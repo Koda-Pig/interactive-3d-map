@@ -3,7 +3,7 @@ export interface Quality {
   readonly tier: "high" | "low";
   readonly maxPixelRatio: number;
   readonly shadowMapSize: number;
-  /** Blur of the shadow edges, in shadow map texels. */
+  /** The most the shadow edges are blurred, in shadow map texels. */
   readonly shadowRadius: number;
   readonly fieldTextureSize: number;
   /** The share of the optional scenery that's drawn. */

@@ -67,7 +67,7 @@ const [kit] = await Promise.all([
 ]);
 
 const scene = new Scene();
-addLighting(scene, quality);
+const sunShadow = addLighting(scene, quality);
 const sky = createSky(renderer, SUN_DIRECTION, kit.get(TABLE_MOUNTAIN_MODEL));
 scene.environment = sky.environment;
 scene.environmentIntensity = ENVIRONMENT_INTENSITY;
@@ -144,6 +144,7 @@ new ResizeObserver(() => {
   camera.updateProjectionMatrix();
   setPixelRatio(pixelRatio);
   labelRenderer.setSize(width, height);
+  sunShadow.refit();
   render();
 }).observe(host);
 
@@ -158,6 +159,10 @@ renderer.setAnimationLoop((now) => {
   const changes = precincts.update(now);
   if (changes.shadows) {
     renderer.shadowMap.needsUpdate = true;
+  }
+  if (sunShadow.update(now, camera, controls.target, moved)) {
+    renderer.shadowMap.needsUpdate = true;
+    needsRender = true;
   }
   const drawing = moved || changes.redraw || needsRender;
   if (drawing) {
