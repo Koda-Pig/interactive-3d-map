@@ -282,3 +282,91 @@ test("pit entry and exit join in the direction of racing travel", () => {
     );
   }
 });
+
+const outlinesOf = (location) =>
+  (location.parts ?? [location]).map((part) => resolveOutline(part.footprint));
+
+test("karting garages sit beside the track and keep their access", () => {
+  const garages = locations.find((location) => location.id === "karting-garages");
+  const apron = resolveOutline(
+    locations.find((location) => location.id === "karting-pit-apron").footprint,
+  );
+  const clubhouse = resolveOutline(
+    locations.find((location) => location.id === "karting-clubhouse").footprint,
+  );
+  const kart = locations.find((location) => location.id === "karting-track");
+  const kartSamples = samplePath(resolvePath(kart.path, true), 3, true);
+  for (const outline of outlinesOf(garages)) {
+    for (const [x, z] of outline) {
+      assert.ok(signedDistance(x, z, clubhouse) > 0, "garages overlap the clubhouse");
+    }
+    const nearest = Math.min(...outline.map(([x, z]) => signedDistance(x, z, apron)));
+    assert.ok(nearest < 3, "garage doors do not open onto the pit apron");
+  }
+  for (const sample of kartSamples) {
+    for (const outline of outlinesOf(garages)) {
+      assert.ok(signedDistance(sample.x, sample.z, outline) > kart.width / 2 + kart.runoff);
+    }
+  }
+});
+
+test("Grandstand Fan Walk runs from the arch to behind both main stands", () => {
+  const walk = locations.find((location) => location.id === "grandstand-fan-walk");
+  const arch = outlinesOf(locations.find((location) => location.id === "gateway-arch")).flat();
+  const [plazaAxis, concourse] = walk.branches;
+  assert.ok(Math.abs(plazaAxis[0][0] - Math.max(...arch.map(([x]) => x))) < 8);
+  for (const id of ["grandstand-a", "grandstand-b"]) {
+    const stand = locations.find((location) => location.id === id);
+    const zs = outlinesOf(stand)
+      .flat()
+      .map(([, z]) => z);
+    assert.ok(concourse[0][1] <= Math.min(...zs) && concourse[1][1] >= Math.max(...zs), id);
+  }
+  for (const path of [walk.path, ...walk.branches]) {
+    for (const sample of samplePath(resolvePath(path, false), 3, false)) {
+      // The walk deliberately starts at the arch, so only other buildings count.
+      const obstacles = locations.filter(
+        (location) => location.type === "building" && location.id !== "gateway-arch",
+      );
+      for (const building of obstacles) {
+        for (const outline of outlinesOf(building)) {
+          assert.ok(
+            signedDistance(sample.x, sample.z, outline) > walk.width / 2,
+            `fan walk intersects ${building.id}`,
+          );
+        }
+      }
+    }
+  }
+});
+
+test("Expo Centre is near stadium scale and clear of the lakefront and road", () => {
+  const expo = locations.find((location) => location.id === "expo-centre");
+  const outlines = outlinesOf(expo);
+  const area = outlines.slice(0, 4).reduce((total, outline) => {
+    const xs = outline.map(([x]) => x);
+    const zs = outline.map(([, z]) => z);
+    return total + (Math.max(...xs) - Math.min(...xs)) * (Math.max(...zs) - Math.min(...zs));
+  }, 0);
+  assert.ok(area >= 40_000, `halls cover only ${area} square metres`);
+  for (const id of ["promenade", "waterfront-drive"]) {
+    const road = locations.find((location) => location.id === id);
+    for (const sample of samplePath(
+      resolvePath(road.path, road.closed ?? false),
+      4,
+      road.closed ?? false,
+    )) {
+      for (const outline of outlines) {
+        assert.ok(signedDistance(sample.x, sample.z, outline) > road.width / 2, id);
+      }
+    }
+  }
+  const yard = resolveOutline(
+    locations.find((location) => location.id === "expo-loading-yard").footprint,
+  );
+  const drive = locations.find((location) => location.id === "waterfront-drive");
+  const touchesDrive = samplePath(resolvePath(drive.path, false), 4, false).some(
+    (sample) => signedDistance(sample.x, sample.z, yard) < drive.width / 2 + 3,
+  );
+  assert.ok(touchesDrive, "loading yard has no road access");
+});
