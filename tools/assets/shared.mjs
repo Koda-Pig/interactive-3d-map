@@ -24,6 +24,9 @@ export const palette = {
   "rock-distant": "#8D9AAB",
 };
 export const budgets = { hero: 15000, building: 4000, modular: 1500, prop: 500, instanced: 200 };
+/** A box face is 18 position values, and its faces start +X, -X, +Y. */
+const FACE = 18;
+const TOP_FACE = FACE * 2;
 export function random(seed) {
   let s = seed >>> 0;
   return () => {
@@ -50,6 +53,17 @@ export class KitShape {
   }
   box(w, h, d, x, y, z, mat = "wall-white", rot = [0, 0, 0]) {
     return this.add(new THREE.BoxGeometry(w, h, d), mat, x, y, z, rot);
+  }
+  /** Sides and bottom only: a top would lie exactly on the ground and flicker against it. */
+  skirt(w, depth, d) {
+    const box = new THREE.BoxGeometry(w, depth, d).toNonIndexed().getAttribute("position").array;
+    const positions = Float32Array.from([
+      ...box.subarray(0, TOP_FACE),
+      ...box.subarray(TOP_FACE + FACE),
+    ]);
+    const open = new THREE.BufferGeometry();
+    open.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    return this.add(open, "concrete", 0, -depth / 2, 0);
   }
   cylinder(r, h, x, y, z, mat = "metal", sides = 8, top = r) {
     return this.add(new THREE.CylinderGeometry(top, r, h, sides, 1), mat, x, y, z);
@@ -103,7 +117,7 @@ export class KitShape {
       g.translate(-center.x, -bounds.min.y, -center.z);
       g.scale(spec.w / size.x, spec.h / size.y, spec.d / size.z);
     }
-    if (spec.skirt) this.box(spec.w, 3, spec.d, 0, -1.5, 0, "concrete");
+    if (spec.skirt) this.skirt(spec.w, 3, spec.d);
     const groups = new Map();
     for (const { g, material } of this.parts) {
       if (!groups.has(material)) groups.set(material, []);

@@ -3,6 +3,7 @@ import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import type { TrackLocation } from "../layout/locations.ts";
 import type { PathSample, PathSegment } from "../layout/path.ts";
 import { resolvePath, samplePath } from "../layout/path.ts";
+import { roadTier } from "../layout/road-order.ts";
 import { createTrackSafety } from "../layout/track-safety.ts";
 import type { GroundSurface } from "../terrain/ground.ts";
 import { createCrossing } from "./crossings.ts";
@@ -12,6 +13,7 @@ const ASPHALT_TILE_LENGTH = 9;
 const DEFAULT_STEP = 6;
 const CROSS_SPACING = 8;
 const LIFT = 0.35;
+const ROAD_TIER_STEP = 0.5;
 
 const DASH_LENGTH = 14;
 
@@ -249,7 +251,10 @@ function startingGrid(
 export function createRibbon(location: TrackLocation, surface: GroundSurface): Group {
   const closed = location.closed ?? false;
   const step = location.step ?? DEFAULT_STEP;
-  const layer = location.type === "track" ? Layer.track : Layer.road;
+  const layer =
+    location.type === "track"
+      ? Layer.track
+      : Layer.road + ROAD_TIER_STEP * roadTier(location.width);
   const keepQuad = location.dashed ? isDashOn : undefined;
 
   const segments = resolvePath(location.path, closed);

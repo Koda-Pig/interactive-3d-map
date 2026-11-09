@@ -8,12 +8,13 @@ import { createAsphaltTexture, createRippleTexture } from "./textures.ts";
  */
 export const Layer = {
   area: 1,
+  /** The lowest road. Wider roads go up to `verge`, so that junctions have a clear winner. */
   road: 2,
   /** Above roads, so a road passing under the circuit stays hidden. */
-  verge: 3,
-  track: 4,
-  marking: 5,
-  outline: 6,
+  verge: 5,
+  track: 6,
+  marking: 7,
+  outline: 8,
 } as const;
 
 export type SiteMaterial = MeshLambertMaterial | MeshStandardMaterial;

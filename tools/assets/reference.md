@@ -4,7 +4,7 @@ The kit contains 60 models across eight categories. Three variants of each natur
 
 ## Coordinates and dimensions
 
-All coordinates use metres, Y up, and +Z forward. The root node has the asset ID and an identity transform. X and Z are centred on the footprint. Above-ground geometry starts at y=0. Building skirts fill the conservative rectangular footprint from y=-3 to y=0. Gantries, the footbridge, the screen, props, nature, and the horizon backdrop have no skirt.
+All coordinates use metres, Y up, and +Z forward. The root node has the asset ID and an identity transform. X and Z are centred on the footprint. Above-ground geometry starts at y=0. Building skirts fill the conservative rectangular footprint from y=-3 to y=0, and have no top face, which would flicker against level ground. Gantries, the footbridge, the screen, props, nature, and the horizon backdrop have no skirt.
 
 `catalog.mjs` defines above-ground dimensions. The manifest's measured bounding box includes skirts. Its `spec.height` excludes skirts. Its footprint is a conservative clockwise rectangle in the XZ plane, including roof overhangs. Place neighbouring tile origins one `spec.width` apart along X.
 

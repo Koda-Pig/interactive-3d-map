@@ -5,6 +5,14 @@ import { resolvePath, samplePath } from "../layout/path.ts";
 import type { GroundSurface } from "../terrain/ground.ts";
 import { solidMaterial } from "./materials.ts";
 
+/**
+ * The slab's top is level with the bridge's profile, well under the road ribbon
+ * laid on it, so that the two can't flicker where the ramps curve differently.
+ */
+const SLAB_DEPTH = 0.5;
+const RAIL_BOTTOM = -0.2;
+const RAIL_TOP = 1.5;
+
 /** One elevation profile for the deck, ramps, parapets and abutments. */
 export function createCrossing(road: TrackLocation, surface: GroundSurface) {
   const structure = new Group();
@@ -42,19 +50,25 @@ export function createCrossing(road: TrackLocation, surface: GroundSurface) {
     const yaw = Math.atan2(-(b.z - a.z), b.x - a.x);
     const tilt = Math.atan2(yB - yA, length);
     for (const side of [-1, 1]) {
-      const rail = new Mesh(new BoxGeometry(length + 0.2, 1.2, 0.5), solidMaterial("#E8ECEF"));
+      const rail = new Mesh(
+        new BoxGeometry(length + 0.2, RAIL_TOP - RAIL_BOTTOM, 0.5),
+        solidMaterial("#E8ECEF"),
+      );
       const offset = (road.width / 2 + 0.25) * side;
       rail.position.set(
         (a.x + b.x) / 2 - a.dirZ * offset,
-        (yA + yB) / 2 + 0.9,
+        (yA + yB) / 2 + (RAIL_TOP + RAIL_BOTTOM) / 2,
         (a.z + b.z) / 2 + a.dirX * offset,
       );
       rail.rotation.set(0, yaw, tilt, "YXZ");
       rail.castShadow = true;
       addPiece(rail);
     }
-    const slab = new Mesh(new BoxGeometry(length + 0.2, 0.8, road.width), solidMaterial("#7C858E"));
-    slab.position.set((a.x + b.x) / 2, (yA + yB) / 2 - 0.1, (a.z + b.z) / 2);
+    const slab = new Mesh(
+      new BoxGeometry(length + 0.2, SLAB_DEPTH, road.width),
+      solidMaterial("#7C858E"),
+    );
+    slab.position.set((a.x + b.x) / 2, (yA + yB) / 2 - SLAB_DEPTH / 2, (a.z + b.z) / 2);
     slab.rotation.set(0, yaw, tilt, "YXZ");
     slab.castShadow = true;
     slab.receiveShadow = true;
