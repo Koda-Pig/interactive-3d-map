@@ -7,9 +7,21 @@ function block(s, w, d, h, floors = 2) {
   for (let n = 0; n < floors; n++) {
     const y = ((n + 0.6) * h) / floors;
     s.box(w * 0.96, (h / floors) * 0.55, d * 1.006, 0, y, 0, "glass");
-    s.box(w * 1.02, 0.35, d * 1.025, 0, ((n + 1) * h) / floors, 0, "wall-grey");
+    if (n < floors - 1) {
+      s.box(w * 1.02, 0.35, d * 1.025, 0, ((n + 1) * h) / floors, 0, "wall-grey");
+    }
   }
+  roofBand(s, w, d, h);
   s.box(w * 0.16, h * 0.07, 0.18, 0, h * 0.9, d * 0.515, "brand-teal");
+}
+/** Trim around the roof slab only. A solid band would flicker through the slab from far away. */
+function roofBand(s, w, d, y) {
+  const sideDepth = d * 0.0125;
+  const endWidth = w * 0.01;
+  for (const sign of [-1, 1]) {
+    s.box(w * 1.02, 0.35, sideDepth, 0, y, sign * (d / 2 + sideDepth / 2), "wall-grey");
+    s.box(endWidth, 0.35, d, sign * (w / 2 + endWidth / 2), y, 0, "wall-grey");
+  }
 }
 function doors(s, w, d, h, count) {
   for (let i = 0; i < count; i++) {

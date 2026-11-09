@@ -427,8 +427,8 @@
           3
         ]
       },
-      "triangleCount": 96,
-      "fileSize": 10588,
+      "triangleCount": 132,
+      "fileSize": 13180,
       "materials": [
         "wall-white",
         "roof-dark",
@@ -542,8 +542,8 @@
           25
         ]
       },
-      "triangleCount": 108,
-      "fileSize": 12056,
+      "triangleCount": 144,
+      "fileSize": 14652,
       "materials": [
         "wall-white",
         "roof-dark",
@@ -893,8 +893,8 @@
           25
         ]
       },
-      "triangleCount": 1728,
-      "fileSize": 128728,
+      "triangleCount": 1764,
+      "fileSize": 131320,
       "materials": [
         "wall-white",
         "roof-dark",
@@ -953,8 +953,8 @@
           25
         ]
       },
-      "triangleCount": 720,
-      "fileSize": 56116,
+      "triangleCount": 756,
+      "fileSize": 58708,
       "materials": [
         "wall-white",
         "roof-dark",
@@ -1182,8 +1182,8 @@
           18
         ]
       },
-      "triangleCount": 888,
-      "fileSize": 68232,
+      "triangleCount": 924,
+      "fileSize": 70824,
       "materials": [
         "wall-white",
         "roof-dark",
@@ -1300,8 +1300,8 @@
           30
         ]
       },
-      "triangleCount": 240,
-      "fileSize": 21584,
+      "triangleCount": 276,
+      "fileSize": 24180,
       "materials": [
         "wall-white",
         "roof-dark",
@@ -1360,8 +1360,8 @@
           30
         ]
       },
-      "triangleCount": 144,
-      "fileSize": 14052,
+      "triangleCount": 180,
+      "fileSize": 16648,
       "materials": [
         "wall-white",
         "roof-dark",
@@ -1478,8 +1478,8 @@
           22
         ]
       },
-      "triangleCount": 120,
-      "fileSize": 12912,
+      "triangleCount": 156,
+      "fileSize": 15508,
       "materials": [
         "wall-white",
         "roof-dark",
@@ -1538,8 +1538,8 @@
           14
         ]
       },
-      "triangleCount": 124,
-      "fileSize": 13196,
+      "triangleCount": 160,
+      "fileSize": 15792,
       "materials": [
         "wall-white",
         "roof-dark",
@@ -1713,8 +1713,8 @@
           15
         ]
       },
-      "triangleCount": 108,
-      "fileSize": 12060,
+      "triangleCount": 144,
+      "fileSize": 14652,
       "materials": [
         "wall-white",
         "roof-dark",
