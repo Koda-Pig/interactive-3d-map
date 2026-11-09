@@ -4,7 +4,7 @@ An interactive 3D concept map of the planned **Blue Mountain Racing** motorsport
 
 The layout is illustrative. There's no published masterplan yet.
 
-**Status:** Phases 1 to 3 of the build plan are done: the whole concept site, drawn from [src/data/locations.json](src/data/locations.json), on farmland you can move around, with name labels and details for everything on the map.
+**Status:** Phases 1 to 4 of the build plan are done: the whole concept site, drawn from [src/data/locations.json](src/data/locations.json), on farmland you can move around, with name labels, details for everything on the map, and a searchable sidebar with precinct filters.
 
 ## Docs
 
@@ -37,3 +37,5 @@ npm run dev
 Left-drag pans, right-drag rotates and scrolling zooms. On touch, one finger pans and two fingers zoom and rotate.
 
 Pointing at a location or its label highlights it. Clicking or tapping opens its details and moves the camera to it. Clicking empty ground, the close button or Escape closes the details.
+
+The sidebar lists every location by precinct. Typing in the search box filters the list, and Enter goes to the first match. Each precinct's switch fades it and its labels in or out. Picking a location in a hidden precinct brings that precinct back. "Reset view" closes the details and returns to the opening view. On a phone the sidebar is a sheet along the bottom: tap or drag its top strip to open it.

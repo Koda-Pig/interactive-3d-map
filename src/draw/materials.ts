@@ -66,6 +66,9 @@ function highlightMaterial(base: MeshLambertMaterial): MeshLambertMaterial {
   if (!material) {
     material = base.clone();
     material.vertexColors = false;
+    // The original may be caught partway through a precinct fade.
+    material.transparent = false;
+    material.opacity = 1;
     material.color.lerp(HIGHLIGHT, HIGHLIGHT_TINT);
     material.emissive.copy(HIGHLIGHT);
     material.emissiveIntensity = HIGHLIGHT_GLOW;

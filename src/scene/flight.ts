@@ -25,12 +25,21 @@ const MAP_AREA = new Box3(
   new Vector3(MAP_HALF_SIZE, Number.POSITIVE_INFINITY, MAP_HALF_SIZE),
 );
 
+/** A place to fly to: the orbit point, and the camera's position around it. */
+interface Destination {
+  readonly target: Vector3;
+  readonly radius: number;
+  readonly phi: number;
+  readonly theta: number;
+}
+
 interface Leg {
   readonly fromTarget: Vector3;
   readonly toTarget: Vector3;
   readonly from: Spherical;
   readonly toRadius: number;
   readonly toPhi: number;
+  readonly toTheta: number;
   readonly hop: number;
   readonly duration: number;
   startedAt: number | null;
@@ -41,43 +50,68 @@ const offset = new Vector3();
 /** Moves the camera smoothly to frame something. Any user input cancels it. */
 export class CameraFlight {
   private leg: Leg | null = null;
+  private readonly home: Destination;
 
+  /** The camera's position when this is created becomes its home view. */
   constructor(
     private readonly camera: PerspectiveCamera,
     private readonly controls: MapControls,
   ) {
+    const { radius, phi, theta } = this.currentView();
+    this.home = { target: controls.target.clone(), radius, phi, theta };
     controls.addEventListener("start", () => {
       this.leg = null;
     });
   }
 
+  /** Flies back to the view the map opened on. */
+  flyHome(): void {
+    this.fly(this.home);
+  }
+
   /** Flies to frame a box, keeping the direction the camera is facing. */
   frame(bounds: Box3): void {
-    const { camera, controls } = this;
+    const { camera } = this;
     const reachable = bounds.clone().intersect(MAP_AREA);
     const sphere = reachable.getBoundingSphere(new Sphere());
 
     const halfHeight = MathUtils.degToRad(camera.fov) / 2;
     const halfWidth = Math.atan(Math.tan(halfHeight) * camera.aspect);
     const fit = (sphere.radius * FRAME_MARGIN) / Math.sin(Math.min(halfHeight, halfWidth));
-    const toRadius = MathUtils.clamp(fit, MIN_FRAME_DISTANCE, MAX_ZOOM_DISTANCE);
-
     const { x, z } = sphere.center;
-    const toTarget = new Vector3(x, heightAt(x, z), z);
-    const from = new Spherical().setFromVector3(
-      offset.copy(camera.position).sub(controls.target),
-    );
+    const { phi, theta } = this.currentView();
 
-    const travel = controls.target.distanceTo(toTarget);
-    const zoom = Math.abs(Math.log(toRadius / from.radius));
+    this.fly({
+      target: new Vector3(x, heightAt(x, z), z),
+      radius: MathUtils.clamp(fit, MIN_FRAME_DISTANCE, MAX_ZOOM_DISTANCE),
+      phi: MathUtils.clamp(phi, MIN_FRAME_TILT, MAX_FRAME_TILT),
+      theta,
+    });
+  }
+
+  private currentView(): Spherical {
+    return new Spherical().setFromVector3(
+      offset.copy(this.camera.position).sub(this.controls.target),
+    );
+  }
+
+  private fly(to: Destination): void {
+    const { controls } = this;
+    const from = this.currentView();
+
+    const travel = controls.target.distanceTo(to.target);
+    const zoom = Math.abs(Math.log(to.radius / from.radius));
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // The short way round, so a view turned past south doesn't spin all the way back.
+    const turn = MathUtils.euclideanModulo(to.theta - from.theta + Math.PI, Math.PI * 2) - Math.PI;
 
     this.leg = {
       fromTarget: controls.target.clone(),
-      toTarget,
+      toTarget: to.target,
       from,
-      toRadius,
-      toPhi: MathUtils.clamp(from.phi, MIN_FRAME_TILT, MAX_FRAME_TILT),
+      toRadius: to.radius,
+      toPhi: to.phi,
+      toTheta: from.theta + turn,
       hop: travel * HOP_SHARE,
       duration: reduceMotion
         ? 0
@@ -105,9 +139,10 @@ export class CameraFlight {
     const zoomed = leg.from.radius * (leg.toRadius / leg.from.radius) ** eased;
     const radius = zoomed + leg.hop * Math.sin(Math.PI * eased);
     const phi = MathUtils.lerp(leg.from.phi, leg.toPhi, eased);
+    const theta = MathUtils.lerp(leg.from.theta, leg.toTheta, eased);
 
     controls.target.lerpVectors(leg.fromTarget, leg.toTarget, eased);
-    offset.setFromSphericalCoords(radius, phi, leg.from.theta);
+    offset.setFromSphericalCoords(radius, phi, theta);
     camera.position.copy(controls.target).add(offset);
 
     if (progress === 1) {

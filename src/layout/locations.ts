@@ -3,14 +3,18 @@ import { resolveOutline } from "./path.ts";
 import type { PathPoint } from "./path.ts";
 import type { Point } from "./polygon.ts";
 
-export type Category =
-  | "racing"
-  | "conference"
-  | "hospitality"
-  | "academy"
-  | "commercial"
-  | "transport"
-  | "entrances";
+/** Every category, in the order precincts are listed to visitors. */
+export const CATEGORIES = [
+  "racing",
+  "conference",
+  "hospitality",
+  "academy",
+  "commercial",
+  "transport",
+  "entrances",
+] as const;
+
+export type Category = (typeof CATEGORIES)[number];
 
 /** Each category's name as a precinct, as shown to visitors. */
 export const PRECINCT_NAMES: Readonly<Record<Category, string>> = {

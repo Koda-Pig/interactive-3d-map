@@ -5,6 +5,7 @@ import type { Location } from "../layout/locations.ts";
 import { resolvePath, samplePath } from "../layout/path.ts";
 import { MAP_HALF_SIZE } from "../site.ts";
 import { heightAt } from "../terrain/height.ts";
+import type { Precincts } from "./precincts.ts";
 
 /** How close the camera must be before a minor label shows, in metres. */
 const MINOR_LABEL_RANGE = 1500;
@@ -56,7 +57,11 @@ export class SiteLabels {
   private active: ReadonlySet<Location> = new Set();
 
   /** `container` must be the `CSS2DRenderer`'s element. */
-  constructor(site: Object3D, container: HTMLElement) {
+  constructor(
+    site: Object3D,
+    container: HTMLElement,
+    private readonly precincts: Precincts,
+  ) {
     const unordered = site.children.map((object) => {
       const location = object.userData.location as Location;
       const element = document.createElement("div");
@@ -116,7 +121,11 @@ export class SiteLabels {
         active ||
         label.location.major === true ||
         label.anchor.distanceTo(camera.position) <= MINOR_LABEL_RANGE;
-      const shown = onScreen && inRange && !placed.some((other) => overlaps(label, other));
+      const shown =
+        this.precincts.isShown(label.location.category) &&
+        onScreen &&
+        inRange &&
+        !placed.some((other) => overlaps(label, other));
 
       if (shown) {
         placed.push(label);

@@ -1,11 +1,13 @@
 import { Box3 } from "three";
 import type { Object3D } from "three";
 import { setHighlighted } from "../draw/materials.ts";
-import type { Location } from "../layout/locations.ts";
+import type { Category, Location } from "../layout/locations.ts";
 import type { InfoPanel } from "../ui/info-panel.ts";
+import type { Sidebar } from "../ui/sidebar.ts";
 import type { CameraFlight } from "./flight.ts";
 import type { SiteLabels } from "./labels.ts";
 import type { Picker } from "./picking.ts";
+import type { Precincts } from "./precincts.ts";
 
 /** A press that moves further than this, in pixels, is a drag and not a click. */
 const CLICK_TOLERANCE = 6;
@@ -17,6 +19,8 @@ export interface InteractionParts {
   readonly labels: SiteLabels;
   readonly flight: CameraFlight;
   readonly panel: InfoPanel;
+  readonly sidebar: Sidebar;
+  readonly precincts: Precincts;
   /** Called when something changed that needs a new frame. */
   readonly onChange: () => void;
 }
@@ -41,14 +45,40 @@ export class MapInteraction {
     document.addEventListener("keydown", this.onKeyDown);
   }
 
-  /** Opens a location's details and frames it, or closes them when given `null`. */
+  /**
+   * Opens a location's details and frames it, or closes them when given `null`.
+   * A location in a hidden precinct brings that precinct back.
+   */
   select(location: Location | null): void {
+    if (location) {
+      this.setPrecinctShown(location.category, true);
+    }
     this.selected = location;
     this.parts.panel.show(location);
+    this.parts.sidebar.showSelected(location);
     this.refresh();
     if (location) {
       this.parts.flight.frame(new Box3().setFromObject(this.objectOf(location)));
     }
+  }
+
+  /** Fades a precinct in or out, letting go of anything in it that's hidden. */
+  setPrecinctShown(category: Category, shown: boolean): void {
+    this.parts.precincts.setShown(category, shown);
+    this.parts.sidebar.showPrecinct(category, shown);
+    if (!shown && this.hovered?.category === category) {
+      this.setHovered(null);
+    }
+    if (!shown && this.selected?.category === category) {
+      this.select(null);
+    }
+    this.parts.onChange();
+  }
+
+  /** Closes any details and flies back to the opening view. */
+  resetView(): void {
+    this.select(null);
+    this.parts.flight.flyHome();
   }
 
   /** Call once a frame, so that hovering costs at most one pick per frame. */

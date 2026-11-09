@@ -2,6 +2,7 @@ import { Raycaster, Vector2, Vector3 } from "three";
 import type { Camera, Intersection, Material, Mesh, Object3D, Ray } from "three";
 import type { Location } from "../layout/locations.ts";
 import type { GroundSurface } from "../terrain/ground.ts";
+import type { Precincts } from "./precincts.ts";
 
 // Flat layers lie within this many metres of each other along a pick ray.
 const SAME_SURFACE_DISTANCE = 2;
@@ -41,14 +42,19 @@ function isBehindGround(ray: Ray, distance: number, surface: GroundSurface): boo
   return false;
 }
 
-export function createPicker(site: Object3D, camera: Camera, surface: GroundSurface): Picker {
+export function createPicker(
+  precincts: Precincts,
+  camera: Camera,
+  surface: GroundSurface,
+): Picker {
   const raycaster = new Raycaster();
   const pointer = new Vector2();
 
   return (ndcX, ndcY) => {
     pointer.set(ndcX, ndcY);
     raycaster.setFromCamera(pointer, camera);
-    const hits = raycaster.intersectObject(site);
+    // Raycasts ignore an object's `visible` flag, so hidden precincts are left out here.
+    const hits = raycaster.intersectObjects(precincts.shownObjects);
     if (hits.length === 0 || isBehindGround(raycaster.ray, hits[0].distance, surface)) {
       return null;
     }

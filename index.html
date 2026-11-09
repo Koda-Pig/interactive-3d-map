@@ -7,6 +7,33 @@
     <link rel="icon" href="data:," />
   </head>
   <body>
+    <aside id="sidebar" class="sidebar" aria-label="Locations">
+      <div class="sidebar__handle">
+        <button
+          class="sidebar__grabber"
+          type="button"
+          aria-expanded="false"
+          aria-label="Show locations"
+        ></button>
+        <div class="sidebar__bar">
+          <h1 class="sidebar__title">Blue Mountain Racing</h1>
+          <button class="sidebar__reset" type="button">Reset view</button>
+        </div>
+      </div>
+      <div class="sidebar__body">
+        <div class="sidebar__search-row">
+          <input
+            class="sidebar__search"
+            type="search"
+            placeholder="Search locations"
+            aria-label="Search locations"
+            autocomplete="off"
+          />
+        </div>
+        <p class="sidebar__empty" role="status"></p>
+        <div class="sidebar__list"></div>
+      </div>
+    </aside>
     <main id="app"></main>
     <aside id="info-panel" class="info-panel" aria-label="Location details" aria-live="polite" hidden>
       <div class="info-panel__bar">

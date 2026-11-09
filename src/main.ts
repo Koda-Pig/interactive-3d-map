@@ -6,17 +6,20 @@ import { MapInteraction } from "./scene/interaction.ts";
 import { SiteLabels } from "./scene/labels.ts";
 import { addLighting } from "./scene/lighting.ts";
 import { createPicker } from "./scene/picking.ts";
+import { Precincts } from "./scene/precincts.ts";
 import { constrainView, createCamera, createControls } from "./scene/view.ts";
 import "./style.css";
 import { createGround } from "./terrain/ground.ts";
 import { createInfoPanel } from "./ui/info-panel.ts";
+import { createSidebar } from "./ui/sidebar.ts";
 
 const MAX_PIXEL_RATIO = 2;
 
 const host = document.querySelector<HTMLElement>("#app");
 const infoPanelElement = document.querySelector<HTMLElement>("#info-panel");
-if (!host || !infoPanelElement) {
-  throw new Error("The page is missing its #app or #info-panel element");
+const sidebarElement = document.querySelector<HTMLElement>("#sidebar");
+if (!host || !infoPanelElement || !sidebarElement) {
+  throw new Error("The page is missing its #app, #info-panel or #sidebar element");
 }
 
 const renderer = new WebGLRenderer({ antialias: true });
@@ -39,19 +42,27 @@ const camera = createCamera(host.clientWidth / host.clientHeight);
 const controls = createControls(camera, renderer.domElement);
 constrainView(camera, controls);
 
-const labels = new SiteLabels(site, labelRenderer.domElement);
+const precincts = new Precincts(site);
+const labels = new SiteLabels(site, labelRenderer.domElement, precincts);
 const flight = new CameraFlight(camera, controls);
 const panel = createInfoPanel(infoPanelElement, () => interaction.select(null));
+const sidebar = createSidebar(sidebarElement, {
+  pick: (location) => interaction.select(location),
+  togglePrecinct: (category, shown) => interaction.setPrecinctShown(category, shown),
+  resetView: () => interaction.resetView(),
+});
 
 let needsRender = false;
 
 const interaction = new MapInteraction({
   canvas: renderer.domElement,
   site,
-  pick: createPicker(site, camera, ground.surface),
+  pick: createPicker(precincts, camera, ground.surface),
   labels,
   flight,
   panel,
+  sidebar,
+  precincts,
   onChange: () => {
     needsRender = true;
   },
@@ -86,7 +97,8 @@ renderer.setAnimationLoop((now) => {
     constrainView(camera, controls);
   }
   interaction.update(moved);
-  if (moved || needsRender) {
+  const faded = precincts.update(now);
+  if (moved || faded || needsRender) {
     needsRender = false;
     render();
   }
