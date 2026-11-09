@@ -1,5 +1,5 @@
-import { PRECINCT_NAMES } from "../layout/locations.ts";
 import type { Location } from "../layout/locations.ts";
+import { PRECINCT_NAMES } from "../layout/locations.ts";
 import { requirePart } from "./dom.ts";
 
 export interface InfoPanel {

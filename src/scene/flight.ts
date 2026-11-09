@@ -1,5 +1,5 @@
-import { Box3, MathUtils, Sphere, Spherical, Vector3 } from "three";
 import type { PerspectiveCamera } from "three";
+import { Box3, MathUtils, Sphere, Spherical, Vector3 } from "three";
 import type { MapControls } from "three/addons/controls/MapControls.js";
 import { MAP_HALF_SIZE } from "../site.ts";
 import { heightAt } from "../terrain/height.ts";

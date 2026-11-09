@@ -1,5 +1,5 @@
-import { BufferAttribute, Color, Mesh } from "three";
 import type { BufferGeometry, MeshStandardMaterial } from "three";
+import { BufferAttribute, Color, Mesh } from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import { buildingParts, layout } from "../layout/locations.ts";
@@ -81,7 +81,10 @@ export async function loadKit(files: Iterable<string>): Promise<Kit> {
       try {
         kit.set(file, await loadModel(loader, file));
       } catch (error) {
-        console.warn(`Could not load the model "${file}", so a plain shape is drawn instead`, error);
+        console.warn(
+          `Could not load the model "${file}", so a plain shape is drawn instead`,
+          error,
+        );
       }
     }),
   );

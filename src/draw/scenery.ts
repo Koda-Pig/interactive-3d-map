@@ -1,3 +1,4 @@
+import type { BufferGeometry, Object3D } from "three";
 import {
   BoxGeometry,
   BufferAttribute,
@@ -12,9 +13,7 @@ import {
   Quaternion,
   Vector3,
 } from "three";
-import type { BufferGeometry, Object3D } from "three";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
-import { CATEGORIES, buildingParts, layout } from "../layout/locations.ts";
 import type {
   AreaLocation,
   BuildingLocation,
@@ -22,27 +21,36 @@ import type {
   Location,
   TrackLocation,
 } from "../layout/locations.ts";
-import { occupancyOf } from "../layout/occupancy.ts";
+import { buildingParts, CATEGORIES, layout } from "../layout/locations.ts";
 import type { Occupancy } from "../layout/occupancy.ts";
-import { resolveOutline, resolvePath, samplePath } from "../layout/path.ts";
+import { occupancyOf } from "../layout/occupancy.ts";
 import type { PathSample } from "../layout/path.ts";
-import { boundsOf, centreOf, signedDistance } from "../layout/polygon.ts";
+import { resolveOutline, resolvePath, samplePath } from "../layout/path.ts";
 import type { Point } from "../layout/polygon.ts";
+import { boundsOf, centreOf, signedDistance } from "../layout/polygon.ts";
 import type { Quality } from "../scene/quality.ts";
 import { MAP_HALF_SIZE, SITE_SIZE } from "../site.ts";
 import { fieldEdgeX } from "../terrain/fields.ts";
 import type { GroundSurface } from "../terrain/ground.ts";
 import { hash2, noise2 } from "../terrain/noise.ts";
-import { bakedGeometry } from "./kit.ts";
 import type { Kit } from "./kit.ts";
+import { bakedGeometry } from "./kit.ts";
 
 const TREES = {
   gum: ["nature/tree-gum-1.glb", "nature/tree-gum-2.glb", "nature/tree-gum-3.glb"],
   pine: ["nature/tree-pine-1.glb", "nature/tree-pine-2.glb", "nature/tree-pine-3.glb"],
   olive: ["nature/tree-olive-1.glb", "nature/tree-olive-2.glb", "nature/tree-olive-3.glb"],
 } as const;
-const SHRUBS = ["nature/shrub-fynbos-1.glb", "nature/shrub-fynbos-2.glb", "nature/shrub-fynbos-3.glb"];
-const ROCKS = ["nature/rock-outcrop-1.glb", "nature/rock-outcrop-2.glb", "nature/rock-outcrop-3.glb"];
+const SHRUBS = [
+  "nature/shrub-fynbos-1.glb",
+  "nature/shrub-fynbos-2.glb",
+  "nature/shrub-fynbos-3.glb",
+];
+const ROCKS = [
+  "nature/rock-outcrop-1.glb",
+  "nature/rock-outcrop-2.glb",
+  "nature/rock-outcrop-3.glb",
+];
 
 const BARRIER = "props/barrier-segment.glb";
 const CATCH_FENCE = "props/race-fence-segment.glb";
@@ -117,7 +125,10 @@ const WHITE = new Color(1, 1, 1);
 class Instances {
   private readonly batches = new Map<BufferGeometry, Batch>();
 
-  add(geometry: BufferGeometry, { x, y, z, yaw = 0, scale = 1, tilt = 0, tint = WHITE }: Placement): void {
+  add(
+    geometry: BufferGeometry,
+    { x, y, z, yaw = 0, scale = 1, tilt = 0, tint = WHITE }: Placement,
+  ): void {
     let batch = this.batches.get(geometry);
     if (!batch) {
       batch = { matrices: [], colors: [] };
@@ -145,7 +156,10 @@ class Instances {
 
 const sceneryMaterial = new MeshLambertMaterial({ vertexColors: true });
 
-function colorize(geometry: BufferGeometry, shade: (y: number) => readonly [number, number, number]): BufferGeometry {
+function colorize(
+  geometry: BufferGeometry,
+  shade: (y: number) => readonly [number, number, number],
+): BufferGeometry {
   const position = geometry.getAttribute("position");
   const colors = new Float32Array(position.count * 3);
   for (let vertex = 0; vertex < position.count; vertex += 1) {
@@ -169,7 +183,13 @@ function createFarTree(): BufferGeometry {
 }
 
 /** A box with no underside. */
-function openBox(width: number, height: number, depth: number, y: number, z: number): BufferGeometry {
+function openBox(
+  width: number,
+  height: number,
+  depth: number,
+  y: number,
+  z: number,
+): BufferGeometry {
   const box = new BoxGeometry(width, height, depth);
   const index = box.getIndex();
   if (index) {
@@ -268,8 +288,18 @@ function plantSiteEdge(context: Context, instances: Instances): void {
       [-edge, along],
       [edge, along],
     ]) {
-      if (noise2(x, z, 260, 31) > -0.25 && !context.occupied.isTaken(x, z) && context.random() < context.density) {
-        placeTree(context, instances, "gum", x + context.random() * 8 - 4, z + context.random() * 8 - 4);
+      if (
+        noise2(x, z, 260, 31) > -0.25 &&
+        !context.occupied.isTaken(x, z) &&
+        context.random() < context.density
+      ) {
+        placeTree(
+          context,
+          instances,
+          "gum",
+          x + context.random() * 8 - 4,
+          z + context.random() * 8 - 4,
+        );
       }
     }
   }
@@ -301,7 +331,11 @@ function plantAreas(context: Context, instances: Instances): void {
       for (let attempt = 0; attempt < 120; attempt += 1) {
         const x = minX + random() * (maxX - minX);
         const z = minZ + random() * (maxZ - minZ);
-        if (signedDistance(x, z, outline) < -8 && !built.isTaken(x, z) && noise2(x, z, 90, 32) > -0.15) {
+        if (
+          signedDistance(x, z, outline) < -8 &&
+          !built.isTaken(x, z) &&
+          noise2(x, z, 90, 32) > -0.15
+        ) {
           placeTree(context, instances, "pine", x, z);
         }
       }
@@ -490,7 +524,11 @@ function dressCircuit(
     const x = sample.x + sample.dirZ * (offset + 7);
     const z = sample.z - sample.dirX * (offset + 7);
     if (!context.built.isTaken(x, z)) {
-      placeModel(context, instances, MARSHAL_POST, { x, z, yaw: Math.atan2(-sample.dirZ, sample.dirX) });
+      placeModel(context, instances, MARSHAL_POST, {
+        x,
+        z,
+        yaw: Math.atan2(-sample.dirZ, sample.dirX),
+      });
     }
   }
 
@@ -727,7 +765,8 @@ export function createScenery(kit: Kit, surface: GroundSurface, quality: Quality
 
   const trackside = new Instances();
   const roads = layout.locations.filter(
-    (location) => (location.type === "road" || location.type === "track") && location.id !== "circuit",
+    (location) =>
+      (location.type === "road" || location.type === "track") && location.id !== "circuit",
   );
   dressCircuit(context, trackside, quality.catchFences, occupancyOf(roads, 2));
   group("racing").add(...trackside.build(true));

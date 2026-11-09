@@ -1,5 +1,5 @@
-import { Box3, Scene, Vector3 } from "three";
 import type { Camera, Object3D } from "three";
+import { Box3, Scene, Vector3 } from "three";
 import { CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
 import type { Location } from "../layout/locations.ts";
 import { resolvePath, samplePath } from "../layout/path.ts";
@@ -65,7 +65,9 @@ export class SiteLabels {
     const unordered = site.children.map((object) => {
       const location = object.userData.location as Location;
       const element = document.createElement("div");
-      element.className = location.major ? "label label--major label--hidden" : "label label--hidden";
+      element.className = location.major
+        ? "label label--major label--hidden"
+        : "label label--hidden";
       element.textContent = location.name;
       container.append(element);
 

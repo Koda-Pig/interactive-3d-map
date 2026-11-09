@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "map",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev", "--", "--port", "5173", "--strictPort"],
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["run", "dev", "--port", "5173", "--strictPort"],
       "port": 5173
     }
   ]

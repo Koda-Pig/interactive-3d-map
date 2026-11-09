@@ -1,8 +1,8 @@
 import { BufferAttribute, BufferGeometry, Color, Group, Mesh } from "three";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import type { TrackLocation } from "../layout/locations.ts";
-import { resolvePath, samplePath } from "../layout/path.ts";
 import type { PathSample, PathSegment } from "../layout/path.ts";
+import { resolvePath, samplePath } from "../layout/path.ts";
 import type { GroundSurface } from "../terrain/ground.ts";
 import { asphaltTexture, Layer, layerMaterial, vertexColorMaterial } from "./materials.ts";
 

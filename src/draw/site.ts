@@ -1,7 +1,7 @@
-import { Group } from "three";
 import type { Object3D } from "three";
-import { layout } from "../layout/locations.ts";
+import { Group } from "three";
 import type { Location } from "../layout/locations.ts";
+import { layout } from "../layout/locations.ts";
 import type { GroundSurface } from "../terrain/ground.ts";
 import { createArea } from "./areas.ts";
 import { createBuilding } from "./buildings.ts";

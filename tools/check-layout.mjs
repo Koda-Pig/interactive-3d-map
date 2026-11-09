@@ -1,6 +1,6 @@
 // Measures the circuit in src/data/locations.json against BMR's published
 // targets, using the same path code the map draws it with. Exits non-zero if a
-// target is missed. Run with `npm run check:layout`.
+// target is missed. Run with `pnpm check:layout`.
 
 import { readFileSync } from "node:fs";
 import { pathLength, resolvePath } from "../src/layout/path.ts";
@@ -20,7 +20,7 @@ const { locations } = JSON.parse(readFileSync(layoutUrl, "utf8"));
 
 const circuit = locations.find((location) => location.id === "circuit");
 if (!circuit) {
-  console.error("No location with the id \"circuit\" in locations.json");
+  console.error('No location with the id "circuit" in locations.json');
   process.exit(1);
 }
 
@@ -44,7 +44,11 @@ const separate = straights
 
 const length = pathLength(segments);
 const results = [
-  [`Length ${MIN_LENGTH}-${MAX_LENGTH} m`, `${length.toFixed(0)} m`, length >= MIN_LENGTH && length <= MAX_LENGTH],
+  [
+    `Length ${MIN_LENGTH}-${MAX_LENGTH} m`,
+    `${length.toFixed(0)} m`,
+    length >= MIN_LENGTH && length <= MAX_LENGTH,
+  ],
   [`Width at least ${MIN_WIDTH} m`, `${circuit.width} m`, circuit.width >= MIN_WIDTH],
   [
     `Start-finish straight at least ${MIN_START_FINISH_STRAIGHT} m`,
@@ -79,7 +83,9 @@ console.log(
 
 // Every model the layout asks for has to exist, or the map falls back to plain shapes.
 const manifestUrl = new URL("../public/models/manifest.json", import.meta.url);
-const known = new Set(JSON.parse(readFileSync(manifestUrl, "utf8")).assets.map((asset) => asset.file));
+const known = new Set(
+  JSON.parse(readFileSync(manifestUrl, "utf8")).assets.map((asset) => asset.file),
+);
 const modelFiles = locations.flatMap((location) =>
   [location.model, ...(location.parts ?? []).map((part) => part.model)].flatMap((model) =>
     model ? [model.file, ...(model.endCap ? [model.endCap] : [])] : [],

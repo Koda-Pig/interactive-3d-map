@@ -1,9 +1,9 @@
-import { buildingParts } from "./locations.ts";
 import type { Location } from "./locations.ts";
-import { resolveOutline, resolvePath, samplePath } from "./path.ts";
+import { buildingParts } from "./locations.ts";
 import type { PathPoint } from "./path.ts";
-import { boundsOf, signedDistance } from "./polygon.ts";
+import { resolveOutline, resolvePath, samplePath } from "./path.ts";
 import type { Point } from "./polygon.ts";
+import { boundsOf, signedDistance } from "./polygon.ts";
 
 const CELL_SIZE = 8;
 const PATH_STEP = 12;

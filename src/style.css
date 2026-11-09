@@ -45,7 +45,10 @@ body {
   border-radius: 8px;
   background: rgb(255 255 255 / 92%);
   color: #004272;
-  font: 500 11px/1.3 Roboto, system-ui, sans-serif;
+  font:
+    500 11px / 1.3 Roboto,
+    system-ui,
+    sans-serif;
   white-space: nowrap;
   transition: opacity 150ms ease;
 }
@@ -76,7 +79,10 @@ body {
   background: #fff;
   box-shadow: 0 8px 24px rgb(0 36 63 / 28%);
   color: #26343d;
-  font: 400 14px/1.5 Roboto, system-ui, sans-serif;
+  font:
+    400 14px / 1.5 Roboto,
+    system-ui,
+    sans-serif;
 }
 
 .info-panel__bar {
@@ -141,7 +147,10 @@ body {
   border-radius: 8px;
   background: #004272;
   color: #fff;
-  font: 500 13px/1.3 Roboto, system-ui, sans-serif;
+  font:
+    500 13px / 1.3 Roboto,
+    system-ui,
+    sans-serif;
   pointer-events: none;
 }
 
@@ -155,7 +164,10 @@ body {
   gap: 8px;
   width: max-content;
   max-width: calc(100vw - var(--sidebar-width) - 32px);
-  font: 500 13px/1.3 Roboto, system-ui, sans-serif;
+  font:
+    500 13px / 1.3 Roboto,
+    system-ui,
+    sans-serif;
 }
 
 .event-switch__buttons {
@@ -209,7 +221,10 @@ body {
   place-items: center;
   background: #e5ddc9;
   color: #004272;
-  font: 500 15px/1.3 Roboto, system-ui, sans-serif;
+  font:
+    500 15px / 1.3 Roboto,
+    system-ui,
+    sans-serif;
 }
 
 .stats {
@@ -220,7 +235,10 @@ body {
   border-radius: 8px;
   background: rgb(0 0 0 / 72%);
   color: #fff;
-  font: 12px/1.3 ui-monospace, Menlo, monospace;
+  font:
+    12px / 1.3 ui-monospace,
+    Menlo,
+    monospace;
   pointer-events: none;
 }
 
@@ -234,7 +252,10 @@ body {
   background: #fff;
   box-shadow: 0 0 16px rgb(0 36 63 / 24%);
   color: #26343d;
-  font: 400 14px/1.4 Roboto, system-ui, sans-serif;
+  font:
+    400 14px / 1.4 Roboto,
+    system-ui,
+    sans-serif;
 }
 
 .sidebar [hidden] {
@@ -466,6 +487,10 @@ body {
     transition: none;
   }
 
+  .sidebar__body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
   .sidebar:not(.sidebar--open, .sidebar--dragging) .sidebar__body {
     visibility: hidden;
   }
@@ -493,10 +518,6 @@ body {
     border-radius: 2px;
     background: rgb(255 255 255 / 60%);
     content: "";
-  }
-
-  .sidebar__body {
-    padding-bottom: env(safe-area-inset-bottom);
   }
 
   /* Anything smaller makes iOS zoom the page when the box gets focus. */

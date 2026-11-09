@@ -1,18 +1,20 @@
+import "@fontsource/roboto/latin-400.css";
+import "@fontsource/roboto/latin-500.css";
 import { NeutralToneMapping, PCFShadowMap, Scene, WebGLRenderer } from "three";
 import { CSS2DRenderer } from "three/addons/renderers/CSS2DRenderer.js";
 import { layoutModelFiles, loadKit } from "./draw/kit.ts";
-import { SCENERY_MODELS, createScenery } from "./draw/scenery.ts";
+import { createScenery, SCENERY_MODELS } from "./draw/scenery.ts";
 import { createSite } from "./draw/site.ts";
 import { setEventMode } from "./scene/event-modes.ts";
 import { CameraFlight } from "./scene/flight.ts";
 import { MapInteraction } from "./scene/interaction.ts";
 import { SiteLabels } from "./scene/labels.ts";
-import { SUN_DIRECTION, addLighting } from "./scene/lighting.ts";
+import { addLighting, SUN_DIRECTION } from "./scene/lighting.ts";
 import { FrameMonitor } from "./scene/performance.ts";
 import { createPicker } from "./scene/picking.ts";
 import { Precincts } from "./scene/precincts.ts";
 import { detectQuality } from "./scene/quality.ts";
-import { TABLE_MOUNTAIN_MODEL, createSky } from "./scene/sky.ts";
+import { createSky, TABLE_MOUNTAIN_MODEL } from "./scene/sky.ts";
 import { constrainView, createCamera, createControls } from "./scene/view.ts";
 import "./style.css";
 import { createGround } from "./terrain/ground.ts";
@@ -32,6 +34,14 @@ if (!host || !infoPanelElement || !sidebarElement || !eventSwitchElement || !loa
   throw new Error("The page is missing one of its main elements");
 }
 
+// Anything that stops the map starting would otherwise leave the loading message up for good.
+const showStartupFailure = (): void => {
+  loadingElement.textContent =
+    "The map couldn't start. Check that WebGL is turned on, or try another browser.";
+};
+window.addEventListener("error", showStartupFailure);
+window.addEventListener("unhandledrejection", showStartupFailure);
+
 const quality = detectQuality();
 
 const renderer = new WebGLRenderer({ antialias: true });
@@ -48,7 +58,13 @@ const labelRenderer = new CSS2DRenderer();
 labelRenderer.domElement.classList.add("labels");
 host.append(labelRenderer.domElement);
 
-const kit = await loadKit([...layoutModelFiles(), ...SCENERY_MODELS, TABLE_MOUNTAIN_MODEL]);
+// Labels measure their text once, so their font has to be ready first. If it
+// can't be fetched, they use the fallback font.
+const labelFont = document.fonts.load("500 12px Roboto").catch(() => []);
+const [kit] = await Promise.all([
+  loadKit([...layoutModelFiles(), ...SCENERY_MODELS, TABLE_MOUNTAIN_MODEL]),
+  labelFont,
+]);
 
 const scene = new Scene();
 addLighting(scene, quality);
@@ -104,7 +120,11 @@ const setPixelRatio = (ratio: number): void => {
   renderer.setSize(host.clientWidth, host.clientHeight, false);
 };
 
-const frames = new FrameMonitor(renderer, quality, setPixelRatio);
+const frames = new FrameMonitor(renderer, quality, (ratio) => {
+  setPixelRatio(ratio);
+  // Resizing the canvas clears it, and the view may have just stopped moving.
+  needsRender = true;
+});
 
 function render(): void {
   sky.follow(camera);
@@ -147,4 +167,6 @@ renderer.setAnimationLoop((now) => {
   frames.tick(now, drawing);
 });
 
+window.removeEventListener("error", showStartupFailure);
+window.removeEventListener("unhandledrejection", showStartupFailure);
 loadingElement.remove();

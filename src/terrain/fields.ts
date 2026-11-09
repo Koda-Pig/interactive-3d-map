@@ -28,12 +28,7 @@ const FIELD_TONES: readonly (readonly [number, number, number])[] = [
  * the map and towards 1 for the other. Between two fields it passes through
  * 0.5, which leaves a strip without rows along their shared edge.
  */
-export function writeFieldColor(
-  x: number,
-  z: number,
-  pixels: Uint8Array,
-  offset: number,
-): void {
+export function writeFieldColor(x: number, z: number, pixels: Uint8Array, offset: number): void {
   const warpedX = x + EDGE_WARP * noise2(x, z, 900, 11);
   const warpedZ = z + EDGE_WARP * noise2(x, z, 900, 12);
 

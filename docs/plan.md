@@ -76,7 +76,4 @@ BMR hasn't published a track map or masterplan, so we draw our own to fit its pu
 - **Style:** clean and simplified, in the BMR and Protium colours
 - **Where it lives:** only in this repo, as a standalone site. It doesn't go into the pitch deck
 - **First nice-to-have:** the race weekend / conference day toggle, because it tells the deck's story best
-
-## Still open
-
-1. **How much detail on the wider precinct?** The residential, business and waterfront zones could be simple blocks, or left out so the circuit and venue get the attention.
+- **Wider precinct:** the residential, business and waterfront zones are on the map, drawn with the kit's models

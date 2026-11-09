@@ -14,8 +14,7 @@ function naturalHeightAt(x: number, z: number): number {
     15 * noise2(x, z, 1900, 1) + 6 * noise2(x, z, 760, 2) + 1.4 * noise2(x, z, 280, 3);
 
   const hills =
-    smoothstep(HILLS_START, HILLS_FULL, Math.hypot(x, z)) *
-    (70 + 60 * noise2(x, z, 2800, 4));
+    smoothstep(HILLS_START, HILLS_FULL, Math.hypot(x, z)) * (70 + 60 * noise2(x, z, 2800, 4));
 
   return rolling + hills;
 }

@@ -1,5 +1,5 @@
-import { Color, Mesh, MeshLambertMaterial, MeshStandardMaterial } from "three";
 import type { Object3D, Texture } from "three";
+import { Color, Mesh, MeshLambertMaterial, MeshStandardMaterial } from "three";
 import { createAsphaltTexture, createRippleTexture } from "./textures.ts";
 
 /**

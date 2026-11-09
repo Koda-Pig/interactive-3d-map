@@ -1,9 +1,9 @@
-import { Color, Material, MathUtils, Mesh } from "three";
 import type { Object3D } from "three";
-import { setBaseMaterial } from "../draw/materials.ts";
+import { Color, Material, MathUtils, Mesh } from "three";
 import type { SiteMaterial } from "../draw/materials.ts";
-import { CATEGORIES, layout } from "../layout/locations.ts";
+import { setBaseMaterial } from "../draw/materials.ts";
 import type { Category, Location } from "../layout/locations.ts";
+import { CATEGORIES, layout } from "../layout/locations.ts";
 
 const FADE_DURATION = 300;
 

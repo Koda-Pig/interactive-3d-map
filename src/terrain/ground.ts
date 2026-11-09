@@ -1,3 +1,4 @@
+import type { Texture } from "three";
 import {
   BufferAttribute,
   BufferGeometry,
@@ -10,7 +11,6 @@ import {
   SRGBColorSpace,
   UnsignedByteType,
 } from "three";
-import type { Texture } from "three";
 import { createFieldDetailTexture } from "../draw/textures.ts";
 import { GROUND_HALF_SIZE, MAP_HALF_SIZE } from "../site.ts";
 import { writeFieldColor } from "./fields.ts";
@@ -40,7 +40,10 @@ function buildGridLines(): Float64Array {
   }
   positive.push(GROUND_HALF_SIZE);
 
-  const negative = positive.slice(1).reverse().map((value) => -value);
+  const negative = positive
+    .slice(1)
+    .reverse()
+    .map((value) => -value);
   return Float64Array.from([...negative, ...positive]);
 }
 

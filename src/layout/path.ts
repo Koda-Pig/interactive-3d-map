@@ -130,7 +130,9 @@ export function resolvePath(points: readonly PathPoint[], closed: boolean): Path
     const start = points[index];
     const end = points[(index + 1) % count];
     if (from.tangent + to.tangent > Math.hypot(end[0] - start[0], end[1] - start[1]) + 1e-6) {
-      throw new Error(`Rounded corners overlap between [${start.join(", ")}] and [${end.join(", ")}]`);
+      throw new Error(
+        `Rounded corners overlap between [${start.join(", ")}] and [${end.join(", ")}]`,
+      );
     }
     if (from.arc && (closed || index > 0)) {
       segments.push(from.arc);
@@ -208,7 +210,8 @@ export function resolveOutline(points: readonly PathPoint[]): [number, number][]
   if (points.every((point) => !point[2])) {
     return points.map(([x, z]) => [x, z]);
   }
-  return samplePath(resolvePath(points, true), Number.POSITIVE_INFINITY, true).map(
-    (sample) => [sample.x, sample.z],
-  );
+  return samplePath(resolvePath(points, true), Number.POSITIVE_INFINITY, true).map((sample) => [
+    sample.x,
+    sample.z,
+  ]);
 }

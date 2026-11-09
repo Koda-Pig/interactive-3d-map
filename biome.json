@@ -1,0 +1,22 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.6.6/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "includes": [
+      "**",
+      "!**/*.md",
+      "!src/data/locations.json",
+      "!public/models/manifest.json",
+      "!tools/assets/validation-report.json",
+      "!tools/assets/determinism-report.json"
+    ]
+  },
+  "formatter": {
+    "indentStyle": "space",
+    "lineWidth": 100
+  }
+}

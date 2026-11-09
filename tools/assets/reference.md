@@ -31,4 +31,4 @@ Results are written to `validation-report.json`. `determinism-report.json` recor
 
 ## Reference access
 
-The gallery URL supplied in the request was unavailable through the web tool during generation. The architectural descriptions in the request and the project planning documents guided the designs. No gallery images were copied.
+BMR's gallery couldn't be reached when the kit was generated. Written descriptions of the architecture and the project's planning documents guided the designs. No gallery images were copied.

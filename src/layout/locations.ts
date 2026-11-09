@@ -1,6 +1,6 @@
 import data from "../data/locations.json";
-import { resolveOutline } from "./path.ts";
 import type { PathPoint } from "./path.ts";
+import { resolveOutline } from "./path.ts";
 import type { Point } from "./polygon.ts";
 
 /** Every category, in the order precincts are listed to visitors. */

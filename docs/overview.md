@@ -86,14 +86,14 @@ We keep the list, search, filters and info panels, and replace the flat picture 
 
 ## What goes on the map
 
-| Category | Things on the map | How it's drawn at first |
+| Category | Things on the map | How it's drawn |
 | --- | --- | --- |
-| Racing | Circuit, pit lane, pit / conference building, grandstands, general admission banks | The track is a ribbon along a closed curve that follows the ground. The buildings are footprint shapes raised to a height |
-| Conference and events | Exhibition halls, amphitheatre, arrival plaza and gateway arch | Raised shapes. The amphitheatre is a stepped curved bowl |
-| Hospitality and waterfront | Hotels, lake, promenade, lakeside restaurants | Raised shapes, with a flat water surface |
-| Academy and automotive | Driving academy, karting track, automotive hub | Simple buildings, and a second smaller track ribbon |
-| Residential and commercial | Trackside housing, retail, research and technology | Groups of simple blocks |
-| Parking and transport | Car parks, shuttle drop-off, the N7 and its interchanges, Kalbaskraal station and fan walk, the aerodrome | Flat areas, road strips, a dotted path |
+| Racing | Circuit, pit lane, pit / conference building, grandstands, general admission banks | The track is a ribbon along a closed curve that follows the ground. The pit / conference building and grandstands are kit models. The banks are footprint shapes raised to a height |
+| Conference and events | Exhibition halls, amphitheatre, arrival plaza and gateway arch | Kit models, with a flat area for the plaza |
+| Hospitality and waterfront | Hotels, lake, promenade, lakeside restaurants | Kit models, with a flat water surface |
+| Academy and automotive | Driving academy, karting track, automotive hub | Kit models, and a second smaller track ribbon |
+| Residential and commercial | Trackside housing, retail, research and technology | Groups of kit models |
+| Parking and transport | Car parks, shuttle drop-off, the N7 and its interchanges, Kalbaskraal station and fan walk, the aerodrome | Flat areas, road strips and a dotted path, with kit models for the station and aerodrome buildings |
 | Entrances | Gates 1 to 14 (a placeholder count, from the deck's demo data) | Small markers |
 | Setting | Farmland, hills, trees, distant Table Mountain silhouette | Gently rolling ground with wheat-coloured fields |
 
@@ -121,19 +121,22 @@ Colours:
 
 ```json
 {
-  "id": "grandstand-b",
-  "name": "Grandstand B",
-  "category": "racing",
+  "id": "driving-academy",
+  "name": "Driving Academy",
+  "category": "academy",
   "type": "building",
-  "footprint": [[120, 40], [200, 40], [200, 62], [120, 62]],
-  "height": 18,
+  "model": { "file": "mixed-use/driving-academy.glb", "facing": "north" },
+  "description": "Classrooms and simulators for the academy and karting pathway.",
   "color": "#E8ECEF",
-  "description": "Covered grandstand on the main straight. Illustrative."
+  "footprint": [[-190, -305], [-150, -305], [-150, -283], [-190, -283]],
+  "height": 12
 }
 ```
 
 The layout lives in `src/data/locations.json`, as a `locations` list, `grading` zones (terraces levelled as one, so everything standing on them shares a ground height) and `events`: the ways the venue is used, each naming the precincts and locations in use.
 
+- Every location has an `id`, a `name`, a `category`, a `type` and a `description`. All but gates also need a `color`
+- `category`: `racing`, `conference`, `hospitality`, `academy`, `commercial`, `transport` or `entrances`
 - `type`: `building`, `area`, `water`, `track`, `road` or `gate`
 - `major`: set to `true` to keep the name label up when zoomed out. Other labels only appear within about 1.5 km of the camera
 - `footprint`: the outline's corners, in metres on the ground. A corner is `[x, z]`, or `[x, z, radius]` to round it
@@ -141,7 +144,8 @@ The layout lives in `src/data/locations.json`, as a `locations` list, `grading` 
 - `parts`: used instead of `footprint` and `height` by buildings with several volumes. Each part has its own `footprint` and `height`, and can add `base` (how far above the ground it starts) and `color`
 - `model`: on a building or one of its `parts`, a `.glb` from `public/models` that replaces the simple shape and is fitted to its footprint. It has a `file`, a `facing` (`north`, `east`, `south` or `west`), and optionally a `grid` of `[columns, rows]`, or an `endCap` file that makes `file` a tile repeated between two end pieces. If the file can't be loaded, the simple shape is drawn
 - `planting`: on an area, `park` scatters trees through it and `edge` lines its edge with them
-- Tracks and roads use `path` (a list of points, rounded the same way) instead of `footprint`, plus `width`. Optional: `closed`, `branches` (more paths in the same location), `median`, `dashed`, `kerbs`, `runoff`
+- Tracks and roads use `path` (a list of points, rounded the same way) instead of `footprint`, plus `width`. Optional: `closed`, `branches` (more paths in the same location), `median`, `dashed`, `kerbs`, `runoff`, `runoffColor`, `step` (spacing of the ribbon's cross-sections, for very long roads)
+- The location with the id `circuit` also needs `startFinish`: an `[x, z]` point on the start-finish line, which `pnpm check:layout` uses to find that straight
 - Gates use `position`: one `[x, z]` point
 
 ## Not in scope yet

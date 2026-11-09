@@ -1,4 +1,4 @@
-import { DirectionalLight, Fog, HemisphereLight, MathUtils, Scene, Vector3 } from "three";
+import { DirectionalLight, Fog, HemisphereLight, MathUtils, type Scene, Vector3 } from "three";
 import { GROUND_HALF_SIZE } from "../site.ts";
 import type { Quality } from "./quality.ts";
 import { HORIZON_COLOR } from "./sky.ts";

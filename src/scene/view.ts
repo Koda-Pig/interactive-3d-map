@@ -14,10 +14,7 @@ export function createCamera(aspect: number): PerspectiveCamera {
   return camera;
 }
 
-export function createControls(
-  camera: PerspectiveCamera,
-  element: HTMLElement,
-): MapControls {
+export function createControls(camera: PerspectiveCamera, element: HTMLElement): MapControls {
   // MapControls defaults to left-drag pan, right-drag rotate and wheel zoom,
   // with one-finger pan and two-finger zoom and rotate on touch.
   const controls = new MapControls(camera, element);

@@ -1,5 +1,5 @@
-import { layout } from "../layout/locations.ts";
 import type { EventMode } from "../layout/locations.ts";
+import { layout } from "../layout/locations.ts";
 import { requirePart } from "./dom.ts";
 
 interface Choice {

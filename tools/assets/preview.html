@@ -8,11 +8,12 @@
 <header><p>PROCEDURAL ASSET LIBRARY / METRES / +Y UP / +Z FRONT</p><h1 id="title">Concept asset kit</h1><p id="subtitle">Flat-shaded geometry · no textures · illustrative architecture</p></header>
 <nav id="nav"></nav><main id="grid"></main>
 <footer>Three-quarter aerial views. <span class="human">Terracotta reference = 1.8 m person</span>. Tiles show three consecutive pieces. Each card fits its own scale. Click to orbit an asset.</footer>
-<dialog id="dialog"><button id="close">Close</button><div id="caption"></div><div id="inspect"></div></dialog>
+<dialog id="dialog"><button id="close" type="button">Close</button><div id="caption"></div><div id="inspect"></div></dialog>
 <script type="module">
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
 const params=new URLSearchParams(location.search),selected=params.get('category');
 if(params.has('sheet'))document.body.classList.add('sheet');
 const manifest=await fetch('/models/manifest.json').then(r=>r.json()),categories=[...new Set(manifest.assets.map(a=>a.category))];

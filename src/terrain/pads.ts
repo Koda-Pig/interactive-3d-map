@@ -1,7 +1,7 @@
 import { layout, levelledOutline } from "../layout/locations.ts";
 import { resolveOutline } from "../layout/path.ts";
-import { boundsOf, centreOf, signedDistance } from "../layout/polygon.ts";
 import type { Bounds, Point } from "../layout/polygon.ts";
+import { boundsOf, centreOf, signedDistance } from "../layout/polygon.ts";
 
 // The ground mesh has 20 m cells, so the flat part of a pad runs past the
 // outline by more than one cell's diagonal to be flat under the whole outline.
@@ -81,12 +81,7 @@ export function buildPads(height: (x: number, z: number) => number): readonly Pa
 }
 
 /** Blends natural ground towards any pads near this position. */
-export function applyPads(
-  pads: readonly Pad[],
-  x: number,
-  z: number,
-  natural: number,
-): number {
+export function applyPads(pads: readonly Pad[], x: number, z: number, natural: number): number {
   let strongest = 0;
   let totalWeight = 0;
   let totalLevel = 0;

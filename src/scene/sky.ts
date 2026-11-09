@@ -1,3 +1,4 @@
+import type { Camera, Texture, Vector3, WebGLRenderer } from "three";
 import {
   BackSide,
   BufferAttribute,
@@ -11,7 +12,6 @@ import {
   SphereGeometry,
   Uniform,
 } from "three";
-import type { Camera, Texture, Vector3, WebGLRenderer } from "three";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import type { KitModel } from "../draw/kit.ts";
 
@@ -129,7 +129,10 @@ export function createSky(
   mountain: KitModel | undefined,
 ): Sky {
   const material = createDomeMaterial(sunDirection);
-  const dome = new Mesh(new SphereGeometry(DOME_RADIUS, DOME_SEGMENTS, DOME_SEGMENTS / 2), material);
+  const dome = new Mesh(
+    new SphereGeometry(DOME_RADIUS, DOME_SEGMENTS, DOME_SEGMENTS / 2),
+    material,
+  );
   dome.renderOrder = DOME_RENDER_ORDER;
   dome.frustumCulled = false;
 

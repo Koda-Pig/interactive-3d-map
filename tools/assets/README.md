@@ -1,22 +1,22 @@
 # Regenerate the asset kit
 
-Run all commands from the repository root with Node.js 22 or later.
+Run all commands from the repository root with Node.js 22.18 or later and pnpm.
 
 ```bash
-npm ci
-npm run assets
-npm run assets:validate
-npm run assets:determinism
+pnpm install --frozen-lockfile
+pnpm assets
+pnpm assets:validate
+pnpm assets:determinism
 ```
 
-`npm run assets` rebuilds 60 GLBs and `public/models/manifest.json`. The fixed nature seeds and locked dependencies produce byte-identical model files. The determinism command compares SHA-256 hashes before and after regeneration.
+`pnpm assets` rebuilds 60 GLBs and `public/models/manifest.json`. The fixed nature seeds and locked dependencies produce byte-identical model files. The determinism command compares SHA-256 hashes before and after regeneration.
 
 ## Inspect the assets
 
 Start the local preview server:
 
 ```bash
-npm run assets:preview
+pnpm assets:preview
 ```
 
 Open [the asset grid](http://127.0.0.1:4173). Choose a category, then click a card to orbit its model. Each card includes a 1.8 m human reference. Tileable assets appear three times along X at their exact placement interval.
@@ -24,13 +24,13 @@ Open [the asset grid](http://127.0.0.1:4173). Choose a category, then click a ca
 Generate the eight category contact sheets with headless Chrome:
 
 ```bash
-npm run assets:render
+pnpm assets:render
 ```
 
 The default browser path is `/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`. On another system, set `ASSET_BROWSER` to a Chromium executable:
 
 ```bash
-ASSET_BROWSER=/path/to/chromium npm run assets:render
+ASSET_BROWSER=/path/to/chromium pnpm assets:render
 ```
 
 Open every PNG in `tools/assets/previews/`. Check silhouettes, surfaces, stage direction, and tile joins. Regenerate the sheets after changing geometry.

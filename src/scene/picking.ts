@@ -1,5 +1,5 @@
-import { Raycaster, Vector2, Vector3 } from "three";
 import type { Camera, Intersection, Material, Mesh, Object3D, Ray } from "three";
+import { Raycaster, Vector2, Vector3 } from "three";
 import type { Location } from "../layout/locations.ts";
 import type { GroundSurface } from "../terrain/ground.ts";
 import type { Precincts } from "./precincts.ts";
@@ -42,11 +42,7 @@ function isBehindGround(ray: Ray, distance: number, surface: GroundSurface): boo
   return false;
 }
 
-export function createPicker(
-  precincts: Precincts,
-  camera: Camera,
-  surface: GroundSurface,
-): Picker {
+export function createPicker(precincts: Precincts, camera: Camera, surface: GroundSurface): Picker {
   const raycaster = new Raycaster();
   const pointer = new Vector2();
 

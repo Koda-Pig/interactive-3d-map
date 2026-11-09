@@ -11,7 +11,7 @@ The layout is illustrative. There's no published masterplan yet.
 - [docs/overview.md](docs/overview.md): what we're building, the reference we're improving on, and the feature list
 - [docs/plan.md](docs/plan.md): the simplified build plan, phase by phase
 
-## Planned stack
+## Stack
 
 | Piece | Choice |
 | --- | --- |
@@ -25,14 +25,18 @@ The layout is illustrative. There's no published masterplan yet.
 
 ## Running it
 
+You need Node.js 22.18 or later and [pnpm](https://pnpm.io).
+
 ```bash
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```
 
-`npm run build` checks the circuit, type-checks and writes a production build to `dist/`.
+`pnpm build` checks the layout, type-checks and writes a production build to `dist/`.
 
-`npm run check:layout` measures the circuit in the layout data and fails if it misses BMR's length, straight or width targets.
+`pnpm check:layout` measures the circuit in the layout data and fails if it misses BMR's length, straight or width targets, or if a model the layout asks for doesn't exist.
+
+`pnpm test` runs the tests in `tests/`. `pnpm lint` checks formatting and common mistakes with [Biome](https://biomejs.dev), and `pnpm format` fixes what it can.
 
 Left-drag pans, right-drag rotates and scrolling zooms. On touch, one finger pans and two fingers zoom and rotate.
 
@@ -46,4 +50,4 @@ The sidebar lists every location by precinct. Typing in the search box filters t
 
 The map draws less on phones. It picks its tier from the device, and `?quality=low` or `?quality=high` in the address overrides that. If the frame rate drops below 28 fps while the view is moving, it lowers the resolution by itself.
 
-Add `?stats` to the address to see the frame rate, draw calls and triangles once you've moved the map. To try it on a phone on the same Wi-Fi, run the dev server with `npm run dev -- --host` and open the "Network" address it prints, with `?stats` added.
+Add `?stats` to the address to see the frame rate, draw calls and triangles once you've moved the map. To try it on a phone on the same Wi-Fi, run the dev server with `pnpm dev --host` and open the "Network" address it prints, with `?stats` added.

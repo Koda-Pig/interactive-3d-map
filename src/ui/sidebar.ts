@@ -1,5 +1,5 @@
-import { CATEGORIES, PRECINCT_NAMES, layout } from "../layout/locations.ts";
 import type { Category, Location } from "../layout/locations.ts";
+import { CATEGORIES, layout, PRECINCT_NAMES } from "../layout/locations.ts";
 import { createBottomSheet } from "./bottom-sheet.ts";
 import { requirePart } from "./dom.ts";
 

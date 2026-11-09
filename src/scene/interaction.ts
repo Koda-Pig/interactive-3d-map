@@ -1,5 +1,5 @@
-import { Box3 } from "three";
 import type { Object3D } from "three";
+import { Box3 } from "three";
 import { setHighlighted } from "../draw/materials.ts";
 import type { Category, Location } from "../layout/locations.ts";
 import type { InfoPanel } from "../ui/info-panel.ts";

@@ -1,6 +1,6 @@
 import type { Object3D } from "three";
-import { layout } from "../layout/locations.ts";
 import type { EventMode, Location } from "../layout/locations.ts";
+import { layout } from "../layout/locations.ts";
 import type { Precincts } from "./precincts.ts";
 
 function inUse(mode: EventMode, location: Location): boolean {

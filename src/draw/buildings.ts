@@ -1,5 +1,6 @@
+import type { BufferGeometry, MeshStandardMaterial } from "three";
 import {
-  BufferAttribute,
+  type BufferAttribute,
   ExtrudeGeometry,
   Group,
   MathUtils,
@@ -10,18 +11,17 @@ import {
   Vector2,
   Vector3,
 } from "three";
-import type { BufferGeometry, MeshStandardMaterial } from "three";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
-import { buildingParts } from "../layout/locations.ts";
 import type {
   BuildingLocation,
   BuildingPart,
   Facing,
   ModelPlacement,
 } from "../layout/locations.ts";
+import { buildingParts } from "../layout/locations.ts";
 import { resolveOutline } from "../layout/path.ts";
-import { boundsOf, centreOf } from "../layout/polygon.ts";
 import type { Point } from "../layout/polygon.ts";
+import { boundsOf, centreOf } from "../layout/polygon.ts";
 import { heightAt } from "../terrain/height.ts";
 import type { Kit, KitModel } from "./kit.ts";
 import { kitMaterial, solidMaterial } from "./materials.ts";
