@@ -4,6 +4,7 @@ import { hash2, noise2 } from "./noise.ts";
 const FIELD_WIDTH = 460;
 const FIELD_LENGTH = 360;
 const EDGE_WARP = 110;
+const EDGE_SOLVE_STEPS = 3;
 const GRASS_EDGE_WIDTH = 30;
 const GRASS_TONE: readonly [number, number, number] = [150, 158, 96];
 
@@ -21,7 +22,12 @@ const FIELD_TONES: readonly (readonly [number, number, number])[] = [
   [148, 150, 94],
 ];
 
-/** Writes the RGB colour of the farmland at a world position into `pixels`. */
+/**
+ * Writes the colour of the farmland at a world position into `pixels`. Alpha
+ * holds the crop rows: 0.5 for none, towards 0 for rows running one way across
+ * the map and towards 1 for the other. Between two fields it passes through
+ * 0.5, which leaves a strip without rows along their shared edge.
+ */
 export function writeFieldColor(
   x: number,
   z: number,
@@ -35,14 +41,31 @@ export function writeFieldColor(
   const row = Math.floor(warpedZ / FIELD_LENGTH + hash2(column, 0, 13));
   const tone = FIELD_TONES[Math.floor(hash2(column, row, 14) * FIELD_TONES.length)];
 
-  const shade = 1 + 0.06 * noise2(x, z, 170, 15) + 0.03 * noise2(x, z, 45, 16);
-
   // Inside the site the wheat gives way to mown grass.
   const edge = Math.max(Math.abs(warpedX), Math.abs(warpedZ)) - SITE_SIZE / 2;
   const grass = 1 - Math.min(1, Math.max(0, edge / GRASS_EDGE_WIDTH + 0.5));
+
+  const shade =
+    1 +
+    0.06 * noise2(x, z, 170, 15) +
+    0.03 * noise2(x, z, 45, 16) +
+    grass * (0.07 * noise2(x, z, 70, 18) + 0.05 * noise2(x, z, 24, 19));
 
   for (let channel = 0; channel < 3; channel += 1) {
     const color = tone[channel] + (GRASS_TONE[channel] - tone[channel]) * grass;
     pixels[offset + channel] = Math.min(255, color * shade);
   }
+
+  const rowDirection = hash2(column, row, 17) < 0.5 ? -1 : 1;
+  pixels[offset + 3] = 127.5 * (1 + rowDirection * (1 - grass));
+}
+
+/** Where the field edge numbered `line` crosses a given distance north to south. */
+export function fieldEdgeX(line: number, z: number): number {
+  const edge = line * FIELD_WIDTH;
+  let x = edge;
+  for (let iteration = 0; iteration < EDGE_SOLVE_STEPS; iteration += 1) {
+    x = edge - EDGE_WARP * noise2(x, z, 900, 11);
+  }
+  return x;
 }

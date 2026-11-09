@@ -62,9 +62,11 @@ BMR hasn't published a track map or masterplan, so we draw our own to fit its pu
 - Better materials, a sky, and softer shadows
 - At least one of the nice-to-haves from [overview.md](overview.md): the race weekend / conference day toggle, a lap of the circuit, or arrival routes
 - Swap in `.glb` models for the key buildings if anyone makes them
-- Check the frame rate on a mid-range phone
+- Check the frame rate on a mid-range phone (open with `?stats`; see the [README](../README.md#checking-performance))
 
 **Done when:** it's good enough to put in front of BMR.
+
+**Status:** built, with the race weekend / conference day toggle as the nice-to-have. The kit's models replace the key buildings. The phone tier draws about 375,000 triangles in 175 draw calls, or about 430,000 on a race weekend. It hasn't been timed on a real phone yet.
 
 ## Decided
 
@@ -73,8 +75,8 @@ BMR hasn't published a track map or masterplan, so we draw our own to fit its pu
 - **Circuit shape:** invented to match BMR's published targets, and labelled as a concept
 - **Style:** clean and simplified, in the BMR and Protium colours
 - **Where it lives:** only in this repo, as a standalone site. It doesn't go into the pitch deck
+- **First nice-to-have:** the race weekend / conference day toggle, because it tells the deck's story best
 
 ## Still open
 
 1. **How much detail on the wider precinct?** The residential, business and waterfront zones could be simple blocks, or left out so the circuit and venue get the attention.
-2. **Which nice-to-have matters most for the pitch?** The race weekend / conference day toggle tells the deck's story best.

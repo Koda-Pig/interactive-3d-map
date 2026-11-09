@@ -6,12 +6,13 @@ import type { GroundSurface } from "../terrain/ground.ts";
 import { createArea } from "./areas.ts";
 import { createBuilding } from "./buildings.ts";
 import { createGate } from "./gates.ts";
+import type { Kit } from "./kit.ts";
 import { createRibbon } from "./ribbons.ts";
 
-function drawLocation(location: Location, surface: GroundSurface): Object3D {
+function drawLocation(location: Location, surface: GroundSurface, kit: Kit): Object3D {
   switch (location.type) {
     case "building":
-      return createBuilding(location);
+      return createBuilding(location, kit);
     case "area":
     case "water":
       return createArea(location);
@@ -24,11 +25,11 @@ function drawLocation(location: Location, surface: GroundSurface): Object3D {
 }
 
 /** Draws every location in the layout data, one named object each. */
-export function createSite(surface: GroundSurface): Group {
+export function createSite(surface: GroundSurface, kit: Kit): Group {
   const site = new Group();
   site.name = "site";
   for (const location of layout.locations) {
-    const object = drawLocation(location, surface);
+    const object = drawLocation(location, surface, kit);
     object.name = location.id;
     object.userData.location = location;
     site.add(object);

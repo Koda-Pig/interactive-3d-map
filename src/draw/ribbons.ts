@@ -4,8 +4,9 @@ import type { TrackLocation } from "../layout/locations.ts";
 import { resolvePath, samplePath } from "../layout/path.ts";
 import type { PathSample, PathSegment } from "../layout/path.ts";
 import type { GroundSurface } from "../terrain/ground.ts";
-import { Layer, layerMaterial, vertexColorMaterial } from "./materials.ts";
+import { asphaltTexture, Layer, layerMaterial, vertexColorMaterial } from "./materials.ts";
 
+const ASPHALT_TILE_LENGTH = 9;
 const DEFAULT_STEP = 6;
 const CROSS_SPACING = 8;
 const LIFT = 0.35;
@@ -44,16 +45,20 @@ function bandGeometry(
   const columns = Math.max(1, Math.ceil((band.to - band.from) / CROSS_SPACING)) + 1;
   const rows = samples.length;
   const positions = new Float32Array(rows * columns * 3);
+  const uvs = new Float32Array(rows * columns * 2);
 
   samples.forEach((sample, row) => {
     for (let column = 0; column < columns; column += 1) {
-      const offset = band.from + ((band.to - band.from) * column) / (columns - 1);
+      const across = column / (columns - 1);
+      const offset = band.from + (band.to - band.from) * across;
       const x = sample.x - sample.dirZ * offset;
       const z = sample.z + sample.dirX * offset;
-      const vertex = (row * columns + column) * 3;
-      positions[vertex] = x;
-      positions[vertex + 1] = surface.heightAt(x, z) + LIFT;
-      positions[vertex + 2] = z;
+      const vertex = row * columns + column;
+      positions[vertex * 3] = x;
+      positions[vertex * 3 + 1] = surface.heightAt(x, z) + LIFT;
+      positions[vertex * 3 + 2] = z;
+      uvs[vertex * 2] = across;
+      uvs[vertex * 2 + 1] = sample.distance / ASPHALT_TILE_LENGTH;
     }
   });
 
@@ -75,6 +80,7 @@ function bandGeometry(
 
   const geometry = new BufferGeometry();
   geometry.setAttribute("position", new BufferAttribute(positions, 3));
+  geometry.setAttribute("uv", new BufferAttribute(uvs, 2));
   geometry.setIndex(indices);
   geometry.computeVertexNormals();
   return geometry;
@@ -188,7 +194,8 @@ export function createRibbon(location: TrackLocation, surface: GroundSurface): G
   }
 
   const geometry = geometries.length === 1 ? geometries[0] : mergeGeometries(geometries);
-  const ribbon = new Mesh(geometry, layerMaterial(location.color, layer));
+  const surfaceMap = location.dashed ? undefined : asphaltTexture();
+  const ribbon = new Mesh(geometry, layerMaterial(location.color, layer, surfaceMap));
   ribbon.receiveShadow = true;
 
   const group = new Group();

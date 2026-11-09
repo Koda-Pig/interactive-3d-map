@@ -1,48 +1,70 @@
 import { NeutralToneMapping, PCFShadowMap, Scene, WebGLRenderer } from "three";
 import { CSS2DRenderer } from "three/addons/renderers/CSS2DRenderer.js";
+import { layoutModelFiles, loadKit } from "./draw/kit.ts";
+import { SCENERY_MODELS, createScenery } from "./draw/scenery.ts";
 import { createSite } from "./draw/site.ts";
+import { setEventMode } from "./scene/event-modes.ts";
 import { CameraFlight } from "./scene/flight.ts";
 import { MapInteraction } from "./scene/interaction.ts";
 import { SiteLabels } from "./scene/labels.ts";
-import { addLighting } from "./scene/lighting.ts";
+import { SUN_DIRECTION, addLighting } from "./scene/lighting.ts";
+import { FrameMonitor } from "./scene/performance.ts";
 import { createPicker } from "./scene/picking.ts";
 import { Precincts } from "./scene/precincts.ts";
+import { detectQuality } from "./scene/quality.ts";
+import { TABLE_MOUNTAIN_MODEL, createSky } from "./scene/sky.ts";
 import { constrainView, createCamera, createControls } from "./scene/view.ts";
 import "./style.css";
 import { createGround } from "./terrain/ground.ts";
+import { createEventSwitch } from "./ui/event-switch.ts";
 import { createInfoPanel } from "./ui/info-panel.ts";
 import { createSidebar } from "./ui/sidebar.ts";
 
-const MAX_PIXEL_RATIO = 2;
+/** How much of the sky's light reaches materials that reflect it. */
+const ENVIRONMENT_INTENSITY = 0.4;
 
 const host = document.querySelector<HTMLElement>("#app");
 const infoPanelElement = document.querySelector<HTMLElement>("#info-panel");
 const sidebarElement = document.querySelector<HTMLElement>("#sidebar");
-if (!host || !infoPanelElement || !sidebarElement) {
-  throw new Error("The page is missing its #app, #info-panel or #sidebar element");
+const eventSwitchElement = document.querySelector<HTMLElement>("#event-switch");
+const loadingElement = document.querySelector<HTMLElement>("#loading");
+if (!host || !infoPanelElement || !sidebarElement || !eventSwitchElement || !loadingElement) {
+  throw new Error("The page is missing one of its main elements");
 }
+
+const quality = detectQuality();
 
 const renderer = new WebGLRenderer({ antialias: true });
 renderer.toneMapping = NeutralToneMapping;
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = PCFShadowMap;
+// Shadows only change when something appears or disappears, so the shadow pass
+// is skipped while the camera moves, which is most of the work on a phone.
+renderer.shadowMap.autoUpdate = false;
+renderer.shadowMap.needsUpdate = true;
 host.append(renderer.domElement);
 
 const labelRenderer = new CSS2DRenderer();
 labelRenderer.domElement.classList.add("labels");
 host.append(labelRenderer.domElement);
 
+const kit = await loadKit([...layoutModelFiles(), ...SCENERY_MODELS, TABLE_MOUNTAIN_MODEL]);
+
 const scene = new Scene();
-addLighting(scene);
-const ground = createGround(renderer.capabilities.getMaxAnisotropy());
-const site = createSite(ground.surface);
-scene.add(ground.mesh, site);
+addLighting(scene, quality);
+const sky = createSky(renderer, SUN_DIRECTION, kit.get(TABLE_MOUNTAIN_MODEL));
+scene.environment = sky.environment;
+scene.environmentIntensity = ENVIRONMENT_INTENSITY;
+const ground = createGround(renderer.capabilities.getMaxAnisotropy(), quality.fieldTextureSize);
+const site = createSite(ground.surface, kit);
+const scenery = createScenery(kit, ground.surface, quality);
+scene.add(sky.object, ground.mesh, site, scenery.setting, ...scenery.precincts.values());
 
 const camera = createCamera(host.clientWidth / host.clientHeight);
 const controls = createControls(camera, renderer.domElement);
 constrainView(camera, controls);
 
-const precincts = new Precincts(site);
+const precincts = new Precincts(site, scenery.precincts);
 const labels = new SiteLabels(site, labelRenderer.domElement, precincts);
 const flight = new CameraFlight(camera, controls);
 const panel = createInfoPanel(infoPanelElement, () => interaction.select(null));
@@ -68,7 +90,24 @@ const interaction = new MapInteraction({
   },
 });
 
+createEventSwitch(eventSwitchElement, (mode) => {
+  setEventMode(mode, precincts, scenery.events);
+  renderer.shadowMap.needsUpdate = true;
+  needsRender = true;
+});
+
+let pixelRatio = Math.min(window.devicePixelRatio, quality.maxPixelRatio);
+
+const setPixelRatio = (ratio: number): void => {
+  pixelRatio = ratio;
+  renderer.setPixelRatio(ratio);
+  renderer.setSize(host.clientWidth, host.clientHeight, false);
+};
+
+const frames = new FrameMonitor(renderer, quality, setPixelRatio);
+
 function render(): void {
+  sky.follow(camera);
   renderer.render(scene, camera);
   const { width, height } = labelRenderer.getSize();
   labels.layout(camera, width, height);
@@ -83,8 +122,7 @@ new ResizeObserver(() => {
   }
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, MAX_PIXEL_RATIO));
-  renderer.setSize(width, height, false);
+  setPixelRatio(pixelRatio);
   labelRenderer.setSize(width, height);
   render();
 }).observe(host);
@@ -97,9 +135,16 @@ renderer.setAnimationLoop((now) => {
     constrainView(camera, controls);
   }
   interaction.update(moved);
-  const faded = precincts.update(now);
-  if (moved || faded || needsRender) {
+  const changes = precincts.update(now);
+  if (changes.shadows) {
+    renderer.shadowMap.needsUpdate = true;
+  }
+  const drawing = moved || changes.redraw || needsRender;
+  if (drawing) {
     needsRender = false;
     render();
   }
+  frames.tick(now, drawing);
 });
+
+loadingElement.remove();

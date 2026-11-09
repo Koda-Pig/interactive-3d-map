@@ -10,6 +10,8 @@ import {
   SRGBColorSpace,
   UnsignedByteType,
 } from "three";
+import type { Texture } from "three";
+import { createFieldDetailTexture } from "../draw/textures.ts";
 import { GROUND_HALF_SIZE, MAP_HALF_SIZE } from "../site.ts";
 import { writeFieldColor } from "./fields.ts";
 import { heightAt } from "./height.ts";
@@ -17,7 +19,6 @@ import { heightAt } from "./height.ts";
 const DETAIL_STEP = 20;
 const MAX_STEP = 400;
 const STEP_GROWTH = 1.12;
-const TEXTURE_SIZE = 2048;
 
 /**
  * Grid line positions along one axis: even across the map, then widening
@@ -140,31 +141,23 @@ function buildGeometry(lines: Float64Array, heights: Float32Array): BufferGeomet
  * Bakes the farmland colours. Texture coordinates follow the grid lines, so
  * most of the texels land on the map, where the camera spends its time.
  */
-function bakeFieldTexture(lines: Float64Array): DataTexture {
+function bakeFieldTexture(lines: Float64Array, size: number): DataTexture {
   const last = lines.length - 1;
-  const worldAtTexel = new Float64Array(TEXTURE_SIZE);
-  for (let texel = 0; texel < TEXTURE_SIZE; texel += 1) {
-    const position = ((texel + 0.5) / TEXTURE_SIZE) * last;
+  const worldAtTexel = new Float64Array(size);
+  for (let texel = 0; texel < size; texel += 1) {
+    const position = ((texel + 0.5) / size) * last;
     const line = Math.floor(position);
     worldAtTexel[texel] = lines[line] + (lines[line + 1] - lines[line]) * (position - line);
   }
 
-  const pixels = new Uint8Array(TEXTURE_SIZE * TEXTURE_SIZE * 4);
-  for (let row = 0; row < TEXTURE_SIZE; row += 1) {
-    for (let column = 0; column < TEXTURE_SIZE; column += 1) {
-      const offset = (row * TEXTURE_SIZE + column) * 4;
-      writeFieldColor(worldAtTexel[column], worldAtTexel[row], pixels, offset);
-      pixels[offset + 3] = 255;
+  const pixels = new Uint8Array(size * size * 4);
+  for (let row = 0; row < size; row += 1) {
+    for (let column = 0; column < size; column += 1) {
+      writeFieldColor(worldAtTexel[column], worldAtTexel[row], pixels, (row * size + column) * 4);
     }
   }
 
-  const texture = new DataTexture(
-    pixels,
-    TEXTURE_SIZE,
-    TEXTURE_SIZE,
-    RGBAFormat,
-    UnsignedByteType,
-  );
+  const texture = new DataTexture(pixels, size, size, RGBAFormat, UnsignedByteType);
   texture.colorSpace = SRGBColorSpace;
   texture.magFilter = LinearFilter;
   texture.minFilter = LinearMipmapLinearFilter;
@@ -173,13 +166,48 @@ function bakeFieldTexture(lines: Float64Array): DataTexture {
   return texture;
 }
 
-export function createGround(maxAnisotropy: number): { mesh: Mesh; surface: GroundSurface } {
+const CROP_ROW_TILE = 24;
+const CROP_SWATH_TILE = 170;
+
+/** Adds crop rows and speckle to the baked colours, sampled in metres. */
+function addFieldDetail(material: MeshLambertMaterial, detail: Texture): void {
+  material.onBeforeCompile = (shader) => {
+    shader.uniforms.fieldDetail = { value: detail };
+    shader.vertexShader = shader.vertexShader
+      .replace("#include <common>", "#include <common>\nvarying vec2 vGroundXZ;")
+      .replace("#include <begin_vertex>", "#include <begin_vertex>\nvGroundXZ = position.xz;");
+    shader.fragmentShader = shader.fragmentShader
+      .replace(
+        "#include <common>",
+        "#include <common>\nvarying vec2 vGroundXZ;\nuniform sampler2D fieldDetail;",
+      )
+      .replace(
+        "#include <map_fragment>",
+        `#include <map_fragment>
+        float rowsCode = sampledDiffuseColor.a;
+        vec2 rowsXZ = rowsCode < 0.5 ? vGroundXZ : vGroundXZ.yx;
+        vec4 nearDetail = texture2D(fieldDetail, rowsXZ / ${CROP_ROW_TILE.toFixed(1)});
+        vec4 farDetail = texture2D(fieldDetail, rowsXZ / ${CROP_SWATH_TILE.toFixed(1)});
+        float rowsAmount = abs(rowsCode - 0.5) * 2.0;
+        float rows = 2.0 * mix(0.5, 0.65 * nearDetail.r + 0.35 * farDetail.r, rowsAmount);
+        diffuseColor.rgb *= rows * (0.6 + 0.8 * nearDetail.g) * (0.82 + 0.36 * farDetail.g);`,
+      );
+  };
+}
+
+export function createGround(
+  maxAnisotropy: number,
+  textureSize: number,
+): { mesh: Mesh; surface: GroundSurface } {
   const lines = buildGridLines();
   const heights = sampleHeights(lines);
-  const map = bakeFieldTexture(lines);
+  const map = bakeFieldTexture(lines, textureSize);
   map.anisotropy = maxAnisotropy;
 
-  const mesh = new Mesh(buildGeometry(lines, heights), new MeshLambertMaterial({ map }));
+  const material = new MeshLambertMaterial({ map });
+  addFieldDetail(material, createFieldDetailTexture(maxAnisotropy));
+
+  const mesh = new Mesh(buildGeometry(lines, heights), material);
   mesh.name = "ground";
   mesh.receiveShadow = true;
   return { mesh, surface: new GroundSurface(lines, heights) };

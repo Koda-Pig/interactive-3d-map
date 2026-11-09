@@ -36,6 +36,20 @@ interface LocationBase {
   readonly major?: boolean;
 }
 
+export type Facing = "north" | "east" | "south" | "west";
+
+/** A `.glb` from `public/models`, fitted to the outline it replaces. */
+export interface ModelPlacement {
+  /** Relative to `public/models`. */
+  readonly file: string;
+  /** Which way the model's front points. */
+  readonly facing: Facing;
+  /** Repeats the model across and front to back. */
+  readonly grid?: readonly [columns: number, rows: number];
+  /** Treats `file` as a tile, filling the run between a copy of this at each end. */
+  readonly endCap?: string;
+}
+
 export interface BuildingPart {
   readonly footprint: readonly PathPoint[];
   readonly height: number;
@@ -43,6 +57,8 @@ export interface BuildingPart {
   readonly base?: number;
   /** Overrides the location's colour. */
   readonly color?: string;
+  /** Drawn in place of this part. */
+  readonly model?: ModelPlacement;
 }
 
 export interface BuildingLocation extends LocationBase {
@@ -52,12 +68,16 @@ export interface BuildingLocation extends LocationBase {
   readonly height?: number;
   /** Used instead of `footprint` and `height` by buildings with several volumes. */
   readonly parts?: readonly BuildingPart[];
+  /** Drawn in place of the whole building. */
+  readonly model?: ModelPlacement;
 }
 
 export interface AreaLocation extends LocationBase {
   readonly type: "area" | "water";
   readonly color: string;
   readonly footprint: readonly PathPoint[];
+  /** Where trees go: scattered through the area, or lining its edge. */
+  readonly planting?: "park" | "edge";
 }
 
 export interface TrackLocation extends LocationBase {
@@ -94,7 +114,19 @@ export interface GradingZone {
   readonly footprint: readonly PathPoint[];
 }
 
+/** One way the venue is used, and the locations in use when it is. */
+export interface EventMode {
+  readonly id: string;
+  readonly name: string;
+  readonly summary: string;
+  /** Precincts in use in full. */
+  readonly categories: readonly Category[];
+  /** Further locations in use, by id. */
+  readonly locations: readonly string[];
+}
+
 export interface Layout {
+  readonly events: readonly EventMode[];
   readonly grading: readonly GradingZone[];
   readonly locations: readonly Location[];
 }

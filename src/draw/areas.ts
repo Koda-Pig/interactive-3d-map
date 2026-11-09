@@ -3,7 +3,7 @@ import type { AreaLocation } from "../layout/locations.ts";
 import { resolveOutline } from "../layout/path.ts";
 import { centreOf } from "../layout/polygon.ts";
 import { heightAt } from "../terrain/height.ts";
-import { Layer, layerMaterial } from "./materials.ts";
+import { Layer, layerMaterial, waterMaterial } from "./materials.ts";
 
 const LIFT = 0.3;
 
@@ -15,7 +15,11 @@ export function createArea(location: AreaLocation): Mesh {
   geometry.rotateX(-Math.PI / 2);
   geometry.translate(0, heightAt(x, z) + LIFT, 0);
 
-  const mesh = new Mesh(geometry, layerMaterial(location.color, Layer.area));
+  const material =
+    location.type === "water"
+      ? waterMaterial(location.color)
+      : layerMaterial(location.color, Layer.area);
+  const mesh = new Mesh(geometry, material);
   mesh.receiveShadow = true;
   return mesh;
 }

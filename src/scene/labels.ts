@@ -123,6 +123,7 @@ export class SiteLabels {
         label.anchor.distanceTo(camera.position) <= MINOR_LABEL_RANGE;
       const shown =
         this.precincts.isShown(label.location.category) &&
+        (active || !this.precincts.isMuted(label.location)) &&
         onScreen &&
         inRange &&
         !placed.some((other) => overlaps(label, other));

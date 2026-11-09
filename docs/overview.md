@@ -80,7 +80,7 @@ We keep the list, search, filters and info panels, and replace the flat picture 
 
 ### Nice to have (it would make the pitch land harder)
 
-- **Race weekend / conference day toggle.** The same site in two modes: grandstands and gates active, or halls and the amphitheatre highlighted. It shows the "one venue, used all year" point from the deck.
+- **Race weekend / conference day toggle** (built). The same site in two modes: grandstands and gates active, or halls and the amphitheatre highlighted. It shows the "one venue, used all year" point from the deck.
 - **A lap of the circuit.** The camera follows the track once round.
 - **Arrival routes.** Animated lines from the N7, the car parks and Kalbaskraal station to the gates.
 
@@ -128,19 +128,19 @@ Colours:
   "footprint": [[120, 40], [200, 40], [200, 62], [120, 62]],
   "height": 18,
   "color": "#E8ECEF",
-  "model": null,
   "description": "Covered grandstand on the main straight. Illustrative."
 }
 ```
 
-The layout lives in `src/data/locations.json`, as a `locations` list plus `grading` zones: terraces levelled as one, so everything standing on them shares a ground height.
+The layout lives in `src/data/locations.json`, as a `locations` list, `grading` zones (terraces levelled as one, so everything standing on them shares a ground height) and `events`: the ways the venue is used, each naming the precincts and locations in use.
 
 - `type`: `building`, `area`, `water`, `track`, `road` or `gate`
 - `major`: set to `true` to keep the name label up when zoomed out. Other labels only appear within about 1.5 km of the camera
 - `footprint`: the outline's corners, in metres on the ground. A corner is `[x, z]`, or `[x, z, radius]` to round it
 - `height`: how tall a building is, in metres
 - `parts`: used instead of `footprint` and `height` by buildings with several volumes. Each part has its own `footprint` and `height`, and can add `base` (how far above the ground it starts) and `color`
-- `model`: optional `.glb` file that replaces the simple shape
+- `model`: on a building or one of its `parts`, a `.glb` from `public/models` that replaces the simple shape and is fitted to its footprint. It has a `file`, a `facing` (`north`, `east`, `south` or `west`), and optionally a `grid` of `[columns, rows]`, or an `endCap` file that makes `file` a tile repeated between two end pieces. If the file can't be loaded, the simple shape is drawn
+- `planting`: on an area, `park` scatters trees through it and `edge` lines its edge with them
 - Tracks and roads use `path` (a list of points, rounded the same way) instead of `footprint`, plus `width`. Optional: `closed`, `branches` (more paths in the same location), `median`, `dashed`, `kerbs`, `runoff`
 - Gates use `position`: one `[x, z]` point
 

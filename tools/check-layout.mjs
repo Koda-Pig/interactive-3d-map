@@ -77,4 +77,18 @@ console.log(
   `note  Heavy braking zones (${BRAKING_MIN_STRAIGHT} m+ straight into a corner of ${BRAKING_MAX_RADIUS} m radius or less): ${brakingZones.length}`,
 );
 
+// Every model the layout asks for has to exist, or the map falls back to plain shapes.
+const manifestUrl = new URL("../public/models/manifest.json", import.meta.url);
+const known = new Set(JSON.parse(readFileSync(manifestUrl, "utf8")).assets.map((asset) => asset.file));
+const modelFiles = locations.flatMap((location) =>
+  [location.model, ...(location.parts ?? []).map((part) => part.model)].flatMap((model) =>
+    model ? [model.file, ...(model.endCap ? [model.endCap] : [])] : [],
+  ),
+);
+const unknown = [...new Set(modelFiles)].filter((file) => !known.has(`/models/${file}`));
+failed ||= unknown.length > 0;
+console.log(
+  `${unknown.length === 0 ? "pass" : "FAIL"}  Layout models exist: ${unknown.length === 0 ? `${new Set(modelFiles).size} files` : unknown.join(", ")}`,
+);
+
 process.exit(failed ? 1 : 0);
