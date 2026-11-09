@@ -21,6 +21,7 @@
     {
       "id": "circuit",
       "name": "Blue Mountain Racing Circuit",
+      "major": true,
       "category": "racing",
       "type": "track",
       "description": "The concept circuit: about 4.8 km, with a start-finish straight, a separate full-throttle straight over 1 km, and heavy braking zones for overtaking. Illustrative shape, drawn to BMR's published targets.",
@@ -63,6 +64,7 @@
     {
       "id": "pit-conference-building",
       "name": "Pit / Conference Building",
+      "major": true,
       "category": "racing",
       "type": "building",
       "description": "Garages at track level with stacked conference floors above, used for conventions and exhibitions all year.",
@@ -85,6 +87,7 @@
     {
       "id": "grandstand-a",
       "name": "Grandstand A",
+      "major": true,
       "category": "racing",
       "type": "building",
       "description": "Covered grandstand at the southern end of the start-finish straight, looking across to the pit building. Illustrative.",
@@ -98,6 +101,7 @@
     {
       "id": "grandstand-b",
       "name": "Grandstand B",
+      "major": true,
       "category": "racing",
       "type": "building",
       "description": "Covered grandstand on the start-finish straight, opposite the pit garages and the start line. Illustrative.",
@@ -111,6 +115,7 @@
     {
       "id": "grandstand-c",
       "name": "Grandstand C",
+      "major": true,
       "category": "racing",
       "type": "building",
       "description": "Covered grandstand overlooking the heavy braking zone into Turn 1. Illustrative.",
@@ -124,6 +129,7 @@
     {
       "id": "grandstand-d",
       "name": "Grandstand D",
+      "major": true,
       "category": "racing",
       "type": "building",
       "description": "Covered grandstand outside the hairpin at the end of the long straight. Illustrative.",
@@ -197,6 +203,7 @@
     {
       "id": "arrival-plaza",
       "name": "Arrival Plaza",
+      "major": true,
       "category": "conference",
       "type": "area",
       "description": "The public front door of the venue, between the gateway arch, the halls and the pit / conference building.",
@@ -259,6 +266,7 @@
     {
       "id": "amphitheatre",
       "name": "Amphitheatre",
+      "major": true,
       "category": "conference",
       "type": "building",
       "description": "Stepped open-air bowl for concerts and events, facing the arrival plaza.",
@@ -410,6 +418,7 @@
     {
       "id": "lake",
       "name": "The Lake",
+      "major": true,
       "category": "hospitality",
       "type": "water",
       "description": "The centrepiece of the waterfront precinct, with the promenade around its edge.",
@@ -486,6 +495,7 @@
     {
       "id": "hotel-waterfront",
       "name": "Waterfront Hotel",
+      "major": true,
       "category": "hospitality",
       "type": "building",
       "description": "Tower hotel on the south shore, with views over the lake to the circuit.",
@@ -516,6 +526,7 @@
     {
       "id": "karting-track",
       "name": "Karting Track",
+      "major": true,
       "category": "academy",
       "type": "track",
       "description": "The first step on the driving pathway, in the circuit's infield.",
@@ -570,6 +581,7 @@
     {
       "id": "automotive-hub",
       "name": "Automotive Hub",
+      "major": true,
       "category": "academy",
       "type": "building",
       "description": "Engineering and testing facilities for manufacturers and race teams.",
@@ -600,6 +612,7 @@
     {
       "id": "trackside-residences-east",
       "name": "Trackside Residences East",
+      "major": true,
       "category": "commercial",
       "type": "building",
       "description": "Apartments and townhouses looking west across the circuit. Illustrative.",
@@ -640,6 +653,7 @@
     {
       "id": "retail-quarter",
       "name": "Retail Quarter",
+      "major": true,
       "category": "commercial",
       "type": "building",
       "description": "Shops and offices east of the ring road, further out from the circuit. Illustrative.",
@@ -660,6 +674,7 @@
     {
       "id": "research-park",
       "name": "Research and Technology Park",
+      "major": true,
       "category": "commercial",
       "type": "building",
       "description": "Research and technology blocks at the south-eastern edge of the site. Illustrative.",
@@ -678,6 +693,7 @@
     {
       "id": "n7",
       "name": "N7 National Road",
+      "major": true,
       "category": "transport",
       "type": "road",
       "description": "The highway along the site's western edge, with direct frontage and two interchanges.",
@@ -833,6 +849,7 @@
     {
       "id": "kalbaskraal-station",
       "name": "Kalbaskraal Station",
+      "major": true,
       "category": "transport",
       "type": "building",
       "description": "The nearest railway station, within walking distance along the fan walk.",
@@ -875,6 +892,7 @@
     {
       "id": "aerodrome-runway",
       "name": "Aerodrome Runway",
+      "major": true,
       "category": "transport",
       "type": "road",
       "description": "The runway of the adjacent aerodrome, with its taxiway.",

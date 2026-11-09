@@ -12,11 +12,24 @@ export type Category =
   | "transport"
   | "entrances";
 
+/** Each category's name as a precinct, as shown to visitors. */
+export const PRECINCT_NAMES: Readonly<Record<Category, string>> = {
+  racing: "Racing",
+  conference: "Conference and events",
+  hospitality: "Hospitality and waterfront",
+  academy: "Academy and automotive",
+  commercial: "Residential and commercial",
+  transport: "Parking and transport",
+  entrances: "Entrances",
+};
+
 interface LocationBase {
   readonly id: string;
   readonly name: string;
   readonly category: Category;
   readonly description: string;
+  /** Keeps the name label up when zoomed out, ahead of the minor labels. */
+  readonly major?: boolean;
 }
 
 export interface BuildingPart {

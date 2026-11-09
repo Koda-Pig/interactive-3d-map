@@ -8,6 +8,16 @@
   </head>
   <body>
     <main id="app"></main>
+    <aside id="info-panel" class="info-panel" aria-label="Location details" aria-live="polite" hidden>
+      <div class="info-panel__bar">
+        <p class="info-panel__precinct"></p>
+        <button class="info-panel__close" type="button" aria-label="Close details">&times;</button>
+      </div>
+      <div class="info-panel__body">
+        <h2 class="info-panel__name"></h2>
+        <p class="info-panel__description"></p>
+      </div>
+    </aside>
     <p class="notice">Concept layout, for illustration only</p>
     <script type="module" src="/src/main.ts"></script>
   </body>

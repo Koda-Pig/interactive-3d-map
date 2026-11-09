@@ -4,7 +4,7 @@ An interactive 3D concept map of the planned **Blue Mountain Racing** motorsport
 
 The layout is illustrative. There's no published masterplan yet.
 
-**Status:** Phases 1 and 2 of the build plan are done: the whole concept site, drawn from [src/data/locations.json](src/data/locations.json), on farmland you can move around.
+**Status:** Phases 1 to 3 of the build plan are done: the whole concept site, drawn from [src/data/locations.json](src/data/locations.json), on farmland you can move around, with name labels and details for everything on the map.
 
 ## Docs
 
@@ -35,3 +35,5 @@ npm run dev
 `npm run check:layout` measures the circuit in the layout data and fails if it misses BMR's length, straight or width targets.
 
 Left-drag pans, right-drag rotates and scrolling zooms. On touch, one finger pans and two fingers zoom and rotate.
+
+Pointing at a location or its label highlights it. Clicking or tapping opens its details and moves the camera to it. Clicking empty ground, the close button or Escape closes the details.

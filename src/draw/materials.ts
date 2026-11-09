@@ -1,4 +1,5 @@
-import { MeshLambertMaterial } from "three";
+import { Color, Mesh, MeshLambertMaterial } from "three";
+import type { Object3D } from "three";
 
 /**
  * Flat layers lie almost on top of each other, so depth precision alone can't
@@ -50,4 +51,37 @@ export function vertexColorMaterial(): MeshLambertMaterial {
     polygonOffsetUnits: -Layer.marking * 4,
   });
   return kerbMaterial;
+}
+
+const HIGHLIGHT = new Color("#1CA7EC");
+const HIGHLIGHT_TINT = 0.8;
+const HIGHLIGHT_GLOW = 0.35;
+
+const highlightMaterials = new WeakMap<MeshLambertMaterial, MeshLambertMaterial>();
+const baseMaterials = new WeakMap<Mesh, MeshLambertMaterial>();
+
+/** A cyan copy that keeps the original's layer, and a trace of its colour. */
+function highlightMaterial(base: MeshLambertMaterial): MeshLambertMaterial {
+  let material = highlightMaterials.get(base);
+  if (!material) {
+    material = base.clone();
+    material.vertexColors = false;
+    material.color.lerp(HIGHLIGHT, HIGHLIGHT_TINT);
+    material.emissive.copy(HIGHLIGHT);
+    material.emissiveIntensity = HIGHLIGHT_GLOW;
+    highlightMaterials.set(base, material);
+  }
+  return material;
+}
+
+/** Turns the cyan highlight on or off for everything drawn by a location. */
+export function setHighlighted(object: Object3D, highlighted: boolean): void {
+  object.traverse((child) => {
+    if (!(child instanceof Mesh)) {
+      return;
+    }
+    const base = baseMaterials.get(child) ?? (child.material as MeshLambertMaterial);
+    baseMaterials.set(child, base);
+    child.material = highlighted ? highlightMaterial(base) : base;
+  });
 }

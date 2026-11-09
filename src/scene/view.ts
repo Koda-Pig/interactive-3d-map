@@ -4,7 +4,7 @@ import { MAP_HALF_SIZE } from "../site.ts";
 import { heightAt } from "../terrain/height.ts";
 
 const MIN_ZOOM_DISTANCE = 120;
-const MAX_ZOOM_DISTANCE = 4500;
+export const MAX_ZOOM_DISTANCE = 4500;
 const MAX_TILT = MathUtils.degToRad(80);
 const GROUND_CLEARANCE = 5;
 

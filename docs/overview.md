@@ -136,6 +136,7 @@ Colours:
 The layout lives in `src/data/locations.json`, as a `locations` list plus `grading` zones: terraces levelled as one, so everything standing on them shares a ground height.
 
 - `type`: `building`, `area`, `water`, `track`, `road` or `gate`
+- `major`: set to `true` to keep the name label up when zoomed out. Other labels only appear within about 1.5 km of the camera
 - `footprint`: the outline's corners, in metres on the ground. A corner is `[x, z]`, or `[x, z, radius]` to round it
 - `height`: how tall a building is, in metres
 - `parts`: used instead of `footprint` and `height` by buildings with several volumes. Each part has its own `footprint` and `height`, and can add `base` (how far above the ground it starts) and `color`

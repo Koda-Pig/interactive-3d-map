@@ -10,7 +10,10 @@ body {
   background: #d9e2e0;
 }
 
+/* Isolated so the labels' z-indexes can't rise above the panel and notice. */
 #app {
+  position: relative;
+  isolation: isolate;
   height: 100dvh;
 }
 
@@ -18,6 +21,117 @@ body {
   display: block;
   width: 100%;
   height: 100%;
+}
+
+/* Clicks reach the canvas, so dragging from a label still moves the map. */
+.labels {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.label {
+  padding: 2px 7px;
+  border-radius: 8px;
+  background: rgb(255 255 255 / 92%);
+  color: #004272;
+  font: 500 11px/1.3 Roboto, system-ui, sans-serif;
+  white-space: nowrap;
+  transition: opacity 150ms ease;
+}
+
+.label--major {
+  padding: 3px 9px;
+  background: #004272;
+  color: #fff;
+  font-size: 12px;
+}
+
+.label--active {
+  background: #1ca7ec;
+  color: #00243f;
+}
+
+.label--hidden {
+  opacity: 0;
+}
+
+.info-panel {
+  position: fixed;
+  top: max(16px, env(safe-area-inset-top));
+  right: max(16px, env(safe-area-inset-right));
+  width: 320px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgb(0 36 63 / 28%);
+  color: #26343d;
+  font: 400 14px/1.5 Roboto, system-ui, sans-serif;
+}
+
+.info-panel__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 6px 6px 16px;
+  background: #004272;
+  color: #fff;
+}
+
+.info-panel__precinct {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.info-panel__close {
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.info-panel__close:hover {
+  background: #00678c;
+}
+
+.info-panel__close:focus-visible {
+  outline: 2px solid #1ca7ec;
+  outline-offset: -2px;
+}
+
+.info-panel__body {
+  padding: 14px 16px 16px;
+}
+
+.info-panel__name {
+  margin: 0 0 6px;
+  color: #004272;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.info-panel__description {
+  margin: 0;
+}
+
+/* On a phone the panel sits above the concept notice. */
+@media (max-width: 600px) {
+  .info-panel {
+    top: auto;
+    right: 16px;
+    bottom: calc(max(16px, env(safe-area-inset-bottom)) + 44px);
+    left: 16px;
+    width: auto;
+  }
 }
 
 .notice {
