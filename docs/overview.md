@@ -8,30 +8,53 @@ It's a concept piece for Protium's software partnership proposal to Blue Mountai
 
 ## About the site
 
-What we know, from the pitch deck and bluemountainracing.com:
+What we know, from the pitch deck, [bluemountainracing.com](https://www.bluemountainracing.com/the-vision.html) (checked November 2026) and press coverage:
 
-- A planned year-round motorsport destination in the **Swartland, near Malmesbury**, about an hour north of Cape Town
-- Reached by the **N7**. **Kalbaskraal station** is within walking distance, and three airports are within about 40 minutes
-- First event targeted for **2031**. The wider development is reported at R6.7 billion
-- A proposed **FIA Grade 1 and FIM-standard circuit**, developed from an existing layout
-- Planned for up to **125,000 people a day** on a race weekend
-- The circuit is surrounded by a permanent precinct:
-  - **Pit and paddock** building, which doubles as convention and exhibition space
-  - **Conferences and exhibitions**
-  - **Entertainment and amphitheatre**
-  - **Hospitality and waterfront**
-  - **Residential and lifestyle**
-  - **Business and innovation**
-  - **Driving academy and karting**, plus track days
+**The land**
 
-**There is no published masterplan and there are no reference photos.** The layout on our map is invented. It's a believable arrangement of the pieces above, not BMR's real plan, and the map has to say so on screen (for example, "Concept layout, for illustration only").
+- A **600-hectare** site in the **Swartland, near Malmesbury**, about an hour north of Cape Town. That's roughly 2.5 km by 2.5 km
+- **Direct frontage onto the N7**, with multiple highway interchanges
+- **Kalbaskraal station** within walking distance, connected by a "fan walk"
+- Three airports within about 40 minutes, including an **adjacent aerodrome**
 
-### Setting rules (carried over from the deck)
+**The circuit** (published targets, which we should match)
+
+- About **4.8 km** long
+- A start-finish straight of **at least 600 m**
+- A full-throttle straight of **at least 1 km**
+- At least **12 m** wide throughout
+- **Natural elevation**: the track follows the lie of the land
+- Multiple overtaking spots
+- About **125,000 spectators a day**, across grandstands and general admission
+- Proposed to FIA Grade 1 and FIM standard
+
+**The precinct**, in BMR's own terms
+
+- Proposed FIA Grade 1 and FIM circuit
+- Pit / conference building, used for conventions and exhibitions all year
+- Amphitheatre and entertainment
+- Waterfront and promenade
+- Hotels and hospitality
+- Trackside and residential
+- Commercial and retail
+- Research and technology
+- Public realm and outdoor space
+- Automotive hub with engineering and testing facilities
+- Driving academy and karting pathway
+
+**Timing:** construction from 2029, homologation in 2030, first event targeted for 2031. BMR is clear that no Formula 1 or MotoGP race has been secured.
+
+**The circuit shape has not been published.** BMR says it's "developed from a layout with an established motorsport foundation", but nobody names that layout. There's no public track map or masterplan either. Our layout is invented to fit the published targets above, and the map has to say so on screen (for example, "Concept layout, for illustration only").
+
+BMR's [gallery](https://www.bluemountainracing.com/gallery.html) has 11 artist's impressions, marked as indicative. None is an aerial view, so they tell us what things look like but not where they go. We use them as style guides and don't copy them into the map.
+
+### Setting rules
 
 - Rolling **Swartland farmland**: golden wheat fields, low hills, big open sky
-- **Never** put the circuit next to Table Mountain or the sea
+- The sea is never in view. **Table Mountain** appears only as a small silhouette on the far southern horizon, as in BMR's fan walk image, because it's about 50 km away
+- BMR's Cape Town beachfront fan zone is off site, so it isn't on the map
 - No F1, MotoGP, FIA or FIM logos or official branding
-- No invented BMR logo. Use the plain text "Blue Mountain Racing" as the wordmark
+- Use the plain text "Blue Mountain Racing" as the wordmark, unless BMR supplies its logo
 - No real or real-sounding company names. Use generic ones, such as "Catering partner" or "Hotel"
 
 ## The reference
@@ -65,20 +88,30 @@ We keep the list, search, filters and info panels, and replace the flat picture 
 
 | Category | Things on the map | How it's drawn at first |
 | --- | --- | --- |
-| Racing | Circuit, pit lane, pit and paddock building, grandstands, race control tower | The track is a ribbon along a closed curve. The buildings are footprint shapes raised to a height |
-| Conference and events | Exhibition halls, amphitheatre | Raised shapes. The amphitheatre is a stepped curved bowl |
-| Hospitality and waterfront | Hotel, paddock suites, waterfront terrace, a dam or lake | Raised shapes, with a flat water surface |
-| Academy | Driving academy, karting track | A small building, and a second smaller track ribbon |
-| Residential and business | Housing, business park | Groups of simple blocks |
-| Parking and transport | Car parks, shuttle drop-off, the N7 link road, the walking route from Kalbaskraal | Flat areas, road strips, a dotted path |
-| Entrances | Gates 1 to 14 | Small markers |
-| Setting | Farmland, hills, trees | Gently rolling ground with wheat-coloured fields |
+| Racing | Circuit, pit lane, pit / conference building, grandstands, general admission banks | The track is a ribbon along a closed curve that follows the ground. The buildings are footprint shapes raised to a height |
+| Conference and events | Exhibition halls, amphitheatre, arrival plaza and gateway arch | Raised shapes. The amphitheatre is a stepped curved bowl |
+| Hospitality and waterfront | Hotels, lake, promenade, lakeside restaurants | Raised shapes, with a flat water surface |
+| Academy and automotive | Driving academy, karting track, automotive hub | Simple buildings, and a second smaller track ribbon |
+| Residential and commercial | Trackside housing, retail, research and technology | Groups of simple blocks |
+| Parking and transport | Car parks, shuttle drop-off, the N7 and its interchanges, Kalbaskraal station and fan walk, the aerodrome | Flat areas, road strips, a dotted path |
+| Entrances | Gates 1 to 14 (a placeholder count, from the deck's demo data) | Small markers |
+| Setting | Farmland, hills, trees, distant Table Mountain silhouette | Gently rolling ground with wheat-coloured fields |
 
 ## Look and feel
 
-A **clean, simplified** style, like a well-made game map, not realistic. With no photos to work from, a simplified style looks good much sooner and doesn't pretend to show the real place.
+A **clean, simplified** style, like a well-made game map, not realistic. Nothing has been built and the design isn't final, so a simplified style looks good much sooner and doesn't pretend to show the real place.
 
-- Ground: warm wheat golds and dry greens, with the hills rising gently towards the edges
+Details worth borrowing from BMR's artist's impressions:
+
+- A long pit / conference building with stacked glass floors, slanted columns and a wide canopy
+- Grandstands with dark, curved roofs and white fabric canopies
+- Timber lakeside pavilions with dark metal roofs
+- Stone-clad towers around the arrival plaza
+- Warm late-afternoon light across the track and grass banks
+
+Colours:
+
+- Ground: warm wheat golds and dry greens, with low hills around and through the site
 - Track: dark asphalt with red and white kerbs
 - Buildings: off-white and light grey, with BMR navy `#004272` and teal `#00678C` as accents
 - Highlight and selection: cyan `#1CA7EC`, Protium's accent colour for this client
