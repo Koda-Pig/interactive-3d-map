@@ -1,0 +1,368 @@
+{
+  "assetCount": 60,
+  "totalBytesIncludingManifest": 1245329,
+  "errors": 0,
+  "warnings": 0,
+  "reports": [
+    {
+      "id": "pit-conference-building",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "grandstand-bay-covered",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "grandstand-bay-open",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "grandstand-end-cap",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "temporary-bleacher",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "start-finish-gantry",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "footbridge-over-track",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "marshal-post",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "big-screen",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "media-centre",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "conference-hall",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "conference-foyer",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "amphitheatre",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "gateway-arch",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "plaza-tower",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "hotel-tower",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "hotel-low",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "lakeside-pavilion",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "promenade-segment",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "hospitality-marquee",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "residential-trackside",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "townhouse-row",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "retail-block",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "research-block",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "automotive-hub",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "driving-academy",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "karting-clubhouse",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "kalbaskraal-station",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "aerodrome-hangar",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "aerodrome-terminal",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "aerodrome-control-tower",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "shuttle-stop",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "entrance-gate",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "light-pole",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "race-fence-segment",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "barrier-segment",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "hoarding-blank",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "food-stall",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "race-car-generic",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "car-parked",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "shuttle-bus",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "light-aircraft",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "farm-silo-group",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "farmhouse",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "table-mountain-silhouette",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "tree-pine-1",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "tree-pine-2",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "tree-pine-3",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "tree-gum-1",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "tree-gum-2",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "tree-gum-3",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "tree-olive-1",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "tree-olive-2",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "tree-olive-3",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "shrub-fynbos-1",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "shrub-fynbos-2",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "shrub-fynbos-3",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "rock-outcrop-1",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "rock-outcrop-2",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "rock-outcrop-3",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    }
+  ]
+}

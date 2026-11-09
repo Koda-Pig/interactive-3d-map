@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Procedural concept asset kit</title>
+<script type="importmap">{"imports":{"three":"/node_modules/three/build/three.module.js","three/addons/":"/node_modules/three/examples/jsm/"}}</script>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#eae6db;color:#203343;font:15px system-ui,sans-serif}header{padding:32px 40px 20px;border-bottom:1px solid #c8c4b9}h1{font-size:28px;margin:5px 0 9px}p{margin:4px 0;color:#56636b}nav{display:flex;gap:8px;flex-wrap:wrap;padding:18px 40px}a{color:inherit;padding:7px 12px;border:1px solid #bec6c9;border-radius:6px;text-decoration:none}a.active{background:#004272;color:white}main{padding:8px 32px 30px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.card{background:#f5f2e9;border:1px solid #d1d2cb;border-radius:9px;overflow:hidden;cursor:pointer}.view{width:100%;aspect-ratio:1.85;display:block}h2{font-size:16px;margin:0 18px 5px;font-weight:650}.meta{font-size:12px;color:#56636b;margin:0 18px 15px}.human{color:#99432e}footer{padding:0 40px 24px;color:#56636b;font-size:12px}dialog{width:90vw;height:90vh;border:0;border-radius:12px;background:#f5f2e9;padding:0}dialog::backdrop{background:#15202d99}#close{position:absolute;top:12px;right:12px;z-index:2;padding:10px}#inspect{height:100%;width:100%}#caption{position:absolute;left:20px;top:12px;z-index:2;background:#f5f2e9bb;padding:8px}body.sheet nav{display:none}body.sheet main{padding-top:24px}body.sheet header{padding-top:28px}@media(max-width:800px){main{grid-template-columns:1fr}header,nav{padding-left:20px}}
+</style></head><body>
+<header><p>PROCEDURAL ASSET LIBRARY / METRES / +Y UP / +Z FRONT</p><h1 id="title">Concept asset kit</h1><p id="subtitle">Flat-shaded geometry · no textures · illustrative architecture</p></header>
+<nav id="nav"></nav><main id="grid"></main>
+<footer>Three-quarter aerial views. <span class="human">Terracotta reference = 1.8 m person</span>. Tiles show three consecutive pieces. Each card fits its own scale. Click to orbit an asset.</footer>
+<dialog id="dialog"><button id="close">Close</button><div id="caption"></div><div id="inspect"></div></dialog>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+const params=new URLSearchParams(location.search),selected=params.get('category');
+if(params.has('sheet'))document.body.classList.add('sheet');
+const manifest=await fetch('/models/manifest.json').then(r=>r.json()),categories=[...new Set(manifest.assets.map(a=>a.category))];
+const active=selected||'all';
+for(const cat of ['all',...categories]){const link=document.createElement('a');link.href=cat==='all'?'?':`?category=${cat}`;link.textContent=cat;link.className=cat===active?'active':'';document.querySelector('#nav').append(link);}
+const assets=manifest.assets.filter(a=>!selected||a.category===selected);
+document.querySelector('#title').textContent=`${selected||'Complete'} / ${assets.length} assets`;
+const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});renderer.setPixelRatio(1);renderer.setSize(1100,600);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.setClearColor('#f5f2e9');renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.25;
+const loader=new GLTFLoader(),loaded=new Map();
+function person(){const p=new THREE.Group(),mat=new THREE.MeshStandardMaterial({color:'#B15A3B',roughness:1});const body=new THREE.Mesh(new THREE.CylinderGeometry(.16,.22,1.35,6),mat);body.position.y=.675;const head=new THREE.Mesh(new THREE.IcosahedronGeometry(.225,0),mat);head.position.y=1.575;p.add(body,head);return p;}
+function setup(asset,model){
+ const scene=new THREE.Scene();scene.add(new THREE.HemisphereLight('#e5f1ff','#b4a07e',2.4));const light=new THREE.DirectionalLight('#fff0d5',3.1);light.position.set(150,250,170);scene.add(light);
+ const group=new THREE.Group();scene.add(group);group.add(model.clone(true));if(asset.tileable)for(const sign of [-1,1]){const copy=model.clone(true);copy.position.x=sign*asset.spec.width;group.add(copy);}
+ const b=new THREE.Box3().setFromObject(group),size=b.getSize(new THREE.Vector3()),center=b.getCenter(new THREE.Vector3());
+ const human=person();human.position.set(b.max.x+Math.max(1,size.x*.025),0,b.max.z*.6);scene.add(human);
+ const reach=Math.max(size.x,size.z,size.y,4);const ground=new THREE.Mesh(new THREE.PlaneGeometry(reach*8,reach*8),new THREE.MeshStandardMaterial({color:'#dfddcd',roughness:1}));ground.rotation.x=-Math.PI/2;ground.position.y=-.025;scene.add(ground);
+ // Skirts sit below this inspection ground, exactly as they will under terrain.
+ const camera=new THREE.OrthographicCamera(-1,1,1,-1,.01,reach*30);camera.position.copy(center).add(new THREE.Vector3(1.2,1.05,1.5).normalize().multiplyScalar(reach*4));camera.lookAt(center);camera.updateMatrixWorld();
+ const corners=[];for(const x of [b.min.x,b.max.x+Math.max(2,size.x*.03)])for(const y of [0,Math.max(size.y,1.8)])for(const z of [b.min.z,b.max.z])corners.push(new THREE.Vector3(x,y,z).applyMatrix4(camera.matrixWorldInverse));
+ const projected=new THREE.Box3().setFromPoints(corners),ps=projected.getSize(new THREE.Vector3());
+ const aspect=1100/600,half=Math.max(ps.y/2,ps.x/aspect/2)*1.19;camera.left=-half*aspect;camera.right=half*aspect;camera.top=half;camera.bottom=-half;camera.updateProjectionMatrix();
+ return {scene,camera,center,reach,half};
+}
+for(const a of assets){const gltf=await loader.loadAsync(a.file);loaded.set(a.id,gltf.scene);const {scene,camera}=setup(a,gltf.scene);renderer.render(scene,camera);
+ const card=document.createElement('article');card.className='card';card.dataset.id=a.id;const canvas=document.createElement('canvas');canvas.width=1100;canvas.height=600;canvas.className='view';canvas.getContext('2d').drawImage(renderer.domElement,0,0);card.append(canvas);
+ const label=document.createElement('h2');label.textContent=a.id;card.append(label);const meta=document.createElement('div');meta.className='meta';meta.textContent=`${a.spec.width} × ${a.spec.depth} × ${a.spec.height} m  /  ${a.triangleCount.toLocaleString()} tris  /  ${(a.fileSize/1024).toFixed(1)} KiB${a.tileable?'  /  3 tiles along X':''}`;card.append(meta);document.querySelector('#grid').append(card);card.onclick=()=>inspect(a);
+}
+const dialog=document.querySelector('#dialog'),container=document.querySelector('#inspect');let controls,current;
+function inspect(a){dialog.showModal();container.append(renderer.domElement);document.querySelector('#caption').textContent=`${a.id} · drag to orbit · scroll to zoom`;current=setup(a,loaded.get(a.id));const w=container.clientWidth,h=container.clientHeight;renderer.setSize(w,h);current.camera.left=-current.half*w/h;current.camera.right=current.half*w/h;current.camera.updateProjectionMatrix();controls=new OrbitControls(current.camera,renderer.domElement);controls.target.copy(current.center);controls.update();renderer.setAnimationLoop(()=>renderer.render(current.scene,current.camera));}
+document.querySelector('#close').onclick=()=>dialog.close();dialog.onclose=()=>{renderer.setAnimationLoop(null);controls?.dispose();renderer.domElement.remove();};
+window.assetPreviewReady=true;window.assetPreviewCount=assets.length;
+</script></body></html>

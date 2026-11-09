@@ -1,0 +1,3434 @@
+{
+  "version": 1,
+  "units": "metres",
+  "upAxis": "Y",
+  "frontAxis": "+Z",
+  "footprintPlane": "XZ",
+  "footprintPolicy": "Conservative centred rectangular ground envelope, including roof overhangs.",
+  "assets": [
+    {
+      "id": "pit-conference-building",
+      "file": "/models/racing/pit-conference-building.glb",
+      "category": "racing",
+      "boundingBox": {
+        "min": [
+          -180,
+          -3,
+          -22.5
+        ],
+        "max": [
+          180,
+          30,
+          22.5
+        ],
+        "size": [
+          360,
+          33,
+          45
+        ]
+      },
+      "triangleCount": 1288,
+      "fileSize": 97628,
+      "materials": [
+        "wall-white",
+        "screen-dark",
+        "metal",
+        "glass",
+        "wall-grey",
+        "roof-dark",
+        "canopy-white",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -180,
+          -22.5
+        ],
+        [
+          180,
+          -22.5
+        ],
+        [
+          180,
+          22.5
+        ],
+        [
+          -180,
+          22.5
+        ]
+      ],
+      "spec": {
+        "width": 360,
+        "depth": 45,
+        "height": 30,
+        "skirtDepth": 3,
+        "triangleBudget": 15000
+      }
+    },
+    {
+      "id": "grandstand-bay-covered",
+      "file": "/models/racing/grandstand-bay-covered.glb",
+      "category": "racing",
+      "boundingBox": {
+        "min": [
+          -10,
+          -3,
+          -16
+        ],
+        "max": [
+          10,
+          22,
+          16
+        ],
+        "size": [
+          20,
+          25,
+          32
+        ]
+      },
+      "triangleCount": 396,
+      "fileSize": 31580,
+      "materials": [
+        "concrete",
+        "brand-navy",
+        "metal",
+        "roof-dark",
+        "canopy-white"
+      ],
+      "tileable": true,
+      "instanced": false,
+      "footprint": [
+        [
+          -10,
+          -16
+        ],
+        [
+          10,
+          -16
+        ],
+        [
+          10,
+          16
+        ],
+        [
+          -10,
+          16
+        ]
+      ],
+      "spec": {
+        "width": 20,
+        "depth": 32,
+        "height": 22,
+        "skirtDepth": 3,
+        "triangleBudget": 1500
+      }
+    },
+    {
+      "id": "grandstand-bay-open",
+      "file": "/models/racing/grandstand-bay-open.glb",
+      "category": "racing",
+      "boundingBox": {
+        "min": [
+          -10,
+          -3,
+          -12
+        ],
+        "max": [
+          10,
+          12,
+          12
+        ],
+        "size": [
+          20,
+          15,
+          24
+        ]
+      },
+      "triangleCount": 252,
+      "fileSize": 19516,
+      "materials": [
+        "concrete",
+        "brand-navy"
+      ],
+      "tileable": true,
+      "instanced": false,
+      "footprint": [
+        [
+          -10,
+          -12
+        ],
+        [
+          10,
+          -12
+        ],
+        [
+          10,
+          12
+        ],
+        [
+          -10,
+          12
+        ]
+      ],
+      "spec": {
+        "width": 20,
+        "depth": 24,
+        "height": 12,
+        "skirtDepth": 3,
+        "triangleBudget": 1500
+      }
+    },
+    {
+      "id": "grandstand-end-cap",
+      "file": "/models/racing/grandstand-end-cap.glb",
+      "category": "racing",
+      "boundingBox": {
+        "min": [
+          -4,
+          -3,
+          -16
+        ],
+        "max": [
+          4,
+          22,
+          16
+        ],
+        "size": [
+          8,
+          25,
+          32
+        ]
+      },
+      "triangleCount": 408,
+      "fileSize": 32984,
+      "materials": [
+        "concrete",
+        "brand-navy",
+        "metal",
+        "roof-dark",
+        "canopy-white",
+        "wall-white"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -4,
+          -16
+        ],
+        [
+          4,
+          -16
+        ],
+        [
+          4,
+          16
+        ],
+        [
+          -4,
+          16
+        ]
+      ],
+      "spec": {
+        "width": 8,
+        "depth": 32,
+        "height": 22,
+        "skirtDepth": 3,
+        "triangleBudget": 1500
+      }
+    },
+    {
+      "id": "temporary-bleacher",
+      "file": "/models/racing/temporary-bleacher.glb",
+      "category": "racing",
+      "boundingBox": {
+        "min": [
+          -10,
+          -3,
+          -6
+        ],
+        "max": [
+          10,
+          7,
+          6
+        ],
+        "size": [
+          20,
+          10,
+          12
+        ]
+      },
+      "triangleCount": 252,
+      "fileSize": 19508,
+      "materials": [
+        "concrete",
+        "brand-navy"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -10,
+          -6
+        ],
+        [
+          10,
+          -6
+        ],
+        [
+          10,
+          6
+        ],
+        [
+          -10,
+          6
+        ]
+      ],
+      "spec": {
+        "width": 20,
+        "depth": 12,
+        "height": 7,
+        "skirtDepth": 3,
+        "triangleBudget": 1500
+      }
+    },
+    {
+      "id": "start-finish-gantry",
+      "file": "/models/racing/start-finish-gantry.glb",
+      "category": "racing",
+      "boundingBox": {
+        "min": [
+          -11,
+          0,
+          -1.5
+        ],
+        "max": [
+          11,
+          9,
+          1.5
+        ],
+        "size": [
+          22,
+          9,
+          3
+        ]
+      },
+      "triangleCount": 48,
+      "fileSize": 5456,
+      "materials": [
+        "metal",
+        "brand-navy",
+        "screen-dark"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -11,
+          -1.5
+        ],
+        [
+          11,
+          -1.5
+        ],
+        [
+          11,
+          1.5
+        ],
+        [
+          -11,
+          1.5
+        ]
+      ],
+      "spec": {
+        "width": 22,
+        "depth": 3,
+        "height": 9,
+        "skirtDepth": 0,
+        "triangleBudget": 1500
+      }
+    },
+    {
+      "id": "footbridge-over-track",
+      "file": "/models/racing/footbridge-over-track.glb",
+      "category": "racing",
+      "boundingBox": {
+        "min": [
+          -20,
+          0,
+          -2.5
+        ],
+        "max": [
+          20,
+          9,
+          2.5
+        ],
+        "size": [
+          40,
+          9,
+          5
+        ]
+      },
+      "triangleCount": 176,
+      "fileSize": 14692,
+      "materials": [
+        "metal",
+        "wall-grey",
+        "screen-dark"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -20,
+          -2.5
+        ],
+        [
+          20,
+          -2.5
+        ],
+        [
+          20,
+          2.5
+        ],
+        [
+          -20,
+          2.5
+        ]
+      ],
+      "spec": {
+        "width": 40,
+        "depth": 5,
+        "height": 9,
+        "skirtDepth": 0,
+        "triangleBudget": 1500
+      }
+    },
+    {
+      "id": "marshal-post",
+      "file": "/models/racing/marshal-post.glb",
+      "category": "racing",
+      "boundingBox": {
+        "min": [
+          -2,
+          -3,
+          -1.5
+        ],
+        "max": [
+          2,
+          4,
+          1.5
+        ],
+        "size": [
+          4,
+          7,
+          3
+        ]
+      },
+      "triangleCount": 96,
+      "fileSize": 10588,
+      "materials": [
+        "wall-white",
+        "roof-dark",
+        "glass",
+        "wall-grey",
+        "brand-teal",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -2,
+          -1.5
+        ],
+        [
+          2,
+          -1.5
+        ],
+        [
+          2,
+          1.5
+        ],
+        [
+          -2,
+          1.5
+        ]
+      ],
+      "spec": {
+        "width": 4,
+        "depth": 3,
+        "height": 4,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "big-screen",
+      "file": "/models/racing/big-screen.glb",
+      "category": "racing",
+      "boundingBox": {
+        "min": [
+          -8,
+          0,
+          -1
+        ],
+        "max": [
+          8,
+          12,
+          1
+        ],
+        "size": [
+          16,
+          12,
+          2
+        ]
+      },
+      "triangleCount": 48,
+      "fileSize": 5448,
+      "materials": [
+        "metal",
+        "roof-dark",
+        "screen-dark"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -8,
+          -1
+        ],
+        [
+          8,
+          -1
+        ],
+        [
+          8,
+          1
+        ],
+        [
+          -8,
+          1
+        ]
+      ],
+      "spec": {
+        "width": 16,
+        "depth": 2,
+        "height": 12,
+        "skirtDepth": 0,
+        "triangleBudget": 500
+      }
+    },
+    {
+      "id": "media-centre",
+      "file": "/models/racing/media-centre.glb",
+      "category": "racing",
+      "boundingBox": {
+        "min": [
+          -25,
+          -3,
+          -12.5
+        ],
+        "max": [
+          25,
+          12,
+          12.5
+        ],
+        "size": [
+          50,
+          15,
+          25
+        ]
+      },
+      "triangleCount": 108,
+      "fileSize": 12056,
+      "materials": [
+        "wall-white",
+        "roof-dark",
+        "glass",
+        "wall-grey",
+        "brand-teal",
+        "canopy-white",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -25,
+          -12.5
+        ],
+        [
+          25,
+          -12.5
+        ],
+        [
+          25,
+          12.5
+        ],
+        [
+          -25,
+          12.5
+        ]
+      ],
+      "spec": {
+        "width": 50,
+        "depth": 25,
+        "height": 12,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "conference-hall",
+      "file": "/models/conference/conference-hall.glb",
+      "category": "conference",
+      "boundingBox": {
+        "min": [
+          -45,
+          -3,
+          -30
+        ],
+        "max": [
+          45,
+          16,
+          30
+        ],
+        "size": [
+          90,
+          19,
+          60
+        ]
+      },
+      "triangleCount": 148,
+      "fileSize": 14312,
+      "materials": [
+        "wall-white",
+        "roof-dark",
+        "screen-dark",
+        "metal",
+        "glass",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -45,
+          -30
+        ],
+        [
+          45,
+          -30
+        ],
+        [
+          45,
+          30
+        ],
+        [
+          -45,
+          30
+        ]
+      ],
+      "spec": {
+        "width": 90,
+        "depth": 60,
+        "height": 16,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "conference-foyer",
+      "file": "/models/conference/conference-foyer.glb",
+      "category": "conference",
+      "boundingBox": {
+        "min": [
+          -30,
+          -3,
+          -12
+        ],
+        "max": [
+          30,
+          12,
+          12
+        ],
+        "size": [
+          60,
+          15,
+          24
+        ]
+      },
+      "triangleCount": 204,
+      "fileSize": 18304,
+      "materials": [
+        "glass",
+        "roof-dark",
+        "wall-grey",
+        "wall-white",
+        "metal",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -30,
+          -12
+        ],
+        [
+          30,
+          -12
+        ],
+        [
+          30,
+          12
+        ],
+        [
+          -30,
+          12
+        ]
+      ],
+      "spec": {
+        "width": 60,
+        "depth": 24,
+        "height": 12,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "amphitheatre",
+      "file": "/models/conference/amphitheatre.glb",
+      "category": "conference",
+      "boundingBox": {
+        "min": [
+          -60,
+          -3,
+          -50
+        ],
+        "max": [
+          60,
+          18,
+          50
+        ],
+        "size": [
+          120,
+          21,
+          100
+        ]
+      },
+      "triangleCount": 2428,
+      "fileSize": 177984,
+      "materials": [
+        "brand-navy",
+        "concrete",
+        "screen-dark",
+        "canopy-white",
+        "metal"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -60,
+          -50
+        ],
+        [
+          60,
+          -50
+        ],
+        [
+          60,
+          50
+        ],
+        [
+          -60,
+          50
+        ]
+      ],
+      "spec": {
+        "width": 120,
+        "depth": 100,
+        "height": 18,
+        "skirtDepth": 3,
+        "triangleBudget": 15000
+      }
+    },
+    {
+      "id": "gateway-arch",
+      "file": "/models/conference/gateway-arch.glb",
+      "category": "conference",
+      "boundingBox": {
+        "min": [
+          -20,
+          -3,
+          -3
+        ],
+        "max": [
+          20,
+          14,
+          3
+        ],
+        "size": [
+          40,
+          17,
+          6
+        ]
+      },
+      "triangleCount": 180,
+      "fileSize": 15384,
+      "materials": [
+        "stone",
+        "wall-white",
+        "brand-navy",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -20,
+          -3
+        ],
+        [
+          20,
+          -3
+        ],
+        [
+          20,
+          3
+        ],
+        [
+          -20,
+          3
+        ]
+      ],
+      "spec": {
+        "width": 40,
+        "depth": 6,
+        "height": 14,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "plaza-tower",
+      "file": "/models/conference/plaza-tower.glb",
+      "category": "conference",
+      "boundingBox": {
+        "min": [
+          -6,
+          -3,
+          -6
+        ],
+        "max": [
+          6,
+          24,
+          6
+        ],
+        "size": [
+          12,
+          27,
+          12
+        ]
+      },
+      "triangleCount": 60,
+      "fileSize": 7400,
+      "materials": [
+        "stone",
+        "roof-dark",
+        "screen-dark",
+        "wall-grey",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -6,
+          -6
+        ],
+        [
+          6,
+          -6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          -6,
+          6
+        ]
+      ],
+      "spec": {
+        "width": 12,
+        "depth": 12,
+        "height": 24,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "hotel-tower",
+      "file": "/models/hospitality/hotel-tower.glb",
+      "category": "hospitality",
+      "boundingBox": {
+        "min": [
+          -22.5,
+          -3,
+          -12.5
+        ],
+        "max": [
+          22.5,
+          48,
+          12.5
+        ],
+        "size": [
+          45,
+          51,
+          25
+        ]
+      },
+      "triangleCount": 1728,
+      "fileSize": 128728,
+      "materials": [
+        "wall-white",
+        "roof-dark",
+        "glass",
+        "wall-grey",
+        "brand-teal",
+        "metal",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -22.5,
+          -12.5
+        ],
+        [
+          22.5,
+          -12.5
+        ],
+        [
+          22.5,
+          12.5
+        ],
+        [
+          -22.5,
+          12.5
+        ]
+      ],
+      "spec": {
+        "width": 45,
+        "depth": 25,
+        "height": 48,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "hotel-low",
+      "file": "/models/hospitality/hotel-low.glb",
+      "category": "hospitality",
+      "boundingBox": {
+        "min": [
+          -40,
+          -3,
+          -12.5
+        ],
+        "max": [
+          40,
+          18,
+          12.5
+        ],
+        "size": [
+          80,
+          21,
+          25
+        ]
+      },
+      "triangleCount": 720,
+      "fileSize": 56116,
+      "materials": [
+        "wall-white",
+        "roof-dark",
+        "glass",
+        "wall-grey",
+        "brand-teal",
+        "metal",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -40,
+          -12.5
+        ],
+        [
+          40,
+          -12.5
+        ],
+        [
+          40,
+          12.5
+        ],
+        [
+          -40,
+          12.5
+        ]
+      ],
+      "spec": {
+        "width": 80,
+        "depth": 25,
+        "height": 18,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "lakeside-pavilion",
+      "file": "/models/hospitality/lakeside-pavilion.glb",
+      "category": "hospitality",
+      "boundingBox": {
+        "min": [
+          -13,
+          -3,
+          -8
+        ],
+        "max": [
+          13,
+          7,
+          8
+        ],
+        "size": [
+          26,
+          10,
+          16
+        ]
+      },
+      "triangleCount": 160,
+      "fileSize": 13988,
+      "materials": [
+        "timber",
+        "glass",
+        "roof-dark",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -13,
+          -8
+        ],
+        [
+          13,
+          -8
+        ],
+        [
+          13,
+          8
+        ],
+        [
+          -13,
+          8
+        ]
+      ],
+      "spec": {
+        "width": 26,
+        "depth": 16,
+        "height": 7,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "promenade-segment",
+      "file": "/models/hospitality/promenade-segment.glb",
+      "category": "hospitality",
+      "boundingBox": {
+        "min": [
+          -10,
+          -3,
+          -4
+        ],
+        "max": [
+          10,
+          2,
+          4
+        ],
+        "size": [
+          20,
+          5,
+          8
+        ]
+      },
+      "triangleCount": 192,
+      "fileSize": 15700,
+      "materials": [
+        "timber",
+        "metal",
+        "concrete"
+      ],
+      "tileable": true,
+      "instanced": false,
+      "footprint": [
+        [
+          -10,
+          -4
+        ],
+        [
+          10,
+          -4
+        ],
+        [
+          10,
+          4
+        ],
+        [
+          -10,
+          4
+        ]
+      ],
+      "spec": {
+        "width": 20,
+        "depth": 8,
+        "height": 2,
+        "skirtDepth": 3,
+        "triangleBudget": 1500
+      }
+    },
+    {
+      "id": "hospitality-marquee",
+      "file": "/models/hospitality/hospitality-marquee.glb",
+      "category": "hospitality",
+      "boundingBox": {
+        "min": [
+          -15,
+          -3,
+          -7.5
+        ],
+        "max": [
+          15,
+          8,
+          7.5
+        ],
+        "size": [
+          30,
+          11,
+          15
+        ]
+      },
+      "triangleCount": 108,
+      "fileSize": 9716,
+      "materials": [
+        "concrete",
+        "canopy-white",
+        "metal"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -15,
+          -7.5
+        ],
+        [
+          15,
+          -7.5
+        ],
+        [
+          15,
+          7.5
+        ],
+        [
+          -15,
+          7.5
+        ]
+      ],
+      "spec": {
+        "width": 30,
+        "depth": 15,
+        "height": 8,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "residential-trackside",
+      "file": "/models/mixed-use/residential-trackside.glb",
+      "category": "mixed-use",
+      "boundingBox": {
+        "min": [
+          -30,
+          -3,
+          -9
+        ],
+        "max": [
+          30,
+          21,
+          9
+        ],
+        "size": [
+          60,
+          24,
+          18
+        ]
+      },
+      "triangleCount": 888,
+      "fileSize": 68232,
+      "materials": [
+        "wall-white",
+        "roof-dark",
+        "glass",
+        "wall-grey",
+        "brand-teal",
+        "metal",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -30,
+          -9
+        ],
+        [
+          30,
+          -9
+        ],
+        [
+          30,
+          9
+        ],
+        [
+          -30,
+          9
+        ]
+      ],
+      "spec": {
+        "width": 60,
+        "depth": 18,
+        "height": 21,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "townhouse-row",
+      "file": "/models/mixed-use/townhouse-row.glb",
+      "category": "mixed-use",
+      "boundingBox": {
+        "min": [
+          -20,
+          -3,
+          -6
+        ],
+        "max": [
+          20,
+          10,
+          6
+        ],
+        "size": [
+          40,
+          13,
+          12
+        ]
+      },
+      "triangleCount": 212,
+      "fileSize": 18292,
+      "materials": [
+        "wall-white",
+        "roof-dark",
+        "glass",
+        "wall-grey",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -20,
+          -6
+        ],
+        [
+          20,
+          -6
+        ],
+        [
+          20,
+          6
+        ],
+        [
+          -20,
+          6
+        ]
+      ],
+      "spec": {
+        "width": 40,
+        "depth": 12,
+        "height": 10,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "retail-block",
+      "file": "/models/mixed-use/retail-block.glb",
+      "category": "mixed-use",
+      "boundingBox": {
+        "min": [
+          -30,
+          -3,
+          -15
+        ],
+        "max": [
+          30,
+          9,
+          15
+        ],
+        "size": [
+          60,
+          12,
+          30
+        ]
+      },
+      "triangleCount": 240,
+      "fileSize": 21584,
+      "materials": [
+        "wall-white",
+        "roof-dark",
+        "glass",
+        "wall-grey",
+        "brand-teal",
+        "canopy-white",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -30,
+          -15
+        ],
+        [
+          30,
+          -15
+        ],
+        [
+          30,
+          15
+        ],
+        [
+          -30,
+          15
+        ]
+      ],
+      "spec": {
+        "width": 60,
+        "depth": 30,
+        "height": 9,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "research-block",
+      "file": "/models/mixed-use/research-block.glb",
+      "category": "mixed-use",
+      "boundingBox": {
+        "min": [
+          -25,
+          -3,
+          -15
+        ],
+        "max": [
+          25,
+          18,
+          15
+        ],
+        "size": [
+          50,
+          21,
+          30
+        ]
+      },
+      "triangleCount": 144,
+      "fileSize": 14052,
+      "materials": [
+        "wall-white",
+        "roof-dark",
+        "glass",
+        "wall-grey",
+        "brand-teal",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -25,
+          -15
+        ],
+        [
+          25,
+          -15
+        ],
+        [
+          25,
+          15
+        ],
+        [
+          -25,
+          15
+        ]
+      ],
+      "spec": {
+        "width": 50,
+        "depth": 30,
+        "height": 18,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "automotive-hub",
+      "file": "/models/mixed-use/automotive-hub.glb",
+      "category": "mixed-use",
+      "boundingBox": {
+        "min": [
+          -40,
+          -3,
+          -22.5
+        ],
+        "max": [
+          40,
+          14,
+          22.5
+        ],
+        "size": [
+          80,
+          17,
+          45
+        ]
+      },
+      "triangleCount": 292,
+      "fileSize": 24696,
+      "materials": [
+        "wall-white",
+        "roof-dark",
+        "screen-dark",
+        "metal",
+        "glass",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -40,
+          -22.5
+        ],
+        [
+          40,
+          -22.5
+        ],
+        [
+          40,
+          22.5
+        ],
+        [
+          -40,
+          22.5
+        ]
+      ],
+      "spec": {
+        "width": 80,
+        "depth": 45,
+        "height": 14,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "driving-academy",
+      "file": "/models/mixed-use/driving-academy.glb",
+      "category": "mixed-use",
+      "boundingBox": {
+        "min": [
+          -20,
+          -3,
+          -11
+        ],
+        "max": [
+          20,
+          9,
+          11
+        ],
+        "size": [
+          40,
+          12,
+          22
+        ]
+      },
+      "triangleCount": 120,
+      "fileSize": 12912,
+      "materials": [
+        "wall-white",
+        "roof-dark",
+        "glass",
+        "wall-grey",
+        "brand-teal",
+        "canopy-white",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -20,
+          -11
+        ],
+        [
+          20,
+          -11
+        ],
+        [
+          20,
+          11
+        ],
+        [
+          -20,
+          11
+        ]
+      ],
+      "spec": {
+        "width": 40,
+        "depth": 22,
+        "height": 9,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "karting-clubhouse",
+      "file": "/models/mixed-use/karting-clubhouse.glb",
+      "category": "mixed-use",
+      "boundingBox": {
+        "min": [
+          -12,
+          -3,
+          -7
+        ],
+        "max": [
+          12,
+          7,
+          7
+        ],
+        "size": [
+          24,
+          10,
+          14
+        ]
+      },
+      "triangleCount": 124,
+      "fileSize": 13196,
+      "materials": [
+        "wall-white",
+        "roof-dark",
+        "glass",
+        "wall-grey",
+        "brand-teal",
+        "canopy-white",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -12,
+          -7
+        ],
+        [
+          12,
+          -7
+        ],
+        [
+          12,
+          7
+        ],
+        [
+          -12,
+          7
+        ]
+      ],
+      "spec": {
+        "width": 24,
+        "depth": 14,
+        "height": 7,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "kalbaskraal-station",
+      "file": "/models/transport/kalbaskraal-station.glb",
+      "category": "transport",
+      "boundingBox": {
+        "min": [
+          -35,
+          -3,
+          -7
+        ],
+        "max": [
+          35,
+          8,
+          7
+        ],
+        "size": [
+          70,
+          11,
+          14
+        ]
+      },
+      "triangleCount": 124,
+      "fileSize": 11432,
+      "materials": [
+        "concrete",
+        "metal",
+        "roof-dark",
+        "timber"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -35,
+          -7
+        ],
+        [
+          35,
+          -7
+        ],
+        [
+          35,
+          7
+        ],
+        [
+          -35,
+          7
+        ]
+      ],
+      "spec": {
+        "width": 70,
+        "depth": 14,
+        "height": 8,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "aerodrome-hangar",
+      "file": "/models/transport/aerodrome-hangar.glb",
+      "category": "transport",
+      "boundingBox": {
+        "min": [
+          -20,
+          -3,
+          -15
+        ],
+        "max": [
+          20,
+          12,
+          15
+        ],
+        "size": [
+          40,
+          15,
+          30
+        ]
+      },
+      "triangleCount": 88,
+      "fileSize": 9432,
+      "materials": [
+        "wall-grey",
+        "roof-dark",
+        "screen-dark",
+        "metal",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -20,
+          -15
+        ],
+        [
+          20,
+          -15
+        ],
+        [
+          20,
+          15
+        ],
+        [
+          -20,
+          15
+        ]
+      ],
+      "spec": {
+        "width": 40,
+        "depth": 30,
+        "height": 12,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "aerodrome-terminal",
+      "file": "/models/transport/aerodrome-terminal.glb",
+      "category": "transport",
+      "boundingBox": {
+        "min": [
+          -15,
+          -3,
+          -7.5
+        ],
+        "max": [
+          15,
+          7,
+          7.5
+        ],
+        "size": [
+          30,
+          10,
+          15
+        ]
+      },
+      "triangleCount": 108,
+      "fileSize": 12060,
+      "materials": [
+        "wall-white",
+        "roof-dark",
+        "glass",
+        "wall-grey",
+        "brand-teal",
+        "canopy-white",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -15,
+          -7.5
+        ],
+        [
+          15,
+          -7.5
+        ],
+        [
+          15,
+          7.5
+        ],
+        [
+          -15,
+          7.5
+        ]
+      ],
+      "spec": {
+        "width": 30,
+        "depth": 15,
+        "height": 7,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "aerodrome-control-tower",
+      "file": "/models/transport/aerodrome-control-tower.glb",
+      "category": "transport",
+      "boundingBox": {
+        "min": [
+          -4,
+          -3,
+          -4
+        ],
+        "max": [
+          4,
+          20,
+          4
+        ],
+        "size": [
+          8,
+          23,
+          8
+        ]
+      },
+      "triangleCount": 48,
+      "fileSize": 5968,
+      "materials": [
+        "wall-grey",
+        "glass",
+        "roof-dark",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -4,
+          -4
+        ],
+        [
+          4,
+          -4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          -4,
+          4
+        ]
+      ],
+      "spec": {
+        "width": 8,
+        "depth": 8,
+        "height": 20,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "shuttle-stop",
+      "file": "/models/transport/shuttle-stop.glb",
+      "category": "transport",
+      "boundingBox": {
+        "min": [
+          -6,
+          -3,
+          -2
+        ],
+        "max": [
+          6,
+          3.5,
+          2
+        ],
+        "size": [
+          12,
+          6.5,
+          4
+        ]
+      },
+      "triangleCount": 124,
+      "fileSize": 11460,
+      "materials": [
+        "concrete",
+        "metal",
+        "roof-dark",
+        "timber"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -6,
+          -2
+        ],
+        [
+          6,
+          -2
+        ],
+        [
+          6,
+          2
+        ],
+        [
+          -6,
+          2
+        ]
+      ],
+      "spec": {
+        "width": 12,
+        "depth": 4,
+        "height": 3.5,
+        "skirtDepth": 3,
+        "triangleBudget": 1500
+      }
+    },
+    {
+      "id": "entrance-gate",
+      "file": "/models/transport/entrance-gate.glb",
+      "category": "transport",
+      "boundingBox": {
+        "min": [
+          -12,
+          -3,
+          -2
+        ],
+        "max": [
+          12,
+          6,
+          2
+        ],
+        "size": [
+          24,
+          9,
+          4
+        ]
+      },
+      "triangleCount": 228,
+      "fileSize": 18904,
+      "materials": [
+        "brand-navy",
+        "metal",
+        "screen-dark",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -12,
+          -2
+        ],
+        [
+          12,
+          -2
+        ],
+        [
+          12,
+          2
+        ],
+        [
+          -12,
+          2
+        ]
+      ],
+      "spec": {
+        "width": 24,
+        "depth": 4,
+        "height": 6,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "light-pole",
+      "file": "/models/props/light-pole.glb",
+      "category": "props",
+      "boundingBox": {
+        "min": [
+          -1.5,
+          0,
+          -0.4000000059604645
+        ],
+        "max": [
+          1.5,
+          12,
+          0.4000000059604645
+        ],
+        "size": [
+          3,
+          12,
+          0.800000011920929
+        ]
+      },
+      "triangleCount": 44,
+      "fileSize": 4596,
+      "materials": [
+        "metal",
+        "canopy-white"
+      ],
+      "tileable": false,
+      "instanced": true,
+      "footprint": [
+        [
+          -1.5,
+          -0.4
+        ],
+        [
+          1.5,
+          -0.4
+        ],
+        [
+          1.5,
+          0.4
+        ],
+        [
+          -1.5,
+          0.4
+        ]
+      ],
+      "spec": {
+        "width": 3,
+        "depth": 0.8,
+        "height": 12,
+        "skirtDepth": 0,
+        "triangleBudget": 200
+      }
+    },
+    {
+      "id": "race-fence-segment",
+      "file": "/models/props/race-fence-segment.glb",
+      "category": "props",
+      "boundingBox": {
+        "min": [
+          -5,
+          0,
+          -0.15000000596046448
+        ],
+        "max": [
+          5,
+          4,
+          0.15000000596046448
+        ],
+        "size": [
+          10,
+          4,
+          0.30000001192092896
+        ]
+      },
+      "triangleCount": 192,
+      "fileSize": 14672,
+      "materials": [
+        "metal"
+      ],
+      "tileable": true,
+      "instanced": true,
+      "footprint": [
+        [
+          -5,
+          -0.15
+        ],
+        [
+          5,
+          -0.15
+        ],
+        [
+          5,
+          0.15
+        ],
+        [
+          -5,
+          0.15
+        ]
+      ],
+      "spec": {
+        "width": 10,
+        "depth": 0.3,
+        "height": 4,
+        "skirtDepth": 0,
+        "triangleBudget": 200
+      }
+    },
+    {
+      "id": "barrier-segment",
+      "file": "/models/props/barrier-segment.glb",
+      "category": "props",
+      "boundingBox": {
+        "min": [
+          -5,
+          0,
+          -0.3499999940395355
+        ],
+        "max": [
+          5,
+          1,
+          0.3499999940395355
+        ],
+        "size": [
+          10,
+          1,
+          0.699999988079071
+        ]
+      },
+      "triangleCount": 12,
+      "fileSize": 1696,
+      "materials": [
+        "concrete"
+      ],
+      "tileable": true,
+      "instanced": true,
+      "footprint": [
+        [
+          -5,
+          -0.35
+        ],
+        [
+          5,
+          -0.35
+        ],
+        [
+          5,
+          0.35
+        ],
+        [
+          -5,
+          0.35
+        ]
+      ],
+      "spec": {
+        "width": 10,
+        "depth": 0.7,
+        "height": 1,
+        "skirtDepth": 0,
+        "triangleBudget": 200
+      }
+    },
+    {
+      "id": "hoarding-blank",
+      "file": "/models/props/hoarding-blank.glb",
+      "category": "props",
+      "boundingBox": {
+        "min": [
+          -5,
+          0,
+          -0.15000000596046448
+        ],
+        "max": [
+          5,
+          1.5,
+          0.15000000596046448
+        ],
+        "size": [
+          10,
+          1.5,
+          0.30000001192092896
+        ]
+      },
+      "triangleCount": 36,
+      "fileSize": 4028,
+      "materials": [
+        "wall-white",
+        "metal"
+      ],
+      "tileable": false,
+      "instanced": true,
+      "footprint": [
+        [
+          -5,
+          -0.15
+        ],
+        [
+          5,
+          -0.15
+        ],
+        [
+          5,
+          0.15
+        ],
+        [
+          -5,
+          0.15
+        ]
+      ],
+      "spec": {
+        "width": 10,
+        "depth": 0.3,
+        "height": 1.5,
+        "skirtDepth": 0,
+        "triangleBudget": 200
+      }
+    },
+    {
+      "id": "food-stall",
+      "file": "/models/props/food-stall.glb",
+      "category": "props",
+      "boundingBox": {
+        "min": [
+          -3,
+          0,
+          -2
+        ],
+        "max": [
+          3,
+          3.5,
+          2
+        ],
+        "size": [
+          6,
+          3.5,
+          4
+        ]
+      },
+      "triangleCount": 52,
+      "fileSize": 6232,
+      "materials": [
+        "wall-white",
+        "screen-dark",
+        "timber",
+        "brand-teal"
+      ],
+      "tileable": false,
+      "instanced": true,
+      "footprint": [
+        [
+          -3,
+          -2
+        ],
+        [
+          3,
+          -2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          -3,
+          2
+        ]
+      ],
+      "spec": {
+        "width": 6,
+        "depth": 4,
+        "height": 3.5,
+        "skirtDepth": 0,
+        "triangleBudget": 200
+      }
+    },
+    {
+      "id": "race-car-generic",
+      "file": "/models/props/race-car-generic.glb",
+      "category": "props",
+      "boundingBox": {
+        "min": [
+          -1,
+          0,
+          -2.799999952316284
+        ],
+        "max": [
+          1,
+          1,
+          2.799999952316284
+        ],
+        "size": [
+          2,
+          1,
+          5.599999904632568
+        ]
+      },
+      "triangleCount": 136,
+      "fileSize": 11780,
+      "materials": [
+        "brand-teal",
+        "screen-dark",
+        "roof-dark"
+      ],
+      "tileable": false,
+      "instanced": true,
+      "footprint": [
+        [
+          -1,
+          -2.8
+        ],
+        [
+          1,
+          -2.8
+        ],
+        [
+          1,
+          2.8
+        ],
+        [
+          -1,
+          2.8
+        ]
+      ],
+      "spec": {
+        "width": 2,
+        "depth": 5.6,
+        "height": 1,
+        "skirtDepth": 0,
+        "triangleBudget": 200
+      },
+      "notes": "Supplied vehicle dimensions interpreted as length × width × height; X/Z exchanged so the nose faces +Z."
+    },
+    {
+      "id": "car-parked",
+      "file": "/models/props/car-parked.glb",
+      "category": "props",
+      "boundingBox": {
+        "min": [
+          -0.8999999761581421,
+          0,
+          -2.200000047683716
+        ],
+        "max": [
+          0.8999999761581421,
+          1.5,
+          2.200000047683716
+        ],
+        "size": [
+          1.7999999523162842,
+          1.5,
+          4.400000095367432
+        ]
+      },
+      "triangleCount": 116,
+      "fileSize": 10996,
+      "materials": [
+        "wall-white",
+        "glass",
+        "wall-grey",
+        "roof-dark"
+      ],
+      "tileable": false,
+      "instanced": true,
+      "footprint": [
+        [
+          -0.9,
+          -2.2
+        ],
+        [
+          0.9,
+          -2.2
+        ],
+        [
+          0.9,
+          2.2
+        ],
+        [
+          -0.9,
+          2.2
+        ]
+      ],
+      "spec": {
+        "width": 1.8,
+        "depth": 4.4,
+        "height": 1.5,
+        "skirtDepth": 0,
+        "triangleBudget": 200
+      },
+      "notes": "Supplied vehicle dimensions interpreted as length × width × height; X/Z exchanged so the nose faces +Z."
+    },
+    {
+      "id": "shuttle-bus",
+      "file": "/models/props/shuttle-bus.glb",
+      "category": "props",
+      "boundingBox": {
+        "min": [
+          -1.25,
+          0,
+          -5.5
+        ],
+        "max": [
+          1.25,
+          3.200000047683716,
+          5.5
+        ],
+        "size": [
+          2.5,
+          3.200000047683716,
+          11
+        ]
+      },
+      "triangleCount": 128,
+      "fileSize": 12400,
+      "materials": [
+        "wall-white",
+        "glass",
+        "wall-grey",
+        "brand-teal",
+        "roof-dark"
+      ],
+      "tileable": false,
+      "instanced": true,
+      "footprint": [
+        [
+          -1.25,
+          -5.5
+        ],
+        [
+          1.25,
+          -5.5
+        ],
+        [
+          1.25,
+          5.5
+        ],
+        [
+          -1.25,
+          5.5
+        ]
+      ],
+      "spec": {
+        "width": 2.5,
+        "depth": 11,
+        "height": 3.2,
+        "skirtDepth": 0,
+        "triangleBudget": 200
+      },
+      "notes": "Supplied vehicle dimensions interpreted as length × width × height; X/Z exchanged so the nose faces +Z."
+    },
+    {
+      "id": "light-aircraft",
+      "file": "/models/props/light-aircraft.glb",
+      "category": "props",
+      "boundingBox": {
+        "min": [
+          -5.5,
+          0,
+          -4
+        ],
+        "max": [
+          5.5,
+          2.5,
+          4
+        ],
+        "size": [
+          11,
+          2.5,
+          8
+        ]
+      },
+      "triangleCount": 104,
+      "fileSize": 10668,
+      "materials": [
+        "wall-white",
+        "brand-teal",
+        "wall-grey",
+        "glass",
+        "roof-dark"
+      ],
+      "tileable": false,
+      "instanced": true,
+      "footprint": [
+        [
+          -5.5,
+          -4
+        ],
+        [
+          5.5,
+          -4
+        ],
+        [
+          5.5,
+          4
+        ],
+        [
+          -5.5,
+          4
+        ]
+      ],
+      "spec": {
+        "width": 11,
+        "depth": 8,
+        "height": 2.5,
+        "skirtDepth": 0,
+        "triangleBudget": 200
+      },
+      "notes": "Supplied vehicle dimensions interpreted as length × width × height; X/Z exchanged so the nose faces +Z."
+    },
+    {
+      "id": "farm-silo-group",
+      "file": "/models/setting/farm-silo-group.glb",
+      "category": "setting",
+      "boundingBox": {
+        "min": [
+          -9,
+          -3,
+          -4
+        ],
+        "max": [
+          9,
+          24,
+          4
+        ],
+        "size": [
+          18,
+          27,
+          8
+        ]
+      },
+      "triangleCount": 204,
+      "fileSize": 16524,
+      "materials": [
+        "wall-grey",
+        "metal",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -9,
+          -4
+        ],
+        [
+          9,
+          -4
+        ],
+        [
+          9,
+          4
+        ],
+        [
+          -9,
+          4
+        ]
+      ],
+      "spec": {
+        "width": 18,
+        "depth": 8,
+        "height": 24,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "farmhouse",
+      "file": "/models/setting/farmhouse.glb",
+      "category": "setting",
+      "boundingBox": {
+        "min": [
+          -9,
+          -3,
+          -5
+        ],
+        "max": [
+          9,
+          6,
+          5
+        ],
+        "size": [
+          18,
+          9,
+          10
+        ]
+      },
+      "triangleCount": 124,
+      "fileSize": 12012,
+      "materials": [
+        "wall-white",
+        "roof-dark",
+        "screen-dark",
+        "metal",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -9,
+          -5
+        ],
+        [
+          9,
+          -5
+        ],
+        [
+          9,
+          5
+        ],
+        [
+          -9,
+          5
+        ]
+      ],
+      "spec": {
+        "width": 18,
+        "depth": 10,
+        "height": 6,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "table-mountain-silhouette",
+      "file": "/models/setting/table-mountain-silhouette.glb",
+      "category": "setting",
+      "boundingBox": {
+        "min": [
+          -6000,
+          0,
+          -30
+        ],
+        "max": [
+          6000,
+          1100,
+          30
+        ],
+        "size": [
+          12000,
+          1100,
+          60
+        ]
+      },
+      "triangleCount": 76,
+      "fileSize": 6308,
+      "materials": [
+        "rock-distant"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -6000,
+          -30
+        ],
+        [
+          6000,
+          -30
+        ],
+        [
+          6000,
+          30
+        ],
+        [
+          -6000,
+          30
+        ]
+      ],
+      "spec": {
+        "width": 12000,
+        "depth": 60,
+        "height": 1100,
+        "skirtDepth": 0,
+        "triangleBudget": 500
+      }
+    },
+    {
+      "id": "tree-pine-1",
+      "file": "/models/nature/tree-pine-1.glb",
+      "category": "nature",
+      "boundingBox": {
+        "min": [
+          -7,
+          0,
+          -6.000000476837158
+        ],
+        "max": [
+          7,
+          14,
+          6.000000476837158
+        ],
+        "size": [
+          14,
+          14,
+          12.000000953674316
+        ]
+      },
+      "triangleCount": 116,
+      "fileSize": 10360,
+      "materials": [
+        "trunk",
+        "foliage-dark",
+        "foliage-dry"
+      ],
+      "tileable": false,
+      "instanced": true,
+      "footprint": [
+        [
+          -7,
+          -6
+        ],
+        [
+          7,
+          -6
+        ],
+        [
+          7,
+          6
+        ],
+        [
+          -7,
+          6
+        ]
+      ],
+      "spec": {
+        "width": 14,
+        "depth": 12,
+        "height": 14,
+        "skirtDepth": 0,
+        "triangleBudget": 200
+      }
+    },
+    {
+      "id": "tree-pine-2",
+      "file": "/models/nature/tree-pine-2.glb",
+      "category": "nature",
+      "boundingBox": {
+        "min": [
+          -7,
+          0,
+          -6
+        ],
+        "max": [
+          7,
+          14,
+          6
+        ],
+        "size": [
+          14,
+          14,
+          12
+        ]
+      },
+      "triangleCount": 116,
+      "fileSize": 10328,
+      "materials": [
+        "trunk",
+        "foliage-dark",
+        "foliage-dry"
+      ],
+      "tileable": false,
+      "instanced": true,
+      "footprint": [
+        [
+          -7,
+          -6
+        ],
+        [
+          7,
+          -6
+        ],
+        [
+          7,
+          6
+        ],
+        [
+          -7,
+          6
+        ]
+      ],
+      "spec": {
+        "width": 14,
+        "depth": 12,
+        "height": 14,
+        "skirtDepth": 0,
+        "triangleBudget": 200
+      }
+    },
+    {
+      "id": "tree-pine-3",
+      "file": "/models/nature/tree-pine-3.glb",
+      "category": "nature",
+      "boundingBox": {
+        "min": [
+          -7,
+          0,
+          -6
+        ],
+        "max": [
+          7,
+          14,
+          6
+        ],
+        "size": [
+          14,
+          14,
+          12
+        ]
+      },
+      "triangleCount": 116,
+      "fileSize": 10328,
+      "materials": [
+        "trunk",
+        "foliage-dark",
+        "foliage-dry"
+      ],
+      "tileable": false,
+      "instanced": true,
+      "footprint": [
+        [
+          -7,
+          -6
+        ],
+        [
+          7,
+          -6
+        ],
+        [
+          7,
+          6
+        ],
+        [
+          -7,
+          6
+        ]
+      ],
+      "spec": {
+        "width": 14,
+        "depth": 12,
+        "height": 14,
+        "skirtDepth": 0,
+        "triangleBudget": 200
+      }
+    },
+    {
+      "id": "tree-gum-1",
+      "file": "/models/nature/tree-gum-1.glb",
+      "category": "nature",
+      "boundingBox": {
+        "min": [
+          -5,
+          0,
+          -4.5
+        ],
+        "max": [
+          5,
+          22,
+          4.5
+        ],
+        "size": [
+          10,
+          22,
+          9
+        ]
+      },
+      "triangleCount": 116,
+      "fileSize": 10352,
+      "materials": [
+        "trunk",
+        "foliage-dark",
+        "foliage-dry"
+      ],
+      "tileable": false,
+      "instanced": true,
+      "footprint": [
+        [
+          -5,
+          -4.5
+        ],
+        [
+          5,
+          -4.5
+        ],
+        [
+          5,
+          4.5
+        ],
+        [
+          -5,
+          4.5
+        ]
+      ],
+      "spec": {
+        "width": 10,
+        "depth": 9,
+        "height": 22,
+        "skirtDepth": 0,
+        "triangleBudget": 200
+      }
+    },
+    {
+      "id": "tree-gum-2",
+      "file": "/models/nature/tree-gum-2.glb",
+      "category": "nature",
+      "boundingBox": {
+        "min": [
+          -5,
+          0,
+          -4.499999523162842
+        ],
+        "max": [
+          5,
+          22,
+          4.499999523162842
+        ],
+        "size": [
+          10,
+          22,
+          8.999999046325684
+        ]
+      },
+      "triangleCount": 116,
+      "fileSize": 10380,
+      "materials": [
+        "trunk",
+        "foliage-dark",
+        "foliage-dry"
+      ],
+      "tileable": false,
+      "instanced": true,
+      "footprint": [
+        [
+          -5,
+          -4.5
+        ],
+        [
+          5,
+          -4.5
+        ],
+        [
+          5,
+          4.5
+        ],
+        [
+          -5,
+          4.5
+        ]
+      ],
+      "spec": {
+        "width": 10,
+        "depth": 9,
+        "height": 22,
+        "skirtDepth": 0,
+        "triangleBudget": 200
+      }
+    },
+    {
+      "id": "tree-gum-3",
+      "file": "/models/nature/tree-gum-3.glb",
+      "category": "nature",
+      "boundingBox": {
+        "min": [
+          -5,
+          0,
+          -4.5
+        ],
+        "max": [
+          5,
+          22,
+          4.5
+        ],
+        "size": [
+          10,
+          22,
+          9
+        ]
+      },
+      "triangleCount": 116,
+      "fileSize": 10348,
+      "materials": [
+        "trunk",
+        "foliage-dark",
+        "foliage-dry"
+      ],
+      "tileable": false,
+      "instanced": true,
+      "footprint": [
+        [
+          -5,
+          -4.5
+        ],
+        [
+          5,
+          -4.5
+        ],
+        [
+          5,
+          4.5
+        ],
+        [
+          -5,
+          4.5
+        ]
+      ],
+      "spec": {
+        "width": 10,
+        "depth": 9,
+        "height": 22,
+        "skirtDepth": 0,
+        "triangleBudget": 200
+      }
+    },
+    {
+      "id": "tree-olive-1",
+      "file": "/models/nature/tree-olive-1.glb",
+      "category": "nature",
+      "boundingBox": {
+        "min": [
+          -3.5,
+          0,
+          -3.000000238418579
+        ],
+        "max": [
+          3.5,
+          6,
+          3.000000238418579
+        ],
+        "size": [
+          7,
+          6,
+          6.000000476837158
+        ]
+      },
+      "triangleCount": 116,
+      "fileSize": 10372,
+      "materials": [
+        "trunk",
+        "foliage-dark",
+        "foliage-dry"
+      ],
+      "tileable": false,
+      "instanced": true,
+      "footprint": [
+        [
+          -3.5,
+          -3
+        ],
+        [
+          3.5,
+          -3
+        ],
+        [
+          3.5,
+          3
+        ],
+        [
+          -3.5,
+          3
+        ]
+      ],
+      "spec": {
+        "width": 7,
+        "depth": 6,
+        "height": 6,
+        "skirtDepth": 0,
+        "triangleBudget": 200
+      }
+    },
+    {
+      "id": "tree-olive-2",
+      "file": "/models/nature/tree-olive-2.glb",
+      "category": "nature",
+      "boundingBox": {
+        "min": [
+          -3.5,
+          0,
+          -3
+        ],
+        "max": [
+          3.5,
+          6,
+          3
+        ],
+        "size": [
+          7,
+          6,
+          6
+        ]
+      },
+      "triangleCount": 116,
+      "fileSize": 10340,
+      "materials": [
+        "trunk",
+        "foliage-dark",
+        "foliage-dry"
+      ],
+      "tileable": false,
+      "instanced": true,
+      "footprint": [
+        [
+          -3.5,
+          -3
+        ],
+        [
+          3.5,
+          -3
+        ],
+        [
+          3.5,
+          3
+        ],
+        [
+          -3.5,
+          3
+        ]
+      ],
+      "spec": {
+        "width": 7,
+        "depth": 6,
+        "height": 6,
+        "skirtDepth": 0,
+        "triangleBudget": 200
+      }
+    },
+    {
+      "id": "tree-olive-3",
+      "file": "/models/nature/tree-olive-3.glb",
+      "category": "nature",
+      "boundingBox": {
+        "min": [
+          -3.5,
+          0,
+          -3
+        ],
+        "max": [
+          3.5,
+          6,
+          3
+        ],
+        "size": [
+          7,
+          6,
+          6
+        ]
+      },
+      "triangleCount": 116,
+      "fileSize": 10340,
+      "materials": [
+        "trunk",
+        "foliage-dark",
+        "foliage-dry"
+      ],
+      "tileable": false,
+      "instanced": true,
+      "footprint": [
+        [
+          -3.5,
+          -3
+        ],
+        [
+          3.5,
+          -3
+        ],
+        [
+          3.5,
+          3
+        ],
+        [
+          -3.5,
+          3
+        ]
+      ],
+      "spec": {
+        "width": 7,
+        "depth": 6,
+        "height": 6,
+        "skirtDepth": 0,
+        "triangleBudget": 200
+      }
+    },
+    {
+      "id": "shrub-fynbos-1",
+      "file": "/models/nature/shrub-fynbos-1.glb",
+      "category": "nature",
+      "boundingBox": {
+        "min": [
+          -1,
+          0,
+          -1
+        ],
+        "max": [
+          1,
+          1.5000001192092896,
+          1
+        ],
+        "size": [
+          2,
+          1.5000001192092896,
+          2
+        ]
+      },
+      "triangleCount": 60,
+      "fileSize": 5728,
+      "materials": [
+        "foliage-dry",
+        "foliage-dark"
+      ],
+      "tileable": false,
+      "instanced": true,
+      "footprint": [
+        [
+          -1,
+          -1
+        ],
+        [
+          1,
+          -1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          -1,
+          1
+        ]
+      ],
+      "spec": {
+        "width": 2,
+        "depth": 2,
+        "height": 1.5,
+        "skirtDepth": 0,
+        "triangleBudget": 200
+      }
+    },
+    {
+      "id": "shrub-fynbos-2",
+      "file": "/models/nature/shrub-fynbos-2.glb",
+      "category": "nature",
+      "boundingBox": {
+        "min": [
+          -1,
+          0,
+          -0.9999999403953552
+        ],
+        "max": [
+          1,
+          1.5000001192092896,
+          0.9999999403953552
+        ],
+        "size": [
+          2,
+          1.5000001192092896,
+          1.9999998807907104
+        ]
+      },
+      "triangleCount": 60,
+      "fileSize": 5760,
+      "materials": [
+        "foliage-dry",
+        "foliage-dark"
+      ],
+      "tileable": false,
+      "instanced": true,
+      "footprint": [
+        [
+          -1,
+          -1
+        ],
+        [
+          1,
+          -1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          -1,
+          1
+        ]
+      ],
+      "spec": {
+        "width": 2,
+        "depth": 2,
+        "height": 1.5,
+        "skirtDepth": 0,
+        "triangleBudget": 200
+      }
+    },
+    {
+      "id": "shrub-fynbos-3",
+      "file": "/models/nature/shrub-fynbos-3.glb",
+      "category": "nature",
+      "boundingBox": {
+        "min": [
+          -1,
+          0,
+          -1
+        ],
+        "max": [
+          1,
+          1.5000001192092896,
+          1
+        ],
+        "size": [
+          2,
+          1.5000001192092896,
+          2
+        ]
+      },
+      "triangleCount": 60,
+      "fileSize": 5724,
+      "materials": [
+        "foliage-dry",
+        "foliage-dark"
+      ],
+      "tileable": false,
+      "instanced": true,
+      "footprint": [
+        [
+          -1,
+          -1
+        ],
+        [
+          1,
+          -1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          -1,
+          1
+        ]
+      ],
+      "spec": {
+        "width": 2,
+        "depth": 2,
+        "height": 1.5,
+        "skirtDepth": 0,
+        "triangleBudget": 200
+      }
+    },
+    {
+      "id": "rock-outcrop-1",
+      "file": "/models/nature/rock-outcrop-1.glb",
+      "category": "nature",
+      "boundingBox": {
+        "min": [
+          -2,
+          0,
+          -1.4999998807907104
+        ],
+        "max": [
+          2,
+          2,
+          1.4999998807907104
+        ],
+        "size": [
+          4,
+          2,
+          2.999999761581421
+        ]
+      },
+      "triangleCount": 60,
+      "fileSize": 5152,
+      "materials": [
+        "stone"
+      ],
+      "tileable": false,
+      "instanced": true,
+      "footprint": [
+        [
+          -2,
+          -1.5
+        ],
+        [
+          2,
+          -1.5
+        ],
+        [
+          2,
+          1.5
+        ],
+        [
+          -2,
+          1.5
+        ]
+      ],
+      "spec": {
+        "width": 4,
+        "depth": 3,
+        "height": 2,
+        "skirtDepth": 0,
+        "triangleBudget": 200
+      }
+    },
+    {
+      "id": "rock-outcrop-2",
+      "file": "/models/nature/rock-outcrop-2.glb",
+      "category": "nature",
+      "boundingBox": {
+        "min": [
+          -2,
+          0,
+          -1.5000001192092896
+        ],
+        "max": [
+          2,
+          2,
+          1.5000001192092896
+        ],
+        "size": [
+          4,
+          2,
+          3.000000238418579
+        ]
+      },
+      "triangleCount": 60,
+      "fileSize": 5152,
+      "materials": [
+        "stone"
+      ],
+      "tileable": false,
+      "instanced": true,
+      "footprint": [
+        [
+          -2,
+          -1.5
+        ],
+        [
+          2,
+          -1.5
+        ],
+        [
+          2,
+          1.5
+        ],
+        [
+          -2,
+          1.5
+        ]
+      ],
+      "spec": {
+        "width": 4,
+        "depth": 3,
+        "height": 2,
+        "skirtDepth": 0,
+        "triangleBudget": 200
+      }
+    },
+    {
+      "id": "rock-outcrop-3",
+      "file": "/models/nature/rock-outcrop-3.glb",
+      "category": "nature",
+      "boundingBox": {
+        "min": [
+          -1.9999998807907104,
+          0,
+          -1.5
+        ],
+        "max": [
+          1.9999998807907104,
+          2,
+          1.5
+        ],
+        "size": [
+          3.999999761581421,
+          2,
+          3
+        ]
+      },
+      "triangleCount": 60,
+      "fileSize": 5156,
+      "materials": [
+        "stone"
+      ],
+      "tileable": false,
+      "instanced": true,
+      "footprint": [
+        [
+          -2,
+          -1.5
+        ],
+        [
+          2,
+          -1.5
+        ],
+        [
+          2,
+          1.5
+        ],
+        [
+          -2,
+          1.5
+        ]
+      ],
+      "spec": {
+        "width": 4,
+        "depth": 3,
+        "height": 2,
+        "skirtDepth": 0,
+        "triangleBudget": 200
+      }
+    }
+  ]
+}
