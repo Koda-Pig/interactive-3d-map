@@ -101,6 +101,13 @@ const sidebar = createSidebar(sidebarElement, {
 
 let needsRender = false;
 
+// Wheel zoom is applied by the controls' own event handler, so by the time the
+// loop calls `controls.update()` there's nothing left for it to report.
+let viewChanged = false;
+controls.addEventListener("change", () => {
+  viewChanged = true;
+});
+
 const interaction = new MapInteraction({
   canvas: renderer.domElement,
   site,
@@ -161,7 +168,9 @@ new ResizeObserver(() => {
 // The scene is static, so frames are only drawn when something has changed.
 renderer.setAnimationLoop((now) => {
   const flying = flight.update(now);
-  const moved = controls.update() || flying;
+  controls.update();
+  const moved = viewChanged || flying;
+  viewChanged = false;
   if (moved) {
     constrainView(camera, controls);
   }
