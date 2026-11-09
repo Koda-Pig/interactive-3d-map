@@ -3,7 +3,9 @@ import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import type { TrackLocation } from "../layout/locations.ts";
 import type { PathSample, PathSegment } from "../layout/path.ts";
 import { resolvePath, samplePath } from "../layout/path.ts";
+import { createTrackSafety } from "../layout/track-safety.ts";
 import type { GroundSurface } from "../terrain/ground.ts";
+import { createCrossing } from "./crossings.ts";
 import { asphaltTexture, Layer, layerMaterial, vertexColorMaterial } from "./materials.ts";
 
 const ASPHALT_TILE_LENGTH = 9;
@@ -37,17 +39,24 @@ function isDashOn(sample: PathSample): boolean {
  */
 function bandGeometry(
   samples: readonly PathSample[],
-  band: Band,
+  band: Band | ((sample: PathSample) => Band),
   closed: boolean,
   surface: GroundSurface,
   keepQuad: (sample: PathSample) => boolean = () => true,
+  heightAt: (x: number, z: number, distance: number) => number = (x, z) => surface.heightAt(x, z),
+  colorAt?: (sample: PathSample) => string,
 ): BufferGeometry {
-  const columns = Math.max(1, Math.ceil((band.to - band.from) / CROSS_SPACING)) + 1;
+  const bands = samples.map((sample) => (typeof band === "function" ? band(sample) : band));
+  const columns =
+    Math.max(1, Math.ceil(Math.max(...bands.map(({ from, to }) => to - from)) / CROSS_SPACING)) + 1;
   const rows = samples.length;
   const positions = new Float32Array(rows * columns * 3);
   const uvs = new Float32Array(rows * columns * 2);
+  const colors = colorAt ? new Float32Array(rows * columns * 3) : null;
 
   samples.forEach((sample, row) => {
+    const band = bands[row];
+    const color = colorAt ? new Color(colorAt(sample)) : null;
     for (let column = 0; column < columns; column += 1) {
       const across = column / (columns - 1);
       const offset = band.from + (band.to - band.from) * across;
@@ -55,10 +64,11 @@ function bandGeometry(
       const z = sample.z + sample.dirX * offset;
       const vertex = row * columns + column;
       positions[vertex * 3] = x;
-      positions[vertex * 3 + 1] = surface.heightAt(x, z) + LIFT;
+      positions[vertex * 3 + 1] = heightAt(x, z, sample.distance) + LIFT;
       positions[vertex * 3 + 2] = z;
       uvs[vertex * 2] = across;
       uvs[vertex * 2 + 1] = sample.distance / ASPHALT_TILE_LENGTH;
+      if (colors && color) colors.set([color.r, color.g, color.b], vertex * 3);
     }
   });
 
@@ -81,6 +91,7 @@ function bandGeometry(
   const geometry = new BufferGeometry();
   geometry.setAttribute("position", new BufferAttribute(positions, 3));
   geometry.setAttribute("uv", new BufferAttribute(uvs, 2));
+  if (colors) geometry.setAttribute("color", new BufferAttribute(colors, 3));
   geometry.setIndex(indices);
   geometry.computeVertexNormals();
   return geometry;
@@ -183,8 +194,9 @@ export function createRibbon(location: TrackLocation, surface: GroundSurface): G
 
   const segments = resolvePath(location.path, closed);
   const samples = samplePath(segments, step, closed);
+  const crossing = createCrossing(location, surface);
   const geometries = bandsFor(location).map((band) =>
-    bandGeometry(samples, band, closed, surface, keepQuad),
+    bandGeometry(samples, band, closed, surface, keepQuad, crossing.heightAt),
   );
   for (const branch of location.branches ?? []) {
     const branchSamples = samplePath(resolvePath(branch, false), step, false);
@@ -199,8 +211,37 @@ export function createRibbon(location: TrackLocation, surface: GroundSurface): G
   ribbon.receiveShadow = true;
 
   const group = new Group();
-  group.add(ribbon);
-  if (location.runoff && location.runoffColor) {
+  group.add(ribbon, crossing.structure);
+  if (location.safetyZones) {
+    const safety = createTrackSafety(location);
+    const half = location.width / 2;
+    for (const side of [-1, 1]) {
+      for (const paved of [false, true]) {
+        const geometry = bandGeometry(
+          samples,
+          (sample) => {
+            const edge = safety(sample, side);
+            const a = half + (paved ? 0 : edge.paved);
+            const b = half + (paved ? edge.paved : edge.width);
+            return side > 0 ? { from: a, to: b } : { from: -b, to: -a };
+          },
+          closed,
+          surface,
+          undefined,
+          undefined,
+          (sample) =>
+            paved
+              ? safety(sample, side).color
+              : safety(sample, side).width > (location.runoff ?? 0) + 1
+                ? "#CFC4A6"
+                : "#8C9860",
+        );
+        const mesh = new Mesh(geometry, vertexColorMaterial(Layer.verge));
+        mesh.receiveShadow = true;
+        group.add(mesh);
+      }
+    }
+  } else if (location.runoff && location.runoffColor) {
     const half = location.width / 2;
     const verge = mergeGeometries([
       bandGeometry(samples, { from: -half - location.runoff, to: -half }, closed, surface),

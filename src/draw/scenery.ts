@@ -3,6 +3,7 @@ import {
   BoxGeometry,
   BufferAttribute,
   Color,
+  ConeGeometry,
   Euler,
   Group,
   InstancedBufferAttribute,
@@ -28,6 +29,7 @@ import type { PathSample } from "../layout/path.ts";
 import { resolveOutline, resolvePath, samplePath } from "../layout/path.ts";
 import type { Point } from "../layout/polygon.ts";
 import { boundsOf, centreOf, signedDistance } from "../layout/polygon.ts";
+import { createTrackSafety } from "../layout/track-safety.ts";
 import type { Quality } from "../scene/quality.ts";
 import { MAP_HALF_SIZE, SITE_SIZE } from "../site.ts";
 import { fieldEdgeX } from "../terrain/fields.ts";
@@ -484,16 +486,24 @@ function dressCircuit(
   const circuit = locationById<TrackLocation>("circuit");
   const segments = resolvePath(circuit.path, true);
   const samples = samplePath(segments, BARRIER_TILE, true);
-  const offset = circuit.width / 2 + (circuit.runoff ?? 0) + 1;
+  const safety = createTrackSafety(circuit);
   const spectators = spectatorOutlines();
   const { surface } = context;
   const barrier = context.model(BARRIER);
   const fence = context.model(CATCH_FENCE);
 
-  for (const sample of samples) {
-    for (const side of [-1, 1]) {
-      const x = sample.x - sample.dirZ * offset * side;
-      const z = sample.z + sample.dirX * offset * side;
+  for (const side of [-1, 1]) {
+    const boundary = samples.map((sample): Point => {
+      const offset = safety(sample, side).barrier * side;
+      return [sample.x - sample.dirZ * offset, sample.z + sample.dirX * offset];
+    });
+    const boundaryPath = resolvePath(boundary, true);
+    const boundarySamples = samplePath(boundaryPath, BARRIER_TILE, true);
+    for (let index = 0; index < boundarySamples.length; index += 1) {
+      const sample = boundarySamples[index];
+      const next = boundarySamples[(index + 1) % boundarySamples.length];
+      const x = (sample.x + next.x) / 2;
+      const z = (sample.z + next.z) / 2;
       if (roadsNearby.isTaken(x, z) || !barrier) {
         continue;
       }
@@ -505,7 +515,7 @@ function dressCircuit(
         x,
         y: surface.heightAt(x, z),
         z,
-        yaw: yawAlong(sample),
+        yaw: Math.atan2(-(next.z - sample.z), next.x - sample.x),
         tilt: Math.atan2(rise, BARRIER_TILE),
       };
       instances.add(barrier, placement);
@@ -521,6 +531,7 @@ function dressCircuit(
 
   const marshals = samplePath(segments, MARSHAL_SPACING, true);
   for (const sample of marshals) {
+    const offset = safety(sample, -1).barrier;
     const x = sample.x + sample.dirZ * (offset + 7);
     const z = sample.z - sample.dirX * (offset + 7);
     if (!context.built.isTaken(x, z)) {
@@ -693,6 +704,48 @@ function placeMarquees(context: Context, instances: Instances): void {
   }
 }
 
+/** Temporary race activity sits inside the permanent compound organisation. */
+function placeTeamActivity(context: Context, teams: Instances, guests: Instances): void {
+  const trailer = colorize(openBox(3, 3.7, 14, 2.1, 0), () => [0.9, 0.93, 0.95]);
+  const cab = colorize(openBox(3, 3, 3.5, 1.7, 8.5), () => [0.02, 0.26, 0.45]);
+  const truck = mergeGeometries([trailer, cab]);
+  if (!truck) throw new Error("The transporter parts could not be merged");
+  const support = locationById<BuildingLocation>("team-support-rows");
+  for (const part of buildingParts(support).filter((part) => part.base === 5)) {
+    const [x, z] = centreOf(resolveOutline(part.footprint));
+    for (const offset of [-6, 6]) {
+      teams.add(truck, { x: x + offset, z, y: context.surface.heightAt(x, z) });
+    }
+  }
+  for (const x of [-225, -170]) {
+    placeModel(context, guests, MARQUEE, { x, z: -93, scale: 0.65 });
+  }
+  const person = colorize(openBox(0.6, 1.7, 0.6, 0.85, 0), () => [0.05, 0.4, 0.55]);
+  for (let index = 0; index < 36; index += 1) {
+    const x = -243 + (index % 12) * 8;
+    const z = -124 + Math.floor(index / 12) * 5;
+    guests.add(person, { x, z, y: context.surface.heightAt(x, z) + 0.3 });
+  }
+}
+
+/** Training equipment and display cars explain the working infield in every mode. */
+function placeAcademyActivity(context: Context, instances: Instances, car: BufferGeometry): void {
+  const court = locationById<AreaLocation>("vehicle-display-courts");
+  const { minX, maxX, minZ, maxZ } = boundsOf(resolveOutline(court.footprint));
+  for (let bay = 0; bay < 6; bay += 1) {
+    const x = minX + ((bay + 0.5) * (maxX - minX)) / 6;
+    const z = (minZ + maxZ) / 2;
+    instances.add(car, { x, z, y: context.surface.heightAt(x, z) + 0.3, tint: CAR_PAINTS[bay] });
+  }
+  const cone = colorize(new ConeGeometry(0.5, 1.1, 6).translate(0, 0.55, 0), () => [1, 0.35, 0.05]);
+  const course = locationById<TrackLocation>("academy-handling-course");
+  for (const [x, z] of course.branches?.[0] ?? []) {
+    for (const side of [-1, 1]) {
+      instances.add(cone, { x, z: z + side * 4, y: context.surface.heightAt(x, z) + 0.35 });
+    }
+  }
+}
+
 /** Scenery in the map, sorted by what has to control it. */
 export interface Scenery {
   /** Farmland and trees, which stay put whatever else is switched off. */
@@ -766,7 +819,9 @@ export function createScenery(kit: Kit, surface: GroundSurface, quality: Quality
   const trackside = new Instances();
   const roads = layout.locations.filter(
     (location) =>
-      (location.type === "road" || location.type === "track") && location.id !== "circuit",
+      (location.type === "road" || location.type === "track") &&
+      location.id !== "circuit" &&
+      !location.bridge,
   );
   dressCircuit(context, trackside, quality.catchFences, occupancyOf(roads, 2));
   group("racing").add(...trackside.build(true));
@@ -777,6 +832,9 @@ export function createScenery(kit: Kit, surface: GroundSurface, quality: Quality
   group("transport").add(...transport.build(true));
 
   const car = createCar();
+  const academy = new Instances();
+  placeAcademyActivity(context, academy, car);
+  group("academy").add(...academy.build(true));
   const parks = carParks();
 
   const raceCars = new Instances();
@@ -788,6 +846,8 @@ export function createScenery(kit: Kit, surface: GroundSurface, quality: Quality
   const raceTrackside = new Instances();
   placeRaceGrid(context, raceTrackside);
   placeFoodStalls(context, raceTrackside);
+  const raceGuests = new Instances();
+  placeTeamActivity(context, raceTrackside, raceGuests);
 
   const conferenceCars = new Instances();
   for (const park of parks.slice(0, CONFERENCE_CAR_PARKS)) {
@@ -805,6 +865,7 @@ export function createScenery(kit: Kit, surface: GroundSurface, quality: Quality
         ...addHidden(group("transport"), raceCars.build(false)),
         ...addHidden(group("transport"), raceShuttles.build(true)),
         ...addHidden(group("racing"), raceTrackside.build(true)),
+        ...addHidden(group("hospitality"), raceGuests.build(true)),
       ],
     ],
     [

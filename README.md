@@ -8,8 +8,10 @@ The layout is illustrative. There's no published masterplan yet.
 
 ## Docs
 
+- [ai/track-layout.md](ai/track-layout.md): required circuit and infield corrections, their reasons, and checks to prevent layout regressions
 - [docs/overview.md](docs/overview.md): what we're building, the reference we're improving on, and the feature list
 - [docs/plan.md](docs/plan.md): the simplified build plan, phase by phase
+- [docs/improvements.md](docs/improvements.md): how the map compares with high-end site maps, and the visual work still to do
 
 ## Stack
 

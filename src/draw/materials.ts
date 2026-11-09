@@ -94,14 +94,17 @@ export function waterMaterial(color: string): MeshStandardMaterial {
   });
 }
 
-let kerbMaterial: MeshLambertMaterial | null = null;
+const vertexMaterials = new Map<number, MeshLambertMaterial>();
 
-export function vertexColorMaterial(): MeshLambertMaterial {
-  kerbMaterial ??= new MeshLambertMaterial({
+export function vertexColorMaterial(layer: number = Layer.marking): MeshLambertMaterial {
+  let material = vertexMaterials.get(layer);
+  if (material) return material;
+  material = new MeshLambertMaterial({
     vertexColors: true,
-    ...offsetParameters(Layer.marking),
+    ...offsetParameters(layer),
   });
-  return kerbMaterial;
+  vertexMaterials.set(layer, material);
+  return material;
 }
 
 const HIGHLIGHT = new Color("#1CA7EC");

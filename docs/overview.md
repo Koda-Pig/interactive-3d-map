@@ -46,6 +46,8 @@ What we know, from the pitch deck, [bluemountainracing.com](https://www.bluemoun
 
 **The circuit shape has not been published.** BMR says it's "developed from a layout with an established motorsport foundation", but nobody names that layout. There's no public track map or masterplan either. Our layout is invented to fit the published targets above, and the map has to say so on screen (for example, "Concept layout, for illustration only").
 
+[Circuit and infield layout requirements](../ai/track-layout.md) records the required correction to the current concept, including infield pits, paddock organisation, access, and local runoff. Read it before changing the circuit or its surrounding facilities.
+
 BMR's [gallery](https://www.bluemountainracing.com/gallery.html) has 11 artist's impressions, marked as indicative. None is an aerial view, so they tell us what things look like but not where they go. We use them as style guides and don't copy them into the map.
 
 ### Setting rules

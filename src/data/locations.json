@@ -4,42 +4,261 @@
       "id": "race",
       "name": "Race weekend",
       "summary": "Up to 125,000 spectators a day across the grandstands, general admission banks and gates.",
-      "categories": ["racing", "entrances"],
+      "categories": [
+        "racing",
+        "entrances"
+      ],
       "locations": [
-        "arrival-plaza", "gateway-arch", "car-park-1", "car-park-2", "car-park-3", "car-park-4",
-        "car-park-5", "car-park-6", "car-park-7", "car-park-8", "shuttle-drop-off", "n7",
-        "n7-north-interchange", "n7-south-interchange", "ring-road", "kalbaskraal-station",
-        "railway-line", "fan-walk"
+        "arrival-plaza",
+        "gateway-arch",
+        "car-park-1",
+        "car-park-2",
+        "car-park-3",
+        "car-park-4",
+        "car-park-5",
+        "car-park-6",
+        "car-park-7",
+        "car-park-8",
+        "shuttle-drop-off",
+        "n7",
+        "n7-north-interchange",
+        "n7-south-interchange",
+        "ring-road",
+        "kalbaskraal-station",
+        "railway-line",
+        "fan-walk",
+        "infield-road",
+        "conference-footbridge",
+        "conference-approach",
+        "infield-guest-walk",
+        "conference-entrance",
+        "infield-hospitality",
+        "hospitality-pavilions",
+        "hospitality-terrace",
+        "hospitality-paths",
+        "hospitality-shade",
+        "academy-handling-ground",
+        "academy-handling-course",
+        "academy-briefing-bays",
+        "automotive-demonstration-court",
+        "automotive-demonstration-loop",
+        "vehicle-display-courts",
+        "automotive-preparation-bays"
       ]
     },
     {
       "id": "conference",
       "name": "Conference day",
       "summary": "The pit building, halls and amphitheatre host conventions and exhibitions all year.",
-      "categories": ["conference", "hospitality"],
+      "categories": [
+        "conference",
+        "hospitality"
+      ],
       "locations": [
-        "pit-conference-building", "paddock", "car-park-1", "car-park-2", "car-park-3",
-        "shuttle-drop-off", "n7", "n7-north-interchange", "n7-south-interchange", "ring-road",
-        "waterfront-drive", "kalbaskraal-station", "railway-line", "fan-walk", "gate-2", "gate-3"
+        "pit-conference-building",
+        "paddock",
+        "car-park-1",
+        "car-park-2",
+        "car-park-3",
+        "shuttle-drop-off",
+        "n7",
+        "n7-north-interchange",
+        "n7-south-interchange",
+        "ring-road",
+        "waterfront-drive",
+        "kalbaskraal-station",
+        "railway-line",
+        "fan-walk",
+        "gate-2",
+        "gate-3",
+        "infield-road",
+        "conference-footbridge",
+        "conference-approach",
+        "infield-guest-walk",
+        "conference-entrance",
+        "infield-hospitality",
+        "hospitality-pavilions",
+        "hospitality-terrace",
+        "hospitality-paths",
+        "hospitality-shade",
+        "academy-handling-ground",
+        "academy-handling-course",
+        "academy-briefing-bays",
+        "automotive-demonstration-court",
+        "automotive-demonstration-loop",
+        "vehicle-display-courts",
+        "automotive-preparation-bays"
       ]
     }
   ],
   "grading": [
     {
       "id": "arrival-terrace",
-      "footprint": [[-1030, -520], [-525, -520], [-525, 290], [-1030, 290]]
+      "footprint": [
+        [
+          -1030,
+          -520
+        ],
+        [
+          -525,
+          -520
+        ],
+        [
+          -525,
+          290
+        ],
+        [
+          -1030,
+          290
+        ]
+      ]
     },
     {
       "id": "waterfront-terrace",
-      "footprint": [[-470, 440], [510, 440], [510, 900], [-470, 900]]
+      "footprint": [
+        [
+          -470,
+          440
+        ],
+        [
+          510,
+          440
+        ],
+        [
+          510,
+          900
+        ],
+        [
+          -470,
+          900
+        ]
+      ]
     },
     {
       "id": "academy-terrace",
-      "footprint": [[-440, -560], [20, -560], [20, -280], [-440, -280]]
+      "footprint": [
+        [
+          -440,
+          -560
+        ],
+        [
+          20,
+          -560
+        ],
+        [
+          20,
+          -280
+        ],
+        [
+          -440,
+          -280
+        ]
+      ]
     },
     {
       "id": "aerodrome-terrace",
-      "footprint": [[80, -1570], [1290, -1570], [1290, -1330], [80, -1330]]
+      "footprint": [
+        [
+          80,
+          -1570
+        ],
+        [
+          1290,
+          -1570
+        ],
+        [
+          1290,
+          -1330
+        ],
+        [
+          80,
+          -1330
+        ]
+      ]
+    },
+    {
+      "id": "pit-operations-terrace",
+      "footprint": [
+        [
+          -610,
+          -280
+        ],
+        [
+          -300,
+          -280
+        ],
+        [
+          -300,
+          100
+        ],
+        [
+          -610,
+          100
+        ]
+      ]
+    },
+    {
+      "id": "infield-hospitality-terrace",
+      "footprint": [
+        [
+          -260,
+          -220
+        ],
+        [
+          -130,
+          -220
+        ],
+        [
+          -130,
+          -60
+        ],
+        [
+          -260,
+          -60
+        ]
+      ]
+    },
+    {
+      "id": "infield-open-ground",
+      "footprint": [
+        [
+          -70,
+          -225
+        ],
+        [
+          345,
+          -225
+        ],
+        [
+          345,
+          -80
+        ],
+        [
+          -70,
+          -80
+        ]
+      ]
+    },
+    {
+      "id": "handling-ground-terrace",
+      "footprint": [
+        [
+          -120,
+          -620
+        ],
+        [
+          235,
+          -620
+        ],
+        [
+          235,
+          -495
+        ],
+        [
+          -120,
+          -495
+        ]
+      ]
     }
   ],
   "locations": [
@@ -49,31 +268,58 @@
       "major": true,
       "category": "racing",
       "type": "track",
-      "description": "The concept circuit: about 4.8 km, with a start-finish straight, a separate full-throttle straight over 1 km, and heavy braking zones for overtaking. Illustrative shape, drawn to BMR's published targets.",
+      "description": "A compact 4.8 km concept circuit. The eastern technical section turns inward around the academy and automotive grounds; the long-straight return reaches into the infield. Published length, width and straight-length targets are retained. Illustrative, not a published masterplan.",
       "closed": true,
       "width": 15,
       "color": "#2F3338",
       "kerbs": true,
-      "runoff": 12,
-      "runoffColor": "#CFC4A6",
+      "runoff": 4,
+      "runoffColor": "#8C9860",
       "startFinish": [-600, -100],
-      "path": [
-        [-600, 250, 90],
-        [-600, -575, 42],
-        [-420, -575, 55],
-        [-310, -700, 70],
-        [825, -700, 36],
-        [825, -615, 36],
-        [520, -615, 45],
-        [520, -430, 55],
-        [705, -380, 60],
-        [705, -120, 40],
-        [465, -120, 50],
-        [395, 110, 65],
-        [110, 170, 45],
-        [30, 55, 40],
-        [-190, 55, 38],
-        [-255, 250, 55]
+      "path": [[-600, 250, 90], [-600, -575, 42], [-420, -575, 55], [-310, -700, 70], [825, -700, 36], [825, -615, 36], [280, -615, 48], [280, -500, 42], [390, -500, 48], [390, -300, 45], [500, -240, 45], [460, -60, 40], [370, 70, 40], [110, 115, 42], [30, 35, 30], [-190, 35, 35], [-255, 250, 55]],
+      "safetyZones": [
+        {
+          "at": [-575, -570],
+          "reach": 145,
+          "side": -1,
+          "width": 55,
+          "color": "#00678C"
+        },
+        {
+          "at": [823, -660],
+          "reach": 155,
+          "side": -1,
+          "width": 62,
+          "color": "#004272"
+        },
+        {
+          "at": [110, 115],
+          "reach": 95,
+          "side": -1,
+          "width": 25,
+          "color": "#004272"
+        },
+        {
+          "at": [-270, 245],
+          "reach": 110,
+          "side": -1,
+          "width": 27,
+          "color": "#00678C"
+        },
+        {
+          "at": [500, -240],
+          "reach": 105,
+          "side": -1,
+          "width": 38,
+          "color": "#00678C"
+        },
+        {
+          "at": [280, -505],
+          "reach": 85,
+          "side": 1,
+          "width": 28,
+          "color": "#004272"
+        }
       ]
     },
     {
@@ -81,10 +327,10 @@
       "name": "Pit Lane",
       "category": "racing",
       "type": "track",
-      "description": "Runs behind the pit wall along the start-finish straight, past the garages of the pit / conference building.",
+      "description": "Infield pit lane, behind the continuous pit wall. A separate working apron fronts the west-facing garages.",
       "width": 12,
       "color": "#2F3338",
-      "path": [[-600, 170], [-632, 110, 40], [-632, -360, 40], [-603, -450]]
+      "path": [[-588, 205], [-566, 130, 35], [-566, -360, 35], [-600, -450]]
     },
     {
       "id": "pit-conference-building",
@@ -92,13 +338,28 @@
       "major": true,
       "category": "racing",
       "type": "building",
-      "model": { "file": "racing/pit-conference-building.glb", "facing": "east" },
-      "description": "Garages at track level with stacked conference floors above, used for conventions and exhibitions all year.",
+      "model": {
+        "file": "racing/pit-conference-building.glb",
+        "facing": "west"
+      },
+      "description": "West-facing garages open onto the infield pit apron. Conference floors have a separate public entrance at the south end, reached by the pedestrian bridge.",
       "color": "#E8ECEF",
       "parts": [
-        { "footprint": [[-690, -280], [-645, -280], [-645, 80], [-690, 80]], "height": 18 },
-        { "footprint": [[-684, -270], [-650, -270], [-650, 70], [-684, 70]], "height": 31, "color": "#004272" },
-        { "footprint": [[-692, -285], [-640, -285], [-640, 85], [-692, 85]], "height": 2, "base": 31, "color": "#E8ECEF" }
+        {
+          "footprint": [[-535, -280], [-490, -280], [-490, 80], [-535, 80]],
+          "height": 18
+        },
+        {
+          "footprint": [[-529, -270], [-495, -270], [-495, 70], [-529, 70]],
+          "height": 31,
+          "color": "#004272"
+        },
+        {
+          "footprint": [[-537, -285], [-485, -285], [-485, 85], [-537, 85]],
+          "height": 2,
+          "base": 31,
+          "color": "#E8ECEF"
+        }
       ]
     },
     {
@@ -106,8 +367,8 @@
       "name": "Paddock",
       "category": "racing",
       "type": "area",
-      "description": "Team and support paddock behind the pit / conference building.",
-      "footprint": [[-780, -280], [-695, -280], [-695, 80], [-780, 80]],
+      "description": "Team compound directly behind the garages. Two rows of support units and equipment awnings flank loading courts, transverse lanes and a rear service spine.",
+      "footprint": [[-482, -280], [-325, -280], [-325, 80], [-482, 80]],
       "color": "#96989A"
     },
     {
@@ -116,13 +377,28 @@
       "major": true,
       "category": "racing",
       "type": "building",
-      "model": { "file": "racing/grandstand-bay-covered.glb", "facing": "west", "endCap": "racing/grandstand-end-cap.glb" },
+      "model": {
+        "file": "racing/grandstand-bay-covered.glb",
+        "facing": "east",
+        "endCap": "racing/grandstand-end-cap.glb"
+      },
       "description": "Covered grandstand at the southern end of the start-finish straight, looking across to the pit building. Illustrative.",
       "color": "#C9CFD4",
       "parts": [
-        { "footprint": [[-575, 0], [-543, 0], [-543, 150], [-575, 150]], "height": 13 },
-        { "footprint": [[-548, 0], [-543, 0], [-543, 150], [-548, 150]], "height": 23 },
-        { "footprint": [[-575, 0], [-543, 0], [-543, 150], [-575, 150]], "height": 2, "base": 23, "color": "#004272" }
+        {
+          "footprint": [[-690, 0], [-658, 0], [-658, 150], [-690, 150]],
+          "height": 13
+        },
+        {
+          "footprint": [[-663, 0], [-658, 0], [-658, 150], [-663, 150]],
+          "height": 23
+        },
+        {
+          "footprint": [[-690, 0], [-658, 0], [-658, 150], [-690, 150]],
+          "height": 2,
+          "base": 23,
+          "color": "#004272"
+        }
       ]
     },
     {
@@ -131,13 +407,28 @@
       "major": true,
       "category": "racing",
       "type": "building",
-      "model": { "file": "racing/grandstand-bay-covered.glb", "facing": "west", "endCap": "racing/grandstand-end-cap.glb" },
+      "model": {
+        "file": "racing/grandstand-bay-covered.glb",
+        "facing": "east",
+        "endCap": "racing/grandstand-end-cap.glb"
+      },
       "description": "Covered grandstand on the start-finish straight, opposite the pit garages and the start line. Illustrative.",
       "color": "#C9CFD4",
       "parts": [
-        { "footprint": [[-575, -220], [-543, -220], [-543, -10], [-575, -10]], "height": 13 },
-        { "footprint": [[-548, -220], [-543, -220], [-543, -10], [-548, -10]], "height": 23 },
-        { "footprint": [[-575, -220], [-543, -220], [-543, -10], [-575, -10]], "height": 2, "base": 23, "color": "#004272" }
+        {
+          "footprint": [[-690, -220], [-658, -220], [-658, -10], [-690, -10]],
+          "height": 13
+        },
+        {
+          "footprint": [[-663, -220], [-658, -220], [-658, -10], [-663, -10]],
+          "height": 23
+        },
+        {
+          "footprint": [[-690, -220], [-658, -220], [-658, -10], [-690, -10]],
+          "height": 2,
+          "base": 23,
+          "color": "#004272"
+        }
       ]
     },
     {
@@ -146,13 +437,28 @@
       "major": true,
       "category": "racing",
       "type": "building",
-      "model": { "file": "racing/grandstand-bay-covered.glb", "facing": "south", "endCap": "racing/grandstand-end-cap.glb" },
+      "model": {
+        "file": "racing/grandstand-bay-covered.glb",
+        "facing": "south",
+        "endCap": "racing/grandstand-end-cap.glb"
+      },
       "description": "Covered grandstand overlooking the heavy braking zone into Turn 1. Illustrative.",
       "color": "#C9CFD4",
       "parts": [
-        { "footprint": [[-640, -635], [-470, -635], [-470, -603], [-640, -603]], "height": 13 },
-        { "footprint": [[-640, -635], [-470, -635], [-470, -630], [-640, -630]], "height": 23 },
-        { "footprint": [[-640, -635], [-470, -635], [-470, -603], [-640, -603]], "height": 2, "base": 23, "color": "#004272" }
+        {
+          "footprint": [[-640, -760], [-470, -760], [-470, -728], [-640, -728]],
+          "height": 13
+        },
+        {
+          "footprint": [[-640, -760], [-470, -760], [-470, -755], [-640, -755]],
+          "height": 23
+        },
+        {
+          "footprint": [[-640, -760], [-470, -760], [-470, -728], [-640, -728]],
+          "height": 2,
+          "base": 23,
+          "color": "#004272"
+        }
       ]
     },
     {
@@ -161,13 +467,28 @@
       "major": true,
       "category": "racing",
       "type": "building",
-      "model": { "file": "racing/grandstand-bay-covered.glb", "facing": "west", "endCap": "racing/grandstand-end-cap.glb" },
+      "model": {
+        "file": "racing/grandstand-bay-covered.glb",
+        "facing": "west",
+        "endCap": "racing/grandstand-end-cap.glb"
+      },
       "description": "Covered grandstand outside the hairpin at the end of the long straight. Illustrative.",
       "color": "#C9CFD4",
       "parts": [
-        { "footprint": [[852, -730], [884, -730], [884, -585], [852, -585]], "height": 13 },
-        { "footprint": [[879, -730], [884, -730], [884, -585], [879, -585]], "height": 23 },
-        { "footprint": [[852, -730], [884, -730], [884, -585], [852, -585]], "height": 2, "base": 23, "color": "#004272" }
+        {
+          "footprint": [[930, -730], [962, -730], [962, -585], [930, -585]],
+          "height": 13
+        },
+        {
+          "footprint": [[957, -730], [962, -730], [962, -585], [957, -585]],
+          "height": 23
+        },
+        {
+          "footprint": [[930, -730], [962, -730], [962, -585], [930, -585]],
+          "height": 2,
+          "base": 23,
+          "color": "#004272"
+        }
       ]
     },
     {
@@ -185,9 +506,9 @@
       "name": "General Admission Bank 2",
       "category": "racing",
       "type": "building",
-      "description": "Grass bank on the outside of the Turn 8 braking zone.",
+      "description": "Grass viewing bank outside the tighter eastern technical section, behind its protective boundary.",
       "color": "#7F9B4C",
-      "footprint": [[728, -335, 12], [762, -335, 12], [762, -100, 12], [728, -100, 12]],
+      "footprint": [[550, -235], [590, -235], [590, -90], [550, -90]],
       "height": 4
     },
     {
@@ -195,9 +516,9 @@
       "name": "General Admission Bank 3",
       "category": "racing",
       "type": "building",
-      "description": "Grass bank on the outside of the run to Turn 10.",
+      "description": "Grass viewing bank beside the diagonal return towards the southern corners.",
       "color": "#7F9B4C",
-      "footprint": [[495, -70, 12], [565, -70, 12], [505, 110, 12], [435, 110, 12]],
+      "footprint": [[505, -20, 12], [550, -20, 12], [465, 135, 12], [420, 135, 12]],
       "height": 4
     },
     {
@@ -207,7 +528,7 @@
       "type": "building",
       "description": "Grass bank looking north over Turns 10 and 11.",
       "color": "#7F9B4C",
-      "footprint": [[130, 195, 12], [330, 195, 12], [330, 235, 12], [130, 235, 12]],
+      "footprint": [[130, 165], [330, 165], [330, 205], [130, 205]],
       "height": 4
     },
     {
@@ -217,7 +538,7 @@
       "type": "building",
       "description": "Grass bank inside Turns 12 and 13.",
       "color": "#7F9B4C",
-      "footprint": [[-70, -25, 12], [15, -25, 12], [15, 28, 12], [-70, 28, 12]],
+      "footprint": [[-70, -65, 10], [15, -65, 10], [15, -20, 10], [-70, -20, 10]],
       "height": 4
     },
     {
@@ -227,7 +548,7 @@
       "type": "building",
       "description": "Grass bank on the outside of the final corner, looking up the start-finish straight.",
       "color": "#7F9B4C",
-      "footprint": [[-640, 275, 12], [-330, 275, 12], [-330, 312, 12], [-640, 312, 12]],
+      "footprint": [[-640, 293, 12], [-330, 293, 12], [-330, 320, 12], [-640, 320, 12]],
       "height": 4
     },
     {
@@ -629,11 +950,22 @@
       "major": true,
       "category": "academy",
       "type": "building",
-      "description": "Engineering and testing facilities for manufacturers and race teams.",
+      "description": "Engineering and testing workshops connected to the test pad and a separate demonstration court in the central infield.",
       "color": "#E8ECEF",
       "parts": [
-        { "footprint": [[130, -400], [210, -400], [210, -355], [130, -355]], "height": 17, "model": { "file": "mixed-use/automotive-hub.glb", "facing": "south" } },
-        { "footprint": [[228, -400], [308, -400], [308, -355], [228, -355]], "height": 13, "color": "#C9CFD4" }
+        {
+          "footprint": [[130, -400], [210, -400], [210, -355], [130, -355]],
+          "height": 17,
+          "model": {
+            "file": "mixed-use/automotive-hub.glb",
+            "facing": "south"
+          }
+        },
+        {
+          "footprint": [[228, -400], [308, -400], [308, -355], [228, -355]],
+          "height": 13,
+          "color": "#C9CFD4"
+        }
       ]
     },
     {
@@ -651,8 +983,8 @@
       "category": "conference",
       "type": "area",
       "planting": "park",
-      "description": "Public open space in the middle of the circuit, part of the venue's public realm.",
-      "footprint": [[-520, -240, 40], [-250, -240, 40], [-250, 10, 40], [-520, 10, 40]],
+      "description": "Planted grass buffers around the automotive demonstration grounds. Defined walks and a drainage strip retain open landscape between the working compounds and the circuit.",
+      "footprint": [[-65, -225], [340, -225], [340, -80], [-65, -80], [-65, -105], [315, -105], [315, -200], [-65, -200]],
       "color": "#8DA35A"
     },
     {
@@ -803,13 +1135,26 @@
       "name": "Infield Road",
       "category": "transport",
       "type": "road",
-      "description": "Passes under the circuit by tunnel to reach the academy and Automotive Hub.",
+      "description": "Service bridge over the southern return, with visible ramps, parapets and abutments. The infield spine connects paddock, academy, karting and automotive facilities; a northern spur serves hospitality deliveries.",
       "width": 10,
       "color": "#777B7F",
-      "path": [[-100, 345], [-100, -240, 30], [-60, -280]],
+      "path": [[-100, 345], [-100, -240]],
       "branches": [
-        [[-100, -240, 0], [240, -240, 30], [240, -285]]
-      ]
+        [[-100, -240], [-310, -240], [-310, 95]],
+        [[-310, -240], [-310, -265], [-170, -265], [-170, -283]],
+        [[-288, -265], [-288, -291]],
+        [[-100, -240], [240, -240], [240, -285]],
+        [[-310, -230], [-195, -230], [-195, -215]],
+        [[-100, -240], [-115, -240], [-115, -555], [-80, -555]],
+        [[-115, -430], [-90, -430]],
+        [[-100, -150], [15, -150], [40, -150]]
+      ],
+      "bridge": {
+        "start": 130,
+        "end": 450,
+        "ramp": 90,
+        "clearance": 9
+      }
     },
     {
       "id": "car-park-1",
@@ -1112,6 +1457,530 @@
       "type": "gate",
       "description": "Spectator entrance. The number of gates is a placeholder.",
       "position": [-420, 330]
+    },
+    {
+      "id": "pit-working-apron",
+      "name": "Pit working apron",
+      "category": "racing",
+      "type": "area",
+      "description": "Working bays between the pit lane and garage doors, east of the pit wall.",
+      "footprint": [[-559, -280], [-535, -280], [-535, 80], [-559, 80]],
+      "color": "#727C83"
+    },
+    {
+      "id": "paddock-service-aisles",
+      "name": "Paddock service aisles",
+      "category": "racing",
+      "type": "road",
+      "description": "Continuous loading aisles and cross lanes connect the rear garage doors and team rows to the service spine.",
+      "width": 12,
+      "color": "#616B73",
+      "path": [[-405, -265], [-405, 65]],
+      "branches": [
+        [[-483, -265], [-310, -265]],
+        [[-483, -202], [-310, -202]],
+        [[-483, -142], [-310, -142]],
+        [[-483, -82], [-310, -82]],
+        [[-483, -22], [-310, -22]],
+        [[-483, 65], [-310, 65]],
+        [[-475, -265], [-475, 65]]
+      ]
+    },
+    {
+      "id": "team-support-rows",
+      "name": "Team support rows",
+      "category": "racing",
+      "type": "building",
+      "description": "Permanent team support units, covered equipment bays and open loading courts. Race weekend adds transporters in the covered bays.",
+      "color": "#E8ECEF",
+      "parts": [
+        {
+          "footprint": [[-466, -250], [-439, -250], [-439, -236], [-466, -236]],
+          "height": 5,
+          "color": "#E8ECEF"
+        },
+        {
+          "footprint": [[-466, -232], [-464, -232], [-464, -210], [-466, -210]],
+          "height": 5,
+          "color": "#697986"
+        },
+        {
+          "footprint": [[-441, -232], [-439, -232], [-439, -210], [-441, -210]],
+          "height": 5,
+          "color": "#697986"
+        },
+        {
+          "footprint": [[-466, -232], [-439, -232], [-439, -210], [-466, -210]],
+          "height": 0.6,
+          "base": 5,
+          "color": "#004272"
+        },
+        {
+          "footprint": [[-466, -190], [-439, -190], [-439, -176], [-466, -176]],
+          "height": 5,
+          "color": "#E8ECEF"
+        },
+        {
+          "footprint": [[-466, -172], [-464, -172], [-464, -150], [-466, -150]],
+          "height": 5,
+          "color": "#697986"
+        },
+        {
+          "footprint": [[-441, -172], [-439, -172], [-439, -150], [-441, -150]],
+          "height": 5,
+          "color": "#697986"
+        },
+        {
+          "footprint": [[-466, -172], [-439, -172], [-439, -150], [-466, -150]],
+          "height": 0.6,
+          "base": 5,
+          "color": "#004272"
+        },
+        {
+          "footprint": [[-466, -130], [-439, -130], [-439, -116], [-466, -116]],
+          "height": 5,
+          "color": "#E8ECEF"
+        },
+        {
+          "footprint": [[-466, -112], [-464, -112], [-464, -90], [-466, -90]],
+          "height": 5,
+          "color": "#697986"
+        },
+        {
+          "footprint": [[-441, -112], [-439, -112], [-439, -90], [-441, -90]],
+          "height": 5,
+          "color": "#697986"
+        },
+        {
+          "footprint": [[-466, -112], [-439, -112], [-439, -90], [-466, -90]],
+          "height": 0.6,
+          "base": 5,
+          "color": "#004272"
+        },
+        {
+          "footprint": [[-466, -70], [-439, -70], [-439, -56], [-466, -56]],
+          "height": 5,
+          "color": "#E8ECEF"
+        },
+        {
+          "footprint": [[-466, -52], [-464, -52], [-464, -30], [-466, -30]],
+          "height": 5,
+          "color": "#697986"
+        },
+        {
+          "footprint": [[-441, -52], [-439, -52], [-439, -30], [-441, -30]],
+          "height": 5,
+          "color": "#697986"
+        },
+        {
+          "footprint": [[-466, -52], [-439, -52], [-439, -30], [-466, -30]],
+          "height": 0.6,
+          "base": 5,
+          "color": "#004272"
+        },
+        {
+          "footprint": [[-466, -10], [-439, -10], [-439, 4], [-466, 4]],
+          "height": 5,
+          "color": "#E8ECEF"
+        },
+        {
+          "footprint": [[-466, 8], [-464, 8], [-464, 30], [-466, 30]],
+          "height": 5,
+          "color": "#697986"
+        },
+        {
+          "footprint": [[-441, 8], [-439, 8], [-439, 30], [-441, 30]],
+          "height": 5,
+          "color": "#697986"
+        },
+        {
+          "footprint": [[-466, 8], [-439, 8], [-439, 30], [-466, 30]],
+          "height": 0.6,
+          "base": 5,
+          "color": "#004272"
+        },
+        {
+          "footprint": [[-369, -250], [-342, -250], [-342, -236], [-369, -236]],
+          "height": 5,
+          "color": "#E8ECEF"
+        },
+        {
+          "footprint": [[-369, -232], [-367, -232], [-367, -210], [-369, -210]],
+          "height": 5,
+          "color": "#697986"
+        },
+        {
+          "footprint": [[-344, -232], [-342, -232], [-342, -210], [-344, -210]],
+          "height": 5,
+          "color": "#697986"
+        },
+        {
+          "footprint": [[-369, -232], [-342, -232], [-342, -210], [-369, -210]],
+          "height": 0.6,
+          "base": 5,
+          "color": "#004272"
+        },
+        {
+          "footprint": [[-369, -190], [-342, -190], [-342, -176], [-369, -176]],
+          "height": 5,
+          "color": "#E8ECEF"
+        },
+        {
+          "footprint": [[-369, -172], [-367, -172], [-367, -150], [-369, -150]],
+          "height": 5,
+          "color": "#697986"
+        },
+        {
+          "footprint": [[-344, -172], [-342, -172], [-342, -150], [-344, -150]],
+          "height": 5,
+          "color": "#697986"
+        },
+        {
+          "footprint": [[-369, -172], [-342, -172], [-342, -150], [-369, -150]],
+          "height": 0.6,
+          "base": 5,
+          "color": "#004272"
+        },
+        {
+          "footprint": [[-369, -130], [-342, -130], [-342, -116], [-369, -116]],
+          "height": 5,
+          "color": "#E8ECEF"
+        },
+        {
+          "footprint": [[-369, -112], [-367, -112], [-367, -90], [-369, -90]],
+          "height": 5,
+          "color": "#697986"
+        },
+        {
+          "footprint": [[-344, -112], [-342, -112], [-342, -90], [-344, -90]],
+          "height": 5,
+          "color": "#697986"
+        },
+        {
+          "footprint": [[-369, -112], [-342, -112], [-342, -90], [-369, -90]],
+          "height": 0.6,
+          "base": 5,
+          "color": "#004272"
+        },
+        {
+          "footprint": [[-369, -70], [-342, -70], [-342, -56], [-369, -56]],
+          "height": 5,
+          "color": "#E8ECEF"
+        },
+        {
+          "footprint": [[-369, -52], [-367, -52], [-367, -30], [-369, -30]],
+          "height": 5,
+          "color": "#697986"
+        },
+        {
+          "footprint": [[-344, -52], [-342, -52], [-342, -30], [-344, -30]],
+          "height": 5,
+          "color": "#697986"
+        },
+        {
+          "footprint": [[-369, -52], [-342, -52], [-342, -30], [-369, -30]],
+          "height": 0.6,
+          "base": 5,
+          "color": "#004272"
+        },
+        {
+          "footprint": [[-369, -10], [-342, -10], [-342, 4], [-369, 4]],
+          "height": 5,
+          "color": "#E8ECEF"
+        },
+        {
+          "footprint": [[-369, 8], [-367, 8], [-367, 30], [-369, 30]],
+          "height": 5,
+          "color": "#697986"
+        },
+        {
+          "footprint": [[-344, 8], [-342, 8], [-342, 30], [-344, 30]],
+          "height": 5,
+          "color": "#697986"
+        },
+        {
+          "footprint": [[-369, 8], [-342, 8], [-342, 30], [-369, 30]],
+          "height": 0.6,
+          "base": 5,
+          "color": "#004272"
+        }
+      ]
+    },
+    {
+      "id": "conference-footbridge",
+      "name": "Conference pedestrian bridge",
+      "category": "conference",
+      "type": "road",
+      "description": "Public bridge from the arrival concourse over the start-finish straight and pit lane. Ramped approaches connect to the south conference entrance and the hospitality walk without using paddock service aisles.",
+      "width": 6,
+      "color": "#D8CDB6",
+      "path": [[-800, 175], [-450, 175]],
+      "bridge": {
+        "start": 0,
+        "end": 350,
+        "ramp": 100,
+        "clearance": 10
+      }
+    },
+    {
+      "id": "conference-approach",
+      "name": "Conference entrance walk",
+      "category": "conference",
+      "type": "road",
+      "description": "Public concourse from the arrival plaza to the bridge, behind the main stands.",
+      "width": 7,
+      "color": "#D8CDB6",
+      "path": [[-810, 0], [-800, 0], [-800, 175]]
+    },
+    {
+      "id": "infield-guest-walk",
+      "name": "Infield guest walk",
+      "category": "conference",
+      "type": "road",
+      "description": "Guest route from the footbridge to the south conference entrance and hospitality courtyard. It remains south of the team compound and west of vehicle access.",
+      "width": 6,
+      "color": "#D8CDB6",
+      "path": [[-450, 175], [-280, 175], [-280, -120], [-255, -120]],
+      "branches": [
+        [[-450, 175], [-450, 110], [-510, 110], [-510, 96]]
+      ]
+    },
+    {
+      "id": "conference-entrance",
+      "name": "Conference entrance",
+      "category": "conference",
+      "type": "building",
+      "description": "Public south lobby of the pit building, separate from team loading behind the garages.",
+      "footprint": [[-530, 80], [-490, 80], [-490, 96], [-530, 96]],
+      "height": 5,
+      "color": "#00678C"
+    },
+    {
+      "id": "infield-hospitality",
+      "name": "Infield hospitality courtyard",
+      "category": "hospitality",
+      "type": "area",
+      "description": "Guest compound overlooking the southern return, with pavilions, shaded court and viewing terrace. Deliveries arrive at its north edge; guests approach from the west.",
+      "major": true,
+      "footprint": [[-255, -215], [-135, -215], [-135, -65], [-255, -65]],
+      "color": "#C7BDA5"
+    },
+    {
+      "id": "hospitality-pavilions",
+      "name": "Infield hospitality pavilions",
+      "category": "hospitality",
+      "type": "building",
+      "description": "Three permanent pavilions opening onto the shaded courtyard and southern viewing terrace.",
+      "color": "#A98660",
+      "parts": [
+        {
+          "footprint": [[-244, -195], [-220, -195], [-220, -173], [-244, -173]],
+          "height": 7,
+          "model": {
+            "file": "hospitality/lakeside-pavilion.glb",
+            "facing": "south"
+          }
+        },
+        {
+          "footprint": [[-207, -195], [-183, -195], [-183, -173], [-207, -173]],
+          "height": 7,
+          "model": {
+            "file": "hospitality/lakeside-pavilion.glb",
+            "facing": "south"
+          }
+        },
+        {
+          "footprint": [[-170, -195], [-146, -195], [-146, -173], [-170, -173]],
+          "height": 7,
+          "model": {
+            "file": "hospitality/lakeside-pavilion.glb",
+            "facing": "south"
+          }
+        }
+      ]
+    },
+    {
+      "id": "hospitality-terrace",
+      "name": "Infield viewing terrace",
+      "category": "hospitality",
+      "type": "area",
+      "description": "Open terrace looking south towards the return corners, behind the protective boundary.",
+      "footprint": [[-245, -110], [-145, -110], [-145, -75], [-245, -75]],
+      "color": "#BDB7A8"
+    },
+    {
+      "id": "hospitality-paths",
+      "name": "Hospitality courtyard paths",
+      "category": "hospitality",
+      "type": "road",
+      "description": "Pedestrian courtyard, pavilion entrances and viewing terrace connected to the public guest walk.",
+      "width": 4,
+      "color": "#E5DDCB",
+      "path": [[-255, -120], [-145, -120]],
+      "branches": [
+        [[-195, -215], [-195, -75]],
+        [[-233, -173], [-233, -120]],
+        [[-158, -173], [-158, -120]]
+      ]
+    },
+    {
+      "id": "hospitality-shade",
+      "name": "Hospitality shade court",
+      "category": "hospitality",
+      "type": "building",
+      "description": "Raised shade canopy around the guest courtyard.",
+      "color": "#E8ECEF",
+      "parts": [
+        {
+          "footprint": [[-241, -155], [-239, -155], [-239, -132], [-241, -132]],
+          "height": 4
+        },
+        {
+          "footprint": [[-213, -155], [-211, -155], [-211, -132], [-213, -132]],
+          "height": 4
+        },
+        {
+          "footprint": [[-185, -155], [-183, -155], [-183, -132], [-185, -132]],
+          "height": 4
+        },
+        {
+          "footprint": [[-157, -155], [-155, -155], [-155, -132], [-157, -132]],
+          "height": 4
+        },
+        {
+          "footprint": [[-241, -155], [-155, -155], [-155, -132], [-241, -132]],
+          "height": 0.4,
+          "base": 4,
+          "color": "#CFC4A6"
+        }
+      ]
+    },
+    {
+      "id": "infield-drainage",
+      "name": "Infield drainage swale",
+      "category": "conference",
+      "type": "area",
+      "description": "Planted drainage and open grass buffer through the central infield.",
+      "footprint": [[0, -220], [325, -220], [325, -210], [0, -210]],
+      "color": "#718755"
+    },
+    {
+      "id": "academy-handling-ground",
+      "name": "Academy handling ground",
+      "category": "academy",
+      "type": "area",
+      "description": "A dedicated vehicle-control and slalom compound north of the skid pan. Its access spur threads between karting and the skid pan without crossing either track.",
+      "major": true,
+      "footprint": [[-100, -590], [220, -590], [220, -505], [-100, -505]],
+      "color": "#A3A59A"
+    },
+    {
+      "id": "academy-handling-course",
+      "name": "Academy handling course",
+      "category": "academy",
+      "type": "road",
+      "description": "A low-speed handling loop with a separate slalom lane and clear service access. Permanent markings explain the use of the northern infield.",
+      "width": 6,
+      "color": "#60686E",
+      "closed": true,
+      "path": [[-80, -575, 12], [200, -575, 12], [200, -525, 12], [-80, -525, 12]],
+      "branches": [
+        [[-80, -550], [-35, -550], [0, -560], [35, -540], [70, -560], [105, -540], [150, -550], [200, -550]],
+        [[-80, -555], [-115, -555]]
+      ]
+    },
+    {
+      "id": "academy-briefing-bays",
+      "name": "Academy briefing bays",
+      "category": "academy",
+      "type": "building",
+      "description": "Covered preparation and briefing bays at the handling compound, served from its western access aisle.",
+      "color": "#E8ECEF",
+      "parts": [
+        {
+          "footprint": [[-90, -612], [-40, -612], [-40, -596], [-90, -596]],
+          "height": 5,
+          "color": "#00678C"
+        },
+        {
+          "footprint": [[-20, -612], [30, -612], [30, -596], [-20, -596]],
+          "height": 5,
+          "color": "#E8ECEF"
+        }
+      ]
+    },
+    {
+      "id": "automotive-demonstration-court",
+      "name": "Automotive demonstration court",
+      "category": "academy",
+      "type": "area",
+      "description": "A paved vehicle demonstration compound within the planted infield park. Connected to the automotive and academy service network, separate from the hospitality guest walks.",
+      "major": true,
+      "footprint": [[15, -200], [315, -200], [315, -105], [15, -105]],
+      "color": "#A6A69A"
+    },
+    {
+      "id": "automotive-demonstration-loop",
+      "name": "Automotive demonstration loop",
+      "category": "academy",
+      "type": "road",
+      "description": "A marked low-speed loop around vehicle display courts and preparation bays.",
+      "width": 7,
+      "color": "#697277",
+      "closed": true,
+      "path": [[40, -183, 15], [290, -183, 15], [290, -122, 15], [40, -122, 15]]
+    },
+    {
+      "id": "vehicle-display-courts",
+      "name": "Vehicle display courts",
+      "category": "academy",
+      "type": "area",
+      "description": "Permanent light-paved demonstration bays inside the automotive loop, with clear circulation around them.",
+      "footprint": [[75, -166], [255, -166], [255, -140], [75, -140]],
+      "color": "#D4CDBA"
+    },
+    {
+      "id": "automotive-preparation-bays",
+      "name": "Automotive preparation bays",
+      "category": "academy",
+      "type": "building",
+      "description": "Three low support pavilions on the demonstration court, grouped along its north service edge.",
+      "color": "#E8ECEF",
+      "parts": [
+        {
+          "footprint": [[60, -200], [105, -200], [105, -187], [60, -187]],
+          "height": 5,
+          "color": "#00678C"
+        },
+        {
+          "footprint": [[145, -200], [190, -200], [190, -187], [145, -187]],
+          "height": 5,
+          "color": "#00678C"
+        },
+        {
+          "footprint": [[230, -200], [275, -200], [275, -187], [230, -187]],
+          "height": 5,
+          "color": "#00678C"
+        }
+      ]
+    },
+    {
+      "id": "vehicle-display-markings",
+      "name": "Demonstration bay markings",
+      "category": "academy",
+      "type": "road",
+      "description": "Marked display bays inside the automotive demonstration loop.",
+      "width": 0.5,
+      "color": "#ECE8DB",
+      "closed": true,
+      "path": [[75, -166], [255, -166], [255, -140], [75, -140]],
+      "branches": [
+        [[105, -166], [105, -140]],
+        [[135, -166], [135, -140]],
+        [[165, -166], [165, -140]],
+        [[195, -166], [195, -140]],
+        [[225, -166], [225, -140]]
+      ]
     }
   ]
 }

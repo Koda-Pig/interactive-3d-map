@@ -4,6 +4,7 @@ import type { PathPoint } from "./path.ts";
 import { resolveOutline, resolvePath, samplePath } from "./path.ts";
 import type { Point } from "./polygon.ts";
 import { boundsOf, signedDistance } from "./polygon.ts";
+import { createTrackSafety } from "./track-safety.ts";
 
 const CELL_SIZE = 8;
 const PATH_STEP = 12;
@@ -72,6 +73,24 @@ export function occupancyOf(locations: readonly Location[], margin: number): Occ
       case "road": {
         const radius = location.width / 2 + (location.runoff ?? 0) + margin;
         occupancy.addPath(location.path, location.closed ?? false, radius);
+        if (location.safetyZones) {
+          const safety = createTrackSafety(location);
+          for (const sample of samplePath(
+            resolvePath(location.path, location.closed ?? false),
+            6,
+            location.closed ?? false,
+          )) {
+            for (const side of [-1, 1]) {
+              const { width } = safety(sample, side);
+              const offset = (location.width / 2 + width / 2) * side;
+              occupancy.addDisc(
+                sample.x - sample.dirZ * offset,
+                sample.z + sample.dirX * offset,
+                width / 2 + margin,
+              );
+            }
+          }
+        }
         for (const branch of location.branches ?? []) {
           occupancy.addPath(branch, false, radius);
         }

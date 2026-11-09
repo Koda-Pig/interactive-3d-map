@@ -99,6 +99,25 @@ export interface TrackLocation extends LocationBase {
   readonly startFinish?: Point;
   /** Spacing of the ribbon's cross-sections, for very long roads. */
   readonly step?: number;
+  /** Local outer runoff catchments; both rendering and protection use these. */
+  readonly safetyZones?: readonly TrackSafetyZone[];
+  /** Raised crossing, measured along this road, with ramps at both ends. */
+  readonly bridge?: BridgeProfile;
+}
+
+export interface TrackSafetyZone {
+  readonly at: Point;
+  readonly reach: number;
+  readonly side: -1 | 1;
+  readonly width: number;
+  readonly color: string;
+}
+
+export interface BridgeProfile {
+  readonly start: number;
+  readonly end: number;
+  readonly ramp: number;
+  readonly clearance: number;
 }
 
 export interface GateLocation extends LocationBase {
