@@ -45,7 +45,8 @@
         "vehicle-display-courts",
         "automotive-preparation-bays",
         "academy-campus-road",
-        "automotive-campus-road"
+        "automotive-campus-road",
+        "grandstand-fan-walk"
       ]
     },
     {
@@ -91,7 +92,8 @@
         "vehicle-display-courts",
         "automotive-preparation-bays",
         "academy-campus-road",
-        "automotive-campus-road"
+        "automotive-campus-road",
+        "car-park-8"
       ]
     }
   ],
@@ -119,24 +121,7 @@
     },
     {
       "id": "waterfront-terrace",
-      "footprint": [
-        [
-          -470,
-          440
-        ],
-        [
-          510,
-          440
-        ],
-        [
-          510,
-          900
-        ],
-        [
-          -470,
-          900
-        ]
-      ]
+      "footprint": [[-610, 400], [-430, 400], [-430, 440], [510, 440], [510, 900], [-470, 900], [-470, 700], [-610, 700]]
     },
     {
       "id": "aerodrome-terrace",
@@ -203,45 +188,7 @@
     },
     {
       "id": "academy-campus-terrace",
-      "footprint": [
-        [
-          -1130,
-          915
-        ],
-        [
-          -670,
-          915
-        ],
-        [
-          -670,
-          1210
-        ],
-        [
-          -1130,
-          1210
-        ]
-      ]
-    },
-    {
-      "id": "academy-handling-terrace",
-      "footprint": [
-        [
-          -700,
-          970
-        ],
-        [
-          -340,
-          970
-        ],
-        [
-          -340,
-          1120
-        ],
-        [
-          -700,
-          1120
-        ]
-      ]
+      "footprint": [[-1130, 915], [-670, 915], [-670, 970], [-340, 970], [-340, 1120], [-670, 1120], [-670, 1210], [-1130, 1210]]
     },
     {
       "id": "automotive-campus-terrace",
@@ -616,6 +563,18 @@
       "color": "#BDB7A8"
     },
     {
+      "id": "grandstand-fan-walk",
+      "name": "Grandstand Fan Walk",
+      "major": true,
+      "category": "conference",
+      "type": "road",
+      "description": "Tree-lined processional avenue from the gateway arch, through the arrival plaza, to a concourse behind Grandstands A and B. Banners line it all year, with food and merchandise stalls on race weekends.",
+      "width": 20,
+      "color": "#D9CBA8",
+      "path": [[-860, 0], [-707, 0]],
+      "branches": [[[-1016, 0], [-860, 0]], [[-707, -220], [-707, 150]]]
+    },
+    {
       "id": "gateway-arch",
       "name": "Gateway Arch",
       "category": "conference",
@@ -656,8 +615,12 @@
       "name": "Exhibition Hall 1",
       "category": "conference",
       "type": "building",
-      "model": { "file": "conference/conference-hall.glb", "facing": "south", "grid": [2, 2] },
-      "description": "Large clear-span hall for exhibitions and conventions.",
+      "model": {
+        "file": "conference/conference-hall.glb",
+        "facing": "south",
+        "grid": [2, 2]
+      },
+      "description": "Smaller exhibition hall beside the arrival plaza, for conventions and meetings. The largest shows use the lakeside Expo Centre.",
       "color": "#E8ECEF",
       "footprint": [[-960, -270], [-810, -270], [-810, -120], [-960, -120]],
       "height": 19
@@ -667,11 +630,117 @@
       "name": "Exhibition Hall 2",
       "category": "conference",
       "type": "building",
-      "model": { "file": "conference/conference-hall.glb", "facing": "north", "grid": [2, 2] },
-      "description": "Second exhibition hall, opening onto the arrival plaza.",
+      "model": {
+        "file": "conference/conference-hall.glb",
+        "facing": "north",
+        "grid": [2, 2]
+      },
+      "description": "Smaller exhibition hall beside the arrival plaza, for conventions and meetings. The largest shows use the lakeside Expo Centre.",
       "color": "#E8ECEF",
       "footprint": [[-960, 120], [-810, 120], [-810, 270], [-960, 270]],
       "height": 19
+    },
+    {
+      "id": "expo-centre",
+      "name": "Expo Centre",
+      "major": true,
+      "category": "conference",
+      "type": "building",
+      "description": "The venue's largest exhibition space: four connected halls on a glazed central concourse, about 5 hectares, facing the lake. Trucks load from Waterfront Drive on its western side.",
+      "color": "#E8ECEF",
+      "parts": [
+        {
+          "footprint": [[-605, 400], [-527, 400], [-527, 540], [-605, 540]],
+          "height": 24,
+          "model": {
+            "file": "conference/conference-hall.glb",
+            "facing": "south",
+            "grid": [1, 2]
+          }
+        },
+        {
+          "footprint": [[-518, 400], [-440, 400], [-440, 540], [-518, 540]],
+          "height": 24,
+          "model": {
+            "file": "conference/conference-hall.glb",
+            "facing": "south",
+            "grid": [1, 2]
+          }
+        },
+        {
+          "footprint": [[-605, 560], [-527, 560], [-527, 700], [-605, 700]],
+          "height": 24,
+          "model": {
+            "file": "conference/conference-hall.glb",
+            "facing": "north",
+            "grid": [1, 2]
+          }
+        },
+        {
+          "footprint": [[-518, 560], [-440, 560], [-440, 700], [-518, 700]],
+          "height": 24,
+          "model": {
+            "file": "conference/conference-hall.glb",
+            "facing": "north",
+            "grid": [1, 2]
+          }
+        },
+        {
+          "footprint": [[-605, 540], [-452, 540], [-452, 560], [-605, 560]],
+          "height": 17,
+          "color": "#7FA9BF"
+        },
+        {
+          "footprint": [[-452, 528], [-428, 528], [-428, 572], [-452, 572]],
+          "height": 27,
+          "color": "#00678C"
+        },
+        {
+          "footprint": [[-428, 532], [-406, 532], [-406, 568], [-428, 568]],
+          "base": 9,
+          "height": 1.5,
+          "color": "#004272"
+        },
+        {
+          "footprint": [[-408, 533], [-406, 533], [-406, 535], [-408, 535]],
+          "height": 9,
+          "color": "#33404B"
+        },
+        {
+          "footprint": [[-408, 565], [-406, 565], [-406, 567], [-408, 567]],
+          "height": 9,
+          "color": "#33404B"
+        }
+      ]
+    },
+    {
+      "id": "expo-forecourt",
+      "name": "Expo forecourt",
+      "category": "conference",
+      "type": "area",
+      "description": "Lake-facing public arrival court for the Expo Centre, connected to the lakeside promenade.",
+      "footprint": [[-428, 470], [-402, 470], [-402, 630], [-428, 630]],
+      "color": "#BDB7A8"
+    },
+    {
+      "id": "expo-loading-yard",
+      "name": "Expo loading yard",
+      "category": "conference",
+      "type": "area",
+      "description": "Truck docks along the western side of the Expo Centre, served directly from Waterfront Drive and kept apart from visitors.",
+      "footprint": [[-632, 400], [-605, 400], [-605, 700], [-632, 700]],
+      "color": "#9A9C9A"
+    },
+    {
+      "id": "expo-walk",
+      "name": "Expo Walk",
+      "category": "conference",
+      "type": "road",
+      "description": "Public walk from the arrival concourse and Car Park P8 to the Expo Centre forecourt, with a branch to the lakeside promenade.",
+      "width": 7,
+      "color": "#D8CDB6",
+      "path": [[-800, 175], [-800, 375, 12], [-415, 375, 12], [-415, 475]],
+      "branches": [[[-760, 420], [-760, 375]], [[-402, 555], [-325, 555]]]
     },
     {
       "id": "amphitheatre",
@@ -970,6 +1039,165 @@
       "height": 10
     },
     {
+      "id": "karting-garages",
+      "name": "Karting Garages",
+      "category": "academy",
+      "type": "building",
+      "description": "Two rows of small lock-up garages beside the clubhouse, opening onto the karting pit apron, with rear access from the campus road.",
+      "color": "#E8ECEF",
+      "parts": [
+        {
+          "footprint": [[-1086, 1170], [-1002, 1170], [-1002, 1184], [-1086, 1184]],
+          "height": 4.2
+        },
+        {
+          "footprint": [[-1085.85, 1168.4], [-1074.15, 1168.4], [-1074.15, 1184.6], [-1085.85, 1184.6]],
+          "base": 4.2,
+          "height": 0.4,
+          "color": "#33404B"
+        },
+        {
+          "footprint": [[-1073.85, 1168.4], [-1062.15, 1168.4], [-1062.15, 1184.6], [-1073.85, 1184.6]],
+          "base": 4.2,
+          "height": 0.4,
+          "color": "#46586A"
+        },
+        {
+          "footprint": [[-1061.85, 1168.4], [-1050.15, 1168.4], [-1050.15, 1184.6], [-1061.85, 1184.6]],
+          "base": 4.2,
+          "height": 0.4,
+          "color": "#33404B"
+        },
+        {
+          "footprint": [[-1049.85, 1168.4], [-1038.15, 1168.4], [-1038.15, 1184.6], [-1049.85, 1184.6]],
+          "base": 4.2,
+          "height": 0.4,
+          "color": "#46586A"
+        },
+        {
+          "footprint": [[-1037.85, 1168.4], [-1026.15, 1168.4], [-1026.15, 1184.6], [-1037.85, 1184.6]],
+          "base": 4.2,
+          "height": 0.4,
+          "color": "#33404B"
+        },
+        {
+          "footprint": [[-1025.85, 1168.4], [-1014.15, 1168.4], [-1014.15, 1184.6], [-1025.85, 1184.6]],
+          "base": 4.2,
+          "height": 0.4,
+          "color": "#46586A"
+        },
+        {
+          "footprint": [[-1013.85, 1168.4], [-1002.15, 1168.4], [-1002.15, 1184.6], [-1013.85, 1184.6]],
+          "base": 4.2,
+          "height": 0.4,
+          "color": "#33404B"
+        },
+        {
+          "footprint": [[-1084.5, 1169.6], [-1075.5, 1169.6], [-1075.5, 1170], [-1084.5, 1170]],
+          "height": 3.3,
+          "color": "#004272"
+        },
+        {
+          "footprint": [[-1072.5, 1169.6], [-1063.5, 1169.6], [-1063.5, 1170], [-1072.5, 1170]],
+          "height": 3.3,
+          "color": "#00678C"
+        },
+        {
+          "footprint": [[-1060.5, 1169.6], [-1051.5, 1169.6], [-1051.5, 1170], [-1060.5, 1170]],
+          "height": 3.3,
+          "color": "#004272"
+        },
+        {
+          "footprint": [[-1048.5, 1169.6], [-1039.5, 1169.6], [-1039.5, 1170], [-1048.5, 1170]],
+          "height": 3.3,
+          "color": "#00678C"
+        },
+        {
+          "footprint": [[-1036.5, 1169.6], [-1027.5, 1169.6], [-1027.5, 1170], [-1036.5, 1170]],
+          "height": 3.3,
+          "color": "#004272"
+        },
+        {
+          "footprint": [[-1024.5, 1169.6], [-1015.5, 1169.6], [-1015.5, 1170], [-1024.5, 1170]],
+          "height": 3.3,
+          "color": "#00678C"
+        },
+        {
+          "footprint": [[-1012.5, 1169.6], [-1003.5, 1169.6], [-1003.5, 1170], [-1012.5, 1170]],
+          "height": 3.3,
+          "color": "#004272"
+        },
+        {
+          "footprint": [[-954, 1170], [-894, 1170], [-894, 1184], [-954, 1184]],
+          "height": 4.2
+        },
+        {
+          "footprint": [[-953.85, 1168.4], [-942.15, 1168.4], [-942.15, 1184.6], [-953.85, 1184.6]],
+          "base": 4.2,
+          "height": 0.4,
+          "color": "#33404B"
+        },
+        {
+          "footprint": [[-941.85, 1168.4], [-930.15, 1168.4], [-930.15, 1184.6], [-941.85, 1184.6]],
+          "base": 4.2,
+          "height": 0.4,
+          "color": "#46586A"
+        },
+        {
+          "footprint": [[-929.85, 1168.4], [-918.15, 1168.4], [-918.15, 1184.6], [-929.85, 1184.6]],
+          "base": 4.2,
+          "height": 0.4,
+          "color": "#33404B"
+        },
+        {
+          "footprint": [[-917.85, 1168.4], [-906.15, 1168.4], [-906.15, 1184.6], [-917.85, 1184.6]],
+          "base": 4.2,
+          "height": 0.4,
+          "color": "#46586A"
+        },
+        {
+          "footprint": [[-905.85, 1168.4], [-894.15, 1168.4], [-894.15, 1184.6], [-905.85, 1184.6]],
+          "base": 4.2,
+          "height": 0.4,
+          "color": "#33404B"
+        },
+        {
+          "footprint": [[-952.5, 1169.6], [-943.5, 1169.6], [-943.5, 1170], [-952.5, 1170]],
+          "height": 3.3,
+          "color": "#004272"
+        },
+        {
+          "footprint": [[-940.5, 1169.6], [-931.5, 1169.6], [-931.5, 1170], [-940.5, 1170]],
+          "height": 3.3,
+          "color": "#00678C"
+        },
+        {
+          "footprint": [[-928.5, 1169.6], [-919.5, 1169.6], [-919.5, 1170], [-928.5, 1170]],
+          "height": 3.3,
+          "color": "#004272"
+        },
+        {
+          "footprint": [[-916.5, 1169.6], [-907.5, 1169.6], [-907.5, 1170], [-916.5, 1170]],
+          "height": 3.3,
+          "color": "#00678C"
+        },
+        {
+          "footprint": [[-904.5, 1169.6], [-895.5, 1169.6], [-895.5, 1170], [-904.5, 1170]],
+          "height": 3.3,
+          "color": "#004272"
+        }
+      ]
+    },
+    {
+      "id": "karting-pit-apron",
+      "name": "Karting pit apron",
+      "category": "academy",
+      "type": "area",
+      "description": "Paved working apron between the karting garages and the track.",
+      "footprint": [[-1090, 1162], [-890, 1162], [-890, 1170], [-1090, 1170]],
+      "color": "#A9A79E"
+    },
+    {
       "id": "driving-academy",
       "name": "Driving Academy",
       "category": "academy",
@@ -985,12 +1213,34 @@
     },
     {
       "id": "skid-pan",
-      "name": "Academy Skid Pan",
+      "name": "Academy Skid Pad",
       "category": "academy",
       "type": "area",
-      "description": "Car-control training surface in the separate south-west academy campus.",
-      "footprint": [[-780, 995, 40], [-680, 995, 40], [-680, 1095, 40], [-780, 1095, 40]],
-      "color": "#96989A"
+      "description": "Open square of low-grip surface where drivers learn to control skids and slides, with painted circles and cones. Part of the driving academy and advanced driving courses.",
+      "footprint": [[-780, 995], [-680, 995], [-680, 1095], [-780, 1095]],
+      "color": "#6B7277"
+    },
+    {
+      "id": "skid-pad-markings",
+      "name": "Skid pad markings",
+      "category": "academy",
+      "type": "road",
+      "description": "Painted boundary and two control circles on the skid pad.",
+      "width": 0.6,
+      "color": "#ECE8DB",
+      "closed": true,
+      "path": [[-775, 1000], [-685, 1000], [-685, 1090], [-775, 1090]],
+      "branches": [[[-690, 1045], [-690.6, 1051.9], [-692.4, 1058.7], [-695.4, 1065], [-699.4, 1070.7], [-704.3, 1075.6], [-710, 1079.6], [-716.3, 1082.6], [-723.1, 1084.4], [-730, 1085], [-736.9, 1084.4], [-743.7, 1082.6], [-750, 1079.6], [-755.7, 1075.6], [-760.6, 1070.7], [-764.6, 1065], [-767.6, 1058.7], [-769.4, 1051.9], [-770, 1045], [-769.4, 1038.1], [-767.6, 1031.3], [-764.6, 1025], [-760.6, 1019.3], [-755.7, 1014.4], [-750, 1010.4], [-743.7, 1007.4], [-736.9, 1005.6], [-730, 1005], [-723.1, 1005.6], [-716.3, 1007.4], [-710, 1010.4], [-704.3, 1014.4], [-699.4, 1019.3], [-695.4, 1025], [-692.4, 1031.3], [-690.6, 1038.1], [-690, 1045]], [[-710, 1045], [-710.7, 1050.2], [-712.7, 1055], [-715.9, 1059.1], [-720, 1062.3], [-724.8, 1064.3], [-730, 1065], [-735.2, 1064.3], [-740, 1062.3], [-744.1, 1059.1], [-747.3, 1055], [-749.3, 1050.2], [-750, 1045], [-749.3, 1039.8], [-747.3, 1035], [-744.1, 1030.9], [-740, 1027.7], [-735.2, 1025.7], [-730, 1025], [-724.8, 1025.7], [-720, 1027.7], [-715.9, 1030.9], [-712.7, 1035], [-710.7, 1039.8], [-710, 1045]]]
+    },
+    {
+      "id": "skid-pad-control",
+      "name": "Skid pad control cabin",
+      "category": "academy",
+      "type": "building",
+      "description": "Instructor cabin overlooking the skid pad.",
+      "color": "#E8ECEF",
+      "footprint": [[-742, 981], [-718, 981], [-718, 993], [-742, 993]],
+      "height": 7
     },
     {
       "id": "automotive-hub",
@@ -1174,7 +1424,7 @@
       "name": "Waterfront Drive",
       "category": "transport",
       "type": "road",
-      "description": "Loop road serving the hotels and the south side of the lake.",
+      "description": "Loop road serving the hotels, the south side of the lake and the Expo Centre loading yard.",
       "width": 11,
       "color": "#777B7F",
       "path": [[-640, 345], [-640, 950, 90], [660, 950, 90], [660, 345]]
@@ -1314,7 +1564,7 @@
     },
     {
       "id": "fan-walk",
-      "name": "Fan Walk",
+      "name": "Station Fan Walk",
       "category": "transport",
       "type": "road",
       "description": "Walking route from Kalbaskraal station around the outside of the automotive campus to the eastern ring-road entrance.",
@@ -2036,17 +2286,11 @@
       "name": "Academy campus access",
       "category": "transport",
       "type": "road",
-      "description": "External access from the western ring road to karting, classrooms, skid pan and handling ground.",
+      "description": "External access from the western ring road to karting, its garages, classrooms, skid pad and handling ground.",
       "width": 10,
       "color": "#777B7F",
       "path": [[-1040, 250], [-1040, 880, 35], [-800, 880, 35], [-800, 1205]],
-      "branches": [
-        [[-800, 1205], [-990, 1205]],
-        [[-978, 1205], [-978, 1184]],
-        [[-860, 1205], [-860, 1192]],
-        [[-800, 1115], [-500, 1115], [-500, 1065]],
-        [[-800, 1045], [-780, 1045]]
-      ]
+      "branches": [[[-800, 1205], [-990, 1205]], [[-978, 1205], [-978, 1184]], [[-860, 1205], [-860, 1192]], [[-800, 1115], [-500, 1115], [-500, 1065]], [[-800, 1045], [-780, 1045]], [[-990, 1205], [-1044, 1205], [-1044, 1184]], [[-924, 1205], [-924, 1184]]]
     },
     {
       "id": "automotive-campus-road",

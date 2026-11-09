@@ -89,8 +89,8 @@ export const SCENERY_MODELS: readonly string[] = [
 ];
 
 const AVENUE_ROADS = ["ring-road", "waterfront-drive"];
-/** The car parks beside the halls come first in the data. */
-const CONFERENCE_CAR_PARKS = 3;
+/** The car parks beside the halls and the Expo Centre. */
+const CONFERENCE_CAR_PARKS = ["car-park-1", "car-park-2", "car-park-3", "car-park-8"];
 
 const BARRIER_TILE = 10;
 const BARRIER_LIFT = 0.8;
@@ -212,6 +212,19 @@ function createCar(): BufferGeometry {
     throw new Error("The car's parts could not be merged");
   }
   return merged;
+}
+
+/** A team or exhibition transporter, long axis on Z. */
+function createTransporter(): BufferGeometry {
+  const trailer = colorize(openBox(3, 3.7, 14, 2.1, 0), () => [0.9, 0.93, 0.95]);
+  const cab = colorize(openBox(3, 3, 3.5, 1.7, 8.5), () => [0.02, 0.26, 0.45]);
+  const truck = mergeGeometries([trailer, cab]);
+  if (!truck) throw new Error("The transporter parts could not be merged");
+  return truck;
+}
+
+function createPerson(): BufferGeometry {
+  return colorize(openBox(0.6, 1.7, 0.6, 0.85, 0), () => [0.05, 0.4, 0.55]);
 }
 
 const CAR_PAINTS = ["#E8ECEF", "#C9D0D6", "#7C858E", "#22303C", "#8A2B2B", "#004272"].map(
@@ -711,10 +724,7 @@ function placeMarquees(context: Context, instances: Instances): void {
 
 /** Temporary race activity sits inside the permanent compound organisation. */
 function placeTeamActivity(context: Context, teams: Instances, guests: Instances): void {
-  const trailer = colorize(openBox(3, 3.7, 14, 2.1, 0), () => [0.9, 0.93, 0.95]);
-  const cab = colorize(openBox(3, 3, 3.5, 1.7, 8.5), () => [0.02, 0.26, 0.45]);
-  const truck = mergeGeometries([trailer, cab]);
-  if (!truck) throw new Error("The transporter parts could not be merged");
+  const truck = createTransporter();
   const support = locationById<BuildingLocation>("team-support-rows");
   for (const part of buildingParts(support).filter((part) => part.base === 5)) {
     const [x, z] = centreOf(resolveOutline(part.footprint));
@@ -728,7 +738,7 @@ function placeTeamActivity(context: Context, teams: Instances, guests: Instances
   for (const x of [-225, -170]) {
     placeModel(context, guests, MARQUEE, { x, z: -93, scale: 0.65 });
   }
-  const person = colorize(openBox(0.6, 1.7, 0.6, 0.85, 0), () => [0.05, 0.4, 0.55]);
+  const person = createPerson();
   for (let index = 0; index < 36; index += 1) {
     const x = -243 + (index % 12) * 8;
     const z = -124 + Math.floor(index / 12) * 5;
@@ -759,6 +769,119 @@ function placeAcademyActivity(context: Context, instances: Instances, car: Buffe
     for (const side of [-1, 1]) {
       instances.add(cone, { x, z: z + side * 4, y: context.surface.heightAt(x, z) + 0.35 });
     }
+  }
+  const pad = boundsOf(resolveOutline(locationById<AreaLocation>("skid-pan").footprint));
+  const padX = (pad.minX + pad.maxX) / 2;
+  const padZ = (pad.minZ + pad.maxZ) / 2;
+  const padY = context.surface.heightAt(padX, padZ);
+  for (let step = 0; step < 12; step += 1) {
+    const angle = (step / 12) * TWO_PI;
+    instances.add(cone, {
+      x: padX + Math.cos(angle) * 20,
+      z: padZ + Math.sin(angle) * 20,
+      y: padY + 0.35,
+    });
+  }
+  for (const [index, angle] of [0.6, 3.9].entries()) {
+    instances.add(car, {
+      x: padX + Math.cos(angle) * 30,
+      z: padZ + Math.sin(angle) * 30,
+      y: padY + 0.3,
+      yaw: 0.9 - angle,
+      tint: CAR_PAINTS[5 - index],
+    });
+  }
+}
+
+function grandstandFanWalk() {
+  const walk = locationById<TrackLocation>("grandstand-fan-walk");
+  // The main path is the avenue east of the plaza, which is where its label belongs.
+  const [[, axisZ], [endX]] = walk.path;
+  const [plazaAxis, concourse] = walk.branches ?? [];
+  if (!plazaAxis || !concourse) throw new Error("The Grandstand Fan Walk needs both branches");
+  const [[startX]] = plazaAxis;
+  const [[concourseX, northZ], [, southZ]] = concourse;
+  return { startX, endX, axisZ, concourseX, northZ, southZ, halfWidth: walk.width / 2 };
+}
+
+/** Olive trees either side of the avenue and along the concourse's outer edge. */
+function plantFanWalk(context: Context, instances: Instances): void {
+  const { startX, endX, axisZ, concourseX, northZ, southZ, halfWidth } = grandstandFanWalk();
+  const setback = halfWidth + 6.5;
+  for (let x = startX + 20; x < endX - setback; x += 24) {
+    for (const side of [-1, 1]) {
+      const z = axisZ + side * setback;
+      if (!context.built.isTaken(x, z)) placeTree(context, instances, "olive", x, z);
+    }
+  }
+  for (let z = northZ + 10; z < southZ; z += 28) {
+    const x = concourseX - setback;
+    if (!context.built.isTaken(x, z)) placeTree(context, instances, "olive", x, z);
+  }
+}
+
+/** Permanent team-colour banners, so the walk reads as a route on any day. */
+function placeFanWalkBanners(context: Context, instances: Instances): void {
+  const { startX, endX, axisZ, halfWidth } = grandstandFanWalk();
+  const banner = colorize(openBox(0.25, 7, 1.6, 5, 0), () => [1, 1, 1]);
+  const colors = [new Color("#004272"), new Color("#00678C")];
+  let index = 0;
+  for (let x = startX + 32; x < endX - halfWidth; x += 24) {
+    for (const side of [-1, 1]) {
+      const z = axisZ + side * (halfWidth + 2);
+      instances.add(banner, {
+        x,
+        z,
+        y: context.surface.heightAt(x, z),
+        tint: colors[index % colors.length],
+      });
+    }
+    index += 1;
+  }
+}
+
+/** Race weekend stalls and crowds along the avenue and concourse. */
+function placeFanWalkCrowd(context: Context, instances: Instances): void {
+  const { startX, endX, axisZ, concourseX, northZ, southZ, halfWidth } = grandstandFanWalk();
+  const stallSetback = halfWidth + 15;
+  for (let x = -795; x < endX - stallSetback; x += 16) {
+    for (const side of [-1, 1]) {
+      const z = axisZ + side * stallSetback;
+      if (!context.built.isTaken(x, z)) placeModel(context, instances, FOOD_STALL, { x, z });
+    }
+  }
+  for (let z = northZ + 8; z < southZ; z += 22) {
+    const x = concourseX - stallSetback;
+    if (Math.abs(z - axisZ) > stallSetback && !context.built.isTaken(x, z)) {
+      placeModel(context, instances, FOOD_STALL, { x, z, yaw: Math.PI / 2 });
+    }
+  }
+  const person = createPerson();
+  const crowd = Math.round(320 * context.density);
+  for (let index = 0; index < crowd; index += 1) {
+    const onAvenue = index % 3 !== 0;
+    const across = (context.random() - 0.5) * halfWidth * 1.8;
+    const along = context.random();
+    const x = onAvenue ? startX + along * (endX - startX) : concourseX + across;
+    const z = onAvenue ? axisZ + across : northZ + along * (southZ - northZ);
+    instances.add(person, { x, z, y: context.surface.heightAt(x, z) + 0.3 });
+  }
+}
+
+/** Show trucks at the docks and guest marquees on the lake forecourt. */
+function placeExpoActivity(context: Context, instances: Instances): void {
+  const truck = createTransporter();
+  const yard = boundsOf(resolveOutline(locationById<AreaLocation>("expo-loading-yard").footprint));
+  const x = (yard.minX + yard.maxX) / 2;
+  for (let z = yard.minZ + 18; z < yard.maxZ; z += 36) {
+    instances.add(truck, { x, z, yaw: -Math.PI / 2, y: context.surface.heightAt(x, z) + 0.3 });
+  }
+  const forecourt = boundsOf(
+    resolveOutline(locationById<AreaLocation>("expo-forecourt").footprint),
+  );
+  const courtX = (forecourt.minX + forecourt.maxX) / 2;
+  for (const z of [forecourt.minZ + 22, forecourt.maxZ - 22]) {
+    placeModel(context, instances, MARQUEE, { x: courtX, z, scale: 0.7, sink: -0.3 });
   }
 }
 
@@ -814,6 +937,7 @@ export function createScenery(kit: Kit, surface: GroundSurface, quality: Quality
   plantSiteEdge(context, trees);
   plantAvenues(context, trees);
   plantAreas(context, trees);
+  plantFanWalk(context, trees);
   plantFarmland(context, trees);
   scatterUnderbrush(context, trees);
   plantWindbreaks(context, trees, farTrees, createFarTree());
@@ -851,6 +975,9 @@ export function createScenery(kit: Kit, surface: GroundSurface, quality: Quality
   const academy = new Instances();
   placeAcademyActivity(context, academy, car);
   group("academy").add(...academy.build(true));
+  const banners = new Instances();
+  placeFanWalkBanners(context, banners);
+  group("conference").add(...banners.build(true));
   const parks = carParks();
 
   const raceCars = new Instances();
@@ -862,17 +989,19 @@ export function createScenery(kit: Kit, surface: GroundSurface, quality: Quality
   const raceTrackside = new Instances();
   placeRaceGrid(context, raceTrackside);
   placeFoodStalls(context, raceTrackside);
+  placeFanWalkCrowd(context, raceTrackside);
   const raceGuests = new Instances();
   placeTeamActivity(context, raceTrackside, raceGuests);
 
   const conferenceCars = new Instances();
-  for (const park of parks.slice(0, CONFERENCE_CAR_PARKS)) {
+  for (const park of parks.filter(({ id }) => CONFERENCE_CAR_PARKS.includes(id))) {
     parkCars(context, conferenceCars, car, park, 0.22 * quality.sceneryDensity);
   }
   const conferenceShuttles = new Instances();
   placeShuttles(context, conferenceShuttles, 3);
   const conferenceTents = new Instances();
   placeMarquees(context, conferenceTents);
+  placeExpoActivity(context, conferenceTents);
 
   const events = new Map<string, readonly Object3D[]>([
     [
