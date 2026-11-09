@@ -4,7 +4,7 @@ An interactive 3D concept map of the planned **Blue Mountain Racing** motorsport
 
 The layout is illustrative. There's no published masterplan yet.
 
-**Status:** planning. No code yet.
+**Status:** Phase 1 of the build plan is done: empty farmland you can move around.
 
 ## Docs
 
@@ -25,9 +25,11 @@ The layout is illustrative. There's no published masterplan yet.
 
 ## Running it
 
-Not set up yet. Once Phase 1 of the plan lands this will be:
-
 ```bash
 npm install
 npm run dev
 ```
+
+`npm run build` type-checks and writes a production build to `dist/`.
+
+Left-drag pans, right-drag rotates and scrolling zooms. On touch, one finger pans and two fingers zoom and rotate.
