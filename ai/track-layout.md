@@ -10,7 +10,7 @@ The user identified too much unused space inside the circuit. The supplied photo
 
 Before this correction, the layout put `pit-lane`, `pit-conference-building`, and `paddock` west of the start-finish straight, outside the circuit. `grandstand-a` and `grandstand-b` occupied its eastern, infield side. That arrangement concentrated the racing facilities outside and contributed to the empty appearance inside.
 
-The infield contains the academy, karting facilities, automotive facilities, and `infield-park`. Retain those functions or deliberately relocate them when making room for the pit complex. They are not vacant land.
+Earlier passes placed the academy, karting, and automotive facilities inside the circuit. The user subsequently asked for an infield centred on pits, team tents, and limited VIP activity. Those wider functions now occupy external campuses. Their former footprints are available for the revised circuit, runoff, and operations reserve.
 
 The intended correction is a connected, visibly organised infield. Change the placement and use of facilities first. Reassess the track shape after that work.
 
@@ -23,7 +23,7 @@ The intended correction is a connected, visibly organised infield. Change the pl
 | Paddock | Place the paddock immediately behind the garages. Provide rows of team transporters, equipment awnings, support structures, loading spaces, and connected service aisles. | A paddock needs visible organisation and room for operations. A plain paved rectangle does not communicate that use. |
 | Hospitality | Add a distinct infield hospitality compound near a useful track view, with marquees or pavilions, terraces, shaded courtyards, and footpaths. | Creates a second area of activity and explains how guests use the infield. Keep guest paths separate from team loading and service aisles. |
 | Conference access | Retain a legible public entrance and pedestrian route to the conference floors of the pit building. | Relocating the building must preserve its year-round conference role. |
-| Infield access | Connect the paddock, hospitality, academy, and automotive facilities to a service road network. Show tunnel portals or a bridge where access crosses the circuit. | Facilities inside a closed circuit need a credible way in. A road description mentioning a tunnel is insufficient if the scene shows an unexplained crossing. |
+| Access | Connect the infield paddock, logistics yard, and hospitality deliveries through a visible operations bridge. Connect the external academy and automotive campuses directly to the ring road. | Restricted racing operations and year-round training traffic need distinct routes. Every circuit crossing must have visible infrastructure. |
 | Open ground | Keep defined grass, planting, drainage areas, and open ground between compounds and track sections. | The references contain open space with a visible purpose. Avoid scattering unrelated buildings through every gap. |
 
 For the pit complex, preserve this sequence from the straight into the infield:
@@ -42,11 +42,13 @@ Keep occupied buildings, hospitality, and spectators behind the intended protect
 
 These are requirements for a credible concept illustration. The photographs do not establish safe dimensions or regulatory compliance. Actual runoff and protective systems require specialist circuit design.
 
-## Track geometry after the second review
+## Current design direction
 
-The first relocation pass kept the circuit path. The user then reported that the overall layout still looked the same and approved a second pass covering both a tighter circuit and clearer infield uses. The eastern technical section and southern return now move inward. The return from the long-straight hairpin extends farther west to retain the lap length. This replaces the earlier decision to leave the circuit outline unchanged.
+The user asked to commit the second pass, then improve track realism with a more limited operational infield. Commit `27d41fc` preserves that checkpoint. This revision replaces the training-filled infield with garages, paddock rows, a team logistics yard, compact VIP hospitality, and reserved grass and drainage ground.
 
-Preserve the project targets recorded in [the overview](../docs/overview.md): approximately 4.8 km per lap, a start-finish straight of at least 600 m, a separate full-throttle straight of at least 1 km, and at least 12 m of track width. Keep natural elevation and intended overtaking opportunities.
+The academy and automotive functions remain part of the venue in external campuses. They are deliberately relocated, not removed. The racing section has fewer corners and a flowing middle sequence instead of the previous series of short rectangular bends.
+
+Preserve the project targets recorded in [the overview](../docs/overview.md): approximately 4.8 km per lap, a start-finish straight of at least 600 m, a separate full-throttle straight of at least 1 km, and at least 12 m of track width. Keep natural elevation and intended overtaking opportunities. The user's preference for this concept does not establish that every real circuit has a small infield.
 
 ## Review criteria for implementation and future changes
 
@@ -68,25 +70,27 @@ When revising these decisions, record the replacement arrangement and its reason
 
 ## Implemented arrangement
 
-The second pass changes the circuit outline as well as the facilities. The rounded centreline encloses about 84.3 hectares, down from 98.0 hectares in the first relocation pass. That is approximately 14% less enclosed land.
+The circuit measures about 4,800 m. Its rounded centreline encloses about 62.0 hectares, compared with 84.3 hectares at the checkpoint. The starting straight and separate long straight retain their positions. The middle section uses a 65 m braking corner, a 100 m connecting bend, and an 85 m sweeper before the southern return. The long-straight hairpin uses a continuous 42.5 m radius through its two quarter-arcs. These radii describe the illustration, not a validated speed profile.
 
-- The start-finish straight remains at `x = -600`. The pit lane runs east of it at `x = -566`, followed by a working apron and west-facing garages. The paddock sits immediately behind the garages, from `x = -482` to `-325`.
-- Grandstands A and B sit west of the straight and face east. Grandstands C and D and the affected spectator banks move clear of the enlarged runoff. Banks 2 to 5 follow the revised eastern and southern sections.
-- Two permanent team rows contain support units and covered equipment bays. Longitudinal aisles and transverse lanes connect loading courts to the rear service spine. Race mode adds transporters beneath the awnings.
-- Hospitality occupies a separate compound west of the vehicle route, with three permanent pavilions, a shade court, a southern viewing terrace, and connected paths. Deliveries reach the northern edge. The public walk reaches the western edge without entering team service aisles.
-- A public footbridge crosses the straight and pit exit at `z = 175`, south of Grandstand A. Its eastern ground-level landing connects to the south conference lobby and hospitality walk. The bridge moved south during visual review because its initial position intersected the grandstand roof.
-- A separate service bridge at `x = -100` crosses the southern return. Visible decks, parapets, abutments, and ramps replace the unexplained at-grade crossing. Its branches serve the paddock, academy, karting clubhouse, automotive hub, and hospitality delivery entrance.
-- The eastern technical section now turns through `x = 390` to `500`, rather than extending to `705`. The long-straight return reaches `x = 280`, and the southern return reaches `z = 115` rather than `170`. The start-finish straight, long straight, pit complex, and western return retain their positions.
-- The academy, karting track, and existing automotive facilities retain their footprints. A connected handling loop and slalom compound fill the ground north of the skid pan, with covered briefing bays. The service spur passes between karting and the skid pan, and also connects the skid pan.
-- A separate automotive demonstration court occupies part of the central infield, with a low-speed loop, preparation bays, marked display spaces, and permanent display cars. Guest paths remain west of the vehicle route. The park remains as planted grass buffers around the court, with a drainage strip along its northern edge.
-- Grading zones level the pit compound, hospitality, handling compound, and park while roads follow the rendered terrain. The opening camera is higher and points towards the infield so these relationships are visible without first rotating the map.
-- Four-metre grass verges replace the uniform 12 m band. Six local outside runoff profiles widen selected corners, with teal or navy paving and gravel. `src/layout/track-safety.ts` supplies the same widths to the ribbons, protective boundary, marshal placements, and scenery exclusion rules. Elevated crossings do not remove the barriers beneath them.
+- The start-finish straight remains at `x = -600`. The infield sequence remains pit wall, pit lane at `x = -566`, working apron, west-facing garages, paddock, and rear service access. The pit entry leaves the straight before the final western bend, and both entry and exit match the racing direction at their joins. Grandstands A and B face the garages from outside.
+- Two permanent team rows contain support units and covered equipment bays. Clear longitudinal and transverse aisles connect them to the service spine. A northern logistics yard adds equipment tents, truck holding, and a separate loading aisle. Race mode adds transporters to the covered bays and logistics yard.
+- VIP hospitality remains a compact compound west of the operations bridge, with three pavilions, a shade court, a viewing terrace, and connected paths. Deliveries reach its northern edge. Public access reaches its western edge without entering team loading aisles.
+- The public footbridge crosses the straight and pit exit at `z = 175`, south of Grandstand A. Its eastern ground-level landing connects to the south conference lobby and VIP walk. The operations bridge at `x = -100` crosses the southern racing section and serves the paddock, logistics yard, and hospitality deliveries.
+- Karting, classrooms, the skid pan, and the handling compound occupy the south-west academy campus. Its access road connects to the western ring road and passes around Car Park P8. The handling course is reached from the south, avoiding a circulation road across the skid pan.
+- The Automotive Hub, test pad, and demonstration compound occupy the eastern campus beside the research precinct. Its access meets the eastern ring road. The station fan walk goes around the campus's eastern side, clear of its buildings and vehicle areas.
+- Defined grass and drainage remain between operations and racing surfaces. Those areas follow the terrain and do not create broad flat grading pads. Dedicated terraces remain under the working compounds and external campuses.
+- Six authored runoff catchments replace the symmetric corner-width pulses. Each specifies its start and end on the circuit, the side of the track, an outer boundary, and a paint colour. Broad paved areas and gravel extend beyond selected corners. `src/layout/track-safety.ts` resolves those edges into the shared runoff and protective boundary used by rendering, barriers, fences, marshals, and scenery exclusion rules.
+- Occupied spectator banks move behind the revised protection. A response road connects the eastern ring road to the middle and southern sectors behind the spectator banks. Elevated crossings do not remove the track barriers beneath them.
+- Inside apex kerbs and short outside approach and exit kerbs replace continuous strips on both sides of each corner. Thin track-edge lines and staggered grid boxes clarify the racing surface.
+- The opening camera frames the larger venue, including the external-campus direction, while keeping the operational infield visible. Facilities and permanent team organisation remain in the whole-site view. Race and conference modes add their relevant activity.
 
 ### Implementation review
 
-The revised running app was inspected from above and in close views of the pits, hospitality, both bridges, the eastern technical section, and the new handling compound. All views were checked in whole-site, race weekend, and conference day modes. Permanent facilities remain visible in the default view. Conference mode retains the public bridge, south lobby, and guest walk. Race mode adds team and guest activity.
+The running app is reviewed from above and in close views of the pits, VIP compound, access crossings, corner catchments, and both external campuses. Checks cover whole-site, race weekend, and conference day modes. The fan walk and campus access are inspected because relocation can create conflicts outside the main circuit.
 
-`pnpm check:layout` measures a 4,802 m lap, a 693 m start-finish straight, a separate 1,067 m straight, and 15 m width. `pnpm build` passes. Geometry tests cover local runoff, the lap seam, occupied footprint clearances, bridge deck height and building conflicts, clear paddock aisles, and the new working compounds. These checks support the concept illustration and do not establish engineering compliance.
+`pnpm check:layout` measures a 4,800 m lap, a 693 m start-finish straight, a separate 1,061 m straight, and 15 m width. Geometry tests cover authored runoff edges, lap continuity, occupied footprint clearances, bridge clearance, paddock aisles, campus placement, ring-road connections, the fan walk, skid-pan access, response access, and at-grade circuit crossings.
+
+These checks support a credible concept illustration. They do not establish suitable speeds, vehicle dynamics, impact performance, or homologation compliance. Those require specialist circuit design.
 
 ## Evidence and limits
 

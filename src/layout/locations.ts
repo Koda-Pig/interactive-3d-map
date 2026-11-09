@@ -78,6 +78,10 @@ export interface AreaLocation extends LocationBase {
   readonly footprint: readonly PathPoint[];
   /** Where trees go: scattered through the area, or lining its edge. */
   readonly planting?: "park" | "edge";
+  /** Natural grass and drainage follow the ground without creating a terrace. */
+  readonly followTerrain?: boolean;
+  /** Paving inset over another area, drawn above its base surface. */
+  readonly overlay?: boolean;
 }
 
 export interface TrackLocation extends LocationBase {
@@ -101,6 +105,8 @@ export interface TrackLocation extends LocationBase {
   readonly step?: number;
   /** Local outer runoff catchments; both rendering and protection use these. */
   readonly safetyZones?: readonly TrackSafetyZone[];
+  /** Authored outer edges of corner catchments, in direction of travel. */
+  readonly runoffCatchments?: readonly RunoffCatchment[];
   /** Raised crossing, measured along this road, with ramps at both ends. */
   readonly bridge?: BridgeProfile;
 }
@@ -110,6 +116,15 @@ export interface TrackSafetyZone {
   readonly reach: number;
   readonly side: -1 | 1;
   readonly width: number;
+  readonly color: string;
+}
+
+export interface RunoffCatchment {
+  readonly id: string;
+  readonly from: Point;
+  readonly to: Point;
+  readonly side: -1 | 1;
+  readonly boundary: readonly PathPoint[];
   readonly color: string;
 }
 
@@ -170,7 +185,7 @@ export function levelledOutline(location: Location): readonly Point[] | null {
       return buildingParts(location).flatMap((part) => resolveOutline(part.footprint));
     case "area":
     case "water":
-      return resolveOutline(location.footprint);
+      return location.followTerrain ? null : resolveOutline(location.footprint);
     default:
       return null;
   }

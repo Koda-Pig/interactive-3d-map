@@ -466,14 +466,19 @@ function yawAlong(sample: PathSample): number {
 
 /** The outlines of everywhere people watch from. */
 function spectatorOutlines(): Point[][] {
-  return layout.locations
-    .filter(
-      (location): location is BuildingLocation =>
-        location.category === "racing" &&
-        location.type === "building" &&
-        location.id !== "pit-conference-building",
-    )
-    .map((location) => buildingParts(location).flatMap((part) => resolveOutline(part.footprint)));
+  return layout.locations.flatMap((location) => {
+    if (
+      location.type === "building" &&
+      location.id !== "pit-conference-building" &&
+      (location.category === "racing" || location.category === "hospitality")
+    ) {
+      return buildingParts(location).map((part) => resolveOutline(part.footprint));
+    }
+    if (location.type === "area" && location.id === "infield-hospitality") {
+      return [resolveOutline(location.footprint)];
+    }
+    return [];
+  });
 }
 
 /** Barriers along both sides of the circuit, and catch fences by the crowds. */
@@ -717,6 +722,9 @@ function placeTeamActivity(context: Context, teams: Instances, guests: Instances
       teams.add(truck, { x: x + offset, z, y: context.surface.heightAt(x, z) });
     }
   }
+  for (const z of [-395, -365, -335]) {
+    teams.add(truck, { x: -285, z, y: context.surface.heightAt(-285, z) });
+  }
   for (const x of [-225, -170]) {
     placeModel(context, guests, MARQUEE, { x, z: -93, scale: 0.65 });
   }
@@ -728,14 +736,22 @@ function placeTeamActivity(context: Context, teams: Instances, guests: Instances
   }
 }
 
-/** Training equipment and display cars explain the working infield in every mode. */
+/** Training equipment and display cars stay with their external campuses. */
 function placeAcademyActivity(context: Context, instances: Instances, car: BufferGeometry): void {
   const court = locationById<AreaLocation>("vehicle-display-courts");
-  const { minX, maxX, minZ, maxZ } = boundsOf(resolveOutline(court.footprint));
+  const [a, b, , d] = court.footprint;
+  const yaw = -Math.atan2(b[1] - a[1], b[0] - a[0]);
   for (let bay = 0; bay < 6; bay += 1) {
-    const x = minX + ((bay + 0.5) * (maxX - minX)) / 6;
-    const z = (minZ + maxZ) / 2;
-    instances.add(car, { x, z, y: context.surface.heightAt(x, z) + 0.3, tint: CAR_PAINTS[bay] });
+    const t = (bay + 0.5) / 6;
+    const x = a[0] + t * (b[0] - a[0]) + (d[0] - a[0]) / 2;
+    const z = a[1] + t * (b[1] - a[1]) + (d[1] - a[1]) / 2;
+    instances.add(car, {
+      x,
+      z,
+      yaw,
+      y: context.surface.heightAt(x, z) + 0.3,
+      tint: CAR_PAINTS[bay],
+    });
   }
   const cone = colorize(new ConeGeometry(0.5, 1.1, 6).translate(0, 0.55, 0), () => [1, 0.35, 0.05]);
   const course = locationById<TrackLocation>("academy-handling-course");

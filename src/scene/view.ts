@@ -10,7 +10,7 @@ const GROUND_CLEARANCE = 5;
 
 export function createCamera(aspect: number): PerspectiveCamera {
   const camera = new PerspectiveCamera(40, aspect, 10, 26000);
-  camera.position.set(-850, heightAt(0, -120) + 1850, 2100);
+  camera.position.set(-850, heightAt(0, 150) + 2200, 2250);
   return camera;
 }
 
@@ -18,7 +18,7 @@ export function createControls(camera: PerspectiveCamera, element: HTMLElement):
   // MapControls defaults to left-drag pan, right-drag rotate and wheel zoom,
   // with one-finger pan and two-finger zoom and rotate on touch.
   const controls = new MapControls(camera, element);
-  controls.target.set(0, heightAt(0, -120), -120);
+  controls.target.set(0, heightAt(0, 150), 150);
   controls.enableDamping = true;
   controls.dampingFactor = 0.12;
   controls.minDistance = MIN_ZOOM_DISTANCE;

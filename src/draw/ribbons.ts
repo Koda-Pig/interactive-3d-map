@@ -109,7 +109,7 @@ function bandsFor(location: TrackLocation): Band[] {
   ];
 }
 
-/** Red and white blocks along both edges of every corner. */
+/** Inside apex kerbs and short outside exits, rather than strips on every edge. */
 function kerbGeometry(
   segments: readonly PathSegment[],
   location: TrackLocation,
@@ -119,6 +119,12 @@ function kerbGeometry(
   const half = location.width / 2;
   const positions: number[] = [];
   const colors: number[] = [];
+  let distance = 0;
+  const starts = segments.map((segment) => {
+    const start = distance;
+    distance += segment.length;
+    return start;
+  });
 
   const pushCorner = (sample: PathSample, offset: number, color: Color): void => {
     const x = sample.x - sample.dirZ * offset;
@@ -129,14 +135,27 @@ function kerbGeometry(
 
   samples.forEach((sample, index) => {
     const next = samples[(index + 1) % samples.length];
-    if (segments[sample.segment].kind !== "arc" || sample.segment !== next.segment) {
-      return;
+    if (sample.segment !== next.segment) return;
+    const segment = segments[sample.segment];
+    const sides: number[] = [];
+    if (location.id !== "circuit") {
+      if (segment.kind === "arc") sides.push(-1, 1);
+    } else if (segment.kind === "arc") {
+      sides.push(Math.sign(segment.sweep));
+    } else {
+      const previous = segments[(sample.segment + segments.length - 1) % segments.length];
+      const after = segments[(sample.segment + 1) % segments.length];
+      const along = sample.distance - starts[sample.segment];
+      if (previous.kind === "arc" && along < 35) sides.push(-Math.sign(previous.sweep));
+      if (after.kind === "arc" && segment.length - along < 18) {
+        const side = -Math.sign(after.sweep);
+        if (!sides.includes(side)) sides.push(side);
+      }
     }
     const color = Math.floor(sample.distance / KERB_STRIPE) % 2 === 0 ? KERB_RED : KERB_WHITE;
-    for (const [inner, outer] of [
-      [half, half + KERB_WIDTH],
-      [-half - KERB_WIDTH, -half],
-    ]) {
+    for (const side of sides) {
+      const inner = side > 0 ? half : -half - KERB_WIDTH;
+      const outer = side > 0 ? half + KERB_WIDTH : -half;
       pushCorner(sample, inner, color);
       pushCorner(sample, outer, color);
       pushCorner(next, inner, color);
@@ -185,6 +204,47 @@ function finishLineMesh(
   return mesh;
 }
 
+function startingGrid(
+  samples: readonly PathSample[],
+  location: TrackLocation,
+  surface: GroundSurface,
+  [lineX, lineZ]: readonly [number, number],
+): Mesh {
+  const finish = samples.reduce((best, sample) =>
+    Math.hypot(sample.x - lineX, sample.z - lineZ) < Math.hypot(best.x - lineX, best.z - lineZ)
+      ? sample
+      : best,
+  );
+  const geometries: BufferGeometry[] = [];
+  for (let row = 0; row < 10; row += 1) {
+    const side = row % 2 === 0 ? -1 : 1;
+    const along = -(row * 10 + 8);
+    const across = (side * location.width) / 4;
+    const points = [
+      [along - 5, across - 1],
+      [along, across - 1],
+      [along, across + 1],
+      [along - 5, across + 1],
+    ];
+    const path = points.map(([a, b]): readonly [number, number] => [
+      finish.x + finish.dirX * a - finish.dirZ * b,
+      finish.z + finish.dirZ * a + finish.dirX * b,
+    ]);
+    geometries.push(
+      bandGeometry(
+        samplePath(resolvePath(path, false), 2, false),
+        { from: -0.1, to: 0.1 },
+        false,
+        surface,
+      ),
+    );
+  }
+  const mesh = new Mesh(mergeGeometries(geometries), layerMaterial(FINISH_COLOR, Layer.marking));
+  mesh.receiveShadow = true;
+  for (const geometry of geometries) geometry.dispose();
+  return mesh;
+}
+
 /** Draws a track or road and its branches as ribbons that follow the ground. */
 export function createRibbon(location: TrackLocation, surface: GroundSurface): Group {
   const closed = location.closed ?? false;
@@ -212,7 +272,7 @@ export function createRibbon(location: TrackLocation, surface: GroundSurface): G
 
   const group = new Group();
   group.add(ribbon, crossing.structure);
-  if (location.safetyZones) {
+  if (location.safetyZones || location.runoffCatchments) {
     const safety = createTrackSafety(location);
     const half = location.width / 2;
     for (const side of [-1, 1]) {
@@ -256,8 +316,27 @@ export function createRibbon(location: TrackLocation, surface: GroundSurface): G
     kerbs.receiveShadow = true;
     group.add(kerbs);
   }
+  if (location.id === "circuit" || location.id === "pit-lane") {
+    const half = location.width / 2;
+    const edges = mergeGeometries(
+      [-1, 1].map((side) =>
+        bandGeometry(
+          samples,
+          { from: side * (half - 0.28) - 0.1, to: side * (half - 0.28) + 0.1 },
+          closed,
+          surface,
+        ),
+      ),
+    );
+    const mesh = new Mesh(edges, layerMaterial("#E9E5D9", Layer.marking));
+    mesh.receiveShadow = true;
+    group.add(mesh);
+  }
   if (location.startFinish) {
-    group.add(finishLineMesh(samples, location, surface, location.startFinish));
+    group.add(
+      finishLineMesh(samples, location, surface, location.startFinish),
+      startingGrid(samples, location, surface, location.startFinish),
+    );
   }
   return group;
 }

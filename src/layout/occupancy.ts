@@ -73,7 +73,7 @@ export function occupancyOf(locations: readonly Location[], margin: number): Occ
       case "road": {
         const radius = location.width / 2 + (location.runoff ?? 0) + margin;
         occupancy.addPath(location.path, location.closed ?? false, radius);
-        if (location.safetyZones) {
+        if (location.safetyZones || location.runoffCatchments) {
           const safety = createTrackSafety(location);
           for (const sample of samplePath(
             resolvePath(location.path, location.closed ?? false),

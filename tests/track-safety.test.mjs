@@ -13,19 +13,52 @@ const circuit = locations.find((location) => location.id === "circuit");
 const samples = samplePath(resolvePath(circuit.path, true), 3, true);
 const safety = createTrackSafety(circuit);
 
-test("selected corner runoff expands outside while inner verges stay narrow", () => {
-  for (const zone of circuit.safetyZones) {
-    const sample = samples.reduce((best, point) =>
-      Math.hypot(point.x - zone.at[0], point.z - zone.at[1]) <
-      Math.hypot(best.x - zone.at[0], best.z - zone.at[1])
-        ? point
-        : best,
-    );
-    const outside = safety(sample, zone.side);
-    assert.ok(outside.width > zone.width - 1);
-    assert.equal(outside.barrier, circuit.width / 2 + outside.width + 2);
-    assert.equal(safety(sample, -zone.side).width, circuit.runoff);
+test("authored catchments widen the selected side while opposite verges remain narrow", () => {
+  assert.ok(circuit.runoffCatchments.length >= 4);
+  for (const catchment of circuit.runoffCatchments) {
+    const profile = createTrackSafety({
+      ...circuit,
+      safetyZones: [],
+      runoffCatchments: [catchment],
+    });
+    const widths = samples.map((sample) => profile(sample, catchment.side).width);
+    assert.ok(Math.max(...widths) > 25, catchment.id);
+    assert.ok(Math.max(...widths) < 250, `${catchment.id} has an unstable boundary`);
+    assert.ok(samples.every((sample) => profile(sample, -catchment.side).width === circuit.runoff));
   }
+});
+
+test("runoff follows the authored outer edge instead of a symmetric width pulse", () => {
+  const track = {
+    width: 10,
+    runoff: 3,
+    closed: true,
+    path: [
+      [0, 0],
+      [100, 0],
+      [100, 100],
+      [0, 100],
+    ],
+    runoffCatchments: [
+      {
+        id: "fan",
+        from: [20, 0],
+        to: [80, 0],
+        side: -1,
+        boundary: [
+          [30, -30],
+          [65, -60],
+        ],
+        color: "#00678C",
+      },
+    ],
+  };
+  const profile = createTrackSafety(track);
+  const sample = { x: 50, z: 0, dirX: 1, dirZ: 0, distance: 50, segment: 0 };
+  const expectedEdge = 30 + (20 * 30) / 35;
+  assert.ok(Math.abs(profile(sample, -1).width - (expectedEdge - 5)) < 1e-6);
+  assert.equal(profile(sample, 1).width, 3);
+  assert.equal(profile({ ...sample, x: 10, distance: 10 }, -1).width, 3);
 });
 
 test("local protection remains continuous at the lap seam", () => {
@@ -136,5 +169,116 @@ test("new working compounds stay behind the circuit protective boundary", () => 
         `${id} encroaches on circuit protection`,
       );
     }
+  }
+});
+
+test("academy and automotive facilities occupy external campuses", () => {
+  const outline = resolveOutline(circuit.path);
+  for (const location of locations.filter((location) => location.category === "academy")) {
+    const points =
+      location.footprint ?? location.parts?.flatMap((part) => part.footprint) ?? location.path;
+    for (const [x, z] of points)
+      assert.ok(signedDistance(x, z, outline) > 0, `${location.id} remains infield`);
+  }
+});
+
+test("campus entrances meet the ring road", () => {
+  const ring = locations.find((location) => location.id === "ring-road");
+  const roadSamples = samplePath(resolvePath(ring.path, true), 2, true);
+  for (const id of ["academy-campus-road", "automotive-campus-road"]) {
+    const [x, z] = locations.find((location) => location.id === id).path[0];
+    assert.ok(
+      roadSamples.some((point) => Math.hypot(point.x - x, point.z - z) < 2),
+      id,
+    );
+  }
+});
+
+test("station fan walk avoids the automotive compounds", () => {
+  const walk = locations.find((location) => location.id === "fan-walk");
+  const obstacles = locations.filter(
+    (location) =>
+      location.category === "academy" && (location.type === "building" || location.type === "area"),
+  );
+  for (const sample of samplePath(resolvePath(walk.path, false), 3, false)) {
+    for (const obstacle of obstacles) {
+      for (const part of obstacle.parts ?? [obstacle]) {
+        assert.ok(
+          signedDistance(sample.x, sample.z, resolveOutline(part.footprint)) > walk.width / 2,
+          `fan walk intersects ${obstacle.id}`,
+        );
+      }
+    }
+  }
+});
+
+test("academy circulation avoids cutting through the skid pan", () => {
+  const road = locations.find((location) => location.id === "academy-campus-road");
+  const pan = resolveOutline(locations.find((location) => location.id === "skid-pan").footprint);
+  for (const path of [road.path, ...road.branches]) {
+    const samples = samplePath(resolvePath(path, false), 2, false);
+    const end = samples.at(-1);
+    for (const sample of samples) {
+      // Allow the final few metres of a designated entry to meet the pan edge.
+      if (signedDistance(end.x, end.z, pan) <= 1 && end.distance - sample.distance < 6) continue;
+      assert.ok(
+        signedDistance(sample.x, sample.z, pan) > road.width / 2,
+        "campus circulation cuts through the training surface",
+      );
+    }
+  }
+});
+
+test("external response route stays clear of occupied footprints", () => {
+  const road = locations.find((location) => location.id === "circuit-response-road");
+  for (const path of [road.path, ...road.branches]) {
+    for (const sample of samplePath(resolvePath(path, false), 3, false)) {
+      for (const building of locations.filter((location) => location.type === "building")) {
+        for (const part of building.parts ?? [building]) {
+          assert.ok(
+            signedDistance(sample.x, sample.z, resolveOutline(part.footprint)) > road.width / 2,
+            `response road intersects ${building.id}`,
+          );
+        }
+      }
+    }
+  }
+});
+
+test("roads meet the main circuit only through the visible elevated crossings", () => {
+  for (const road of locations.filter((location) => location.type === "road")) {
+    const paths = [
+      ...(road.bridge ? [] : [{ path: road.path, closed: road.closed ?? false }]),
+      ...(road.branches ?? []).map((path) => ({ path, closed: false })),
+    ];
+    for (const { path, closed } of paths) {
+      for (const sample of samplePath(resolvePath(path, closed), 3, closed)) {
+        const separation = Math.min(
+          ...samples.map((track) => Math.hypot(track.x - sample.x, track.z - sample.z)),
+        );
+        assert.ok(
+          separation > (circuit.width + road.width) / 2,
+          `${road.id} crosses the racing surface at grade`,
+        );
+      }
+    }
+  }
+});
+
+test("pit entry and exit join in the direction of racing travel", () => {
+  const pit = locations.find((location) => location.id === "pit-lane");
+  const pitSamples = samplePath(resolvePath(pit.path, false), 2, false);
+  for (const point of [pitSamples[0], pitSamples.at(-1)]) {
+    const nearest = samples.reduce((best, track) =>
+      Math.hypot(track.x - point.x, track.z - point.z) <
+      Math.hypot(best.x - point.x, best.z - point.z)
+        ? track
+        : best,
+    );
+    assert.ok(Math.hypot(nearest.x - point.x, nearest.z - point.z) < 2);
+    assert.ok(
+      nearest.dirX * point.dirX + nearest.dirZ * point.dirZ > 0.98,
+      "pit connection has an abrupt direction change",
+    );
   }
 });

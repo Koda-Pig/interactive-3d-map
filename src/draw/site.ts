@@ -15,7 +15,7 @@ function drawLocation(location: Location, surface: GroundSurface, kit: Kit): Obj
       return createBuilding(location, kit);
     case "area":
     case "water":
-      return createArea(location);
+      return createArea(location, surface);
     case "track":
     case "road":
       return createRibbon(location, surface);
