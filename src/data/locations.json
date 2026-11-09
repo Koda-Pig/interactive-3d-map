@@ -1,0 +1,1042 @@
+{
+  "grading": [
+    {
+      "id": "arrival-terrace",
+      "footprint": [[-1030, -520], [-525, -520], [-525, 290], [-1030, 290]]
+    },
+    {
+      "id": "waterfront-terrace",
+      "footprint": [[-470, 440], [510, 440], [510, 900], [-470, 900]]
+    },
+    {
+      "id": "academy-terrace",
+      "footprint": [[-440, -560], [20, -560], [20, -280], [-440, -280]]
+    },
+    {
+      "id": "aerodrome-terrace",
+      "footprint": [[80, -1570], [1290, -1570], [1290, -1330], [80, -1330]]
+    }
+  ],
+  "locations": [
+    {
+      "id": "circuit",
+      "name": "Blue Mountain Racing Circuit",
+      "category": "racing",
+      "type": "track",
+      "description": "The concept circuit: about 4.8 km, with a start-finish straight, a separate full-throttle straight over 1 km, and heavy braking zones for overtaking. Illustrative shape, drawn to BMR's published targets.",
+      "closed": true,
+      "width": 15,
+      "color": "#2F3338",
+      "kerbs": true,
+      "runoff": 12,
+      "runoffColor": "#CFC4A6",
+      "startFinish": [-600, -100],
+      "path": [
+        [-600, 250, 90],
+        [-600, -575, 42],
+        [-420, -575, 55],
+        [-310, -700, 70],
+        [825, -700, 36],
+        [825, -615, 36],
+        [520, -615, 45],
+        [520, -430, 55],
+        [705, -380, 60],
+        [705, -120, 40],
+        [465, -120, 50],
+        [395, 110, 65],
+        [110, 170, 45],
+        [30, 55, 40],
+        [-190, 55, 38],
+        [-255, 250, 55]
+      ]
+    },
+    {
+      "id": "pit-lane",
+      "name": "Pit Lane",
+      "category": "racing",
+      "type": "track",
+      "description": "Runs behind the pit wall along the start-finish straight, past the garages of the pit / conference building.",
+      "width": 12,
+      "color": "#2F3338",
+      "path": [[-600, 170], [-632, 110, 40], [-632, -360, 40], [-603, -450]]
+    },
+    {
+      "id": "pit-conference-building",
+      "name": "Pit / Conference Building",
+      "category": "racing",
+      "type": "building",
+      "description": "Garages at track level with stacked conference floors above, used for conventions and exhibitions all year.",
+      "color": "#E8ECEF",
+      "parts": [
+        { "footprint": [[-690, -280], [-645, -280], [-645, 80], [-690, 80]], "height": 18 },
+        { "footprint": [[-684, -270], [-650, -270], [-650, 70], [-684, 70]], "height": 31, "color": "#004272" },
+        { "footprint": [[-692, -285], [-640, -285], [-640, 85], [-692, 85]], "height": 2, "base": 31, "color": "#E8ECEF" }
+      ]
+    },
+    {
+      "id": "paddock",
+      "name": "Paddock",
+      "category": "racing",
+      "type": "area",
+      "description": "Team and support paddock behind the pit / conference building.",
+      "footprint": [[-780, -280], [-695, -280], [-695, 80], [-780, 80]],
+      "color": "#96989A"
+    },
+    {
+      "id": "grandstand-a",
+      "name": "Grandstand A",
+      "category": "racing",
+      "type": "building",
+      "description": "Covered grandstand at the southern end of the start-finish straight, looking across to the pit building. Illustrative.",
+      "color": "#C9CFD4",
+      "parts": [
+        { "footprint": [[-575, 0], [-543, 0], [-543, 150], [-575, 150]], "height": 13 },
+        { "footprint": [[-548, 0], [-543, 0], [-543, 150], [-548, 150]], "height": 23 },
+        { "footprint": [[-575, 0], [-543, 0], [-543, 150], [-575, 150]], "height": 2, "base": 23, "color": "#004272" }
+      ]
+    },
+    {
+      "id": "grandstand-b",
+      "name": "Grandstand B",
+      "category": "racing",
+      "type": "building",
+      "description": "Covered grandstand on the start-finish straight, opposite the pit garages and the start line. Illustrative.",
+      "color": "#C9CFD4",
+      "parts": [
+        { "footprint": [[-575, -220], [-543, -220], [-543, -10], [-575, -10]], "height": 13 },
+        { "footprint": [[-548, -220], [-543, -220], [-543, -10], [-548, -10]], "height": 23 },
+        { "footprint": [[-575, -220], [-543, -220], [-543, -10], [-575, -10]], "height": 2, "base": 23, "color": "#004272" }
+      ]
+    },
+    {
+      "id": "grandstand-c",
+      "name": "Grandstand C",
+      "category": "racing",
+      "type": "building",
+      "description": "Covered grandstand overlooking the heavy braking zone into Turn 1. Illustrative.",
+      "color": "#C9CFD4",
+      "parts": [
+        { "footprint": [[-640, -635], [-470, -635], [-470, -603], [-640, -603]], "height": 13 },
+        { "footprint": [[-640, -635], [-470, -635], [-470, -630], [-640, -630]], "height": 23 },
+        { "footprint": [[-640, -635], [-470, -635], [-470, -603], [-640, -603]], "height": 2, "base": 23, "color": "#004272" }
+      ]
+    },
+    {
+      "id": "grandstand-d",
+      "name": "Grandstand D",
+      "category": "racing",
+      "type": "building",
+      "description": "Covered grandstand outside the hairpin at the end of the long straight. Illustrative.",
+      "color": "#C9CFD4",
+      "parts": [
+        { "footprint": [[852, -730], [884, -730], [884, -585], [852, -585]], "height": 13 },
+        { "footprint": [[879, -730], [884, -730], [884, -585], [879, -585]], "height": 23 },
+        { "footprint": [[852, -730], [884, -730], [884, -585], [852, -585]], "height": 2, "base": 23, "color": "#004272" }
+      ]
+    },
+    {
+      "id": "ga-bank-1",
+      "name": "General Admission Bank 1",
+      "category": "racing",
+      "type": "building",
+      "description": "Grass bank inside Turn 1 and Turn 2.",
+      "color": "#7F9B4C",
+      "footprint": [[-540, -545, 12], [-430, -545, 12], [-430, -470, 12], [-540, -470, 12]],
+      "height": 4
+    },
+    {
+      "id": "ga-bank-2",
+      "name": "General Admission Bank 2",
+      "category": "racing",
+      "type": "building",
+      "description": "Grass bank on the outside of the Turn 8 braking zone.",
+      "color": "#7F9B4C",
+      "footprint": [[728, -335, 12], [762, -335, 12], [762, -100, 12], [728, -100, 12]],
+      "height": 4
+    },
+    {
+      "id": "ga-bank-3",
+      "name": "General Admission Bank 3",
+      "category": "racing",
+      "type": "building",
+      "description": "Grass bank on the outside of the run to Turn 10.",
+      "color": "#7F9B4C",
+      "footprint": [[495, -70, 12], [565, -70, 12], [505, 110, 12], [435, 110, 12]],
+      "height": 4
+    },
+    {
+      "id": "ga-bank-4",
+      "name": "General Admission Bank 4",
+      "category": "racing",
+      "type": "building",
+      "description": "Grass bank looking north over Turns 10 and 11.",
+      "color": "#7F9B4C",
+      "footprint": [[130, 195, 12], [330, 195, 12], [330, 235, 12], [130, 235, 12]],
+      "height": 4
+    },
+    {
+      "id": "ga-bank-5",
+      "name": "General Admission Bank 5",
+      "category": "racing",
+      "type": "building",
+      "description": "Grass bank inside Turns 12 and 13.",
+      "color": "#7F9B4C",
+      "footprint": [[-70, -25, 12], [15, -25, 12], [15, 28, 12], [-70, 28, 12]],
+      "height": 4
+    },
+    {
+      "id": "ga-bank-6",
+      "name": "General Admission Bank 6",
+      "category": "racing",
+      "type": "building",
+      "description": "Grass bank on the outside of the final corner, looking up the start-finish straight.",
+      "color": "#7F9B4C",
+      "footprint": [[-640, 275, 12], [-330, 275, 12], [-330, 312, 12], [-640, 312, 12]],
+      "height": 4
+    },
+    {
+      "id": "arrival-plaza",
+      "name": "Arrival Plaza",
+      "category": "conference",
+      "type": "area",
+      "description": "The public front door of the venue, between the gateway arch, the halls and the pit / conference building.",
+      "footprint": [[-1020, -100], [-810, -100], [-810, 100], [-1020, 100]],
+      "color": "#BDB7A8"
+    },
+    {
+      "id": "gateway-arch",
+      "name": "Gateway Arch",
+      "category": "conference",
+      "type": "building",
+      "description": "The landmark arch at the western edge of the arrival plaza.",
+      "color": "#00678C",
+      "parts": [
+        { "footprint": [[-1028, -26], [-1020, -26], [-1020, -18], [-1028, -18]], "height": 18 },
+        { "footprint": [[-1028, 18], [-1020, 18], [-1020, 26], [-1028, 26]], "height": 18 },
+        { "footprint": [[-1028, -26], [-1020, -26], [-1020, 26], [-1028, 26]], "height": 4, "base": 14 }
+      ]
+    },
+    {
+      "id": "plaza-tower-north",
+      "name": "Plaza Tower North",
+      "category": "conference",
+      "type": "building",
+      "description": "Stone-clad tower marking the northern side of the arrival plaza.",
+      "color": "#CFC6B4",
+      "footprint": [[-1000, -132], [-980, -132], [-980, -112], [-1000, -112]],
+      "height": 34
+    },
+    {
+      "id": "plaza-tower-south",
+      "name": "Plaza Tower South",
+      "category": "conference",
+      "type": "building",
+      "description": "Stone-clad tower marking the southern side of the arrival plaza.",
+      "color": "#CFC6B4",
+      "footprint": [[-1000, 112], [-980, 112], [-980, 132], [-1000, 132]],
+      "height": 34
+    },
+    {
+      "id": "exhibition-hall-1",
+      "name": "Exhibition Hall 1",
+      "category": "conference",
+      "type": "building",
+      "description": "Large clear-span hall for exhibitions and conventions.",
+      "color": "#E8ECEF",
+      "footprint": [[-960, -270], [-810, -270], [-810, -120], [-960, -120]],
+      "height": 19
+    },
+    {
+      "id": "exhibition-hall-2",
+      "name": "Exhibition Hall 2",
+      "category": "conference",
+      "type": "building",
+      "description": "Second exhibition hall, opening onto the arrival plaza.",
+      "color": "#E8ECEF",
+      "footprint": [[-960, 120], [-810, 120], [-810, 270], [-960, 270]],
+      "height": 19
+    },
+    {
+      "id": "amphitheatre",
+      "name": "Amphitheatre",
+      "category": "conference",
+      "type": "building",
+      "description": "Stepped open-air bowl for concerts and events, facing the arrival plaza.",
+      "color": "#CFC6B4",
+      "parts": [
+        {
+          "footprint": [
+            [-936, -390],
+            [-938, -405],
+            [-936, -420],
+            [-930.2, -434],
+            [-921, -446],
+            [-909, -455.2],
+            [-895, -461],
+            [-880, -463],
+            [-865, -461],
+            [-851, -455.2],
+            [-839, -446],
+            [-829.8, -434],
+            [-824, -420],
+            [-822, -405],
+            [-824, -390],
+            [-839.4, -394.1],
+            [-838, -405],
+            [-839.4, -415.9],
+            [-843.6, -426],
+            [-850.3, -434.7],
+            [-859, -441.4],
+            [-869.1, -445.6],
+            [-880, -447],
+            [-890.9, -445.6],
+            [-901, -441.4],
+            [-909.7, -434.7],
+            [-916.4, -426],
+            [-920.6, -415.9],
+            [-922, -405],
+            [-920.6, -394.1]
+          ],
+          "height": 4
+        },
+        {
+          "footprint": [
+            [-951.5, -385.8],
+            [-954, -405],
+            [-951.5, -424.2],
+            [-944.1, -442],
+            [-932.3, -457.3],
+            [-917, -469.1],
+            [-899.2, -476.5],
+            [-880, -479],
+            [-860.8, -476.5],
+            [-843, -469.1],
+            [-827.7, -457.3],
+            [-815.9, -442],
+            [-808.5, -424.2],
+            [-806, -405],
+            [-808.5, -385.8],
+            [-824, -390],
+            [-822, -405],
+            [-824, -420],
+            [-829.8, -434],
+            [-839, -446],
+            [-851, -455.2],
+            [-865, -461],
+            [-880, -463],
+            [-895, -461],
+            [-909, -455.2],
+            [-921, -446],
+            [-930.2, -434],
+            [-936, -420],
+            [-938, -405],
+            [-936, -390]
+          ],
+          "height": 8
+        },
+        {
+          "footprint": [
+            [-966.9, -381.7],
+            [-970, -405],
+            [-966.9, -428.3],
+            [-957.9, -450],
+            [-943.6, -468.6],
+            [-925, -482.9],
+            [-903.3, -491.9],
+            [-880, -495],
+            [-856.7, -491.9],
+            [-835, -482.9],
+            [-816.4, -468.6],
+            [-802.1, -450],
+            [-793.1, -428.3],
+            [-790, -405],
+            [-793.1, -381.7],
+            [-808.5, -385.8],
+            [-806, -405],
+            [-808.5, -424.2],
+            [-815.9, -442],
+            [-827.7, -457.3],
+            [-843, -469.1],
+            [-860.8, -476.5],
+            [-880, -479],
+            [-899.2, -476.5],
+            [-917, -469.1],
+            [-932.3, -457.3],
+            [-944.1, -442],
+            [-951.5, -424.2],
+            [-954, -405],
+            [-951.5, -385.8]
+          ],
+          "height": 12
+        },
+        {
+          "footprint": [
+            [-980.5, -378.1],
+            [-984, -405],
+            [-980.5, -431.9],
+            [-970.1, -457],
+            [-953.5, -478.5],
+            [-932, -495.1],
+            [-906.9, -505.5],
+            [-880, -509],
+            [-853.1, -505.5],
+            [-828, -495.1],
+            [-806.5, -478.5],
+            [-789.9, -457],
+            [-779.5, -431.9],
+            [-776, -405],
+            [-779.5, -378.1],
+            [-793.1, -381.7],
+            [-790, -405],
+            [-793.1, -428.3],
+            [-802.1, -450],
+            [-816.4, -468.6],
+            [-835, -482.9],
+            [-856.7, -491.9],
+            [-880, -495],
+            [-903.3, -491.9],
+            [-925, -482.9],
+            [-943.6, -468.6],
+            [-957.9, -450],
+            [-966.9, -428.3],
+            [-970, -405],
+            [-966.9, -381.7]
+          ],
+          "height": 16
+        },
+        { "footprint": [[-906, -409], [-854, -409], [-854, -385], [-906, -385]], "height": 3, "color": "#004272" }
+      ]
+    },
+    {
+      "id": "lake",
+      "name": "The Lake",
+      "category": "hospitality",
+      "type": "water",
+      "description": "The centrepiece of the waterfront precinct, with the promenade around its edge.",
+      "footprint": [
+        [-340, 573.5, 88],
+        [-108, 501.3, 136],
+        [156, 535.3, 136],
+        [368, 505.5, 76],
+        [424, 641.5, 72],
+        [304, 777.5, 104],
+        [52, 820, 136],
+        [-236, 777.5, 104],
+        [-384, 692.5, 72]
+      ],
+      "color": "#2E7E9E"
+    },
+    {
+      "id": "promenade",
+      "name": "Lakeside Promenade",
+      "category": "hospitality",
+      "type": "road",
+      "description": "A walking loop around the lake, linking the restaurants and hotels.",
+      "closed": true,
+      "width": 9,
+      "color": "#D8CDB6",
+      "path": [
+        [-367, 567.8, 94.6],
+        [-117.6, 490.1, 146.2],
+        [166.2, 526.7, 146.2],
+        [394.1, 494.7, 81.7],
+        [454.3, 640.9, 77.4],
+        [325.3, 787.1, 111.8],
+        [54.4, 832.8, 146.2],
+        [-255.2, 787.1, 111.8],
+        [-414.3, 695.7, 77.4]
+      ]
+    },
+    {
+      "id": "restaurant-west",
+      "name": "Lakeside Restaurant West",
+      "category": "hospitality",
+      "type": "building",
+      "description": "Timber pavilion with a dark metal roof, opening onto the promenade.",
+      "color": "#A98660",
+      "parts": [
+        { "footprint": [[-190, 447], [-164, 447], [-164, 463], [-190, 463]], "height": 6 },
+        { "footprint": [[-192, 445], [-162, 445], [-162, 465], [-192, 465]], "height": 2, "base": 6, "color": "#004272" }
+      ]
+    },
+    {
+      "id": "restaurant-central",
+      "name": "Lakeside Restaurant Central",
+      "category": "hospitality",
+      "type": "building",
+      "description": "Timber pavilion with a dark metal roof, opening onto the promenade.",
+      "color": "#A98660",
+      "parts": [
+        { "footprint": [[10, 447], [36, 447], [36, 463], [10, 463]], "height": 6 },
+        { "footprint": [[8, 445], [38, 445], [38, 465], [8, 465]], "height": 2, "base": 6, "color": "#004272" }
+      ]
+    },
+    {
+      "id": "restaurant-east",
+      "name": "Lakeside Restaurant East",
+      "category": "hospitality",
+      "type": "building",
+      "description": "Timber pavilion with a dark metal roof, opening onto the promenade.",
+      "color": "#A98660",
+      "parts": [
+        { "footprint": [[215, 447], [241, 447], [241, 463], [215, 463]], "height": 6 },
+        { "footprint": [[213, 445], [243, 445], [243, 465], [213, 465]], "height": 2, "base": 6, "color": "#004272" }
+      ]
+    },
+    {
+      "id": "hotel-waterfront",
+      "name": "Waterfront Hotel",
+      "category": "hospitality",
+      "type": "building",
+      "description": "Tower hotel on the south shore, with views over the lake to the circuit.",
+      "color": "#E8ECEF",
+      "footprint": [[-150, 860], [-105, 860], [-105, 885], [-150, 885]],
+      "height": 51
+    },
+    {
+      "id": "hotel-lakeside",
+      "name": "Lakeside Lodge",
+      "category": "hospitality",
+      "type": "building",
+      "description": "Low-rise hotel on the south shore.",
+      "color": "#CFC6B4",
+      "footprint": [[60, 860], [140, 860], [140, 885], [60, 885]],
+      "height": 21
+    },
+    {
+      "id": "hotel-promenade",
+      "name": "Promenade Hotel",
+      "category": "hospitality",
+      "type": "building",
+      "description": "Mid-rise hotel at the western end of the waterfront.",
+      "color": "#E8ECEF",
+      "footprint": [[-340, 850], [-280, 850], [-280, 880], [-340, 880]],
+      "height": 36
+    },
+    {
+      "id": "karting-track",
+      "name": "Karting Track",
+      "category": "academy",
+      "type": "track",
+      "description": "The first step on the driving pathway, in the circuit's infield.",
+      "closed": true,
+      "width": 8,
+      "color": "#2F3338",
+      "kerbs": true,
+      "runoff": 3,
+      "runoffColor": "#CFC4A6",
+      "path": [
+        [-410, -525, 24],
+        [-140, -525, 22],
+        [-140, -420, 20],
+        [-240, -420, 16],
+        [-240, -470, 14],
+        [-330, -470, 14],
+        [-330, -380, 18],
+        [-140, -380, 18],
+        [-140, -320, 20],
+        [-410, -320, 24]
+      ]
+    },
+    {
+      "id": "karting-clubhouse",
+      "name": "Karting Clubhouse",
+      "category": "academy",
+      "type": "building",
+      "description": "Pits, timing and a viewing deck for the karting track.",
+      "color": "#00678C",
+      "footprint": [[-300, -305], [-276, -305], [-276, -291], [-300, -291]],
+      "height": 10
+    },
+    {
+      "id": "driving-academy",
+      "name": "Driving Academy",
+      "category": "academy",
+      "type": "building",
+      "description": "Classrooms and simulators for the academy and karting pathway.",
+      "color": "#E8ECEF",
+      "footprint": [[-190, -305], [-150, -305], [-150, -283], [-190, -283]],
+      "height": 12
+    },
+    {
+      "id": "skid-pan",
+      "name": "Academy Skid Pan",
+      "category": "academy",
+      "type": "area",
+      "description": "A low-grip surface for car-control training.",
+      "footprint": [[-90, -480, 40], [10, -480, 40], [10, -380, 40], [-90, -380, 40]],
+      "color": "#96989A"
+    },
+    {
+      "id": "automotive-hub",
+      "name": "Automotive Hub",
+      "category": "academy",
+      "type": "building",
+      "description": "Engineering and testing facilities for manufacturers and race teams.",
+      "color": "#E8ECEF",
+      "parts": [
+        { "footprint": [[130, -400], [210, -400], [210, -355], [130, -355]], "height": 17 },
+        { "footprint": [[228, -400], [308, -400], [308, -355], [228, -355]], "height": 13, "color": "#C9CFD4" }
+      ]
+    },
+    {
+      "id": "automotive-test-pad",
+      "name": "Automotive Test Pad",
+      "category": "academy",
+      "type": "area",
+      "description": "Open paved area for vehicle testing beside the Automotive Hub.",
+      "footprint": [[120, -345], [320, -345], [320, -285], [120, -285]],
+      "color": "#96989A"
+    },
+    {
+      "id": "infield-park",
+      "name": "Infield Park",
+      "category": "conference",
+      "type": "area",
+      "description": "Public open space in the middle of the circuit, part of the venue's public realm.",
+      "footprint": [[-520, -240, 40], [-250, -240, 40], [-250, 10, 40], [-520, 10, 40]],
+      "color": "#8DA35A"
+    },
+    {
+      "id": "trackside-residences-east",
+      "name": "Trackside Residences East",
+      "category": "commercial",
+      "type": "building",
+      "description": "Apartments and townhouses looking west across the circuit. Illustrative.",
+      "color": "#E8ECEF",
+      "parts": [
+        { "footprint": [[790, -330], [808, -330], [808, -270], [790, -270]], "height": 24 },
+        { "footprint": [[790, -250], [808, -250], [808, -190], [790, -190]], "height": 24 },
+        { "footprint": [[790, -170], [808, -170], [808, -110], [790, -110]], "height": 24 },
+        { "footprint": [[790, -90], [808, -90], [808, -30], [790, -30]], "height": 24 },
+        { "footprint": [[790, -10], [808, -10], [808, 50], [790, 50]], "height": 24 },
+        { "footprint": [[790, 70], [808, 70], [808, 130], [790, 130]], "height": 24 },
+        { "footprint": [[830, -325], [842, -325], [842, -285], [830, -285]], "height": 13, "color": "#CFC6B4" },
+        { "footprint": [[830, -245], [842, -245], [842, -205], [830, -205]], "height": 13, "color": "#CFC6B4" },
+        { "footprint": [[830, -165], [842, -165], [842, -125], [830, -125]], "height": 13, "color": "#CFC6B4" },
+        { "footprint": [[830, -85], [842, -85], [842, -45], [830, -45]], "height": 13, "color": "#CFC6B4" },
+        { "footprint": [[830, -5], [842, -5], [842, 35], [830, 35]], "height": 13, "color": "#CFC6B4" },
+        { "footprint": [[830, 75], [842, 75], [842, 115], [830, 115]], "height": 13, "color": "#CFC6B4" }
+      ]
+    },
+    {
+      "id": "trackside-residences-south",
+      "name": "Trackside Residences South",
+      "category": "commercial",
+      "type": "building",
+      "description": "Apartments and townhouses looking north over the infield section of the circuit. Illustrative.",
+      "color": "#E8ECEF",
+      "parts": [
+        { "footprint": [[440, 230], [500, 230], [500, 248], [440, 248]], "height": 24 },
+        { "footprint": [[520, 230], [580, 230], [580, 248], [520, 248]], "height": 24 },
+        { "footprint": [[600, 230], [660, 230], [660, 248], [600, 248]], "height": 24 },
+        { "footprint": [[680, 230], [740, 230], [740, 248], [680, 248]], "height": 24 },
+        { "footprint": [[450, 272], [490, 272], [490, 284], [450, 284]], "height": 13, "color": "#CFC6B4" },
+        { "footprint": [[530, 272], [570, 272], [570, 284], [530, 284]], "height": 13, "color": "#CFC6B4" },
+        { "footprint": [[610, 272], [650, 272], [650, 284], [610, 284]], "height": 13, "color": "#CFC6B4" },
+        { "footprint": [[690, 272], [730, 272], [730, 284], [690, 284]], "height": 13, "color": "#CFC6B4" }
+      ]
+    },
+    {
+      "id": "retail-quarter",
+      "name": "Retail Quarter",
+      "category": "commercial",
+      "type": "building",
+      "description": "Shops and offices east of the ring road, further out from the circuit. Illustrative.",
+      "color": "#C9CFD4",
+      "parts": [
+        { "footprint": [[1040, -190], [1100, -190], [1100, -160], [1040, -160]], "height": 12 },
+        { "footprint": [[1040, -120], [1100, -120], [1100, -90], [1040, -90]], "height": 12 },
+        { "footprint": [[1040, -50], [1100, -50], [1100, -20], [1040, -20]], "height": 12 },
+        { "footprint": [[1040, 20], [1100, 20], [1100, 50], [1040, 50]], "height": 12 },
+        { "footprint": [[1040, 90], [1100, 90], [1100, 120], [1040, 120]], "height": 12 },
+        { "footprint": [[1125, -190], [1185, -190], [1185, -160], [1125, -160]], "height": 12 },
+        { "footprint": [[1125, -120], [1185, -120], [1185, -90], [1125, -90]], "height": 12 },
+        { "footprint": [[1125, -50], [1185, -50], [1185, -20], [1125, -20]], "height": 12 },
+        { "footprint": [[1125, 20], [1185, 20], [1185, 50], [1125, 50]], "height": 12 },
+        { "footprint": [[1125, 90], [1185, 90], [1185, 120], [1125, 120]], "height": 12 }
+      ]
+    },
+    {
+      "id": "research-park",
+      "name": "Research and Technology Park",
+      "category": "commercial",
+      "type": "building",
+      "description": "Research and technology blocks at the south-eastern edge of the site. Illustrative.",
+      "color": "#E8ECEF",
+      "parts": [
+        { "footprint": [[800, 430], [850, 430], [850, 460], [800, 460]], "height": 21 },
+        { "footprint": [[800, 520], [850, 520], [850, 550], [800, 550]], "height": 21 },
+        { "footprint": [[800, 610], [850, 610], [850, 640], [800, 640]], "height": 21 },
+        { "footprint": [[800, 700], [850, 700], [850, 730], [800, 730]], "height": 21 },
+        { "footprint": [[880, 430], [930, 430], [930, 460], [880, 460]], "height": 21 },
+        { "footprint": [[880, 520], [930, 520], [930, 550], [880, 550]], "height": 21 },
+        { "footprint": [[880, 610], [930, 610], [930, 640], [880, 640]], "height": 21 },
+        { "footprint": [[880, 700], [930, 700], [930, 730], [880, 730]], "height": 21 }
+      ]
+    },
+    {
+      "id": "n7",
+      "name": "N7 National Road",
+      "category": "transport",
+      "type": "road",
+      "description": "The highway along the site's western edge, with direct frontage and two interchanges.",
+      "width": 28,
+      "median": 6,
+      "color": "#4B5056",
+      "step": 12,
+      "path": [[-1560, -11000], [-1320, -2800, 4000], [-1320, 2800, 4000], [-1110, 11000]]
+    },
+    {
+      "id": "n7-north-interchange",
+      "name": "N7 North Interchange",
+      "category": "transport",
+      "type": "road",
+      "description": "Links the N7 to the ring road, with slip roads in both directions.",
+      "width": 11,
+      "color": "#777B7F",
+      "path": [[-1302, -700], [-1040, -700]],
+      "branches": [
+        [[-1310, -1000], [-1285, -880, 150], [-1220, -700]],
+        [[-1220, -700], [-1285, -520, 150], [-1310, -400]]
+      ]
+    },
+    {
+      "id": "n7-south-interchange",
+      "name": "N7 South Interchange",
+      "category": "transport",
+      "type": "road",
+      "description": "Links the N7 to the ring road, with slip roads in both directions.",
+      "width": 11,
+      "color": "#777B7F",
+      "path": [[-1302, 300], [-1040, 300]],
+      "branches": [
+        [[-1310, 0], [-1285, 120, 150], [-1220, 300]],
+        [[-1220, 300], [-1285, 480, 150], [-1310, 600]]
+      ]
+    },
+    {
+      "id": "ring-road",
+      "name": "Ring Road",
+      "category": "transport",
+      "type": "road",
+      "description": "Circulation road around the circuit, serving the car parks and gates.",
+      "closed": true,
+      "width": 12,
+      "color": "#777B7F",
+      "path": [[-1040, -800, 70], [1000, -800, 170], [1000, 345, 170], [-1040, 345, 70]]
+    },
+    {
+      "id": "waterfront-drive",
+      "name": "Waterfront Drive",
+      "category": "transport",
+      "type": "road",
+      "description": "Loop road serving the hotels and the south side of the lake.",
+      "width": 11,
+      "color": "#777B7F",
+      "path": [[-640, 345], [-640, 950, 90], [660, 950, 90], [660, 345]]
+    },
+    {
+      "id": "infield-road",
+      "name": "Infield Road",
+      "category": "transport",
+      "type": "road",
+      "description": "Passes under the circuit by tunnel to reach the academy and Automotive Hub.",
+      "width": 10,
+      "color": "#777B7F",
+      "path": [[-100, 345], [-100, -240, 30], [-60, -280]],
+      "branches": [
+        [[-100, -240, 0], [240, -240, 30], [240, -285]]
+      ]
+    },
+    {
+      "id": "car-park-1",
+      "name": "Car Park P1",
+      "category": "transport",
+      "type": "area",
+      "description": "Between the N7 and the ring road, by the north interchange.",
+      "footprint": [[-1210, -660], [-1060, -660], [-1060, -280], [-1210, -280]],
+      "color": "#96989A"
+    },
+    {
+      "id": "car-park-2",
+      "name": "Car Park P2",
+      "category": "transport",
+      "type": "area",
+      "description": "Closest parking to the arrival plaza.",
+      "footprint": [[-1210, -240], [-1060, -240], [-1060, 60], [-1210, 60]],
+      "color": "#96989A"
+    },
+    {
+      "id": "car-park-3",
+      "name": "Car Park P3",
+      "category": "transport",
+      "type": "area",
+      "description": "By the south interchange.",
+      "footprint": [[-1210, 100], [-1060, 100], [-1060, 265], [-1210, 265]],
+      "color": "#96989A"
+    },
+    {
+      "id": "car-park-4",
+      "name": "Car Park P4",
+      "category": "transport",
+      "type": "area",
+      "description": "North of the ring road.",
+      "footprint": [[-980, -1120], [-640, -1120], [-640, -850], [-980, -850]],
+      "color": "#96989A"
+    },
+    {
+      "id": "car-park-5",
+      "name": "Car Park P5",
+      "category": "transport",
+      "type": "area",
+      "description": "North of the ring road, near Gates 5 and 6.",
+      "footprint": [[-520, -1120], [-140, -1120], [-140, -850], [-520, -850]],
+      "color": "#96989A"
+    },
+    {
+      "id": "car-park-6",
+      "name": "Car Park P6",
+      "category": "transport",
+      "type": "area",
+      "description": "North of the ring road, near Gate 7.",
+      "footprint": [[-20, -1120], [400, -1120], [400, -850], [-20, -850]],
+      "color": "#96989A"
+    },
+    {
+      "id": "car-park-7",
+      "name": "Car Park P7",
+      "category": "transport",
+      "type": "area",
+      "description": "East of the ring road, near Gate 9.",
+      "footprint": [[1030, -640], [1200, -640], [1200, -260], [1030, -260]],
+      "color": "#96989A"
+    },
+    {
+      "id": "car-park-8",
+      "name": "Car Park P8",
+      "category": "transport",
+      "type": "area",
+      "description": "South-west of the ring road, serving the waterfront.",
+      "footprint": [[-980, 420], [-720, 420], [-720, 760], [-980, 760]],
+      "color": "#96989A"
+    },
+    {
+      "id": "shuttle-drop-off",
+      "name": "Shuttle Drop-off",
+      "category": "transport",
+      "type": "area",
+      "description": "Shuttle buses from the station, car parks and aerodrome set down here.",
+      "footprint": [[-1030, 140], [-970, 140], [-970, 210], [-1030, 210]],
+      "color": "#BDB7A8"
+    },
+    {
+      "id": "kalbaskraal-station",
+      "name": "Kalbaskraal Station",
+      "category": "transport",
+      "type": "building",
+      "description": "The nearest railway station, within walking distance along the fan walk.",
+      "color": "#CFC6B4",
+      "footprint": [[1495, 1150], [1509, 1150], [1509, 1220], [1495, 1220]],
+      "height": 11
+    },
+    {
+      "id": "railway-line",
+      "name": "Railway Line",
+      "category": "transport",
+      "type": "road",
+      "description": "The line through Kalbaskraal station.",
+      "width": 4,
+      "color": "#6B5F55",
+      "step": 12,
+      "path": [[1620, -6000], [1540, 0, 3000], [1480, 6000]]
+    },
+    {
+      "id": "fan-walk",
+      "name": "Fan Walk",
+      "category": "transport",
+      "type": "road",
+      "description": "The walking route between Kalbaskraal station and the ring road.",
+      "width": 6,
+      "color": "#D8CDB6",
+      "dashed": true,
+      "path": [[1490, 1185], [1250, 1120, 120], [1120, 760, 120], [1060, 420, 60], [1012, 170]]
+    },
+    {
+      "id": "aerodrome-road",
+      "name": "Aerodrome Road",
+      "category": "transport",
+      "type": "road",
+      "description": "Links the ring road to the aerodrome.",
+      "width": 10,
+      "color": "#777B7F",
+      "path": [[620, -800], [620, -1370]]
+    },
+    {
+      "id": "aerodrome-runway",
+      "name": "Aerodrome Runway",
+      "category": "transport",
+      "type": "road",
+      "description": "The runway of the adjacent aerodrome, with its taxiway.",
+      "width": 30,
+      "color": "#777B7F",
+      "path": [[150, -1500], [1250, -1500]],
+      "branches": [
+        [[450, -1500], [450, -1440]]
+      ]
+    },
+    {
+      "id": "aerodrome-apron",
+      "name": "Aerodrome Apron",
+      "category": "transport",
+      "type": "area",
+      "description": "Aircraft parking in front of the hangars and terminal.",
+      "footprint": [[300, -1440], [640, -1440], [640, -1372], [300, -1372]],
+      "color": "#96989A"
+    },
+    {
+      "id": "aerodrome-terminal",
+      "name": "Aerodrome Terminal",
+      "category": "transport",
+      "type": "building",
+      "description": "Small terminal for arrivals by light aircraft.",
+      "color": "#E8ECEF",
+      "footprint": [[430, -1368], [460, -1368], [460, -1353], [430, -1353]],
+      "height": 10
+    },
+    {
+      "id": "aerodrome-hangars",
+      "name": "Aerodrome Hangars",
+      "category": "transport",
+      "type": "building",
+      "description": "Hangars beside the apron.",
+      "color": "#C9CFD4",
+      "parts": [
+        { "footprint": [[320, -1368], [360, -1368], [360, -1338], [320, -1338]], "height": 15 },
+        { "footprint": [[370, -1368], [410, -1368], [410, -1338], [370, -1338]], "height": 15 }
+      ]
+    },
+    {
+      "id": "aerodrome-control-tower",
+      "name": "Aerodrome Control Tower",
+      "category": "transport",
+      "type": "building",
+      "description": "Control tower for the adjacent aerodrome.",
+      "color": "#E8ECEF",
+      "footprint": [[480, -1360], [488, -1360], [488, -1352], [480, -1352]],
+      "height": 23
+    },
+    {
+      "id": "gate-1",
+      "name": "Gate 1",
+      "category": "entrances",
+      "type": "gate",
+      "description": "Spectator entrance. The number of gates is a placeholder.",
+      "position": [-1025, -420]
+    },
+    {
+      "id": "gate-2",
+      "name": "Gate 2",
+      "category": "entrances",
+      "type": "gate",
+      "description": "Spectator entrance. The number of gates is a placeholder.",
+      "position": [-1025, -60]
+    },
+    {
+      "id": "gate-3",
+      "name": "Gate 3",
+      "category": "entrances",
+      "type": "gate",
+      "description": "Spectator entrance. The number of gates is a placeholder.",
+      "position": [-1025, 60]
+    },
+    {
+      "id": "gate-4",
+      "name": "Gate 4",
+      "category": "entrances",
+      "type": "gate",
+      "description": "Spectator entrance. The number of gates is a placeholder.",
+      "position": [-1025, 230]
+    },
+    {
+      "id": "gate-5",
+      "name": "Gate 5",
+      "category": "entrances",
+      "type": "gate",
+      "description": "Spectator entrance. The number of gates is a placeholder.",
+      "position": [-760, -785]
+    },
+    {
+      "id": "gate-6",
+      "name": "Gate 6",
+      "category": "entrances",
+      "type": "gate",
+      "description": "Spectator entrance. The number of gates is a placeholder.",
+      "position": [-300, -785]
+    },
+    {
+      "id": "gate-7",
+      "name": "Gate 7",
+      "category": "entrances",
+      "type": "gate",
+      "description": "Spectator entrance. The number of gates is a placeholder.",
+      "position": [200, -785]
+    },
+    {
+      "id": "gate-8",
+      "name": "Gate 8",
+      "category": "entrances",
+      "type": "gate",
+      "description": "Spectator entrance. The number of gates is a placeholder.",
+      "position": [620, -785]
+    },
+    {
+      "id": "gate-9",
+      "name": "Gate 9",
+      "category": "entrances",
+      "type": "gate",
+      "description": "Spectator entrance. The number of gates is a placeholder.",
+      "position": [985, -520]
+    },
+    {
+      "id": "gate-10",
+      "name": "Gate 10",
+      "category": "entrances",
+      "type": "gate",
+      "description": "Spectator entrance. The number of gates is a placeholder.",
+      "position": [985, -100]
+    },
+    {
+      "id": "gate-11",
+      "name": "Gate 11",
+      "category": "entrances",
+      "type": "gate",
+      "description": "Spectator entrance. The number of gates is a placeholder.",
+      "position": [985, 150]
+    },
+    {
+      "id": "gate-12",
+      "name": "Gate 12",
+      "category": "entrances",
+      "type": "gate",
+      "description": "Spectator entrance. The number of gates is a placeholder.",
+      "position": [640, 330]
+    },
+    {
+      "id": "gate-13",
+      "name": "Gate 13",
+      "category": "entrances",
+      "type": "gate",
+      "description": "Spectator entrance. The number of gates is a placeholder.",
+      "position": [150, 330]
+    },
+    {
+      "id": "gate-14",
+      "name": "Gate 14",
+      "category": "entrances",
+      "type": "gate",
+      "description": "Spectator entrance. The number of gates is a placeholder.",
+      "position": [-420, 330]
+    }
+  ]
+}

@@ -1,8 +1,11 @@
+import { SITE_SIZE } from "../site.ts";
 import { hash2, noise2 } from "./noise.ts";
 
 const FIELD_WIDTH = 460;
 const FIELD_LENGTH = 360;
 const EDGE_WARP = 110;
+const GRASS_EDGE_WIDTH = 30;
+const GRASS_TONE: readonly [number, number, number] = [150, 158, 96];
 
 // sRGB. Wheat tones are listed more often so gold dominates the patchwork.
 const FIELD_TONES: readonly (readonly [number, number, number])[] = [
@@ -33,7 +36,13 @@ export function writeFieldColor(
   const tone = FIELD_TONES[Math.floor(hash2(column, row, 14) * FIELD_TONES.length)];
 
   const shade = 1 + 0.06 * noise2(x, z, 170, 15) + 0.03 * noise2(x, z, 45, 16);
-  pixels[offset] = Math.min(255, tone[0] * shade);
-  pixels[offset + 1] = Math.min(255, tone[1] * shade);
-  pixels[offset + 2] = Math.min(255, tone[2] * shade);
+
+  // Inside the site the wheat gives way to mown grass.
+  const edge = Math.max(Math.abs(warpedX), Math.abs(warpedZ)) - SITE_SIZE / 2;
+  const grass = 1 - Math.min(1, Math.max(0, edge / GRASS_EDGE_WIDTH + 0.5));
+
+  for (let channel = 0; channel < 3; channel += 1) {
+    const color = tone[channel] + (GRASS_TONE[channel] - tone[channel]) * grass;
+    pixels[offset + channel] = Math.min(255, color * shade);
+  }
 }

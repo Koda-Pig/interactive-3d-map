@@ -117,7 +117,7 @@ Colours:
 - Highlight and selection: cyan `#1CA7EC`, Protium's accent colour for this client
 - Interface (sidebar, panels): BMR's style from the deck. Roboto, navy bars, teal buttons, 8px corners
 
-## Location data (first draft)
+## Location data
 
 ```json
 {
@@ -133,10 +133,15 @@ Colours:
 }
 ```
 
-- `footprint`: the outline's corners, in metres on the ground
+The layout lives in `src/data/locations.json`, as a `locations` list plus `grading` zones: terraces levelled as one, so everything standing on them shares a ground height.
+
+- `type`: `building`, `area`, `water`, `track`, `road` or `gate`
+- `footprint`: the outline's corners, in metres on the ground. A corner is `[x, z]`, or `[x, z, radius]` to round it
 - `height`: how tall a building is, in metres
+- `parts`: used instead of `footprint` and `height` by buildings with several volumes. Each part has its own `footprint` and `height`, and can add `base` (how far above the ground it starts) and `color`
 - `model`: optional `.glb` file that replaces the simple shape
-- Tracks and roads use `path` (a list of points) instead of `footprint`. For tracks, add `closed: true` and `width`
+- Tracks and roads use `path` (a list of points, rounded the same way) instead of `footprint`, plus `width`. Optional: `closed`, `branches` (more paths in the same location), `median`, `dashed`, `kerbs`, `runoff`
+- Gates use `position`: one `[x, z]` point
 
 ## Not in scope yet
 

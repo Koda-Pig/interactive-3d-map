@@ -43,7 +43,64 @@ function buildGridLines(): Float64Array {
   return Float64Array.from([...negative, ...positive]);
 }
 
-function buildGeometry(lines: Float64Array): BufferGeometry {
+/** Largest index whose grid line is at or before `value`, kept inside the grid. */
+function lineBefore(lines: Float64Array, value: number): number {
+  let low = 0;
+  let high = lines.length - 2;
+  while (low < high) {
+    const middle = Math.ceil((low + high) / 2);
+    if (lines[middle] <= value) {
+      low = middle;
+    } else {
+      high = middle - 1;
+    }
+  }
+  return low;
+}
+
+/**
+ * The height of the triangles actually drawn. Ribbons use this instead of
+ * `heightAt` so the ground can't poke through them between mesh vertices.
+ */
+export class GroundSurface {
+  private readonly count: number;
+
+  constructor(
+    private readonly lines: Float64Array,
+    private readonly heights: Float32Array,
+  ) {
+    this.count = lines.length;
+  }
+
+  heightAt(x: number, z: number): number {
+    const { lines, heights, count } = this;
+    const column = lineBefore(lines, x);
+    const row = lineBefore(lines, z);
+    const u = (x - lines[column]) / (lines[column + 1] - lines[column]);
+    const v = (z - lines[row]) / (lines[row + 1] - lines[row]);
+
+    const a = heights[row * count + column];
+    const b = heights[row * count + column + 1];
+    const c = heights[(row + 1) * count + column];
+    const d = heights[(row + 1) * count + column + 1];
+
+    // Matches the diagonal used by the mesh indices.
+    return u + v <= 1 ? a + (b - a) * u + (c - a) * v : d + (c - d) * (1 - u) + (b - d) * (1 - v);
+  }
+}
+
+function sampleHeights(lines: Float64Array): Float32Array {
+  const count = lines.length;
+  const heights = new Float32Array(count * count);
+  for (let row = 0; row < count; row += 1) {
+    for (let column = 0; column < count; column += 1) {
+      heights[row * count + column] = heightAt(lines[column], lines[row]);
+    }
+  }
+  return heights;
+}
+
+function buildGeometry(lines: Float64Array, heights: Float32Array): BufferGeometry {
   const count = lines.length;
   const last = count - 1;
   const positions = new Float32Array(count * count * 3);
@@ -53,11 +110,9 @@ function buildGeometry(lines: Float64Array): BufferGeometry {
   for (let row = 0; row < count; row += 1) {
     for (let column = 0; column < count; column += 1) {
       const vertex = row * count + column;
-      const x = lines[column];
-      const z = lines[row];
-      positions[vertex * 3] = x;
-      positions[vertex * 3 + 1] = heightAt(x, z);
-      positions[vertex * 3 + 2] = z;
+      positions[vertex * 3] = lines[column];
+      positions[vertex * 3 + 1] = heights[vertex];
+      positions[vertex * 3 + 2] = lines[row];
       uvs[vertex * 2] = column / last;
       uvs[vertex * 2 + 1] = row / last;
     }
@@ -118,13 +173,14 @@ function bakeFieldTexture(lines: Float64Array): DataTexture {
   return texture;
 }
 
-export function createGround(maxAnisotropy: number): Mesh {
+export function createGround(maxAnisotropy: number): { mesh: Mesh; surface: GroundSurface } {
   const lines = buildGridLines();
+  const heights = sampleHeights(lines);
   const map = bakeFieldTexture(lines);
   map.anisotropy = maxAnisotropy;
 
-  const ground = new Mesh(buildGeometry(lines), new MeshLambertMaterial({ map }));
-  ground.name = "ground";
-  ground.receiveShadow = true;
-  return ground;
+  const mesh = new Mesh(buildGeometry(lines, heights), new MeshLambertMaterial({ map }));
+  mesh.name = "ground";
+  mesh.receiveShadow = true;
+  return { mesh, surface: new GroundSurface(lines, heights) };
 }

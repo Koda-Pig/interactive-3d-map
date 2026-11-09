@@ -4,9 +4,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "npm run check:layout && tsc && vite build",
     "preview": "vite preview",
     "typecheck": "tsc",
+    "check:layout": "node tools/check-layout.mjs",
     "assets": "node tools/assets/generate.mjs",
     "assets:validate": "node tools/assets/validate.mjs",
     "assets:preview": "node tools/assets/serve.mjs",

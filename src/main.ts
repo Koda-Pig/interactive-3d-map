@@ -1,4 +1,5 @@
 import { NeutralToneMapping, PCFShadowMap, Scene, WebGLRenderer } from "three";
+import { createSite } from "./draw/site.ts";
 import { addLighting } from "./scene/lighting.ts";
 import { constrainView, createCamera, createControls } from "./scene/view.ts";
 import "./style.css";
@@ -19,7 +20,8 @@ host.append(renderer.domElement);
 
 const scene = new Scene();
 addLighting(scene);
-scene.add(createGround(renderer.capabilities.getMaxAnisotropy()));
+const ground = createGround(renderer.capabilities.getMaxAnisotropy());
+scene.add(ground.mesh, createSite(ground.surface));
 
 const camera = createCamera(host.clientWidth / host.clientHeight);
 const controls = createControls(camera, renderer.domElement);
