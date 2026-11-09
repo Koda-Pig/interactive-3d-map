@@ -1,6 +1,6 @@
 # Visual improvements
 
-A review of the map against high-end interactive site maps, from November 2026, and the work that would close the gap. None of this is built yet.
+A review of the map against high-end interactive site maps, from November 2026, and the work that would close the gap. Only item 1 is built so far. The scores are from before it.
 
 The map already does its job as a product. Search, precinct filters, fly-to and the event switch are as good as most maps of this kind. It falls behind on finish. From the air it reads clearly, but up close it looks like an architectural blockout, and the close view is where every click takes you.
 
@@ -39,9 +39,7 @@ The usual alternatives each make a different trade:
 
 ### 1. The selection highlight flattens buildings
 
-A selected building becomes 80% cyan with an added glow, so its roof, glass and shading all turn into one blue block ([materials.ts:107](../src/draw/materials.ts:107)). Nothing else on the map changes, so the eye gets no other help finding it.
-
-Keep the building's own materials with a light cyan tint, and draw a cyan outline on the ground from its footprint. Mute the rest of the site using the colour muting the event modes already have ([precincts.ts:12](../src/scene/precincts.ts:12)). Hover should stay lighter than selection. Closing the details has to restore the current event mode's muting, not clear it.
+**Built.** A selected building keeps its own materials under a light cyan tint, with a cyan line on the ground around its footprint ([selection-outline.ts](../src/scene/selection-outline.ts)), and the rest of the site mutes around it. Hover uses a lighter tint and doesn't mute anything. Closing the details returns to the current event mode's muting. Flat areas, roads and gates keep a strong tint, with no outline.
 
 **Done when:** a selected building is obvious from the whole-site view and still recognisable as that building up close.
 
@@ -51,7 +49,7 @@ The light is one sun plus a hemisphere light ([lighting.ts:41](../src/scene/ligh
 
 Bake ambient occlusion into the kit in the model generator, as vertex colours, and draw a soft dark decal around each building from its footprint. That costs almost nothing at runtime, which a screen-space pass on phones wouldn't. Three things to handle along the way:
 
-- The highlight turns vertex colours off ([materials.ts:119](../src/draw/materials.ts:119)), so item 1 has to keep them
+- The building highlight already keeps vertex colours. The strong highlight on flat shapes still turns them off
 - Tiled models such as grandstand bays need to match at their seams
 - The generated files change, so `pnpm assets:validate` and `pnpm assets:determinism` need to pass again
 
@@ -109,7 +107,7 @@ Add an image rendered from our own scene, room for facts BMR supplies, and links
 
 | Order | Item | Size | Effect |
 | --- | --- | --- | --- |
-| 1 | Selection highlight | Small | High |
+| 1 | Selection highlight (built) | Small | High |
 | 2 | Soft shading and ground contact | Medium | High |
 | 3 | Ground dressing | Medium | High |
 | 4 | Opening view and fly-in | Small | Medium |

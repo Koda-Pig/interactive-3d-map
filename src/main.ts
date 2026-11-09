@@ -14,6 +14,7 @@ import { FrameMonitor } from "./scene/performance.ts";
 import { createPicker } from "./scene/picking.ts";
 import { Precincts } from "./scene/precincts.ts";
 import { detectQuality } from "./scene/quality.ts";
+import { SelectionOutline } from "./scene/selection-outline.ts";
 import { createSky, TABLE_MOUNTAIN_MODEL } from "./scene/sky.ts";
 import { constrainView, createCamera, createControls } from "./scene/view.ts";
 import "./style.css";
@@ -74,7 +75,15 @@ scene.environmentIntensity = ENVIRONMENT_INTENSITY;
 const ground = createGround(renderer.capabilities.getMaxAnisotropy(), quality.fieldTextureSize);
 const site = createSite(ground.surface, kit);
 const scenery = createScenery(kit, ground.surface, quality);
-scene.add(sky.object, ground.mesh, site, scenery.setting, ...scenery.precincts.values());
+const outline = new SelectionOutline(ground.surface);
+scene.add(
+  sky.object,
+  ground.mesh,
+  site,
+  scenery.setting,
+  outline.object,
+  ...scenery.precincts.values(),
+);
 
 const camera = createCamera(host.clientWidth / host.clientHeight);
 const controls = createControls(camera, renderer.domElement);
@@ -101,6 +110,7 @@ const interaction = new MapInteraction({
   panel,
   sidebar,
   precincts,
+  outline,
   onChange: () => {
     needsRender = true;
   },

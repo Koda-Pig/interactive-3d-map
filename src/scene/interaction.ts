@@ -1,6 +1,7 @@
 import type { Object3D } from "three";
 import { Box3 } from "three";
-import { setHighlighted } from "../draw/materials.ts";
+import type { HighlightLevel } from "../draw/materials.ts";
+import { highlightLook, setHighlight } from "../draw/materials.ts";
 import type { Category, Location } from "../layout/locations.ts";
 import type { InfoPanel } from "../ui/info-panel.ts";
 import type { Sidebar } from "../ui/sidebar.ts";
@@ -8,6 +9,7 @@ import type { CameraFlight } from "./flight.ts";
 import type { SiteLabels } from "./labels.ts";
 import type { Picker } from "./picking.ts";
 import type { Precincts } from "./precincts.ts";
+import type { SelectionOutline } from "./selection-outline.ts";
 
 /** A press that moves further than this, in pixels, is a drag and not a click. */
 const CLICK_TOLERANCE = 6;
@@ -21,6 +23,7 @@ export interface InteractionParts {
   readonly panel: InfoPanel;
   readonly sidebar: Sidebar;
   readonly precincts: Precincts;
+  readonly outline: SelectionOutline;
   /** Called when something changed that needs a new frame. */
   readonly onChange: () => void;
 }
@@ -29,7 +32,7 @@ export interface InteractionParts {
 export class MapInteraction {
   private hovered: Location | null = null;
   private selected: Location | null = null;
-  private lit: ReadonlySet<Location> = new Set();
+  private lit: ReadonlyMap<Location, HighlightLevel> = new Map();
 
   private pointer: { x: number; y: number } | null = null;
   private pointerMoved = false;
@@ -56,6 +59,8 @@ export class MapInteraction {
     this.selected = location;
     this.parts.panel.show(location);
     this.parts.sidebar.showSelected(location);
+    this.parts.precincts.setFocus(location);
+    this.parts.outline.show(location);
     this.refresh();
     if (location) {
       this.parts.flight.frame(new Box3().setFromObject(this.objectOf(location)));
@@ -113,24 +118,26 @@ export class MapInteraction {
   }
 
   private refresh(): void {
-    const next = new Set<Location>();
-    for (const location of [this.hovered, this.selected]) {
-      if (location) {
-        next.add(location);
-      }
+    const next = new Map<Location, HighlightLevel>();
+    if (this.hovered) {
+      next.set(this.hovered, "hover");
     }
-    for (const location of this.lit) {
+    if (this.selected) {
+      next.set(this.selected, "selected");
+    }
+    for (const location of this.lit.keys()) {
       if (!next.has(location)) {
-        setHighlighted(this.objectOf(location), false);
+        setHighlight(this.objectOf(location), null);
       }
     }
-    for (const location of next) {
-      if (!this.lit.has(location)) {
-        setHighlighted(this.objectOf(location), true);
+    for (const [location, level] of next) {
+      if (this.lit.get(location) !== level) {
+        const look = highlightLook(location.type === "building", level);
+        setHighlight(this.objectOf(location), look);
       }
     }
     this.lit = next;
-    this.parts.labels.setActive(next);
+    this.parts.labels.setActive(new Set(next.keys()));
     this.parts.onChange();
   }
 

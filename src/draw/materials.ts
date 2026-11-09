@@ -13,6 +13,7 @@ export const Layer = {
   verge: 3,
   track: 4,
   marking: 5,
+  outline: 6,
 } as const;
 
 export type SiteMaterial = MeshLambertMaterial | MeshStandardMaterial;
@@ -53,7 +54,7 @@ export function kitMaterial(source: MeshStandardMaterial): MeshStandardMaterial 
   return material;
 }
 
-function offsetParameters(layer: number) {
+export function offsetParameters(layer: number) {
   return { polygonOffset: true, polygonOffsetFactor: -layer, polygonOffsetUnits: -layer * 4 };
 }
 
@@ -107,46 +108,91 @@ export function vertexColorMaterial(layer: number = Layer.marking): MeshLambertM
   return material;
 }
 
-const HIGHLIGHT = new Color("#1CA7EC");
-const HIGHLIGHT_TINT = 0.8;
-const HIGHLIGHT_GLOW = 0.35;
+export const HIGHLIGHT = new Color("#1CA7EC");
 
-const highlightMaterials = new WeakMap<SiteMaterial, SiteMaterial>();
+export type HighlightLevel = "hover" | "selected";
+
+export interface HighlightLook {
+  readonly tint: number;
+  readonly glow: number;
+  readonly keepsVertexColors: boolean;
+}
+
+type HighlightLooks = Readonly<Record<HighlightLevel, HighlightLook>>;
+
+/** Buildings stay recognisable: their roofs, glass and shading all still show. */
+const BUILDING_LOOKS: HighlightLooks = {
+  hover: { tint: 0.07, glow: 0.03, keepsVertexColors: true },
+  selected: { tint: 0.15, glow: 0.05, keepsVertexColors: true },
+};
+
+/** Flat shapes and markers have no form to lose, and no ground outline to help them. */
+const FLAT_LOOKS: HighlightLooks = {
+  hover: { tint: 0.5, glow: 0.2, keepsVertexColors: false },
+  selected: { tint: 0.8, glow: 0.35, keepsVertexColors: false },
+};
+
+export function highlightLook(building: boolean, level: HighlightLevel): HighlightLook {
+  return (building ? BUILDING_LOOKS : FLAT_LOOKS)[level];
+}
+
+const highlightMaterials = new WeakMap<SiteMaterial, Map<HighlightLook, SiteMaterial>>();
 const baseMaterials = new WeakMap<Mesh, SiteMaterial>();
+const meshLooks = new WeakMap<Mesh, HighlightLook>();
 
-/** A cyan copy that keeps the original's layer, and a trace of its colour. */
-function highlightMaterial(base: SiteMaterial): SiteMaterial {
-  let material = highlightMaterials.get(base);
+function paintHighlight(material: SiteMaterial, base: SiteMaterial, look: HighlightLook): void {
+  material.color.copy(base.color).lerp(HIGHLIGHT, look.tint);
+}
+
+/** A cyan-tinted copy that keeps the original's layer. */
+function highlightMaterial(base: SiteMaterial, look: HighlightLook): SiteMaterial {
+  let copies = highlightMaterials.get(base);
+  if (!copies) {
+    copies = new Map();
+    highlightMaterials.set(base, copies);
+  }
+  let material = copies.get(look);
   if (!material) {
     material = base.clone();
-    material.vertexColors = false;
+    material.vertexColors &&= look.keepsVertexColors;
     // The original may be caught partway through a precinct fade.
     material.transparent = false;
     material.opacity = 1;
-    material.color.lerp(HIGHLIGHT, HIGHLIGHT_TINT);
+    paintHighlight(material, base, look);
     material.emissive.copy(HIGHLIGHT);
-    material.emissiveIntensity = HIGHLIGHT_GLOW;
-    highlightMaterials.set(base, material);
+    material.emissiveIntensity = look.glow;
+    copies.set(look, material);
   }
   return material;
 }
 
-/** Turns the cyan highlight on or off for everything drawn by a location. */
-export function setHighlighted(object: Object3D, highlighted: boolean): void {
+/** Sets the highlight on everything drawn by a location, or clears it with `null`. */
+export function setHighlight(object: Object3D, look: HighlightLook | null): void {
   object.traverse((child) => {
     if (!(child instanceof Mesh)) {
       return;
     }
     const base = baseMaterials.get(child) ?? (child.material as SiteMaterial);
     baseMaterials.set(child, base);
-    child.material = highlighted ? highlightMaterial(base) : base;
+    if (look) {
+      meshLooks.set(child, look);
+    } else {
+      meshLooks.delete(child);
+    }
+    child.material = look ? highlightMaterial(base, look) : base;
   });
 }
 
 /** Changes a mesh's normal material, without losing a highlight it has on. */
 export function setBaseMaterial(mesh: Mesh, material: SiteMaterial): void {
-  const base = baseMaterials.get(mesh);
-  const highlighted = base !== undefined && mesh.material !== base;
   baseMaterials.set(mesh, material);
-  mesh.material = highlighted ? highlightMaterial(material) : material;
+  const look = meshLooks.get(mesh);
+  mesh.material = look ? highlightMaterial(material, look) : material;
+}
+
+/** Call after changing a material's colour, so its highlighted copies follow. */
+export function refreshHighlights(base: SiteMaterial): void {
+  for (const [look, material] of highlightMaterials.get(base) ?? []) {
+    paintHighlight(material, base, look);
+  }
 }

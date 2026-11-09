@@ -1,7 +1,7 @@
 import type { Object3D } from "three";
 import { Color, Material, MathUtils, Mesh } from "three";
 import type { SiteMaterial } from "../draw/materials.ts";
-import { setBaseMaterial } from "../draw/materials.ts";
+import { refreshHighlights, setBaseMaterial } from "../draw/materials.ts";
 import type { Category, Location } from "../layout/locations.ts";
 import { CATEGORIES, layout } from "../layout/locations.ts";
 
@@ -11,6 +11,8 @@ const FADE_DURATION = 300;
 const MUTE_DURATION = 220;
 const MUTED_COLOR = new Color("#D9D4C4");
 const MUTED_AMOUNT = 0.74;
+/** How far the rest of the site mutes around a selection, where 1 is an event mode's muting. */
+const FOCUS_MUTE = 0.6;
 
 interface Fade {
   readonly from: number;
@@ -18,7 +20,7 @@ interface Fade {
   startedAt: number | null;
 }
 
-/** A material and the copy of it used by locations that aren't the focus. */
+/** A copy of a mesh's material that eases towards the muted colour. */
 interface MutedTwin {
   readonly material: SiteMaterial;
   readonly full: Color;
@@ -31,7 +33,7 @@ interface Precinct {
   readonly dressing: Object3D[];
   /** Each precinct's own copies, so that fading one leaves the others alone. */
   readonly materials: Map<Material, Material>;
-  readonly twins: Map<Material, MutedTwin>;
+  readonly twins: SiteMaterial[];
   shown: boolean;
   opacity: number;
   fade: Fade | null;
@@ -40,7 +42,13 @@ interface Precinct {
 interface LocationMesh {
   readonly mesh: Mesh;
   readonly own: SiteMaterial;
-  readonly twin: SiteMaterial;
+  readonly twin: MutedTwin;
+}
+
+/** A location's meshes and how muted they are, from 0 to 1. */
+interface LocationMuting {
+  readonly meshes: readonly LocationMesh[];
+  amount: number;
 }
 
 function ownMaterials(object: Object3D, precinct: Precinct): void {
@@ -57,17 +65,15 @@ function ownMaterials(object: Object3D, precinct: Precinct): void {
   });
 }
 
-function twinOf(own: SiteMaterial, precinct: Precinct): SiteMaterial {
-  let twin = precinct.twins.get(own);
-  if (!twin) {
-    twin = {
-      material: own.clone(),
-      full: own.color.clone(),
-      muted: own.color.clone().lerp(MUTED_COLOR, MUTED_AMOUNT),
-    };
-    precinct.twins.set(own, twin);
-  }
-  return twin.material;
+/** Each mesh has its own twin, so locations can mute by different amounts at once. */
+function createTwin(own: SiteMaterial, precinct: Precinct): MutedTwin {
+  const material = own.clone();
+  precinct.twins.push(material);
+  return {
+    material,
+    full: own.color.clone(),
+    muted: own.color.clone().lerp(MUTED_COLOR, MUTED_AMOUNT),
+  };
 }
 
 function setOpacity(material: Material, opacity: number): void {
@@ -85,8 +91,8 @@ function applyOpacity(precinct: Precinct, opacity: number): void {
   for (const material of precinct.materials.values()) {
     setOpacity(material, opacity);
   }
-  for (const { material } of precinct.twins.values()) {
-    setOpacity(material, opacity);
+  for (const twin of precinct.twins) {
+    setOpacity(twin, opacity);
   }
   for (const object of [...precinct.objects, ...precinct.dressing]) {
     object.visible = opacity > 0;
@@ -99,13 +105,12 @@ export class Precincts {
   shownObjects: Object3D[];
 
   private readonly precincts = new Map<Category, Precinct>();
-  private readonly meshes = new Map<Location, LocationMesh[]>();
+  private readonly muting = new Map<Location, LocationMuting>();
 
-  /** What should be muted, once any change that's under way has finished. */
-  private wantedMuted: ReadonlySet<Location> = new Set();
-  /** What the twin materials are currently on. */
-  private appliedMuted: ReadonlySet<Location> = new Set();
-  private muteAmount = 0;
+  /** What the current event mode leaves out. */
+  private eventMuted: ReadonlySet<Location> = new Set();
+  /** The selected location, which everything else steps back from. */
+  private focus: Location | null = null;
   private lastUpdate: number | null = null;
 
   /**
@@ -118,7 +123,7 @@ export class Precincts {
         objects: [],
         dressing: [],
         materials: new Map(),
-        twins: new Map(),
+        twins: [],
         shown: true,
         opacity: 1,
         fade: null,
@@ -137,10 +142,10 @@ export class Precincts {
       object.traverse((child) => {
         if (child instanceof Mesh) {
           const own = child.material as SiteMaterial;
-          meshes.push({ mesh: child, own, twin: twinOf(own, precinct) });
+          meshes.push({ mesh: child, own, twin: createTwin(own, precinct) });
         }
       });
-      this.meshes.set(location, meshes);
+      this.muting.set(location, { meshes, amount: 0 });
     }
     for (const [category, object] of dressing) {
       const precinct = this.precinct(category);
@@ -154,8 +159,9 @@ export class Precincts {
     return this.precinct(category).shown;
   }
 
+  /** Whether the event mode leaves this location out. A selection doesn't count. */
   isMuted(location: Location): boolean {
-    return this.wantedMuted.has(location);
+    return this.eventMuted.has(location);
   }
 
   /** Starts a precinct fading. It stops being pickable as soon as it's turned off. */
@@ -173,9 +179,14 @@ export class Precincts {
     this.shownObjects = this.collectShown();
   }
 
-  /** Mutes exactly these locations, leaving every other one in full colour. */
+  /** Sets the locations the event mode leaves out. */
   setMuted(locations: ReadonlySet<Location>): void {
-    this.wantedMuted = locations;
+    this.eventMuted = locations;
+  }
+
+  /** Mutes everything around this location, or returns to the event mode's muting. */
+  setFocus(location: Location | null): void {
+    this.focus = location;
   }
 
   /** Advances any changes to `now`, and says what needs drawing again. */
@@ -199,50 +210,50 @@ export class Precincts {
     return { redraw: recoloured || faded, shadows: faded };
   }
 
+  private muteTarget(location: Location): number {
+    if (location === this.focus) {
+      return 0;
+    }
+    if (this.eventMuted.has(location)) {
+      return 1;
+    }
+    return this.focus ? FOCUS_MUTE : 0;
+  }
+
   /**
-   * A change of muted locations first eases the old ones back to full colour,
-   * where the twin materials look the same as the originals. Only then are
-   * the meshes switched over, so nothing jumps.
+   * Eases each location towards its target. A location only uses its twin
+   * materials while it's muted, where they can't be told from the originals
+   * at either end of the change, so nothing jumps.
    */
   private updateMuting(now: number): boolean {
     const elapsed = this.lastUpdate === null ? 0 : now - this.lastUpdate;
     this.lastUpdate = now;
-
-    const changing = this.wantedMuted !== this.appliedMuted;
-    const target = changing || this.appliedMuted.size === 0 ? 0 : 1;
-    if (this.muteAmount === target && !changing) {
-      return false;
-    }
-
     const step = prefersReducedMotion() ? 1 : Math.min(1, elapsed / MUTE_DURATION);
-    const amount =
-      this.muteAmount < target
-        ? Math.min(target, this.muteAmount + step)
-        : Math.max(target, this.muteAmount - step);
-    this.setMuteAmount(amount);
 
-    if (changing && amount === 0) {
-      this.switchMutedMeshes();
-    }
-    return true;
-  }
-
-  private setMuteAmount(amount: number): void {
-    this.muteAmount = amount;
-    const eased = MathUtils.smoothstep(amount, 0, 1);
-    for (const precinct of this.precincts.values()) {
-      for (const { material, full, muted } of precinct.twins.values()) {
-        material.color.lerpColors(full, muted, eased);
+    let changed = false;
+    for (const [location, muting] of this.muting) {
+      const target = this.muteTarget(location);
+      if (muting.amount === target) {
+        continue;
       }
+      const wasFullColour = muting.amount === 0;
+      muting.amount =
+        muting.amount < target
+          ? Math.min(target, muting.amount + step)
+          : Math.max(target, muting.amount - step);
+      this.applyMuting(muting, wasFullColour);
+      changed = true;
     }
+    return changed;
   }
 
-  private switchMutedMeshes(): void {
-    this.appliedMuted = this.wantedMuted;
-    for (const [location, meshes] of this.meshes) {
-      const muted = this.appliedMuted.has(location);
-      for (const { mesh, own, twin } of meshes) {
-        setBaseMaterial(mesh, muted ? twin : own);
+  private applyMuting(muting: LocationMuting, wasFullColour: boolean): void {
+    const eased = MathUtils.smoothstep(muting.amount, 0, 1);
+    for (const { mesh, own, twin } of muting.meshes) {
+      twin.material.color.lerpColors(twin.full, twin.muted, eased);
+      refreshHighlights(twin.material);
+      if (wasFullColour || muting.amount === 0) {
+        setBaseMaterial(mesh, muting.amount === 0 ? own : twin.material);
       }
     }
   }
