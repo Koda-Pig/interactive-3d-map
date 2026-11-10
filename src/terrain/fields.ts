@@ -1,5 +1,5 @@
-import type { LandUse } from "../layout/locations.ts";
 import { landUseAt, siteOccupancy } from "../layout/land-use.ts";
+import type { LandUse } from "../layout/locations.ts";
 import { SITE_SIZE } from "../site.ts";
 import { hash2, noise2 } from "./noise.ts";
 

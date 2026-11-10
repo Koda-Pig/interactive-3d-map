@@ -24,6 +24,8 @@ import {
   pointInBlock,
   stallsOf,
 } from "../layout/car-parks.ts";
+import type { ResolvedZone } from "../layout/land-use.ts";
+import { landUseAt, landUseZones, siteOccupancy } from "../layout/land-use.ts";
 import type {
   AreaLocation,
   BuildingLocation,
@@ -32,8 +34,6 @@ import type {
   TrackLocation,
 } from "../layout/locations.ts";
 import { buildingParts, CATEGORIES, layout } from "../layout/locations.ts";
-import type { ResolvedZone } from "../layout/land-use.ts";
-import { landUseAt, landUseZones, siteOccupancy } from "../layout/land-use.ts";
 import type { Occupancy } from "../layout/occupancy.ts";
 import { occupancyOf } from "../layout/occupancy.ts";
 import type { PathSample } from "../layout/path.ts";
@@ -1452,7 +1452,7 @@ function plantFieldEdges(context: Context, instances: Instances): void {
       const [bx, bz] = zone.outline[(index + 1) % zone.outline.length];
       // The site's own edge already has its row of trees.
       const onBoundary = [ax, az, bx, bz].filter((value) => Math.abs(value) > boundary);
-      if (onBoundary.length >= 2 && (Math.abs(ax) > boundary) === (Math.abs(bx) > boundary)) {
+      if (onBoundary.length >= 2 && Math.abs(ax) > boundary === Math.abs(bx) > boundary) {
         return;
       }
       const length = Math.hypot(bx - ax, bz - az);
