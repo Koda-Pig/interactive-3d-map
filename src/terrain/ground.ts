@@ -1,15 +1,19 @@
 import type { Texture } from "three";
 import {
+  Box3,
   BufferAttribute,
   BufferGeometry,
   DataTexture,
+  Group,
   LinearFilter,
   LinearMipmapLinearFilter,
   Mesh,
   MeshLambertMaterial,
   RGBAFormat,
+  Sphere,
   SRGBColorSpace,
   UnsignedByteType,
+  Vector3,
 } from "three";
 import { createFieldDetailTexture } from "../draw/textures.ts";
 import { GROUND_HALF_SIZE, MAP_HALF_SIZE } from "../site.ts";
@@ -102,6 +106,64 @@ function sampleHeights(lines: Float64Array): Float32Array {
     }
   }
   return heights;
+}
+
+/**
+ * How many grid cells one piece of the ground spans each way. The ground is
+ * drawn in pieces so that the ones out of view can be skipped. Smaller pieces
+ * skip more triangles but cost more draw calls when the whole site is in view.
+ */
+const PIECE_CELLS = 48;
+
+/**
+ * One piece of the ground: the same vertices as the whole, with the triangles
+ * of a block of cells. Its bounds are set by hand, because the ones a
+ * geometry works out for itself would cover every vertex.
+ */
+function pieceGeometry(
+  whole: BufferGeometry,
+  lines: Float64Array,
+  heights: Float32Array,
+  firstColumn: number,
+  firstRow: number,
+): BufferGeometry {
+  const count = lines.length;
+  const lastColumn = Math.min(firstColumn + PIECE_CELLS, count - 1);
+  const lastRow = Math.min(firstRow + PIECE_CELLS, count - 1);
+  const indices = new Uint32Array((lastColumn - firstColumn) * (lastRow - firstRow) * 6);
+  let next = 0;
+  for (let row = firstRow; row < lastRow; row += 1) {
+    for (let column = firstColumn; column < lastColumn; column += 1) {
+      const a = row * count + column;
+      const b = a + 1;
+      const c = a + count;
+      const d = c + 1;
+      indices.set([a, c, b, b, c, d], next);
+      next += 6;
+    }
+  }
+
+  let lowest = Number.POSITIVE_INFINITY;
+  let highest = Number.NEGATIVE_INFINITY;
+  for (let row = firstRow; row <= lastRow; row += 1) {
+    for (let column = firstColumn; column <= lastColumn; column += 1) {
+      const height = heights[row * count + column];
+      lowest = Math.min(lowest, height);
+      highest = Math.max(highest, height);
+    }
+  }
+
+  const geometry = new BufferGeometry();
+  for (const name of ["position", "uv", "normal"]) {
+    geometry.setAttribute(name, whole.getAttribute(name));
+  }
+  geometry.setIndex(new BufferAttribute(indices, 1));
+  geometry.boundingBox = new Box3(
+    new Vector3(lines[firstColumn], lowest, lines[firstRow]),
+    new Vector3(lines[lastColumn], highest, lines[lastRow]),
+  );
+  geometry.boundingSphere = geometry.boundingBox.getBoundingSphere(new Sphere());
+  return geometry;
 }
 
 function buildGeometry(lines: Float64Array, heights: Float32Array): BufferGeometry {
@@ -201,7 +263,7 @@ function addFieldDetail(material: MeshLambertMaterial, detail: Texture): void {
 export function createGround(
   maxAnisotropy: number,
   textureSize: number,
-): { mesh: Mesh; surface: GroundSurface } {
+): { mesh: Group; surface: GroundSurface } {
   const lines = buildGridLines();
   const heights = sampleHeights(lines);
   const map = bakeFieldTexture(lines, textureSize);
@@ -210,8 +272,15 @@ export function createGround(
   const material = new MeshLambertMaterial({ map });
   addFieldDetail(material, createFieldDetailTexture(maxAnisotropy));
 
-  const mesh = new Mesh(buildGeometry(lines, heights), material);
+  const whole = buildGeometry(lines, heights);
+  const mesh = new Group();
   mesh.name = "ground";
-  mesh.receiveShadow = true;
+  for (let row = 0; row < lines.length - 1; row += PIECE_CELLS) {
+    for (let column = 0; column < lines.length - 1; column += PIECE_CELLS) {
+      const piece = new Mesh(pieceGeometry(whole, lines, heights, column, row), material);
+      piece.receiveShadow = true;
+      mesh.add(piece);
+    }
+  }
   return { mesh, surface: new GroundSurface(lines, heights) };
 }

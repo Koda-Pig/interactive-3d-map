@@ -18,14 +18,33 @@ A review of how the map behaves in use, from November 2026. [improvements.md](im
 | Two overlapping labels could swap as the camera moved | Within each rank, a label that's already up keeps its place | [labels.ts](../src/scene/labels.ts) |
 | Every label was repositioned on every frame, shown or not | Hidden labels leave the page once they've faded. In a close view that was 9 of 114 on the page | [labels.ts](../src/scene/labels.ts) |
 | A precinct fade redrew the shadow map on every frame | Shadows are redrawn once, when the precinct's objects appear or go | [precincts.ts](../src/scene/precincts.ts) |
+| Nothing out of view could be skipped. The ground was one mesh and each kind of tree one site-wide batch, so both were always drawn | The ground is drawn in 49 pieces and scenery batches are split into regions, so the ones out of view are skipped | [ground.ts](../src/terrain/ground.ts), [scenery.ts](../src/draw/scenery.ts) |
 
 ## Still open
 
 - **Labels vanish when they touch the map's edge.** Letting them run off the edge was tried. Half a name at the edge looked worse, so they still fade out over 150 ms.
 - **Shadows change after the camera stops.** The shadow pass waits 180 ms and then refits to the view ([sun-shadow.ts](../src/scene/sun-shadow.ts)). This comes from reading the code. Nobody has confirmed how visible it is.
-- **Nothing is culled.** A view of an empty field still drew 525,000 triangles, because the scenery is merged into a few large meshes.
 - **Selecting a road still mutes the whole site** and scrolls the sidebar to its row, even though the camera now stays put.
 - **In a small window, a large selection sits low.** The clear part of the map is the strip under the details panel, so the circuit is framed in the lower half.
+
+## What culling bought
+
+Triangles and draw calls in the main pass, counted on the high tier.
+
+| View | Before | After |
+| --- | --- | --- |
+| Opening view | 580,000 triangles, 260 draws | 502,000 triangles, 376 draws |
+| Flown to the pit / conference building | 554,000 triangles, 123 draws | 359,000 triangles, 180 draws |
+| Close to open ground | 525,000 triangles, 61 draws | 304,000 triangles, 121 draws |
+
+The last row compares two different patches of ground, so read it as a rough guide.
+
+The saving is smaller than the size of the scene suggests. A tilted view reaches the horizon, so everything in a wedge ahead of the camera is still in view. Two things would cut more:
+
+- **Far trees as simple shapes.** Scenery is about 200,000 triangles and most of it is trees. Windbreaks already use an eight-triangle tree. Swapping every tree to it beyond a set distance would remove most of that, at the cost of a visible change in the whole-site view.
+- **A lighter circuit.** The circuit and its runoff are 74,000 triangles in a few meshes that span the site, so they're nearly always drawn.
+
+More pieces mean more draw calls, which is why the opening view went from 260 to 376. `PIECE_CELLS` in ground.ts and `REGION_TRIANGLES` in scenery.ts set that trade.
 
 ## Not measured
 

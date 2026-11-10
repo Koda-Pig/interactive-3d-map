@@ -133,7 +133,59 @@ interface Placement {
 
 const WHITE = new Color(1, 1, 1);
 
-/** Collects copies of geometries, then draws each geometry in a single call. */
+/**
+ * A batch with more triangles than this is split into regions, each drawn
+ * only when it's in view. One site-wide batch is always in view, so every
+ * tree on the map was drawn however close the camera was.
+ */
+const REGION_TRIANGLES = 5_000;
+/** Regions stop splitting at this size, in metres, to keep the draw calls down. */
+const MIN_REGION_SIZE = 250;
+const MATRIX_SIZE = 16;
+
+function trianglesIn(geometry: BufferGeometry): number {
+  return (geometry.index ?? geometry.getAttribute("position")).count / 3;
+}
+
+/** Sorts the copies in a batch into regions, quartering any that hold too much. */
+function regionsOf(
+  matrices: readonly number[],
+  copies: readonly number[],
+  trianglesEach: number,
+): (readonly number[])[] {
+  let minX = Number.POSITIVE_INFINITY;
+  let maxX = Number.NEGATIVE_INFINITY;
+  let minZ = Number.POSITIVE_INFINITY;
+  let maxZ = Number.NEGATIVE_INFINITY;
+  for (const copy of copies) {
+    const x = matrices[copy * MATRIX_SIZE + 12];
+    const z = matrices[copy * MATRIX_SIZE + 14];
+    minX = Math.min(minX, x);
+    maxX = Math.max(maxX, x);
+    minZ = Math.min(minZ, z);
+    maxZ = Math.max(maxZ, z);
+  }
+  if (
+    copies.length * trianglesEach <= REGION_TRIANGLES ||
+    Math.max(maxX - minX, maxZ - minZ) <= MIN_REGION_SIZE
+  ) {
+    return [copies];
+  }
+
+  const middleX = (minX + maxX) / 2;
+  const middleZ = (minZ + maxZ) / 2;
+  const quarters: number[][] = [[], [], [], []];
+  for (const copy of copies) {
+    const east = matrices[copy * MATRIX_SIZE + 12] > middleX ? 1 : 0;
+    const south = matrices[copy * MATRIX_SIZE + 14] > middleZ ? 2 : 0;
+    quarters[east + south].push(copy);
+  }
+  return quarters
+    .filter((quarter) => quarter.length > 0)
+    .flatMap((quarter) => regionsOf(matrices, quarter, trianglesEach));
+}
+
+/** Collects copies of geometries, then draws each geometry in one call per region. */
 class Instances {
   private readonly batches = new Map<BufferGeometry, Batch>();
 
@@ -156,12 +208,22 @@ class Instances {
   }
 
   build(castShadow: boolean): InstancedMesh[] {
-    return [...this.batches].map(([geometry, { matrices, colors }]) => {
-      const mesh = new InstancedMesh(geometry, sceneryMaterial, colors.length / 3);
-      mesh.instanceMatrix.array.set(matrices);
-      mesh.instanceColor = new InstancedBufferAttribute(Float32Array.from(colors), 3);
-      mesh.castShadow = castShadow;
-      return mesh;
+    return [...this.batches].flatMap(([geometry, { matrices, colors }]) => {
+      const all = Array.from({ length: colors.length / 3 }, (_, copy) => copy);
+      return regionsOf(matrices, all, trianglesIn(geometry)).map((copies) => {
+        const mesh = new InstancedMesh(geometry, sceneryMaterial, copies.length);
+        const tints = new Float32Array(copies.length * 3);
+        copies.forEach((copy, index) => {
+          for (let part = 0; part < MATRIX_SIZE; part += 1) {
+            mesh.instanceMatrix.array[index * MATRIX_SIZE + part] =
+              matrices[copy * MATRIX_SIZE + part];
+          }
+          tints.set(colors.slice(copy * 3, copy * 3 + 3), index * 3);
+        });
+        mesh.instanceColor = new InstancedBufferAttribute(tints, 3);
+        mesh.castShadow = castShadow;
+        return mesh;
+      });
     });
   }
 }
