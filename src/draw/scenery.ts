@@ -32,17 +32,20 @@ import type {
   TrackLocation,
 } from "../layout/locations.ts";
 import { buildingParts, CATEGORIES, layout } from "../layout/locations.ts";
+import type { ResolvedZone } from "../layout/land-use.ts";
+import { landUseAt, landUseZones, siteOccupancy } from "../layout/land-use.ts";
 import type { Occupancy } from "../layout/occupancy.ts";
 import { occupancyOf } from "../layout/occupancy.ts";
 import type { PathSample } from "../layout/path.ts";
 import { resolveOutline, resolvePath, samplePath } from "../layout/path.ts";
 import type { Point } from "../layout/polygon.ts";
-import { boundsOf, centreOf, signedDistance } from "../layout/polygon.ts";
+import { boundsOf, centreOf, outsetPolygon, signedDistance } from "../layout/polygon.ts";
 import { createTrackSafety } from "../layout/track-safety.ts";
 import type { Quality } from "../scene/quality.ts";
 import { MAP_HALF_SIZE, SITE_SIZE } from "../site.ts";
 import { fieldEdgeX } from "../terrain/fields.ts";
 import type { GroundSurface } from "../terrain/ground.ts";
+import { heightAt } from "../terrain/height.ts";
 import { hash2, noise2 } from "../terrain/noise.ts";
 import type { Kit } from "./kit.ts";
 import { bakedGeometry } from "./kit.ts";
@@ -77,6 +80,8 @@ const FARMHOUSE = "setting/farmhouse.glb";
 const PADDLE_BOAT = "props/paddle-boat.glb";
 const BOOM_GATE = "props/boom-gate.glb";
 const SILOS = "setting/farm-silo-group.glb";
+const BIG_SCREEN = "racing/big-screen.glb";
+const BLEACHER = "racing/temporary-bleacher.glb";
 
 /** Every model the scenery can use. */
 export const SCENERY_MODELS: readonly string[] = [
@@ -99,9 +104,45 @@ export const SCENERY_MODELS: readonly string[] = [
   SILOS,
   PADDLE_BOAT,
   BOOM_GATE,
+  BIG_SCREEN,
+  BLEACHER,
 ];
 
 const AVENUE_ROADS = ["ring-road", "waterfront-drive"];
+/** Smaller roads and walks that get a closer row of trees each side. */
+const TREE_LINED_ROADS = [
+  "academy-campus-road",
+  "automotive-campus-road",
+  "aerodrome-road",
+  "residences-east-street",
+  "residences-south-street",
+  "retail-street",
+  "research-park-street",
+  "fan-walk",
+  "expo-walk",
+];
+/** Buildings with planting around them. */
+const LANDSCAPED_BUILDINGS = [
+  "hotel-waterfront",
+  "hotel-lakeside",
+  "hotel-promenade",
+  "restaurant-west",
+  "restaurant-central",
+  "restaurant-east",
+  "expo-centre",
+  "exhibition-hall-1",
+  "exhibition-hall-2",
+  "amphitheatre",
+  "trackside-residences-east",
+  "trackside-residences-south",
+  "residents-club-east",
+  "residents-club-south",
+  "retail-quarter",
+  "research-park",
+  "automotive-hub",
+  "driving-academy",
+  "kalbaskraal-station",
+];
 /** The car parks beside the halls and the Expo Centre. */
 const CONFERENCE_CAR_PARKS = ["car-park-1", "car-park-2", "car-park-3", "car-park-8"];
 
@@ -121,6 +162,35 @@ const FOUNTAIN_HEIGHT = 26;
 const BOAT_SHORE_CLEARANCE = 28;
 /** The share of the logistics yard's truck bays in use outside race weekends. */
 const YARD_TRUCKS_EVERY_DAY = 0.5;
+/** The share of each car park's stalls in use on any day, and on a race day. */
+const STAFF_PARKING = 0.05;
+const RACE_PARKING = 0.8;
+const CONFERENCE_PARKING = 0.22;
+/** Trees along a field edge are this far apart, in metres. */
+const WINDBREAK_SPACING = 20;
+/** Vine rows: how far apart, and how long each drawn piece of a row is. */
+const VINE_ROW_SPACING = 3;
+const VINE_PIECE = 24;
+/** Every this many rows, two are left out for a tractor track. */
+const VINE_ROWS_PER_TRACK = 24;
+/** A camping pitch, along its row and across it. Every third row is a grass lane. */
+const PITCH_LENGTH = 9;
+const PITCH_DEPTH = 10;
+/** Square metres of bank for each spectator drawn. A full bank holds far more. */
+const BANK_AREA_PER_PERSON = 6;
+const TENT_PAINTS = ["#E4572E", "#2F6DA8", "#5E8C4A", "#D9B23C", "#8E9AA6", "#C9482B"].map(
+  (hex) => new Color(hex),
+);
+const SHIRT_PAINTS = [
+  "#F4F4F0",
+  "#E4572E",
+  "#1C6FA8",
+  "#F2C230",
+  "#2E2E33",
+  "#C2332F",
+  "#5FA36B",
+  "#E88BA5",
+].map((hex) => new Color(hex));
 const BOAT_PAINTS = ["#F2C230", "#E4572E", "#1CA7EC", "#F4F4F0", "#7BC47F"];
 /** Where each shell bursts, from the barge, with its size and colour. */
 const FIREWORK_BURSTS = [
@@ -416,6 +486,15 @@ function placeModel(
     const { x, z, sink = 0 } = placement;
     instances.add(geometry, { ...placement, y: context.surface.heightAt(x, z) - sink });
   }
+}
+
+/** A repeatable stream of numbers from 0 to 1, different for each seed. */
+function seededRandom(seed: number): () => number {
+  let draw = 0;
+  return () => {
+    draw += 1;
+    return hash2(draw, 7, seed);
+  };
 }
 
 function pickOne<T>(random: () => number, options: readonly T[]): T {
@@ -779,28 +858,49 @@ function carParks(): AreaLocation[] {
   return layout.locations.filter(isCarPark);
 }
 
-/** Cars in the marked stalls, thick and thin, parked back to back. */
+/** One set of parked cars, and the share of the stalls it fills. */
+interface Parking {
+  readonly instances: Instances;
+  readonly share: number;
+}
+
+/**
+ * Cars in the marked stalls, thick and thin, parked back to back. The cars
+ * there every day keep their stalls, and each event fills more around them.
+ */
 function parkCars(
   context: Context,
-  instances: Instances,
   car: BufferGeometry,
-  park: AreaLocation,
-  fill: number,
+  park: Pick<AreaLocation, "footprint">,
+  everyDay: Parking,
+  events: readonly Parking[],
+  lift = 0.3,
 ): void {
-  const { random, surface } = context;
+  const { random, surface, occupied } = context;
+  const marked = "id" in park;
   for (const block of parkingBlocks(park)) {
     for (const { x, z, row } of stallsOf(block)) {
-      const crowding = 0.5 + 0.5 * noise2(x, z, 120, 37);
-      if (random() > fill * (0.25 + 1.5 * crowding)) {
+      // Rows on open grass give way to whatever stands in the field.
+      if (!marked && occupied.isTaken(x, z)) {
         continue;
       }
-      instances.add(car, {
+      const crowding = 0.5 + 0.5 * noise2(x, z, 120, 37);
+      const chance = random() / (0.25 + 1.5 * crowding);
+      const placement = {
         x,
-        y: surface.heightAt(x, z) + 0.3,
+        y: surface.heightAt(x, z) + lift,
         z,
         yaw: (block.rowsAlongX ? 0 : Math.PI / 2) + (row ? Math.PI : 0),
-        tint: pickOne(random, CAR_PAINTS),
-      });
+      };
+      if (chance < everyDay.share) {
+        everyDay.instances.add(car, { ...placement, tint: pickOne(random, CAR_PAINTS) });
+        continue;
+      }
+      for (const { instances, share } of events) {
+        if (chance < share) {
+          instances.add(car, { ...placement, tint: pickOne(random, CAR_PAINTS) });
+        }
+      }
     }
   }
 }
@@ -844,10 +944,11 @@ function placeFoodStalls(context: Context, instances: Instances): void {
   }
 }
 
-function placeShuttles(context: Context, instances: Instances, count: number): void {
+/** Buses in the drop-off's bays, from bay `first` up to but not including bay `end`. */
+function placeShuttles(context: Context, instances: Instances, first: number, end: number): void {
   const outline = resolveOutline(locationById<AreaLocation>("shuttle-drop-off").footprint);
   const { minX, minZ, maxX, maxZ } = boundsOf(outline);
-  for (let bus = 0; bus < count; bus += 1) {
+  for (let bus = first; bus < end; bus += 1) {
     placeModel(context, instances, SHUTTLE, {
       x: minX + ((maxX - minX) * ((bus % 4) + 0.5)) / 4,
       z: minZ + ((maxZ - minZ) * (Math.floor(bus / 4) + 0.5)) / 2,
@@ -1304,6 +1405,380 @@ function placeExpoActivity(context: Context, instances: Instances): void {
   }
 }
 
+/** A vine row piece, long axis on X, without the faces nobody sees. */
+function createVineRow(): BufferGeometry {
+  const box = new BoxGeometry(VINE_PIECE, 1.5, 1.1);
+  const index = box.getIndex();
+  if (index) {
+    // A box's faces are stored in order: the top, then the two long sides.
+    box.setIndex([...index.array.slice(12, 18), ...index.array.slice(24, 36)]);
+  }
+  box.translate(0, 0.85, 0);
+  return colorize(box, (y) => (y > 1 ? [0.38, 0.52, 0.22] : [0.27, 0.38, 0.17]));
+}
+
+/** A tent as a four-sided pyramid, which takes the tint. */
+function createTent(): BufferGeometry {
+  const tent = new ConeGeometry(2.3, 2, 4, 1, true);
+  tent.rotateY(Math.PI / 4);
+  tent.translate(0, 1, 0);
+  return colorize(tent.toNonIndexed(), (y) => (y > 1.5 ? [0.82, 0.82, 0.8] : [1, 1, 1]));
+}
+
+function createCaravan(): BufferGeometry {
+  return colorize(openBox(2.3, 2.2, 5.6, 1.5, 0), (y) =>
+    y > 2 ? [0.97, 0.97, 0.95] : [0.78, 0.8, 0.82],
+  );
+}
+
+/** A spectator in three triangles, since a bank holds thousands. Takes the tint. */
+function createSpectator(): BufferGeometry {
+  const figure = new ConeGeometry(0.42, 1.7, 3, 1, true);
+  figure.translate(0, 0.85, 0);
+  return colorize(figure.toNonIndexed(), () => [1, 1, 1]);
+}
+
+function insideLand(zone: ResolvedZone, x: number, z: number, inset: number): boolean {
+  return signedDistance(x, z, zone.outline) < -inset;
+}
+
+/** Rows of gums along the edges of the fields, vineyards and event fields. */
+function plantFieldEdges(context: Context, instances: Instances): void {
+  const { random, occupied } = context;
+  const boundary = SITE_SIZE / 2 - 25;
+  for (const zone of landUseZones("wheat", "vineyard", "overflow-parking", "camping")) {
+    const species = zone.use === "camping" ? "pine" : "gum";
+    zone.outline.forEach(([ax, az], index) => {
+      const [bx, bz] = zone.outline[(index + 1) % zone.outline.length];
+      // The site's own edge already has its row of trees.
+      const onBoundary = [ax, az, bx, bz].filter((value) => Math.abs(value) > boundary);
+      if (onBoundary.length >= 2 && (Math.abs(ax) > boundary) === (Math.abs(bx) > boundary)) {
+        return;
+      }
+      const length = Math.hypot(bx - ax, bz - az);
+      for (let along = WINDBREAK_SPACING / 2; along < length; along += WINDBREAK_SPACING) {
+        const x = ax + ((bx - ax) * along) / length + random() * 4 - 2;
+        const z = az + ((bz - az) * along) / length + random() * 4 - 2;
+        if (!occupied.isTaken(x, z) && random() < context.density) {
+          placeTree(context, instances, species, x, z);
+        }
+      }
+    });
+  }
+}
+
+/** Trellised vine rows across each vineyard block, following the slope. */
+function plantVineyards(context: Context, instances: Instances): void {
+  const { occupied, surface } = context;
+  const vine = createVineRow();
+  const reach = VINE_PIECE / 2;
+  for (const zone of landUseZones("vineyard")) {
+    const { minX, minZ, maxX, maxZ } = zone.bounds;
+    const alongX = hash2(zone.index, 2, 72) < 0.5;
+    const [acrossMin, acrossMax] = alongX ? [minZ, maxZ] : [minX, maxX];
+    const [alongMin, alongMax] = alongX ? [minX, maxX] : [minZ, maxZ];
+    const step = VINE_ROW_SPACING / Math.max(0.45, context.density);
+    for (let row = 0, across = acrossMin + 8; across < acrossMax - 8; row += 1, across += step) {
+      if (row % VINE_ROWS_PER_TRACK >= VINE_ROWS_PER_TRACK - 2) {
+        continue;
+      }
+      const shade = 0.9 + 0.2 * hash2(row, zone.index, 73);
+      const tint = new Color(shade, shade, shade);
+      for (let along = alongMin + 8 + reach; along < alongMax - 8 - reach; along += VINE_PIECE) {
+        const [x, z] = alongX ? [along, across] : [across, along];
+        const [dx, dz] = alongX ? [reach, 0] : [0, reach];
+        if (
+          !insideLand(zone, x, z, 6) ||
+          occupied.isTaken(x, z) ||
+          occupied.isTaken(x + dx, z + dz) ||
+          occupied.isTaken(x - dx, z - dz)
+        ) {
+          continue;
+        }
+        const rise = surface.heightAt(x + dx, z + dz) - surface.heightAt(x - dx, z - dz);
+        instances.add(vine, {
+          x,
+          y: surface.heightAt(x, z),
+          z,
+          yaw: alongX ? 0 : -Math.PI / 2,
+          tilt: Math.atan2(rise, VINE_PIECE),
+          tint,
+        });
+      }
+    }
+  }
+}
+
+/** Olive trees between the rows of each car park, on the lanes without light poles. */
+function plantCarParkShade(context: Context, instances: Instances): void {
+  for (const park of carParks()) {
+    for (const block of parkingBlocks(park).filter(({ lane }) => lane % POLE_LANES !== 1)) {
+      const first = 18 + (block.lane % 2) * 24;
+      for (let along = first; along < block.to - block.from - 6; along += 48) {
+        if (context.random() < context.density) {
+          const [x, z] = pointInBlock(block, BLOCK_DEPTH / 2, along);
+          placeTree(context, instances, "olive", x, z);
+        }
+      }
+    }
+  }
+}
+
+/** Trees around the hotels, halls, residences and campuses, clear of their walls. */
+function plantPrecinctGardens(context: Context, instances: Instances): void {
+  const { random, occupied } = context;
+  for (const id of LANDSCAPED_BUILDINGS) {
+    for (const part of buildingParts(locationById<BuildingLocation>(id))) {
+      const ring = outsetPolygon(resolveOutline(part.footprint), 18);
+      ring.forEach(([ax, az], index) => {
+        const [bx, bz] = ring[(index + 1) % ring.length];
+        const length = Math.hypot(bx - ax, bz - az);
+        for (let along = 8; along < length; along += 20) {
+          const x = ax + ((bx - ax) * along) / length + random() * 8 - 4;
+          const z = az + ((bz - az) * along) / length + random() * 8 - 4;
+          if (!occupied.isTaken(x, z) && !landUseAt(x, z) && random() < 0.7 * context.density) {
+            placeTree(context, instances, random() < 0.7 ? "olive" : "pine", x, z);
+          }
+        }
+      });
+    }
+  }
+}
+
+/** A row of trees each side of the smaller roads and the walks. */
+function plantRoadsides(context: Context, instances: Instances, footprints: Occupancy): void {
+  for (const id of TREE_LINED_ROADS) {
+    const road = locationById<TrackLocation>(id);
+    const offset = road.width / 2 + 9;
+    for (const { x, z, dirX, dirZ } of samplePath(resolvePath(road.path, false), 34, false)) {
+      for (const side of [-1, 1]) {
+        const treeX = x - dirZ * offset * side;
+        const treeZ = z + dirX * offset * side;
+        if (
+          insideSite(treeX, treeZ) &&
+          !footprints.isTaken(treeX, treeZ) &&
+          context.random() < context.density
+        ) {
+          placeTree(context, instances, "olive", treeX, treeZ);
+        }
+      }
+    }
+  }
+}
+
+/** Clumps of trees on the open ground outside the circuit that has no other use. */
+function plantParkland(context: Context, instances: Instances): void {
+  const { random, occupied } = context;
+  const circuit = locationById<TrackLocation>("circuit");
+  const infield = samplePath(resolvePath(circuit.path, true), 20, true).map(
+    ({ x, z }): Point => [x, z],
+  );
+  const reach = SITE_SIZE / 2 - 15;
+  for (let attempt = 0; attempt < 2600; attempt += 1) {
+    const x = random() * reach * 2 - reach;
+    const z = random() * reach * 2 - reach;
+    if (
+      noise2(x, z, 150, 41) < 0.3 ||
+      occupied.isTaken(x, z) ||
+      landUseAt(x, z) ||
+      signedDistance(x, z, infield) < 0 ||
+      random() > context.density
+    ) {
+      continue;
+    }
+    placeTree(context, instances, pickOne(random, ["gum", "pine", "pine", "olive"] as const), x, z);
+  }
+}
+
+/** A works vehicle inside each gate, and a farm one at each vineyard. */
+function parkServiceVehicles(
+  context: Context,
+  instances: Instances,
+  car: BufferGeometry,
+  footprints: Occupancy,
+): void {
+  const { surface } = context;
+  const paint = new Color("#F4F4F0");
+  const park = (x: number, z: number, yaw: number): void => {
+    if (!footprints.isTaken(x, z)) {
+      instances.add(car, { x, z, yaw, y: surface.heightAt(x, z), tint: paint });
+    }
+  };
+  for (const gate of layout.locations) {
+    if (gate.type !== "gate") {
+      continue;
+    }
+    // People arrive from the way the gate faces, so the site is behind it.
+    const [x, z] = gate.position;
+    const sideways = gate.facing === "east" || gate.facing === "west";
+    const inward = gate.facing === "west" || gate.facing === "north" ? 1 : -1;
+    park(
+      x + (sideways ? inward * 20 : 12),
+      z + (sideways ? 12 : inward * 20),
+      sideways ? Math.PI / 2 : 0,
+    );
+  }
+  for (const { bounds } of landUseZones("vineyard")) {
+    park(bounds.minX + 12, bounds.minZ + 4, Math.PI / 2);
+  }
+}
+
+/** Cars in rows on the overflow fields, as full as the car parks on a race day. */
+function parkOverflow(context: Context, instances: Instances, car: BufferGeometry): void {
+  const nobody: Parking = { instances, share: 0 };
+  const share = RACE_PARKING * context.density;
+  for (const zone of landUseZones("overflow-parking")) {
+    parkCars(context, car, { footprint: zone.outline }, nobody, [{ instances, share }], 0);
+  }
+}
+
+/** Tents and caravans in rows of pitches, each with its car, and grass lanes between. */
+function pitchCampsites(context: Context, instances: Instances, car: BufferGeometry): void {
+  const { random, occupied, surface } = context;
+  const tent = createTent();
+  const caravan = createCaravan();
+  for (const zone of landUseZones("camping")) {
+    const { minX, minZ, maxX, maxZ } = zone.bounds;
+    for (let row = 0, x = minX + 14; x < maxX - 14; row += 1, x += PITCH_DEPTH) {
+      if (row % 3 === 2) {
+        continue;
+      }
+      for (let z = minZ + 14; z < maxZ - 14; z += PITCH_LENGTH) {
+        const busy = 0.45 + 0.55 * noise2(x, z, 140, 42);
+        if (occupied.isTaken(x, z) || !insideLand(zone, x, z, 10) || random() > 0.6 + busy) {
+          continue;
+        }
+        if (random() > context.density) {
+          continue;
+        }
+        const y = surface.heightAt(x, z);
+        const shelterZ = z - 1.8 + random() * 0.8;
+        if (random() < 0.25) {
+          instances.add(caravan, { x, y, z: shelterZ, yaw: Math.PI / 2 + random() * 0.2 - 0.1 });
+        } else {
+          instances.add(tent, {
+            x: x + random() * 1.5 - 0.75,
+            y,
+            z: shelterZ,
+            yaw: random() * TWO_PI,
+            scale: 0.8 + random() * 0.5,
+            tint: pickOne(random, TENT_PAINTS),
+          });
+        }
+        instances.add(car, {
+          x: x + random() - 0.5,
+          y,
+          z: z + 2.9,
+          yaw: Math.PI / 2 + random() * 0.3 - 0.15,
+          tint: pickOne(random, CAR_PAINTS),
+        });
+      }
+    }
+  }
+}
+
+/** Spectators standing on the general admission banks, thicker in some places. */
+function crowdBanks(context: Context, instances: Instances): void {
+  const { random } = context;
+  const spectator = createSpectator();
+  for (const bank of layout.locations) {
+    if (bank.type !== "building" || !bank.id.startsWith("ga-bank-")) {
+      continue;
+    }
+    const outline = buildingParts(bank).flatMap((part) => resolveOutline(part.footprint));
+    const { minX, minZ, maxX, maxZ } = boundsOf(outline);
+    // A bank is raised from the ground at its centre, as buildings are.
+    const [centreX, centreZ] = centreOf(outline);
+    const y = heightAt(centreX, centreZ) + (bank.height ?? 0);
+    const tries = ((maxX - minX) * (maxZ - minZ) * context.density) / BANK_AREA_PER_PERSON;
+    for (let attempt = 0; attempt < tries; attempt += 1) {
+      const x = minX + random() * (maxX - minX);
+      const z = minZ + random() * (maxZ - minZ);
+      const packed = 0.35 + 0.65 * (0.5 + 0.5 * noise2(x, z, 30, 43));
+      if (signedDistance(x, z, outline) < -1.2 && random() < packed) {
+        instances.add(spectator, { x, y, z, tint: pickOne(random, SHIRT_PAINTS) });
+      }
+    }
+  }
+}
+
+/**
+ * A fan village in each of its zones: a big screen with a bleacher and a
+ * crowd in front of it, a street of food stalls, and hospitality marquees.
+ */
+function placeFanVillages(context: Context, structures: Instances, crowd: Instances): void {
+  const { random, occupied, surface } = context;
+  const spectator = createSpectator();
+  for (const zone of landUseZones("fan-village")) {
+    const { minX, minZ, maxX, maxZ } = zone.bounds;
+    const alongX = maxX - minX >= maxZ - minZ;
+    const length = alongX ? maxX - minX : maxZ - minZ;
+    const width = alongX ? maxZ - minZ : maxX - minX;
+    /** A point `along` the zone from its screen end, and `across` from its centre line. */
+    const at = (along: number, across: number): [number, number] =>
+      alongX
+        ? [minX + along, (minZ + maxZ) / 2 + across]
+        : [(minX + maxX) / 2 + across, minZ + along];
+    /** Yaw that turns a model's front along the zone, or across it. */
+    const facing = (along: number, across: number): number =>
+      alongX ? Math.atan2(along, across) : Math.atan2(across, along);
+    const place = (file: string, along: number, across: number, yaw: number): void => {
+      const [x, z] = at(along, across);
+      if (!occupied.isTaken(x, z)) {
+        placeModel(context, structures, file, { x, z, yaw });
+      }
+    };
+
+    place(BIG_SCREEN, 8, 0, facing(1, 0));
+    const lawn = Math.min(48, length * 0.3);
+    place(BLEACHER, 8 + lawn + 8, 0, facing(-1, 0));
+    const watching = Math.round(lawn * (width - 8) * 0.12 * context.density);
+    for (let person = 0; person < watching; person += 1) {
+      const [x, z] = at(14 + random() * (lawn - 8), (random() - 0.5) * (width - 8));
+      if (!occupied.isTaken(x, z)) {
+        crowd.add(spectator, {
+          x,
+          z,
+          y: surface.heightAt(x, z),
+          tint: pickOne(random, SHIRT_PAINTS),
+        });
+      }
+    }
+
+    const streetFrom = lawn + 30;
+    const streetTo = length - 42;
+    for (let along = streetFrom; along < streetTo; along += 9) {
+      for (const side of [-1, 1]) {
+        place(FOOD_STALL, along, side * (width / 2 - 6), facing(0, -side));
+      }
+    }
+    const strolling = Math.round((streetTo - streetFrom) * 1.2 * context.density);
+    for (let person = 0; person < strolling; person += 1) {
+      const [x, z] = at(
+        streetFrom + random() * (streetTo - streetFrom),
+        (random() - 0.5) * (width - 22),
+      );
+      if (!occupied.isTaken(x, z)) {
+        crowd.add(spectator, {
+          x,
+          z,
+          y: surface.heightAt(x, z),
+          tint: pickOne(random, SHIRT_PAINTS),
+        });
+      }
+    }
+
+    // Marquees are 30 m long. They stand side by side where there's room.
+    const marqueeYaw = alongX ? 0 : Math.PI / 2;
+    if (width >= 70) {
+      place(MARQUEE, length - 22, -width / 4, marqueeYaw + Math.PI / 2);
+      place(MARQUEE, length - 22, width / 4, marqueeYaw + Math.PI / 2);
+    } else {
+      place(MARQUEE, length - 22, 0, marqueeYaw);
+    }
+  }
+}
+
 /** Scenery in the map, sorted by what has to control it. */
 export interface Scenery {
   /** Farmland and trees, which stay put whatever else is switched off. */
@@ -1336,7 +1811,6 @@ export function createScenery(kit: Kit, surface: GroundSurface, quality: Quality
     return baked.get(file);
   };
 
-  let draw = 0;
   const notPlanted = layout.locations.filter(
     (location) => !(location.type === "area" && location.planting),
   );
@@ -1344,13 +1818,15 @@ export function createScenery(kit: Kit, surface: GroundSurface, quality: Quality
     surface,
     density: quality.sceneryDensity,
     model,
-    occupied: occupancyOf(layout.locations, 10),
+    occupied: siteOccupancy(),
     built: occupancyOf(notPlanted, 5),
-    random: () => {
-      draw += 1;
-      return hash2(draw, 7, 71);
-    },
+    random: seededRandom(71),
   };
+  // The land-use rules draw from their own stream, so adding to them leaves
+  // the rest of the scenery where it was.
+  const land: Context = { ...context, random: seededRandom(72) };
+  /** Ground with anything on it, to within a couple of metres. */
+  const footprints = occupancyOf(layout.locations, 2);
 
   const trees = new Instances();
   const farTrees = new Instances();
@@ -1362,10 +1838,17 @@ export function createScenery(kit: Kit, surface: GroundSurface, quality: Quality
   scatterUnderbrush(context, trees);
   plantWindbreaks(context, trees, farTrees, createFarTree());
   placeFarmsteads(context, trees);
+  plantFieldEdges(land, trees);
+  plantCarParkShade(land, trees);
+  plantPrecinctGardens(land, trees);
+  plantRoadsides(land, trees, footprints);
+  plantParkland(land, trees);
+  const vines = new Instances();
+  plantVineyards(land, vines);
 
   const setting = new Group();
   setting.name = "scenery";
-  setting.add(...trees.build(true), ...farTrees.build(false));
+  setting.add(...trees.build(true), ...farTrees.build(false), ...vines.build(false));
 
   const precincts = new Map<Category, Group>(CATEGORIES.map((category) => [category, new Group()]));
   const group = (category: Category): Group => {
@@ -1398,6 +1881,7 @@ export function createScenery(kit: Kit, surface: GroundSurface, quality: Quality
   placeLightPoles(context, transport);
   placeCheckpointBooms(context, transport);
   placeAircraft(context, transport);
+  placeShuttles(context, transport, 0, 2);
   group("transport").add(...transport.build(true));
 
   const car = createCar();
@@ -1409,25 +1893,43 @@ export function createScenery(kit: Kit, surface: GroundSurface, quality: Quality
   group("conference").add(...banners.build(true));
   const parks = carParks();
 
+  // Staff and residents' cars, and the works vehicles, are there every day.
+  const staffCars = new Instances();
   const raceCars = new Instances();
+  const conferenceCars = new Instances();
   for (const park of parks) {
-    parkCars(context, raceCars, car, park, 0.3 * quality.sceneryDensity);
+    const conference = CONFERENCE_CAR_PARKS.includes(park.id) ? CONFERENCE_PARKING : 0;
+    parkCars(
+      land,
+      car,
+      park,
+      { instances: staffCars, share: STAFF_PARKING * quality.sceneryDensity },
+      [
+        { instances: raceCars, share: RACE_PARKING * quality.sceneryDensity },
+        { instances: conferenceCars, share: conference * quality.sceneryDensity },
+      ],
+    );
   }
+  parkServiceVehicles(land, staffCars, car, footprints);
+  group("transport").add(...staffCars.build(false));
+
+  parkOverflow(land, raceCars, car);
   const raceShuttles = new Instances();
-  placeShuttles(context, raceShuttles, 8);
+  placeShuttles(context, raceShuttles, 2, 8);
   const raceTrackside = new Instances();
   placeRaceGrid(context, raceTrackside);
   placeFoodStalls(context, raceTrackside);
   placeFanWalkCrowd(context, raceTrackside);
   const raceGuests = new Instances();
   placeTeamActivity(context, raceTrackside, raceGuests);
+  // Small and many, so they're drawn without shadows, as the parked cars are.
+  const raceCrowds = new Instances();
+  crowdBanks(land, raceCrowds);
+  pitchCampsites(land, raceCrowds, car);
+  placeFanVillages(land, raceTrackside, raceCrowds);
 
-  const conferenceCars = new Instances();
-  for (const park of parks.filter(({ id }) => CONFERENCE_CAR_PARKS.includes(id))) {
-    parkCars(context, conferenceCars, car, park, 0.22 * quality.sceneryDensity);
-  }
   const conferenceShuttles = new Instances();
-  placeShuttles(context, conferenceShuttles, 3);
+  placeShuttles(context, conferenceShuttles, 2, 3);
   const conferenceTents = new Instances();
   placeMarquees(context, conferenceTents);
   placeExpoActivity(context, conferenceTents);
@@ -1440,6 +1942,7 @@ export function createScenery(kit: Kit, surface: GroundSurface, quality: Quality
         ...addHidden(group("transport"), raceShuttles.build(true)),
         ...addHidden(group("racing"), raceTrackside.build(true)),
         ...addHidden(group("racing"), raceYardTrucks.build(true)),
+        ...addHidden(group("racing"), raceCrowds.build(false)),
         ...addHidden(group("hospitality"), raceGuests.build(true)),
       ],
     ],

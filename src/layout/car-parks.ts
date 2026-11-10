@@ -39,7 +39,7 @@ export function isCarPark(location: Location): location is AreaLocation {
  * Rows follow a car park's long side. They stop short of the middle, where the
  * access spine crosses them, so a spine has to enter at the long side's centre.
  */
-export function parkingBlocks(park: AreaLocation): ParkingBlock[] {
+export function parkingBlocks(park: Pick<AreaLocation, "footprint">): ParkingBlock[] {
   const { minX, minZ, maxX, maxZ } = boundsOf(resolveOutline(park.footprint));
   const rowsAlongX = maxX - minX > maxZ - minZ;
   const [acrossMin, acrossMax] = rowsAlongX ? [minZ, maxZ] : [minX, maxX];

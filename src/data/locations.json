@@ -97,6 +97,22 @@
       ]
     }
   ],
+  "landUse": [
+    { "id": "wheat-north", "use": "wheat", "footprint": [[-1215, -1215], [600, -1215], [600, -1095], [-1215, -1095]] },
+    { "id": "wheat-north-west", "use": "wheat", "footprint": [[-1215, -1095], [-1062, -1095], [-1062, -690], [-1215, -690]] },
+    { "id": "wheat-north-east", "use": "wheat", "footprint": [[930, -1215], [1215, -1215], [1215, -1010], [930, -1010]] },
+    { "id": "wheat-south-west", "use": "wheat", "footprint": [[-1215, 385], [-1062, 385], [-1062, 905], [-1215, 905]] },
+    { "id": "wheat-south-east", "use": "wheat", "footprint": [[850, 975], [1215, 975], [1215, 1215], [850, 1215]] },
+    { "id": "vineyard-north-east", "use": "vineyard", "footprint": [[650, -1215], [900, -1215], [900, -1010], [650, -1010]] },
+    { "id": "vineyard-south-west", "use": "vineyard", "footprint": [[-300, 945], [250, 945], [250, 1215], [-300, 1215]] },
+    { "id": "vineyard-south", "use": "vineyard", "footprint": [[280, 945], [820, 945], [820, 1215], [280, 1215]] },
+    { "id": "overflow-parking-north-east", "use": "overflow-parking", "footprint": [[650, -990], [990, -990], [990, -830], [650, -830]] },
+    { "id": "overflow-parking-south-west", "use": "overflow-parking", "footprint": [[-1010, 750], [-665, 750], [-665, 865], [-1010, 865]] },
+    { "id": "campsite-east", "use": "camping", "footprint": [[620, -490], [850, -490], [850, 120], [620, 120]] },
+    { "id": "fan-village-north", "use": "fan-village", "footprint": [[-450, -776], [-262, -776], [-262, -728], [-450, -728]] },
+    { "id": "fan-village-east", "use": "fan-village", "footprint": [[530, -300], [605, -300], [605, -100], [530, -100]] },
+    { "id": "fan-village-south", "use": "fan-village", "footprint": [[-40, 195], [150, 195], [150, 300], [-40, 300]] }
+  ],
   "grading": [
     {
       "id": "arrival-terrace",

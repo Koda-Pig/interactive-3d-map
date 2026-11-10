@@ -171,8 +171,22 @@ export interface EventMode {
   readonly locations: readonly string[];
 }
 
+/** What a stretch of open ground inside the boundary is used for. */
+export type LandUse = "wheat" | "vineyard" | "overflow-parking" | "camping" | "fan-village";
+
+/**
+ * Open ground with a use. It isn't a location: it has no label or sidebar
+ * entry, and scenery only fills the parts of it that nothing else stands on.
+ */
+export interface LandUseZone {
+  readonly id: string;
+  readonly use: LandUse;
+  readonly footprint: readonly PathPoint[];
+}
+
 export interface Layout {
   readonly events: readonly EventMode[];
+  readonly landUse: readonly LandUseZone[];
   readonly grading: readonly GradingZone[];
   readonly locations: readonly Location[];
 }

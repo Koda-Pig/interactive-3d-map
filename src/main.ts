@@ -265,3 +265,8 @@ renderer.setAnimationLoop((now) => {
 window.removeEventListener("error", showStartupFailure);
 window.removeEventListener("unhandledrejection", showStartupFailure);
 loadingElement.remove();
+
+if (import.meta.env.DEV) {
+  // For framing views and reading draw counts from the console while developing.
+  Object.assign(window, { __map: { renderer, scene, camera, controls } });
+}
