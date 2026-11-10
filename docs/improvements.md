@@ -99,7 +99,7 @@ Render continuously only while something visible is animating, and keep moving o
 
 A panel shows the precinct, the name and one sentence ([info-panel.ts:17](../src/ui/info-panel.ts:17)). High-end maps use this space for images, key facts and a next step. A selection can't be shared either, because the address only carries `?quality` and `?stats`.
 
-Add an image rendered from our own scene, room for facts BMR supplies, and links between related places such as a grandstand and its nearest gate and car park. Put the selected location in the address so a link opens on it.
+The sidebar now shows a picture under the selected location, from the location's `image` field, with a placeholder until the pictures exist. Add an image rendered from our own scene, room for facts BMR supplies, and links between related places such as a grandstand and its nearest gate and car park. Put the selected location in the address so a link opens on it.
 
 **Done when:** someone can send a link to a location, and its panel says more than the label does.
 

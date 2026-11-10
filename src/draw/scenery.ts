@@ -9,6 +9,8 @@ import {
   InstancedBufferAttribute,
   InstancedMesh,
   Matrix4,
+  Mesh,
+  MeshBasicMaterial,
   MeshLambertMaterial,
   OctahedronGeometry,
   Quaternion,
@@ -108,6 +110,29 @@ const POLE_LANES = 4;
 const POLE_SPACING = 90;
 
 const TWO_PI = Math.PI * 2;
+/** Length of a boom gate's arm, in metres. Two of them close a 10 m road. */
+const BOOM_REACH = 5;
+const FOUNTAIN_HEIGHT = 26;
+/** How far in from the shore the paddle boats stay. */
+const BOAT_SHORE_CLEARANCE = 28;
+/** The share of the logistics yard's truck bays in use outside race weekends. */
+const YARD_TRUCKS_EVERY_DAY = 0.5;
+const BOAT_PAINTS = ["#F2C230", "#E4572E", "#1CA7EC", "#F4F4F0", "#7BC47F"];
+/** Where each shell bursts, from the barge, with its size and colour. */
+const FIREWORK_BURSTS = [
+  { east: -20, up: 82, south: -6, radius: 26, color: "#FFD45E" },
+  { east: 16, up: 108, south: 8, radius: 32, color: "#3FC4FF" },
+  { east: 36, up: 68, south: -14, radius: 20, color: "#FF6B8B" },
+] as const;
+const FIREWORK_STREAKS = 84;
+/** The location whose hover or selection sets the fireworks off. */
+export const FIREWORKS_LOCATION = "fireworks-barge";
+/** Seconds a shell takes to climb, to open, and to droop and fade, and between launches. */
+const FIREWORK_LAUNCH = 0.5;
+const FIREWORK_BURST = 0.7;
+const FIREWORK_FADE = 1.1;
+const FIREWORK_CYCLE = 3;
+const FIREWORK_STAGGER = 0.8;
 
 const placedAt = new Vector3();
 const placedScale = new Vector3();
@@ -293,6 +318,66 @@ function createTransporter(): BufferGeometry {
   const truck = mergeGeometries([trailer, cab]);
   if (!truck) throw new Error("The transporter parts could not be merged");
   return truck;
+}
+
+/** A boom gate: a post at the origin with a striped arm reaching along X. */
+function createBoom(): BufferGeometry {
+  const parts = [colorize(openBox(0.6, 1.4, 0.6, 0.7, 0), () => [0.13, 0.19, 0.24])];
+  for (let stripe = 0; stripe < BOOM_REACH; stripe += 1) {
+    const arm = openBox(1, 0.3, 0.3, 1.2, 0);
+    arm.translate(stripe + 0.6, 0, 0);
+    parts.push(colorize(arm, () => (stripe % 2 === 0 ? [0.85, 0.12, 0.1] : [0.96, 0.96, 0.94])));
+  }
+  const boom = mergeGeometries(parts);
+  if (!boom) throw new Error("The boom gate's parts could not be merged");
+  return boom;
+}
+
+/** A two-seat pedal boat with a sun canopy. The hull and canopy take the tint. */
+function createPaddleBoat(): BufferGeometry {
+  const dark = (): readonly [number, number, number] => [0.16, 0.19, 0.23];
+  const parts = [
+    colorize(openBox(2.2, 0.7, 3.4, 0.35, 0), () => [1, 1, 1]),
+    colorize(openBox(1.8, 0.45, 0.8, 0.9, 0.5), dark),
+    colorize(openBox(2.1, 0.12, 2.3, 2, 0.2), () => [1, 1, 1]),
+  ];
+  for (const [x, z] of [
+    [-0.95, -0.85],
+    [0.95, -0.85],
+    [-0.95, 1.25],
+    [0.95, 1.25],
+  ]) {
+    const post = openBox(0.1, 1.3, 0.1, 1.35, z);
+    post.translate(x, 0, 0);
+    parts.push(colorize(post, dark));
+  }
+  const boat = mergeGeometries(parts);
+  if (!boat) throw new Error("The paddle boat's parts could not be merged");
+  return boat;
+}
+
+/** The fountain's water: a tall central jet inside two rings of arcing ones. */
+function createFountainJets(): BufferGeometry {
+  const jets: BufferGeometry[] = [];
+  const jet = (height: number, radius: number, lean: number, turn: number, out: number): void => {
+    const cone = new ConeGeometry(radius, height, 6);
+    cone.translate(0, height / 2, 0);
+    cone.rotateZ(-lean);
+    cone.translate(out, 0, 0);
+    cone.rotateY(turn);
+    jets.push(cone);
+  };
+  jet(FOUNTAIN_HEIGHT, 1.3, 0, 0, 0);
+  for (let index = 0; index < 8; index += 1) {
+    jet(12, 0.7, 0.5, (index / 8) * TWO_PI, 3);
+    jet(7, 0.5, 0.75, ((index + 0.5) / 8) * TWO_PI, 4.5);
+  }
+  const merged = mergeGeometries(jets);
+  if (!merged) throw new Error("The fountain's jets could not be merged");
+  return colorize(merged, (y) => {
+    const t = Math.min(1, y / FOUNTAIN_HEIGHT);
+    return [0.72 + 0.26 * t, 0.88 + 0.1 * t, 1];
+  });
 }
 
 function createPerson(): BufferGeometry {
@@ -780,6 +865,262 @@ function placeMarquees(context: Context, instances: Instances): void {
   }
 }
 
+interface TruckBay {
+  readonly x: number;
+  readonly z: number;
+  readonly yaw: number;
+}
+
+/**
+ * Truck bays in the logistics yard, in the strips its aisles and tents leave
+ * free: nose-in rows under the north aisle, and rows parked along the edges.
+ */
+function yardTruckBays(): TruckBay[] {
+  const yard = boundsOf(
+    resolveOutline(locationById<AreaLocation>("team-logistics-yard").footprint),
+  );
+  const aisle = locationById<TrackLocation>("logistics-service-aisle");
+  const loop = boundsOf(resolveOutline(aisle.path));
+  const half = aisle.width / 2;
+  const spine = locationById<TrackLocation>("infield-road");
+  const spineX = spine.branches?.[1]?.[0]?.[0] ?? loop.maxX;
+  const crossX = aisle.branches?.[0]?.[0]?.[0] ?? loop.minX;
+  const bays: TruckBay[] = [];
+  // Nose-in, just south of the north aisle, between the aisles that run north to south.
+  const noseInZ = loop.minZ + half + 14;
+  const runs = [
+    [loop.minX + half, crossX - half],
+    [crossX + half, spineX - spine.width / 2],
+    [spineX + spine.width / 2, loop.maxX - half],
+  ];
+  for (const [from, to] of runs) {
+    for (let x = from + 4; x <= to - 4; x += 4.5) {
+      bays.push({ x, z: noseInZ, yaw: 0 });
+    }
+  }
+  // Parked end to end along the north edge, and along the west edge.
+  for (let x = loop.minX + 12; x <= loop.maxX - 4; x += 21) {
+    bays.push({ x, z: (yard.minZ + loop.minZ - half) / 2, yaw: Math.PI / 2 });
+  }
+  for (let z = loop.minZ + 14; z <= loop.maxZ - 12; z += 21) {
+    bays.push({ x: (yard.minX + loop.minX - half) / 2, z, yaw: 0 });
+  }
+  // Side by side between the service spine and the east aisle.
+  const eastX = (spineX + spine.width / 2 + loop.maxX - half) / 2;
+  for (let z = noseInZ + 20; z <= loop.maxZ - half - 6; z += 5) {
+    bays.push({ x: eastX, z, yaw: Math.PI / 2 });
+  }
+  return bays;
+}
+
+/** Transporters in the logistics yard: some all year, the rest on a race weekend. */
+function parkYardTrucks(context: Context, everyDay: Instances, raceOnly: Instances): void {
+  const truck = createTransporter();
+  for (const { x, z, yaw } of yardTruckBays()) {
+    const instances = context.random() < YARD_TRUCKS_EVERY_DAY ? everyDay : raceOnly;
+    instances.add(truck, { x, z, yaw, y: context.surface.heightAt(x, z) + 0.3 });
+  }
+}
+
+/** A pair of boom gates across the Infield Road, beside the checkpoint's hut. */
+function placeCheckpointBooms(context: Context, instances: Instances): void {
+  const hut = locationById<BuildingLocation>("infield-checkpoint");
+  const road = locationById<TrackLocation>("infield-road");
+  const [, z] = centreOf(buildingParts(hut).flatMap((part) => resolveOutline(part.footprint)));
+  const roadX = road.path[0][0];
+  const boom = createBoom();
+  for (const side of [-1, 1]) {
+    const x = roadX + side * (road.width / 2 + 0.4);
+    instances.add(boom, {
+      x,
+      z,
+      y: context.surface.heightAt(x, z) + 0.3,
+      yaw: side < 0 ? 0 : Math.PI,
+    });
+  }
+}
+
+/** The fountain's jets, and paddle boats at the jetty and out on the water. */
+function placeLakeFeatures(context: Context, instances: Instances): void {
+  const { random, surface } = context;
+  const lake = resolveOutline(locationById<AreaLocation>("lake").footprint);
+  const water = (x: number, z: number): number => surface.heightAt(x, z) + 0.3;
+
+  const fountain = locationById<BuildingLocation>("lake-fountain");
+  const [fountainX, fountainZ] = centreOf(resolveOutline(fountain.footprint ?? []));
+  instances.add(createFountainJets(), {
+    x: fountainX,
+    z: fountainZ,
+    y: surface.heightAt(fountainX, fountainZ) + (fountain.height ?? 0),
+  });
+
+  const boat = createPaddleBoat();
+  const tint = (): Color => new Color(pickOne(random, BOAT_PAINTS));
+  // The jetty's last part is its head, with boats moored along the lake side.
+  const jetty = buildingParts(locationById<BuildingLocation>("paddle-boats"));
+  const head = boundsOf(resolveOutline(jetty[2].footprint));
+  for (let x = head.minX + 3; x <= head.maxX - 3; x += 4) {
+    instances.add(boat, { x, z: head.maxZ + 2.4, y: water(x, head.maxZ), tint: tint() });
+  }
+  const barge = centreOf(
+    buildingParts(locationById<BuildingLocation>(FIREWORKS_LOCATION)).flatMap((part) =>
+      resolveOutline(part.footprint),
+    ),
+  );
+  const { minX, minZ, maxX, maxZ } = boundsOf(lake);
+  for (let placed = 0, tries = 0; placed < 9 && tries < 200; tries += 1) {
+    const x = minX + random() * (maxX - minX);
+    const z = minZ + random() * (maxZ - minZ);
+    const clear =
+      signedDistance(x, z, lake) < -BOAT_SHORE_CLEARANCE &&
+      Math.hypot(x - fountainX, z - fountainZ) > 45 &&
+      Math.hypot(x - barge[0], z - barge[1]) > 60;
+    if (clear) {
+      instances.add(boat, { x, z, y: water(x, z), yaw: random() * TWO_PI, tint: tint() });
+      placed += 1;
+    }
+  }
+}
+
+/** The fireworks over the lake, which play while their barge is hovered or selected. */
+export interface Fireworks {
+  setActive(active: boolean): void;
+  /** Moves the display on to `now`. True while it needs drawing again. */
+  update(now: number): boolean;
+}
+
+interface Shell {
+  readonly bloom: Mesh;
+  readonly trail: Mesh;
+  readonly burstY: number;
+  /** How far the trail climbs before the shell bursts. */
+  readonly climb: number;
+  /** Seconds into the display at which this shell first launches. */
+  readonly delay: number;
+}
+
+/** A burst's sparks around the origin: a white core, coloured streaks and bright tips. */
+function createBloom(radius: number, color: Color): BufferGeometry {
+  const pieces: BufferGeometry[] = [];
+  const forward = new Vector3(0, 0, 1);
+  const towards = new Vector3();
+  const turn = new Quaternion();
+  const white = new Color("#FFF6DC");
+  const streak = (start: number, end: number, thickness: number, paint: Color): void => {
+    const box = new BoxGeometry(thickness, thickness, end - start);
+    box.translate(0, 0, (start + end) / 2);
+    box.applyQuaternion(turn.setFromUnitVectors(forward, towards));
+    pieces.push(colorize(box.toNonIndexed(), () => [paint.r, paint.g, paint.b]));
+  };
+  for (let index = 0; index < FIREWORK_STREAKS; index += 1) {
+    // Evenly spread over a sphere, then drooping a little, as falling sparks do.
+    const y = 1 - (2 * (index + 0.5)) / FIREWORK_STREAKS;
+    const ring = Math.sqrt(1 - y * y);
+    const angle = index * 2.399963;
+    towards.set(Math.cos(angle) * ring, y - 0.12, Math.sin(angle) * ring).normalize();
+    streak(radius * 0.18, radius * 0.5, 0.22, white);
+    streak(radius * 0.5, radius, 0.4, color);
+    const tip = new OctahedronGeometry(0.8, 0);
+    tip.translate(towards.x * radius, towards.y * radius, towards.z * radius);
+    pieces.push(colorize(tip, () => [white.r, white.g, white.b]));
+  }
+  const bloom = mergeGeometries(pieces);
+  if (!bloom) throw new Error("The firework's sparks could not be merged");
+  return bloom;
+}
+
+/**
+ * Shells bursting over the barge. They're drawn unlit, so they stay bright
+ * against the sky, and they cast no shadows. At rest every shell is shown in
+ * full bloom. While active each one climbs, bursts, droops and fades in turn.
+ */
+function createFireworks(context: Context): { object: Group; fireworks: Fireworks } {
+  const barge = buildingParts(locationById<BuildingLocation>(FIREWORKS_LOCATION));
+  const [bargeX, bargeZ] = centreOf(barge.flatMap((part) => resolveOutline(part.footprint)));
+  const launch = new Vector3(bargeX, context.surface.heightAt(bargeX, bargeZ) + 2, bargeZ);
+  const forward = new Vector3(0, 0, 1);
+  const smoke = new Color("#D8D2C4");
+  const object = new Group();
+  object.name = "fireworks";
+
+  const shells: Shell[] = FIREWORK_BURSTS.map((burst, index) => {
+    // A shell's sparks and trail share a material, so they fade as one.
+    const material = new MeshBasicMaterial({ vertexColors: true });
+    const centre = launch.clone().add(new Vector3(burst.east, burst.up, burst.south));
+    const bloom = new Mesh(createBloom(burst.radius, new Color(burst.color)), material);
+    bloom.position.copy(centre);
+
+    // One metre long from its origin, so its Z scale is its length.
+    const line = new BoxGeometry(0.18, 0.18, 1);
+    line.translate(0, 0, 0.5);
+    const trail = new Mesh(
+      colorize(line, () => [smoke.r, smoke.g, smoke.b]),
+      material,
+    );
+    const path = centre.clone().sub(launch);
+    const climb = path.length() * 0.8;
+    trail.position.copy(launch);
+    trail.quaternion.setFromUnitVectors(forward, path.normalize());
+    trail.scale.z = climb;
+
+    object.add(bloom, trail);
+    return { bloom, trail, burstY: centre.y, climb, delay: index * FIREWORK_STAGGER };
+  });
+
+  // The precincts swap in their own copies of the materials, so they're read from the mesh.
+  const setOpacity = (shell: Shell, opacity: number): void => {
+    const material = shell.bloom.material as MeshBasicMaterial;
+    material.opacity = opacity;
+    if (material.transparent !== opacity < 1) {
+      material.transparent = opacity < 1;
+      material.needsUpdate = true;
+    }
+  };
+  const pose = (shell: Shell, time: number | null): void => {
+    const { bloom, trail } = shell;
+    // At rest, and before a shell's first launch, it's shown in full bloom.
+    const t = time === null || time < 0 ? FIREWORK_LAUNCH + FIREWORK_BURST : time % FIREWORK_CYCLE;
+    const bursting = (t - FIREWORK_LAUNCH) / FIREWORK_BURST;
+    const fading = Math.min(1, Math.max(0, (bursting - 1) * (FIREWORK_BURST / FIREWORK_FADE)));
+    const gone = fading === 1;
+    bloom.visible = bursting > 0 && !gone;
+    trail.visible = !gone;
+    trail.scale.z = shell.climb * Math.min(1, t / FIREWORK_LAUNCH);
+    const spread = 1 - (1 - Math.min(1, Math.max(0.02, bursting))) ** 3;
+    bloom.scale.setScalar(spread * (1 + 0.08 * fading));
+    bloom.position.y = shell.burstY - 7 * fading * fading;
+    setOpacity(shell, 1 - fading);
+  };
+
+  let active = false;
+  let startedAt: number | null = null;
+  let stale = false;
+  return {
+    object,
+    fireworks: {
+      setActive(next) {
+        const playing = next && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (playing === active) return;
+        active = playing;
+        startedAt = null;
+        stale = true;
+        if (!active) for (const shell of shells) pose(shell, null);
+      },
+      update(now) {
+        if (!active) {
+          const redraw = stale;
+          stale = false;
+          return redraw;
+        }
+        startedAt ??= now;
+        const elapsed = (now - startedAt) / 1000;
+        for (const shell of shells) pose(shell, elapsed - shell.delay);
+        return true;
+      },
+    },
+  };
+}
+
 /** Temporary race activity sits inside the permanent compound organisation. */
 function placeTeamActivity(context: Context, teams: Instances, guests: Instances): void {
   const truck = createTransporter();
@@ -789,9 +1130,6 @@ function placeTeamActivity(context: Context, teams: Instances, guests: Instances
     for (const offset of [-6, 6]) {
       teams.add(truck, { x: x + offset, z, y: context.surface.heightAt(x, z) });
     }
-  }
-  for (const z of [-395, -365, -335]) {
-    teams.add(truck, { x: -285, z, y: context.surface.heightAt(-285, z) });
   }
   for (const x of [-225, -170]) {
     placeModel(context, guests, MARQUEE, { x, z: -93, scale: 0.65 });
@@ -951,6 +1289,7 @@ export interface Scenery {
   readonly precincts: ReadonlyMap<Category, Group>;
   /** Dressing that only appears for one way of using the site, by event id. */
   readonly events: ReadonlyMap<string, readonly Object3D[]>;
+  readonly fireworks: Fireworks;
 }
 
 function addHidden(group: Group, meshes: readonly InstancedMesh[]): readonly InstancedMesh[] {
@@ -1022,10 +1361,19 @@ export function createScenery(kit: Kit, surface: GroundSurface, quality: Quality
       !location.bridge,
   );
   dressCircuit(context, trackside, quality.catchFences, occupancyOf(roads, 2));
-  group("racing").add(...trackside.build(true));
+  const yardTrucks = new Instances();
+  const raceYardTrucks = new Instances();
+  parkYardTrucks(context, yardTrucks, raceYardTrucks);
+  group("racing").add(...trackside.build(true), ...yardTrucks.build(true));
+
+  const waterfront = new Instances();
+  placeLakeFeatures(context, waterfront);
+  const display = createFireworks(context);
+  group("hospitality").add(...waterfront.build(true), display.object);
 
   const transport = new Instances();
   placeLightPoles(context, transport);
+  placeCheckpointBooms(context, transport);
   placeAircraft(context, transport);
   group("transport").add(...transport.build(true));
 
@@ -1068,6 +1416,7 @@ export function createScenery(kit: Kit, surface: GroundSurface, quality: Quality
         ...addHidden(group("transport"), raceCars.build(false)),
         ...addHidden(group("transport"), raceShuttles.build(true)),
         ...addHidden(group("racing"), raceTrackside.build(true)),
+        ...addHidden(group("racing"), raceYardTrucks.build(true)),
         ...addHidden(group("hospitality"), raceGuests.build(true)),
       ],
     ],
@@ -1081,5 +1430,5 @@ export function createScenery(kit: Kit, surface: GroundSurface, quality: Quality
     ],
   ]);
 
-  return { setting, precincts, events };
+  return { setting, precincts, events, fireworks: display.fireworks };
 }

@@ -20,7 +20,7 @@ BMR hasn't published a track map or masterplan, so we draw our own to fit its pu
 - Sketch the layout on a 2D grid in metres:
   - The circuit as a closed curve: about 4.8 km long, at least 12 m wide, a start-finish straight of at least 600 m, a separate straight of at least 1 km, and heavy braking zones for overtaking
   - The pit / conference building along the start-finish straight
-  - Grandstands A to D and grass general admission banks, at the main straight and the best corners
+  - Grandstands A to E and grass general admission banks, at the main straight and the best corners
   - The arrival plaza and gateway arch, with the amphitheatre and conference halls nearby
   - The lake with its promenade, restaurants and hotels
   - The academy, karting track and automotive hub

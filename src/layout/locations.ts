@@ -34,6 +34,8 @@ interface LocationBase {
   readonly description: string;
   /** Keeps the name label up when zoomed out, ahead of the minor labels. */
   readonly major?: boolean;
+  /** A picture for the sidebar, as a URL. A placeholder is shown without one. */
+  readonly image?: string;
 }
 
 export type Facing = "north" | "east" | "south" | "west";
@@ -82,6 +84,14 @@ export interface AreaLocation extends LocationBase {
   readonly followTerrain?: boolean;
   /** Paving inset over another area, drawn above its base surface. */
   readonly overlay?: boolean;
+  /** Lines painted on the area, such as the lines of a sports court. */
+  readonly markings?: AreaMarkings;
+}
+
+export interface AreaMarkings {
+  readonly color: string;
+  readonly width: number;
+  readonly lines: readonly (readonly PathPoint[])[];
 }
 
 export interface TrackLocation extends LocationBase {

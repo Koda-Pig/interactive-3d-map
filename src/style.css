@@ -261,6 +261,7 @@ body {
   font: inherit;
   white-space: nowrap;
   cursor: pointer;
+  transition: 0.15s ease-out background-color;
 }
 
 .event-switch__button:hover {
@@ -507,6 +508,31 @@ body {
   background: #1ca7ec;
   color: #00243f;
   font-weight: 500;
+}
+
+.sidebar__preview {
+  margin: 0;
+  padding: 8px 16px 12px;
+  background: #e3f4fd;
+}
+
+.sidebar__preview-image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+  object-fit: cover;
+  background: linear-gradient(135deg, #004272, #00678c);
+}
+
+.sidebar__preview-image--placeholder {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  color: rgb(255 255 255 / 80%);
+  font-size: 12px;
 }
 
 /* Still pickable: choosing one brings its precinct back. */

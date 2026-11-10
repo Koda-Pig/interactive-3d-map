@@ -105,6 +105,33 @@ function createGroup(
   return { section, count, toggle, rows };
 }
 
+const PLACEHOLDER_ICON =
+  '<svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path fill="currentColor" d="M21 5v14H3V5zm-2 2H5v8.6l3.5-3.5 3 3 4-5L19 15.5zM8 11a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/></svg>';
+
+/** The picture shown under the selected row: the location's own, or a placeholder. */
+function createPreview(location: Location): HTMLElement {
+  const figure = document.createElement("figure");
+  figure.className = "sidebar__preview";
+  if (location.image) {
+    const image = document.createElement("img");
+    image.className = "sidebar__preview-image";
+    image.src = location.image;
+    image.alt = location.name;
+    figure.append(image);
+  } else {
+    const placeholder = document.createElement("div");
+    placeholder.className = "sidebar__preview-image sidebar__preview-image--placeholder";
+    placeholder.innerHTML = PLACEHOLDER_ICON;
+    const note = document.createElement("span");
+    note.textContent = "Image to come";
+    placeholder.append(note);
+    placeholder.setAttribute("role", "img");
+    placeholder.setAttribute("aria-label", `Placeholder image for ${location.name}`);
+    figure.append(placeholder);
+  }
+  return figure;
+}
+
 /** Moves the list by just enough to show a row below the sticky precinct header. */
 function revealRow(list: HTMLElement, row: Row): void {
   if (row.item.hidden) {
@@ -113,11 +140,12 @@ function revealRow(list: HTMLElement, row: Row): void {
   const area = list.getBoundingClientRect();
   const box = row.button.getBoundingClientRect();
   const above = box.top - (area.top + row.header.offsetHeight);
-  const below = box.bottom - area.bottom;
+  // The row's picture sits under its button, and should be in view with it.
+  const below = row.item.getBoundingClientRect().bottom - area.bottom;
   if (above < 0) {
     list.scrollTop += above;
   } else if (below > 0) {
-    list.scrollTop += below;
+    list.scrollTop += Math.min(below, above);
   }
 }
 
@@ -147,6 +175,7 @@ export function createSidebar(root: HTMLElement, actions: SidebarActions): Sideb
   list.append(...[...groups.values()].map((group) => group.section));
 
   let selected: Row | null = null;
+  let preview: HTMLElement | null = null;
 
   function applySearch(): void {
     const query = wordsIn(search.value);
@@ -184,9 +213,13 @@ export function createSidebar(root: HTMLElement, actions: SidebarActions): Sideb
   return {
     showSelected(location) {
       selected?.button.removeAttribute("aria-current");
+      preview?.remove();
+      preview = null;
       selected = rows.find((row) => row.location === location) ?? null;
       if (selected) {
         selected.button.setAttribute("aria-current", "true");
+        preview = createPreview(selected.location);
+        selected.item.append(preview);
         revealRow(list, selected);
       }
     },

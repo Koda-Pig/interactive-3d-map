@@ -90,11 +90,11 @@ We keep the list, search, filters and info panels, and replace the flat picture 
 
 | Category | Things on the map | How it's drawn |
 | --- | --- | --- |
-| Racing | Circuit, pit lane, pit / conference building, grandstands, general admission banks | The track is a ribbon along a closed curve that follows the ground. The pit / conference building and grandstands are kit models. The banks are footprint shapes raised to a height |
+| Racing | Circuit, pit lane, pit / conference building, grandstands, general admission banks | The track is a ribbon along a closed curve that follows the ground. The pit / conference building and grandstands are kit models. The banks are footprint shapes raised to a height, curved where the track beside them is |
 | Conference and events | Expo Centre, exhibition halls, amphitheatre, arrival plaza, gateway arch and Grandstand Fan Walk | Kit models, with flat areas for the plaza and forecourt and a road strip for the walk |
-| Hospitality and waterfront | Hotels, lake, promenade, lakeside restaurants | Kit models, with a flat water surface |
+| Hospitality and waterfront | Hotels, lake, promenade, lakeside restaurants, fountain, paddle boats, fireworks barge | Kit models, with a flat water surface. The jets, boats and fireworks are simple shapes built in code |
 | Academy and automotive | Driving academy, karting track and garages, skid pad, automotive hub | Kit models, a second smaller track ribbon, and a marked flat area for the skid pad |
-| Residential and commercial | Trackside housing, retail, research and technology | Groups of kit models |
+| Residential and commercial | Trackside housing with its streets, tennis courts and pools, retail, research and technology | Groups of kit models, with painted court lines and small water surfaces |
 | Parking and transport | Car parks, shuttle drop-off, the N7 and its interchanges, Kalbaskraal station and Station Fan Walk, the aerodrome | Flat areas with marked parking rows, road strips and a dotted path, with kit models for the station and aerodrome buildings |
 | Entrances | Gates 1 to 14 (a placeholder count, from the deck's demo data) | Kit models of turnstile gates |
 | Setting | Farmland, hills, trees, distant Table Mountain silhouette | Gently rolling ground with wheat-coloured fields |
@@ -145,6 +145,8 @@ The layout lives in `src/data/locations.json`, as a `locations` list, `grading` 
 - `height`: how tall a building is, in metres
 - `parts`: used instead of `footprint` and `height` by buildings with several volumes. Each part has its own `footprint` and `height`, and can add `base` (how far above the ground it starts) and `color`
 - `model`: on a building or one of its `parts`, a `.glb` from `public/models` that replaces the simple shape and is fitted to its footprint. It has a `file`, a `facing` (`north`, `east`, `south` or `west`), and optionally a `grid` of `[columns, rows]`, or an `endCap` file that makes `file` a tile repeated between two end pieces. If the file can't be loaded, the simple shape is drawn
+- `image`: a picture's URL, shown in the sidebar under the location when it's selected. Without one, a placeholder is shown
+- `markings`: on an area, lines painted on it, such as a tennis court's. It has a `color`, a `width` and a list of `lines`, each a path
 - `planting`: on an area, `park` scatters trees through it and `edge` lines its edge with them
 - Tracks and roads use `path` (a list of points, rounded the same way) instead of `footprint`, plus `width`. Optional: `closed`, `branches` (more paths in the same location), `median`, `dashed`, `kerbs`, `runoff`, `runoffColor`, `step` (spacing of the ribbon's cross-sections, for very long roads)
 - The location with the id `circuit` also needs `startFinish`: an `[x, z]` point on the start-finish line, which `pnpm check:layout` uses to find that straight

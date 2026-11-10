@@ -3,7 +3,7 @@ import "@fontsource/roboto/latin-500.css";
 import { NeutralToneMapping, PCFShadowMap, Scene, WebGLRenderer } from "three";
 import { CSS2DRenderer } from "three/addons/renderers/CSS2DRenderer.js";
 import { layoutModelFiles, loadKit } from "./draw/kit.ts";
-import { createScenery, SCENERY_MODELS } from "./draw/scenery.ts";
+import { createScenery, FIREWORKS_LOCATION, SCENERY_MODELS } from "./draw/scenery.ts";
 import { createSite } from "./draw/site.ts";
 import { setEventMode } from "./scene/event-modes.ts";
 import { CameraFlight } from "./scene/flight.ts";
@@ -231,7 +231,7 @@ new ResizeObserver(() => {
   render(performance.now());
 }).observe(host);
 
-// The scene is static, so frames are only drawn when something has changed.
+// The scene is all but static, so frames are only drawn when something has changed.
 renderer.setAnimationLoop((now) => {
   const flying = flight.update(now);
   controls.update();
@@ -247,6 +247,11 @@ renderer.setAnimationLoop((now) => {
   }
   if (sunShadow.update(now, camera, controls.target, moved)) {
     renderer.shadowMap.needsUpdate = true;
+    needsRender = true;
+  }
+  // The one thing that moves: fireworks play while their barge is hovered or selected.
+  scenery.fireworks.setActive(interaction.isLit(FIREWORKS_LOCATION));
+  if (scenery.fireworks.update(now)) {
     needsRender = true;
   }
   const drawing = moved || changes.redraw || needsRender;

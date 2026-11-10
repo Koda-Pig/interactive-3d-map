@@ -14,8 +14,17 @@ function drawLocation(location: Location, surface: GroundSurface, kit: Kit): Obj
     case "building":
       return createBuilding(location, kit);
     case "area":
-    case "water":
-      return createArea(location, surface);
+    case "water": {
+      const area = createArea(location, surface);
+      if (location.markings) {
+        const { color, width, lines } = location.markings;
+        const [path, ...branches] = lines;
+        area.add(
+          createRibbon({ ...location, type: "road", color, width, path, branches }, surface),
+        );
+      }
+      return area;
+    }
     case "track":
     case "road":
       return createRibbon(location, surface);

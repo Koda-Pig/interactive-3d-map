@@ -90,6 +90,11 @@ export class MapInteraction {
     this.parts.onChange();
   }
 
+  /** Whether the location with this id is hovered or selected. */
+  isLit(id: string): boolean {
+    return this.hovered?.id === id || this.selected?.id === id;
+  }
+
   /** Closes any details and flies back to the opening view. */
   resetView(): void {
     this.select(null);

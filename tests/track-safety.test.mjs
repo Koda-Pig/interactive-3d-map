@@ -78,16 +78,37 @@ test("local protection remains continuous at the lap seam", () => {
   assert.deepEqual(safety(first, -1), safety(wrapped, -1));
 });
 
+/** Points every few metres around an outline, so long straight edges are checked too. */
+function edgePoints(polygon) {
+  return polygon.flatMap(([ax, az], index) => {
+    const [bx, bz] = polygon[(index + 1) % polygon.length];
+    const steps = Math.max(1, Math.ceil(Math.hypot(bx - ax, bz - az) / 5));
+    return Array.from({ length: steps }, (_, step) => [
+      ax + ((bx - ax) * step) / steps,
+      az + ((bz - az) * step) / steps,
+    ]);
+  });
+}
+
+/** The barrier line on one side of the circuit, as the map draws it. */
+function barrierLine(side) {
+  return samples.map((sample) => {
+    const offset = safety(sample, side).barrier * side;
+    return [sample.x - sample.dirZ * offset, sample.z + sample.dirX * offset];
+  });
+}
+
 test("occupied buildings and spectator banks remain behind the circuit protection", () => {
+  // The circuit runs clockwise, so its left-hand barrier is the outer one.
+  // Banks follow these lines, so they're checked against the lines themselves.
+  const outer = barrierLine(-1);
+  const infield = barrierLine(1);
   for (const location of locations.filter((location) => location.type === "building")) {
     for (const part of location.parts ?? [location]) {
-      const polygon = resolveOutline(part.footprint);
-      const [cx, cz] = centreOf(polygon);
-      for (const sample of samples) {
-        const side = (cx - sample.x) * -sample.dirZ + (cz - sample.z) * sample.dirX > 0 ? 1 : -1;
+      for (const [x, z] of edgePoints(resolveOutline(part.footprint))) {
         assert.ok(
-          signedDistance(sample.x, sample.z, polygon) > safety(sample, side).barrier,
-          `${location.id} encroaches on protection at ${sample.x}, ${sample.z}`,
+          signedDistance(x, z, outer) > 2 || signedDistance(x, z, infield) < -2,
+          `${location.id} encroaches on protection at ${x}, ${z}`,
         );
       }
     }
@@ -445,6 +466,62 @@ test("gates are clear of every road and building", () => {
           );
         }
       }
+    }
+  }
+});
+
+test("residential, retail and research streets start on the ring road", () => {
+  const ring = locations.find((location) => location.id === "ring-road");
+  const ringSamples = samplePath(resolvePath(ring.path, true), 2, true);
+  for (const id of [
+    "residences-east-street",
+    "residences-south-street",
+    "retail-street",
+    "research-park-street",
+  ]) {
+    const [x, z] = locations.find((location) => location.id === id).path[0];
+    assert.ok(
+      ringSamples.some((point) => Math.hypot(point.x - x, point.z - z) < ring.width / 2),
+      id,
+    );
+  }
+});
+
+test("lake features stand in the water, and the lake stays inside its promenade", () => {
+  const lake = resolveOutline(locations.find((location) => location.id === "lake").footprint);
+  for (const id of ["lake-fountain", "fireworks-barge"]) {
+    for (const outline of outlinesOf(locations.find((location) => location.id === id))) {
+      for (const [x, z] of outline) assert.ok(signedDistance(x, z, lake) < -10, id);
+    }
+  }
+  const jettyHead = outlinesOf(locations.find((location) => location.id === "paddle-boats"))[2];
+  for (const [x, z] of jettyHead) assert.ok(signedDistance(x, z, lake) < 0, "jetty head");
+  const promenade = locations.find((location) => location.id === "promenade");
+  for (const sample of samplePath(resolvePath(promenade.path, true), 4, true)) {
+    assert.ok(signedDistance(sample.x, sample.z, lake) > promenade.width / 2, "promenade");
+  }
+});
+
+test("the checkpoint's hut stands beside the Infield Road before its ramp", () => {
+  const road = locations.find((location) => location.id === "infield-road");
+  const hut = outlinesOf(locations.find((location) => location.id === "infield-checkpoint")).flat();
+  const [startX, startZ] = road.path[0];
+  for (const [x, z] of hut) {
+    assert.ok(Math.abs(x - startX) > road.width / 2, "hut stands on the road");
+    assert.ok(Math.abs(x - startX) < road.width / 2 + 10, "hut is away from the road");
+    assert.ok(Math.abs(z - startZ) < road.bridge.start, "hut is past the start of the ramp");
+  }
+});
+
+test("residents' pools and courts sit beside their residences", () => {
+  for (const side of ["east", "south"]) {
+    const homes = outlinesOf(
+      locations.find((location) => location.id === `trackside-residences-${side}`),
+    ).flat();
+    for (const id of [`tennis-courts-${side}`, `swimming-pool-${side}`]) {
+      const [x, z] = centreOf(resolveOutline(locations.find((l) => l.id === id).footprint));
+      const nearest = Math.min(...homes.map(([hx, hz]) => Math.hypot(hx - x, hz - z)));
+      assert.ok(nearest < 120, `${id} is ${nearest.toFixed(0)} m from the nearest home`);
     }
   }
 });
