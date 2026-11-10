@@ -1,6 +1,6 @@
 # Asset conventions
 
-The kit contains 60 models across eight categories. Three variants of each nature asset use deterministic seeds. The kit contains no downloaded models, textures, compression, logos, or embedded text. The viewer labels and human reference exist only in the preview.
+The kit contains 72 models across eight categories. Three variants of each nature asset use deterministic seeds. The kit contains no downloaded models, textures, compression, logos, or embedded text. The viewer labels and human reference exist only in the preview.
 
 ## Coordinates and dimensions
 
@@ -27,8 +27,12 @@ These are the only changes to explicitly supplied dimension axes. Unspecified wi
 
 `assets:validate` loads every GLB independently with glTF Transform and runs Khronos `gltf-validator`. It checks dimensions against the catalog within 10%, triangle budgets, centred bounds, ground and skirt depth, root name and transform, palette names, unique material primitives, file sizes, manifest bounds, footprint, instancing and tile flags, matching tile boundary vertices, flat unit normals, winding, nondegenerate triangles, absence of textures and extensions, stale GLBs, and the 15 MB kit limit. The size limit includes GLBs and manifest.
 
-Results are written to `validation-report.json`. `determinism-report.json` records SHA-256 hashes for all 61 generated files. Rendering uses the exported GLBs, rather than the generator geometry.
+Results are written to `validation-report.json`. `determinism-report.json` records SHA-256 hashes for all 73 generated files. Rendering uses the exported GLBs, rather than the generator geometry.
 
 ## Reference access
 
 BMR's gallery couldn't be reached when the kit was generated. Written descriptions of the architecture and the project's planning documents guided the designs. No gallery images were copied.
+
+## Aerial architecture
+
+The signature-building generators live in `aerial.mjs`. Retail, research and residential each have three variants. The kit also includes separate Expo concourse and entrance models, paddock support rooms and equipment awnings, karting garages and a conference entrance canopy. See [the aerial review](aerial-review.md) for dimensions, placement constraints and triangle counts.

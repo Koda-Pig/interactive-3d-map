@@ -43,7 +43,7 @@ try {
   await page.locator("#close").click();
   if (await page.locator("#dialog").isVisible()) throw Error("Inspector did not close");
   if (errors.length) throw Error(errors.join("\n"));
-  console.log("Full 60-asset grid and orbit inspector passed.");
+  console.log(`Full ${assets.length}-asset grid and orbit inspector passed.`);
 } finally {
   await browser?.close();
   server.close();

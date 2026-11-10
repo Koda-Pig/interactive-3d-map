@@ -688,12 +688,14 @@
         {
           "footprint": [[-605, 540], [-452, 540], [-452, 560], [-605, 560]],
           "height": 17,
-          "color": "#7FA9BF"
+          "color": "#7FA9BF",
+          "model": {"file": "conference/expo-concourse.glb", "facing": "south"}
         },
         {
           "footprint": [[-452, 528], [-428, 528], [-428, 572], [-452, 572]],
           "height": 27,
-          "color": "#00678C"
+          "color": "#00678C",
+          "model": {"file": "conference/expo-entrance.glb", "facing": "east"}
         },
         {
           "footprint": [[-428, 532], [-406, 532], [-406, 568], [-428, 568]],
@@ -1048,7 +1050,8 @@
       "parts": [
         {
           "footprint": [[-1086, 1170], [-1002, 1170], [-1002, 1184], [-1086, 1184]],
-          "height": 4.2
+          "height": 4.2,
+          "model": {"file": "mixed-use/karting-garage-row.glb", "facing": "north"}
         },
         {
           "footprint": [[-1085.85, 1168.4], [-1074.15, 1168.4], [-1074.15, 1184.6], [-1085.85, 1184.6]],
@@ -1129,7 +1132,8 @@
         },
         {
           "footprint": [[-954, 1170], [-894, 1170], [-894, 1184], [-954, 1184]],
-          "height": 4.2
+          "height": 4.2,
+          "model": {"file": "mixed-use/karting-garage-row.glb", "facing": "north"}
         },
         {
           "footprint": [[-953.85, 1168.4], [-942.15, 1168.4], [-942.15, 1184.6], [-953.85, 1184.6]],
@@ -1296,11 +1300,11 @@
       "color": "#E8ECEF",
       "parts": [
         { "footprint": [[790, -330], [808, -330], [808, -270], [790, -270]], "height": 24, "model": { "file": "mixed-use/residential-trackside.glb", "facing": "west" } },
-        { "footprint": [[790, -250], [808, -250], [808, -190], [790, -190]], "height": 24, "model": { "file": "mixed-use/residential-trackside.glb", "facing": "west" } },
-        { "footprint": [[790, -170], [808, -170], [808, -110], [790, -110]], "height": 24, "model": { "file": "mixed-use/residential-trackside.glb", "facing": "west" } },
+        { "footprint": [[790, -250], [808, -250], [808, -190], [790, -190]], "height": 24, "model": { "file": "mixed-use/residential-trackside-2.glb", "facing": "west" } },
+        { "footprint": [[790, -170], [808, -170], [808, -110], [790, -110]], "height": 24, "model": { "file": "mixed-use/residential-trackside-3.glb", "facing": "west" } },
         { "footprint": [[790, -90], [808, -90], [808, -30], [790, -30]], "height": 24, "model": { "file": "mixed-use/residential-trackside.glb", "facing": "west" } },
-        { "footprint": [[790, -10], [808, -10], [808, 50], [790, 50]], "height": 24, "model": { "file": "mixed-use/residential-trackside.glb", "facing": "west" } },
-        { "footprint": [[790, 70], [808, 70], [808, 130], [790, 130]], "height": 24, "model": { "file": "mixed-use/residential-trackside.glb", "facing": "west" } },
+        { "footprint": [[790, -10], [808, -10], [808, 50], [790, 50]], "height": 24, "model": { "file": "mixed-use/residential-trackside-2.glb", "facing": "west" } },
+        { "footprint": [[790, 70], [808, 70], [808, 130], [790, 130]], "height": 24, "model": { "file": "mixed-use/residential-trackside-3.glb", "facing": "west" } },
         { "footprint": [[830, -325], [842, -325], [842, -285], [830, -285]], "height": 13, "color": "#CFC6B4" },
         { "footprint": [[830, -245], [842, -245], [842, -205], [830, -205]], "height": 13, "color": "#CFC6B4" },
         { "footprint": [[830, -165], [842, -165], [842, -125], [830, -125]], "height": 13, "color": "#CFC6B4" },
@@ -1318,8 +1322,8 @@
       "color": "#E8ECEF",
       "parts": [
         { "footprint": [[440, 230], [500, 230], [500, 248], [440, 248]], "height": 24, "model": { "file": "mixed-use/residential-trackside.glb", "facing": "north" } },
-        { "footprint": [[520, 230], [580, 230], [580, 248], [520, 248]], "height": 24, "model": { "file": "mixed-use/residential-trackside.glb", "facing": "north" } },
-        { "footprint": [[600, 230], [660, 230], [660, 248], [600, 248]], "height": 24, "model": { "file": "mixed-use/residential-trackside.glb", "facing": "north" } },
+        { "footprint": [[520, 230], [580, 230], [580, 248], [520, 248]], "height": 24, "model": { "file": "mixed-use/residential-trackside-2.glb", "facing": "north" } },
+        { "footprint": [[600, 230], [660, 230], [660, 248], [600, 248]], "height": 24, "model": { "file": "mixed-use/residential-trackside-3.glb", "facing": "north" } },
         { "footprint": [[680, 230], [740, 230], [740, 248], [680, 248]], "height": 24, "model": { "file": "mixed-use/residential-trackside.glb", "facing": "north" } },
         { "footprint": [[450, 272], [490, 272], [490, 284], [450, 284]], "height": 13, "color": "#CFC6B4" },
         { "footprint": [[530, 272], [570, 272], [570, 284], [530, 284]], "height": 13, "color": "#CFC6B4" },
@@ -1337,14 +1341,14 @@
       "color": "#C9CFD4",
       "parts": [
         { "footprint": [[1040, -190], [1100, -190], [1100, -160], [1040, -160]], "height": 12, "model": { "file": "mixed-use/retail-block.glb", "facing": "east" } },
-        { "footprint": [[1040, -120], [1100, -120], [1100, -90], [1040, -90]], "height": 12, "model": { "file": "mixed-use/retail-block.glb", "facing": "east" } },
-        { "footprint": [[1040, -50], [1100, -50], [1100, -20], [1040, -20]], "height": 12, "model": { "file": "mixed-use/retail-block.glb", "facing": "east" } },
+        { "footprint": [[1040, -120], [1100, -120], [1100, -90], [1040, -90]], "height": 12, "model": { "file": "mixed-use/retail-block-2.glb", "facing": "east" } },
+        { "footprint": [[1040, -50], [1100, -50], [1100, -20], [1040, -20]], "height": 12, "model": { "file": "mixed-use/retail-block-3.glb", "facing": "east" } },
         { "footprint": [[1040, 20], [1100, 20], [1100, 50], [1040, 50]], "height": 12, "model": { "file": "mixed-use/retail-block.glb", "facing": "east" } },
-        { "footprint": [[1040, 90], [1100, 90], [1100, 120], [1040, 120]], "height": 12, "model": { "file": "mixed-use/retail-block.glb", "facing": "east" } },
-        { "footprint": [[1125, -190], [1185, -190], [1185, -160], [1125, -160]], "height": 12, "model": { "file": "mixed-use/retail-block.glb", "facing": "west" } },
+        { "footprint": [[1040, 90], [1100, 90], [1100, 120], [1040, 120]], "height": 12, "model": { "file": "mixed-use/retail-block-2.glb", "facing": "east" } },
+        { "footprint": [[1125, -190], [1185, -190], [1185, -160], [1125, -160]], "height": 12, "model": { "file": "mixed-use/retail-block-3.glb", "facing": "west" } },
         { "footprint": [[1125, -120], [1185, -120], [1185, -90], [1125, -90]], "height": 12, "model": { "file": "mixed-use/retail-block.glb", "facing": "west" } },
-        { "footprint": [[1125, -50], [1185, -50], [1185, -20], [1125, -20]], "height": 12, "model": { "file": "mixed-use/retail-block.glb", "facing": "west" } },
-        { "footprint": [[1125, 20], [1185, 20], [1185, 50], [1125, 50]], "height": 12, "model": { "file": "mixed-use/retail-block.glb", "facing": "west" } },
+        { "footprint": [[1125, -50], [1185, -50], [1185, -20], [1125, -20]], "height": 12, "model": { "file": "mixed-use/retail-block-2.glb", "facing": "west" } },
+        { "footprint": [[1125, 20], [1185, 20], [1185, 50], [1125, 50]], "height": 12, "model": { "file": "mixed-use/retail-block-3.glb", "facing": "west" } },
         { "footprint": [[1125, 90], [1185, 90], [1185, 120], [1125, 120]], "height": 12, "model": { "file": "mixed-use/retail-block.glb", "facing": "west" } }
       ]
     },
@@ -1358,13 +1362,13 @@
       "color": "#E8ECEF",
       "parts": [
         { "footprint": [[800, 430], [850, 430], [850, 460], [800, 460]], "height": 21, "model": { "file": "mixed-use/research-block.glb", "facing": "south" } },
-        { "footprint": [[800, 520], [850, 520], [850, 550], [800, 550]], "height": 21, "model": { "file": "mixed-use/research-block.glb", "facing": "south" } },
-        { "footprint": [[800, 610], [850, 610], [850, 640], [800, 640]], "height": 21, "model": { "file": "mixed-use/research-block.glb", "facing": "south" } },
+        { "footprint": [[800, 520], [850, 520], [850, 550], [800, 550]], "height": 21, "model": { "file": "mixed-use/research-block-2.glb", "facing": "south" } },
+        { "footprint": [[800, 610], [850, 610], [850, 640], [800, 640]], "height": 21, "model": { "file": "mixed-use/research-block-3.glb", "facing": "south" } },
         { "footprint": [[800, 700], [850, 700], [850, 730], [800, 730]], "height": 21, "model": { "file": "mixed-use/research-block.glb", "facing": "south" } },
-        { "footprint": [[880, 430], [930, 430], [930, 460], [880, 460]], "height": 21, "model": { "file": "mixed-use/research-block.glb", "facing": "south" } },
-        { "footprint": [[880, 520], [930, 520], [930, 550], [880, 550]], "height": 21, "model": { "file": "mixed-use/research-block.glb", "facing": "south" } },
+        { "footprint": [[880, 430], [930, 430], [930, 460], [880, 460]], "height": 21, "model": { "file": "mixed-use/research-block-2.glb", "facing": "south" } },
+        { "footprint": [[880, 520], [930, 520], [930, 550], [880, 550]], "height": 21, "model": { "file": "mixed-use/research-block-3.glb", "facing": "south" } },
         { "footprint": [[880, 610], [930, 610], [930, 640], [880, 640]], "height": 21, "model": { "file": "mixed-use/research-block.glb", "facing": "south" } },
-        { "footprint": [[880, 700], [930, 700], [930, 730], [880, 730]], "height": 21, "model": { "file": "mixed-use/research-block.glb", "facing": "south" } }
+        { "footprint": [[880, 700], [930, 700], [930, 730], [880, 730]], "height": 21, "model": { "file": "mixed-use/research-block-2.glb", "facing": "south" } }
       ]
     },
     {
@@ -1815,7 +1819,8 @@
         {
           "footprint": [[-466, -250], [-439, -250], [-439, -236], [-466, -236]],
           "height": 5,
-          "color": "#E8ECEF"
+          "color": "#E8ECEF",
+          "model": {"file": "racing/paddock-support-unit.glb", "facing": "south"}
         },
         {
           "footprint": [[-466, -232], [-464, -232], [-464, -210], [-466, -210]],
@@ -1831,12 +1836,14 @@
           "footprint": [[-466, -232], [-439, -232], [-439, -210], [-466, -210]],
           "height": 0.6,
           "base": 5,
-          "color": "#004272"
+          "color": "#004272",
+          "model": {"file": "racing/paddock-equipment-awning.glb", "facing": "south"}
         },
         {
           "footprint": [[-466, -190], [-439, -190], [-439, -176], [-466, -176]],
           "height": 5,
-          "color": "#E8ECEF"
+          "color": "#E8ECEF",
+          "model": {"file": "racing/paddock-support-unit.glb", "facing": "south"}
         },
         {
           "footprint": [[-466, -172], [-464, -172], [-464, -150], [-466, -150]],
@@ -1852,12 +1859,14 @@
           "footprint": [[-466, -172], [-439, -172], [-439, -150], [-466, -150]],
           "height": 0.6,
           "base": 5,
-          "color": "#004272"
+          "color": "#004272",
+          "model": {"file": "racing/paddock-equipment-awning.glb", "facing": "south"}
         },
         {
           "footprint": [[-466, -130], [-439, -130], [-439, -116], [-466, -116]],
           "height": 5,
-          "color": "#E8ECEF"
+          "color": "#E8ECEF",
+          "model": {"file": "racing/paddock-support-unit.glb", "facing": "south"}
         },
         {
           "footprint": [[-466, -112], [-464, -112], [-464, -90], [-466, -90]],
@@ -1873,12 +1882,14 @@
           "footprint": [[-466, -112], [-439, -112], [-439, -90], [-466, -90]],
           "height": 0.6,
           "base": 5,
-          "color": "#004272"
+          "color": "#004272",
+          "model": {"file": "racing/paddock-equipment-awning.glb", "facing": "south"}
         },
         {
           "footprint": [[-466, -70], [-439, -70], [-439, -56], [-466, -56]],
           "height": 5,
-          "color": "#E8ECEF"
+          "color": "#E8ECEF",
+          "model": {"file": "racing/paddock-support-unit.glb", "facing": "south"}
         },
         {
           "footprint": [[-466, -52], [-464, -52], [-464, -30], [-466, -30]],
@@ -1894,12 +1905,14 @@
           "footprint": [[-466, -52], [-439, -52], [-439, -30], [-466, -30]],
           "height": 0.6,
           "base": 5,
-          "color": "#004272"
+          "color": "#004272",
+          "model": {"file": "racing/paddock-equipment-awning.glb", "facing": "south"}
         },
         {
           "footprint": [[-466, -10], [-439, -10], [-439, 4], [-466, 4]],
           "height": 5,
-          "color": "#E8ECEF"
+          "color": "#E8ECEF",
+          "model": {"file": "racing/paddock-support-unit.glb", "facing": "south"}
         },
         {
           "footprint": [[-466, 8], [-464, 8], [-464, 30], [-466, 30]],
@@ -1915,12 +1928,14 @@
           "footprint": [[-466, 8], [-439, 8], [-439, 30], [-466, 30]],
           "height": 0.6,
           "base": 5,
-          "color": "#004272"
+          "color": "#004272",
+          "model": {"file": "racing/paddock-equipment-awning.glb", "facing": "south"}
         },
         {
           "footprint": [[-369, -250], [-342, -250], [-342, -236], [-369, -236]],
           "height": 5,
-          "color": "#E8ECEF"
+          "color": "#E8ECEF",
+          "model": {"file": "racing/paddock-support-unit.glb", "facing": "south"}
         },
         {
           "footprint": [[-369, -232], [-367, -232], [-367, -210], [-369, -210]],
@@ -1936,12 +1951,14 @@
           "footprint": [[-369, -232], [-342, -232], [-342, -210], [-369, -210]],
           "height": 0.6,
           "base": 5,
-          "color": "#004272"
+          "color": "#004272",
+          "model": {"file": "racing/paddock-equipment-awning.glb", "facing": "south"}
         },
         {
           "footprint": [[-369, -190], [-342, -190], [-342, -176], [-369, -176]],
           "height": 5,
-          "color": "#E8ECEF"
+          "color": "#E8ECEF",
+          "model": {"file": "racing/paddock-support-unit.glb", "facing": "south"}
         },
         {
           "footprint": [[-369, -172], [-367, -172], [-367, -150], [-369, -150]],
@@ -1957,12 +1974,14 @@
           "footprint": [[-369, -172], [-342, -172], [-342, -150], [-369, -150]],
           "height": 0.6,
           "base": 5,
-          "color": "#004272"
+          "color": "#004272",
+          "model": {"file": "racing/paddock-equipment-awning.glb", "facing": "south"}
         },
         {
           "footprint": [[-369, -130], [-342, -130], [-342, -116], [-369, -116]],
           "height": 5,
-          "color": "#E8ECEF"
+          "color": "#E8ECEF",
+          "model": {"file": "racing/paddock-support-unit.glb", "facing": "south"}
         },
         {
           "footprint": [[-369, -112], [-367, -112], [-367, -90], [-369, -90]],
@@ -1978,12 +1997,14 @@
           "footprint": [[-369, -112], [-342, -112], [-342, -90], [-369, -90]],
           "height": 0.6,
           "base": 5,
-          "color": "#004272"
+          "color": "#004272",
+          "model": {"file": "racing/paddock-equipment-awning.glb", "facing": "south"}
         },
         {
           "footprint": [[-369, -70], [-342, -70], [-342, -56], [-369, -56]],
           "height": 5,
-          "color": "#E8ECEF"
+          "color": "#E8ECEF",
+          "model": {"file": "racing/paddock-support-unit.glb", "facing": "south"}
         },
         {
           "footprint": [[-369, -52], [-367, -52], [-367, -30], [-369, -30]],
@@ -1999,12 +2020,14 @@
           "footprint": [[-369, -52], [-342, -52], [-342, -30], [-369, -30]],
           "height": 0.6,
           "base": 5,
-          "color": "#004272"
+          "color": "#004272",
+          "model": {"file": "racing/paddock-equipment-awning.glb", "facing": "south"}
         },
         {
           "footprint": [[-369, -10], [-342, -10], [-342, 4], [-369, 4]],
           "height": 5,
-          "color": "#E8ECEF"
+          "color": "#E8ECEF",
+          "model": {"file": "racing/paddock-support-unit.glb", "facing": "south"}
         },
         {
           "footprint": [[-369, 8], [-367, 8], [-367, 30], [-369, 30]],
@@ -2020,7 +2043,8 @@
           "footprint": [[-369, 8], [-342, 8], [-342, 30], [-369, 30]],
           "height": 0.6,
           "base": 5,
-          "color": "#004272"
+          "color": "#004272",
+          "model": {"file": "racing/paddock-equipment-awning.glb", "facing": "south"}
         }
       ]
     },
@@ -2071,7 +2095,8 @@
       "description": "Public south lobby of the pit building, separate from team loading behind the garages.",
       "footprint": [[-530, 80], [-490, 80], [-490, 96], [-530, 96]],
       "height": 5,
-      "color": "#00678C"
+      "color": "#00678C",
+      "model": {"file": "conference/conference-entrance-canopy.glb", "facing": "south"}
     },
     {
       "id": "infield-hospitality",

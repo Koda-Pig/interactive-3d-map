@@ -1,6 +1,6 @@
 {
-  "assetCount": 60,
-  "totalBytesIncludingManifest": 1266662,
+  "assetCount": 72,
+  "totalBytesIncludingManifest": 1569713,
   "errors": 0,
   "warnings": 0,
   "reports": [
@@ -59,6 +59,18 @@
       "messages": []
     },
     {
+      "id": "paddock-support-unit",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "paddock-equipment-awning",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
       "id": "media-centre",
       "errors": 0,
       "warnings": 0,
@@ -66,6 +78,24 @@
     },
     {
       "id": "conference-hall",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "expo-concourse",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "expo-entrance",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "conference-entrance-canopy",
       "errors": 0,
       "warnings": 0,
       "messages": []
@@ -156,6 +186,12 @@
     },
     {
       "id": "driving-academy",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "karting-garage-row",
       "errors": 0,
       "warnings": 0,
       "messages": []
@@ -360,6 +396,42 @@
     },
     {
       "id": "rock-outcrop-3",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "retail-block-2",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "retail-block-3",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "research-block-2",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "research-block-3",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "residential-trackside-2",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "residential-trackside-3",
       "errors": 0,
       "warnings": 0,
       "messages": []

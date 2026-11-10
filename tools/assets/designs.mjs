@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { aerial } from "./aerial.mjs";
 import { KitShape, random } from "./shared.mjs";
 
 function block(s, w, d, h, floors = 2) {
@@ -167,6 +168,7 @@ function nature(s, a) {
 export function design(a) {
   const s = new KitShape(),
     { id, w, d, h } = a;
+  if (aerial(s, a)) return s.finish(a);
   if (a.category === "nature") {
     nature(s, a);
     return s.finish(a);

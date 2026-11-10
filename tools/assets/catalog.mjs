@@ -1,7 +1,7 @@
 // Dimensions are above-ground envelopes. Unspecified dimensions are explicit design choices.
 const rows = {
   racing: [
-    ["pit-conference-building", 360, 45, 30, "hero"],
+    ["pit-conference-building", 370, 52, 33, "hero"],
     ["grandstand-bay-covered", 20, 32, 22, "modular", true],
     ["grandstand-bay-open", 20, 24, 12, "modular", true],
     ["grandstand-end-cap", 8, 32, 22, "modular"],
@@ -10,10 +10,15 @@ const rows = {
     ["footbridge-over-track", 40, 5, 9, "modular"],
     ["marshal-post", 4, 3, 4],
     ["big-screen", 16, 2, 12, "prop"],
+    ["paddock-support-unit", 27, 14, 5],
+    ["paddock-equipment-awning", 27, 22, 5.6],
     ["media-centre", 50, 25, 12],
   ],
   conference: [
-    ["conference-hall", 90, 60, 16],
+    ["conference-hall", 78, 72, 24],
+    ["expo-concourse", 153, 20, 17],
+    ["expo-entrance", 44, 24, 27],
+    ["conference-entrance-canopy", 40, 16, 5],
     ["conference-foyer", 60, 24, 12],
     ["amphitheatre", 120, 100, 18, "hero"],
     ["gateway-arch", 40, 6, 14],
@@ -27,12 +32,13 @@ const rows = {
     ["hospitality-marquee", 30, 15, 8],
   ],
   "mixed-use": [
-    ["residential-trackside", 60, 18, 21],
+    ["residential-trackside", 60, 18, 24],
     ["townhouse-row", 40, 12, 10],
-    ["retail-block", 60, 30, 9],
-    ["research-block", 50, 30, 18],
+    ["retail-block", 30, 60, 12],
+    ["research-block", 50, 30, 21],
     ["automotive-hub", 80, 45, 14],
     ["driving-academy", 40, 22, 9],
+    ["karting-garage-row", 84, 14, 4.2],
     ["karting-clubhouse", 24, 14, 7],
   ],
   transport: [
@@ -105,3 +111,9 @@ for (const a of catalog)
     a.notes =
       "Supplied vehicle dimensions interpreted as length × width × height; X/Z exchanged so the nose faces +Z.";
   }
+
+// Variants keep identical envelopes so precinct placement remains data-only.
+for (const base of ["retail-block", "research-block", "residential-trackside"]) {
+  const spec = catalog.find((a) => a.id === base);
+  for (const variant of [2, 3]) catalog.push({ ...spec, id: `${base}-${variant}` });
+}

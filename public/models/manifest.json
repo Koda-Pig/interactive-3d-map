@@ -12,57 +12,60 @@
       "category": "racing",
       "boundingBox": {
         "min": [
-          -180,
+          -185,
           -3,
-          -22.5
+          -26.000001907348633
         ],
         "max": [
-          180,
-          30,
-          22.5
+          185,
+          33,
+          26.000001907348633
         ],
         "size": [
-          360,
-          33,
-          45
+          370,
+          36,
+          52.000003814697266
         ]
       },
-      "triangleCount": 1286,
-      "fileSize": 97484,
+      "triangleCount": 2370,
+      "fileSize": 177384,
       "materials": [
         "wall-white",
         "screen-dark",
         "metal",
         "glass",
-        "wall-grey",
-        "roof-dark",
+        "timber",
         "canopy-white",
+        "roof-dark",
+        "wall-grey",
+        "foliage-dry",
+        "brand-navy",
         "concrete"
       ],
       "tileable": false,
       "instanced": false,
       "footprint": [
         [
-          -180,
-          -22.5
+          -185,
+          -26
         ],
         [
-          180,
-          -22.5
+          185,
+          -26
         ],
         [
-          180,
-          22.5
+          185,
+          26
         ],
         [
-          -180,
-          22.5
+          -185,
+          26
         ]
       ],
       "spec": {
-        "width": 360,
-        "depth": 45,
-        "height": 30,
+        "width": 370,
+        "depth": 52,
+        "height": 33,
         "skirtDepth": 3,
         "triangleBudget": 15000
       }
@@ -88,14 +91,17 @@
           32
         ]
       },
-      "triangleCount": 394,
-      "fileSize": 31436,
+      "triangleCount": 506,
+      "fileSize": 41184,
       "materials": [
         "concrete",
         "brand-navy",
+        "brand-teal",
+        "wall-white",
         "metal",
         "roof-dark",
-        "canopy-white"
+        "canopy-white",
+        "wall-grey"
       ],
       "tileable": true,
       "instanced": false,
@@ -201,15 +207,17 @@
           32
         ]
       },
-      "triangleCount": 406,
-      "fileSize": 32840,
+      "triangleCount": 518,
+      "fileSize": 42124,
       "materials": [
         "concrete",
         "brand-navy",
+        "brand-teal",
+        "wall-white",
         "metal",
         "roof-dark",
         "canopy-white",
-        "wall-white"
+        "wall-grey"
       ],
       "tileable": false,
       "instanced": false,
@@ -522,6 +530,121 @@
       }
     },
     {
+      "id": "paddock-support-unit",
+      "file": "/models/racing/paddock-support-unit.glb",
+      "category": "racing",
+      "boundingBox": {
+        "min": [
+          -13.5,
+          -3,
+          -7
+        ],
+        "max": [
+          13.5,
+          5,
+          7
+        ],
+        "size": [
+          27,
+          8,
+          14
+        ]
+      },
+      "triangleCount": 218,
+      "fileSize": 19300,
+      "materials": [
+        "wall-white",
+        "screen-dark",
+        "metal",
+        "wall-grey",
+        "brand-teal",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -13.5,
+          -7
+        ],
+        [
+          13.5,
+          -7
+        ],
+        [
+          13.5,
+          7
+        ],
+        [
+          -13.5,
+          7
+        ]
+      ],
+      "spec": {
+        "width": 27,
+        "depth": 14,
+        "height": 5,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "paddock-equipment-awning",
+      "file": "/models/racing/paddock-equipment-awning.glb",
+      "category": "racing",
+      "boundingBox": {
+        "min": [
+          -13.5,
+          -3,
+          -11
+        ],
+        "max": [
+          13.5,
+          5.599999904632568,
+          11
+        ],
+        "size": [
+          27,
+          8.599999904632568,
+          22
+        ]
+      },
+      "triangleCount": 74,
+      "fileSize": 7260,
+      "materials": [
+        "metal",
+        "brand-navy",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -13.5,
+          -11
+        ],
+        [
+          13.5,
+          -11
+        ],
+        [
+          13.5,
+          11
+        ],
+        [
+          -13.5,
+          11
+        ]
+      ],
+      "spec": {
+        "width": 27,
+        "depth": 22,
+        "height": 5.6,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
       "id": "media-centre",
       "file": "/models/racing/media-centre.glb",
       "category": "racing",
@@ -587,28 +710,197 @@
       "category": "conference",
       "boundingBox": {
         "min": [
-          -45,
+          -39,
           -3,
-          -30
+          -36
         ],
         "max": [
-          45,
-          16,
-          30
+          39,
+          24,
+          36
         ],
         "size": [
-          90,
-          19,
-          60
+          78,
+          27,
+          72
         ]
       },
-      "triangleCount": 146,
-      "fileSize": 14168,
+      "triangleCount": 258,
+      "fileSize": 21656,
       "materials": [
         "wall-white",
         "roof-dark",
-        "screen-dark",
+        "glass",
         "metal",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -39,
+          -36
+        ],
+        [
+          39,
+          -36
+        ],
+        [
+          39,
+          36
+        ],
+        [
+          -39,
+          36
+        ]
+      ],
+      "spec": {
+        "width": 78,
+        "depth": 72,
+        "height": 24,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "expo-concourse",
+      "file": "/models/conference/expo-concourse.glb",
+      "category": "conference",
+      "boundingBox": {
+        "min": [
+          -76.5,
+          -3,
+          -10
+        ],
+        "max": [
+          76.5,
+          17,
+          10
+        ],
+        "size": [
+          153,
+          20,
+          20
+        ]
+      },
+      "triangleCount": 402,
+      "fileSize": 30816,
+      "materials": [
+        "glass",
+        "wall-white",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -76.5,
+          -10
+        ],
+        [
+          76.5,
+          -10
+        ],
+        [
+          76.5,
+          10
+        ],
+        [
+          -76.5,
+          10
+        ]
+      ],
+      "spec": {
+        "width": 153,
+        "depth": 20,
+        "height": 17,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "expo-entrance",
+      "file": "/models/conference/expo-entrance.glb",
+      "category": "conference",
+      "boundingBox": {
+        "min": [
+          -22,
+          -3,
+          -12
+        ],
+        "max": [
+          22,
+          27,
+          12
+        ],
+        "size": [
+          44,
+          30,
+          24
+        ]
+      },
+      "triangleCount": 74,
+      "fileSize": 7804,
+      "materials": [
+        "glass",
+        "stone",
+        "canopy-white",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -22,
+          -12
+        ],
+        [
+          22,
+          -12
+        ],
+        [
+          22,
+          12
+        ],
+        [
+          -22,
+          12
+        ]
+      ],
+      "spec": {
+        "width": 44,
+        "depth": 24,
+        "height": 27,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "conference-entrance-canopy",
+      "file": "/models/conference/conference-entrance-canopy.glb",
+      "category": "conference",
+      "boundingBox": {
+        "min": [
+          -20,
+          -3,
+          -8
+        ],
+        "max": [
+          20,
+          5,
+          8
+        ],
+        "size": [
+          40,
+          8,
+          16
+        ]
+      },
+      "triangleCount": 86,
+      "fileSize": 8612,
+      "materials": [
+        "metal",
+        "canopy-white",
         "glass",
         "concrete"
       ],
@@ -616,26 +908,26 @@
       "instanced": false,
       "footprint": [
         [
-          -45,
-          -30
+          -20,
+          -8
         ],
         [
-          45,
-          -30
+          20,
+          -8
         ],
         [
-          45,
-          30
+          20,
+          8
         ],
         [
-          -45,
-          30
+          -20,
+          8
         ]
       ],
       "spec": {
-        "width": 90,
-        "depth": 60,
-        "height": 16,
+        "width": 40,
+        "depth": 16,
+        "height": 5,
         "skirtDepth": 3,
         "triangleBudget": 4000
       }
@@ -778,12 +1070,13 @@
           6
         ]
       },
-      "triangleCount": 178,
-      "fileSize": 15240,
+      "triangleCount": 94,
+      "fileSize": 9768,
       "materials": [
         "stone",
         "wall-white",
         "brand-navy",
+        "canopy-white",
         "concrete"
       ],
       "tileable": false,
@@ -835,13 +1128,14 @@
           12
         ]
       },
-      "triangleCount": 58,
-      "fileSize": 7256,
+      "triangleCount": 162,
+      "fileSize": 15196,
       "materials": [
         "stone",
-        "roof-dark",
-        "screen-dark",
-        "wall-grey",
+        "timber",
+        "wall-white",
+        "brand-navy",
+        "glass",
         "concrete"
       ],
       "tileable": false,
@@ -893,15 +1187,17 @@
           25
         ]
       },
-      "triangleCount": 1762,
-      "fileSize": 131176,
+      "triangleCount": 418,
+      "fileSize": 35544,
       "materials": [
+        "stone",
+        "timber",
         "wall-white",
-        "roof-dark",
         "glass",
-        "wall-grey",
         "brand-teal",
-        "metal",
+        "canopy-white",
+        "wall-grey",
+        "foliage-dry",
         "concrete"
       ],
       "tileable": false,
@@ -953,15 +1249,17 @@
           25
         ]
       },
-      "triangleCount": 754,
-      "fileSize": 58564,
+      "triangleCount": 322,
+      "fileSize": 28612,
       "materials": [
+        "stone",
+        "timber",
         "wall-white",
-        "roof-dark",
         "glass",
-        "wall-grey",
         "brand-teal",
-        "metal",
+        "canopy-white",
+        "wall-grey",
+        "foliage-dry",
         "concrete"
       ],
       "tileable": false,
@@ -1173,24 +1471,26 @@
         ],
         "max": [
           30,
-          21,
+          24,
           9
         ],
         "size": [
           60,
-          24,
+          27,
           18
         ]
       },
-      "triangleCount": 922,
-      "fileSize": 70680,
+      "triangleCount": 386,
+      "fileSize": 33208,
       "materials": [
-        "wall-white",
-        "roof-dark",
-        "glass",
         "wall-grey",
-        "brand-teal",
+        "wall-white",
+        "glass",
+        "timber",
+        "canopy-white",
+        "foliage-dry",
         "metal",
+        "roof-dark",
         "concrete"
       ],
       "tileable": false,
@@ -1216,7 +1516,7 @@
       "spec": {
         "width": 60,
         "depth": 18,
-        "height": 21,
+        "height": 24,
         "skirtDepth": 3,
         "triangleBudget": 4000
       }
@@ -1285,56 +1585,60 @@
       "category": "mixed-use",
       "boundingBox": {
         "min": [
-          -30,
+          -15,
           -3,
-          -15
+          -30
         ],
         "max": [
-          30,
-          9,
-          15
-        ],
-        "size": [
-          60,
+          15,
           12,
           30
+        ],
+        "size": [
+          30,
+          15,
+          60
         ]
       },
-      "triangleCount": 274,
-      "fileSize": 24036,
+      "triangleCount": 522,
+      "fileSize": 44176,
       "materials": [
+        "stone",
         "wall-white",
-        "roof-dark",
         "glass",
-        "wall-grey",
-        "brand-teal",
+        "timber",
         "canopy-white",
+        "wall-grey",
+        "foliage-dry",
+        "metal",
+        "roof-dark",
+        "brand-teal",
         "concrete"
       ],
       "tileable": false,
       "instanced": false,
       "footprint": [
         [
-          -30,
-          -15
+          -15,
+          -30
         ],
         [
-          30,
-          -15
+          15,
+          -30
         ],
         [
-          30,
-          15
+          15,
+          30
         ],
         [
-          -30,
-          15
+          -15,
+          30
         ]
       ],
       "spec": {
-        "width": 60,
-        "depth": 30,
-        "height": 9,
+        "width": 30,
+        "depth": 60,
+        "height": 12,
         "skirtDepth": 3,
         "triangleBudget": 4000
       }
@@ -1351,23 +1655,26 @@
         ],
         "max": [
           25,
-          18,
+          21,
           15
         ],
         "size": [
           50,
-          21,
+          24,
           30
         ]
       },
-      "triangleCount": 178,
-      "fileSize": 16504,
+      "triangleCount": 290,
+      "fileSize": 26136,
       "materials": [
-        "wall-white",
-        "roof-dark",
-        "glass",
         "wall-grey",
-        "brand-teal",
+        "wall-white",
+        "glass",
+        "timber",
+        "canopy-white",
+        "foliage-dry",
+        "metal",
+        "roof-dark",
         "concrete"
       ],
       "tileable": false,
@@ -1393,7 +1700,7 @@
       "spec": {
         "width": 50,
         "depth": 30,
-        "height": 18,
+        "height": 21,
         "skirtDepth": 3,
         "triangleBudget": 4000
       }
@@ -1513,6 +1820,65 @@
         "width": 40,
         "depth": 22,
         "height": 9,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "karting-garage-row",
+      "file": "/models/mixed-use/karting-garage-row.glb",
+      "category": "mixed-use",
+      "boundingBox": {
+        "min": [
+          -42,
+          -3,
+          -7
+        ],
+        "max": [
+          42,
+          4.199999809265137,
+          7
+        ],
+        "size": [
+          84,
+          7.199999809265137,
+          14
+        ]
+      },
+      "triangleCount": 410,
+      "fileSize": 33140,
+      "materials": [
+        "wall-white",
+        "screen-dark",
+        "metal",
+        "wall-grey",
+        "brand-teal",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -42,
+          -7
+        ],
+        [
+          42,
+          -7
+        ],
+        [
+          42,
+          7
+        ],
+        [
+          -42,
+          7
+        ]
+      ],
+      "spec": {
+        "width": 84,
+        "depth": 14,
+        "height": 4.2,
         "skirtDepth": 3,
         "triangleBudget": 4000
       }
@@ -3428,6 +3794,382 @@
         "height": 2,
         "skirtDepth": 0,
         "triangleBudget": 200
+      }
+    },
+    {
+      "id": "retail-block-2",
+      "file": "/models/mixed-use/retail-block-2.glb",
+      "category": "mixed-use",
+      "boundingBox": {
+        "min": [
+          -15,
+          -3,
+          -30
+        ],
+        "max": [
+          15,
+          12,
+          30
+        ],
+        "size": [
+          30,
+          15,
+          60
+        ]
+      },
+      "triangleCount": 530,
+      "fileSize": 44788,
+      "materials": [
+        "stone",
+        "wall-white",
+        "glass",
+        "timber",
+        "metal",
+        "roof-dark",
+        "wall-grey",
+        "foliage-dry",
+        "canopy-white",
+        "brand-teal",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -15,
+          -30
+        ],
+        [
+          15,
+          -30
+        ],
+        [
+          15,
+          30
+        ],
+        [
+          -15,
+          30
+        ]
+      ],
+      "spec": {
+        "width": 30,
+        "depth": 60,
+        "height": 12,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "retail-block-3",
+      "file": "/models/mixed-use/retail-block-3.glb",
+      "category": "mixed-use",
+      "boundingBox": {
+        "min": [
+          -15,
+          -3,
+          -30
+        ],
+        "max": [
+          15,
+          12,
+          30
+        ],
+        "size": [
+          30,
+          15,
+          60
+        ]
+      },
+      "triangleCount": 522,
+      "fileSize": 44188,
+      "materials": [
+        "stone",
+        "wall-white",
+        "glass",
+        "timber",
+        "canopy-white",
+        "wall-grey",
+        "foliage-dry",
+        "metal",
+        "roof-dark",
+        "brand-teal",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -15,
+          -30
+        ],
+        [
+          15,
+          -30
+        ],
+        [
+          15,
+          30
+        ],
+        [
+          -15,
+          30
+        ]
+      ],
+      "spec": {
+        "width": 30,
+        "depth": 60,
+        "height": 12,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "research-block-2",
+      "file": "/models/mixed-use/research-block-2.glb",
+      "category": "mixed-use",
+      "boundingBox": {
+        "min": [
+          -25,
+          -3,
+          -15
+        ],
+        "max": [
+          25,
+          21,
+          15
+        ],
+        "size": [
+          50,
+          24,
+          30
+        ]
+      },
+      "triangleCount": 290,
+      "fileSize": 26148,
+      "materials": [
+        "wall-grey",
+        "wall-white",
+        "glass",
+        "timber",
+        "metal",
+        "roof-dark",
+        "foliage-dry",
+        "canopy-white",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -25,
+          -15
+        ],
+        [
+          25,
+          -15
+        ],
+        [
+          25,
+          15
+        ],
+        [
+          -25,
+          15
+        ]
+      ],
+      "spec": {
+        "width": 50,
+        "depth": 30,
+        "height": 21,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "research-block-3",
+      "file": "/models/mixed-use/research-block-3.glb",
+      "category": "mixed-use",
+      "boundingBox": {
+        "min": [
+          -25,
+          -3,
+          -15
+        ],
+        "max": [
+          25,
+          21,
+          15
+        ],
+        "size": [
+          50,
+          24,
+          30
+        ]
+      },
+      "triangleCount": 290,
+      "fileSize": 26160,
+      "materials": [
+        "wall-grey",
+        "wall-white",
+        "glass",
+        "timber",
+        "canopy-white",
+        "foliage-dry",
+        "metal",
+        "roof-dark",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -25,
+          -15
+        ],
+        [
+          25,
+          -15
+        ],
+        [
+          25,
+          15
+        ],
+        [
+          -25,
+          15
+        ]
+      ],
+      "spec": {
+        "width": 50,
+        "depth": 30,
+        "height": 21,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "residential-trackside-2",
+      "file": "/models/mixed-use/residential-trackside-2.glb",
+      "category": "mixed-use",
+      "boundingBox": {
+        "min": [
+          -30,
+          -3,
+          -9
+        ],
+        "max": [
+          30,
+          24,
+          9
+        ],
+        "size": [
+          60,
+          27,
+          18
+        ]
+      },
+      "triangleCount": 386,
+      "fileSize": 33216,
+      "materials": [
+        "wall-grey",
+        "wall-white",
+        "glass",
+        "timber",
+        "metal",
+        "roof-dark",
+        "foliage-dry",
+        "canopy-white",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -30,
+          -9
+        ],
+        [
+          30,
+          -9
+        ],
+        [
+          30,
+          9
+        ],
+        [
+          -30,
+          9
+        ]
+      ],
+      "spec": {
+        "width": 60,
+        "depth": 18,
+        "height": 24,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "residential-trackside-3",
+      "file": "/models/mixed-use/residential-trackside-3.glb",
+      "category": "mixed-use",
+      "boundingBox": {
+        "min": [
+          -30,
+          -3,
+          -9
+        ],
+        "max": [
+          30,
+          24,
+          9
+        ],
+        "size": [
+          60,
+          27,
+          18
+        ]
+      },
+      "triangleCount": 386,
+      "fileSize": 33216,
+      "materials": [
+        "wall-grey",
+        "wall-white",
+        "glass",
+        "timber",
+        "canopy-white",
+        "foliage-dry",
+        "metal",
+        "roof-dark",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -30,
+          -9
+        ],
+        [
+          30,
+          -9
+        ],
+        [
+          30,
+          9
+        ],
+        [
+          -30,
+          9
+        ]
+      ],
+      "spec": {
+        "width": 60,
+        "depth": 18,
+        "height": 24,
+        "skirtDepth": 3,
+        "triangleBudget": 4000
       }
     }
   ]

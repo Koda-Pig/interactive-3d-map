@@ -9,7 +9,7 @@ pnpm assets:validate
 pnpm assets:determinism
 ```
 
-`pnpm assets` rebuilds 60 GLBs and `public/models/manifest.json`. The fixed nature seeds and locked dependencies produce byte-identical model files. The determinism command compares SHA-256 hashes before and after regeneration.
+`pnpm assets` rebuilds 72 GLBs and `public/models/manifest.json`. The fixed nature seeds and locked dependencies produce byte-identical model files. The determinism command compares SHA-256 hashes before and after regeneration.
 
 ## Inspect the assets
 

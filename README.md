@@ -6,6 +6,8 @@ The layout is illustrative. There's no published masterplan yet.
 
 **Status:** All five phases of the build plan are built: the whole concept site, drawn from [src/data/locations.json](src/data/locations.json), on dressed farmland you can move around, with name labels, details for everything on the map, a searchable sidebar with precinct filters, and a race weekend / conference day switch. The frame rate on a real mid-range phone still has to be checked.
 
+The procedural kit contains 72 models. The signature buildings use stepped roofs, terraces, skylights and exposed seating designed for the aerial camera. See the [asset review](tools/assets/aerial-review.md) for placement-weighted triangle counts and visual checks.
+
 ## Docs
 
 - [ai/track-layout.md](ai/track-layout.md): required circuit and infield corrections, their reasons, and checks to prevent layout regressions
