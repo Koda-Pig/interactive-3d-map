@@ -15,6 +15,7 @@ The procedural kit contains 72 models. The signature buildings use stepped roofs
 - [docs/plan.md](docs/plan.md): the simplified build plan, phase by phase
 - [docs/improvements.md](docs/improvements.md): how the map compares with high-end site maps, and the visual work still to do
 - [docs/interaction-issues.md](docs/interaction-issues.md): problems with the camera, clicking and labels, which are fixed and which are still open
+- [docs/bmr-demo-brief.md](docs/bmr-demo-brief.md): showing this map to Blue Mountain Racing, what they'd want to see, what they'd question, and what to fix before the demo
 
 ## Stack
 
