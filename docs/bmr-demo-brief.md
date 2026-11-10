@@ -12,6 +12,8 @@ From public coverage of the September 2026 announcement (Business Day, TimesLIVE
 - About **125,000 spectators a day** at capacity.
 - Local participation is part of their public story, including recruiting and training motorsport marshals from the surrounding area.
 
+Their own website (scraped 10 November 2026, full notes in [bmr-website-notes.md](bmr-website-notes.md)) confirms the same numbers and adds: **Bobby Hartslief** as CEO, a four-decade motorsport and circuit-development figure described as the driving force behind BMR; a 22 September 2026 Swartland announcement with provincial government present; and six destination pillars (motorsport, conferences and exhibitions, entertainment and amphitheatre, hospitality and waterfront, residential and lifestyle, business and innovation) that match the map's precincts one for one. The site's gallery renders are saved in [reference-images/](reference-images/) as the visual target; they are artist's impressions, indicative not final, by BMR's own disclaimer.
+
 The full picture of the site and circuit targets is in [overview.md](overview.md).
 
 ## What they would want to see
