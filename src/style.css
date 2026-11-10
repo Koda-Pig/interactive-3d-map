@@ -4,6 +4,11 @@
   --sheet-peek: calc(var(--sheet-handle) + env(safe-area-inset-bottom));
 }
 
+/* hide netlify badge */
+#nl-badge-frame {
+  display: none;
+}
+
 html,
 body,
 #app {

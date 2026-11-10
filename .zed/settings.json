@@ -1,0 +1,15 @@
+// Editor settings for this repo. Requires the Biome extension in Zed
+// (zed: extensions → search "Biome"). With it installed, Zed formats on
+// save with Biome, matching `pnpm lint` / `pnpm format`.
+{
+  "languages": {
+    "CSS": { "formatter": "language_server" },
+    "SCSS": { "formatter": "language_server" },
+    "JSON": { "formatter": "language_server" },
+    "JSONC": { "formatter": "language_server" },
+    "JavaScript": { "formatter": "language_server" },
+    "TypeScript": { "formatter": "language_server" },
+    "JSX": { "formatter": "language_server" },
+    "TSX": { "formatter": "language_server" }
+  }
+}
