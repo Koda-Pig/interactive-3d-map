@@ -8,7 +8,7 @@ import { createTrackSafety } from "./track-safety.ts";
 
 const CELL_SIZE = 8;
 const PATH_STEP = 12;
-const GATE_RADIUS = 8;
+const GATE_RADIUS = 12;
 /** Keeps cell coordinates positive and well apart when packed into one number. */
 const KEY_OFFSET = 40000;
 const KEY_STRIDE = 80000;

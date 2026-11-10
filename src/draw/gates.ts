@@ -1,28 +1,35 @@
-import { CylinderGeometry, Group, Mesh, SphereGeometry } from "three";
-import type { GateLocation } from "../layout/locations.ts";
-import { heightAt } from "../terrain/height.ts";
-import { solidMaterial } from "./materials.ts";
+import type { Group } from "three";
+import type { BuildingLocation, GateLocation } from "../layout/locations.ts";
+import { createBuilding } from "./buildings.ts";
+import type { Kit } from "./kit.ts";
+import { GATE_MODEL } from "./kit.ts";
 
-const POST_HEIGHT = 16;
-const POST_COLOR = "#004272";
-const CAP_COLOR = "#00678C";
+const GATE_WIDTH = 24;
+const GATE_DEPTH = 4;
+const GATE_HEIGHT = 6;
+const GATE_COLOR = "#004272";
 
-const postGeometry = new CylinderGeometry(2.5, 4, POST_HEIGHT, 12);
-const capGeometry = new SphereGeometry(7, 16, 12);
-
-export function createGate(location: GateLocation): Group {
+/** A turnstile gate, built as a building so that it shares its model fitting and fallback. */
+export function createGate(location: GateLocation, kit: Kit): Group {
   const [x, z] = location.position;
-  const ground = heightAt(x, z);
-
-  const post = new Mesh(postGeometry, solidMaterial(POST_COLOR));
-  post.position.set(x, ground + POST_HEIGHT / 2, z);
-  const cap = new Mesh(capGeometry, solidMaterial(CAP_COLOR));
-  cap.position.set(x, ground + POST_HEIGHT + 5, z);
-
-  const group = new Group();
-  for (const part of [post, cap]) {
-    part.castShadow = true;
-    group.add(part);
-  }
-  return group;
+  const sideways = location.facing === "east" || location.facing === "west";
+  const halfX = (sideways ? GATE_DEPTH : GATE_WIDTH) / 2;
+  const halfZ = (sideways ? GATE_WIDTH : GATE_DEPTH) / 2;
+  const building: BuildingLocation = {
+    id: location.id,
+    name: location.name,
+    category: location.category,
+    description: location.description,
+    type: "building",
+    color: GATE_COLOR,
+    height: GATE_HEIGHT,
+    footprint: [
+      [x - halfX, z - halfZ],
+      [x + halfX, z - halfZ],
+      [x + halfX, z + halfZ],
+      [x - halfX, z + halfZ],
+    ],
+    model: { file: GATE_MODEL, facing: location.facing },
+  };
+  return createBuilding(building, kit);
 }

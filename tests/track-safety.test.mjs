@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import { createCrossing } from "../src/draw/crossings.ts";
+import { isCarPark, parkingBlocks, stallsOf } from "../src/layout/car-parks.ts";
 import { resolveOutline, resolvePath, samplePath } from "../src/layout/path.ts";
 import { centreOf, signedDistance } from "../src/layout/polygon.ts";
 import { createTrackSafety } from "../src/layout/track-safety.ts";
@@ -12,6 +13,13 @@ const { locations } = JSON.parse(
 const circuit = locations.find((location) => location.id === "circuit");
 const samples = samplePath(resolvePath(circuit.path, true), 3, true);
 const safety = createTrackSafety(circuit);
+
+function segmentDistance([x, z], [ax, az], [bx, bz]) {
+  const dx = bx - ax;
+  const dz = bz - az;
+  const t = Math.max(0, Math.min(1, ((x - ax) * dx + (z - az) * dz) / (dx * dx + dz * dz)));
+  return Math.hypot(x - ax - t * dx, z - az - t * dz);
+}
 
 test("authored catchments widen the selected side while opposite verges remain narrow", () => {
   assert.ok(circuit.runoffCatchments.length >= 4);
@@ -369,4 +377,74 @@ test("Expo Centre is near stadium scale and clear of the lakefront and road", ()
     (sample) => signedDistance(sample.x, sample.z, yard) < drive.width / 2 + 3,
   );
   assert.ok(touchesDrive, "loading yard has no road access");
+});
+
+test("every car park has an access spine from the ring road through its middle", () => {
+  const ring = locations.find((location) => location.id === "ring-road");
+  const parks = locations.filter((location) => isCarPark(location));
+  assert.equal(parks.length, 8);
+  const roadPoints = locations
+    .filter((location) => location.type === "road" && location.width >= 10)
+    .flatMap((road) => samplePath(resolvePath(road.path, road.closed ?? false), 6, road.closed));
+  for (const park of parks) {
+    const outline = resolveOutline(park.footprint);
+    const spine = ring.branches.find(
+      (branch) => signedDistance(branch[1][0], branch[1][1], outline) < 0,
+    );
+    assert.ok(spine, `${park.id} has no access spine`);
+    assert.ok(
+      roadPoints.some(({ x, z }) => Math.hypot(x - spine[0][0], z - spine[0][1]) < 6),
+      `${park.id}'s spine doesn't start on a road`,
+    );
+    const blocks = parkingBlocks(park);
+    assert.ok(blocks.length >= 4, park.id);
+    for (const { x, z } of blocks.flatMap(stallsOf)) {
+      assert.ok(signedDistance(x, z, outline) < -8, `${park.id} has a stall at its edge`);
+      assert.ok(
+        Math.abs(segmentDistance([x, z], spine[0], spine[1])) > ring.width / 2 + 0.5,
+        `${park.id} has a stall on its spine`,
+      );
+    }
+  }
+});
+
+test("gates are clear of every road and building", () => {
+  const halfWide = 12;
+  const halfDeep = 2;
+  const ribbons = locations.filter(
+    (location) => (location.type === "road" || location.type === "track") && !location.bridge,
+  );
+  for (const gate of locations.filter((location) => location.type === "gate")) {
+    const sideways = gate.facing === "east" || gate.facing === "west";
+    const [x, z] = gate.position;
+    const halfX = sideways ? halfDeep : halfWide;
+    const halfZ = sideways ? halfWide : halfDeep;
+    const outline = [
+      [x - halfX, z - halfZ],
+      [x + halfX, z - halfZ],
+      [x + halfX, z + halfZ],
+      [x - halfX, z + halfZ],
+    ];
+    for (const ribbon of ribbons) {
+      for (const path of [ribbon.path, ...(ribbon.branches ?? [])]) {
+        const closed = path === ribbon.path && (ribbon.closed ?? false);
+        for (const sample of samplePath(resolvePath(path, closed), 2, closed)) {
+          assert.ok(
+            signedDistance(sample.x, sample.z, outline) > ribbon.width / 2,
+            `${gate.id} stands on ${ribbon.id}`,
+          );
+        }
+      }
+    }
+    for (const building of locations.filter((location) => location.type === "building")) {
+      for (const part of building.parts ?? [building]) {
+        for (const [cornerX, cornerZ] of outline) {
+          assert.ok(
+            signedDistance(cornerX, cornerZ, resolveOutline(part.footprint)) > 0,
+            `${gate.id} overlaps ${building.id}`,
+          );
+        }
+      }
+    }
+  }
 });

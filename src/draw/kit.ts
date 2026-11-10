@@ -54,10 +54,15 @@ async function loadModel(loader: GLTFLoader, file: string): Promise<KitModel> {
   return { pieces, width: maxX - minX, depth: maxZ - minZ, height };
 }
 
+export const GATE_MODEL = "transport/entrance-gate.glb";
+
 /** Every model file the layout data refers to. */
 export function layoutModelFiles(): string[] {
   const files = new Set<string>();
   for (const location of layout.locations) {
+    if (location.type === "gate") {
+      files.add(GATE_MODEL);
+    }
     if (location.type !== "building") {
       continue;
     }

@@ -1,4 +1,10 @@
-import { DataTexture, LinearMipmapLinearFilter, NoColorSpace, RepeatWrapping } from "three";
+import {
+  DataTexture,
+  LinearFilter,
+  LinearMipmapLinearFilter,
+  NoColorSpace,
+  RepeatWrapping,
+} from "three";
 import { hash2 } from "../terrain/noise.ts";
 
 const DETAIL_SIZE = 256;
@@ -11,8 +17,14 @@ const RIPPLE_SIZE = 256;
 const RIPPLE_WAVES = 26;
 const RIPPLE_SLOPE = 0.022;
 
-function repeatingTexture(pixels: Uint8Array, size: number): DataTexture {
-  const texture = new DataTexture(pixels, size, size);
+const STALL_TEXTURE_ACROSS = 176;
+const STALL_TEXTURE_ALONG = 48;
+const STALL_LINE_PIXELS = 3;
+/** The asphalt between the lines, as a share of the paint's colour. */
+const STALL_ASPHALT = 62;
+
+function repeatingTexture(pixels: Uint8Array, size: number, height = size): DataTexture {
+  const texture = new DataTexture(pixels, size, height);
   texture.wrapS = RepeatWrapping;
   texture.wrapT = RepeatWrapping;
   texture.colorSpace = NoColorSpace;
@@ -62,6 +74,28 @@ export function createAsphaltTexture(anisotropy: number): DataTexture {
     }
   }
   const texture = repeatingTexture(pixels, ASPHALT_SIZE);
+  texture.anisotropy = anisotropy;
+  return texture;
+}
+
+/**
+ * One stall of a back-to-back double row: a divider along it and the line
+ * between the two rows. Mipmaps keep the lines from shimmering at a distance.
+ */
+export function createParkingStallTexture(anisotropy: number): DataTexture {
+  const pixels = new Uint8Array(STALL_TEXTURE_ACROSS * STALL_TEXTURE_ALONG * 4);
+  const middle = Math.floor((STALL_TEXTURE_ACROSS - STALL_LINE_PIXELS) / 2);
+  for (let row = 0; row < STALL_TEXTURE_ALONG; row += 1) {
+    for (let column = 0; column < STALL_TEXTURE_ACROSS; column += 1) {
+      const painted =
+        row < STALL_LINE_PIXELS || (column >= middle && column < middle + STALL_LINE_PIXELS);
+      const offset = (row * STALL_TEXTURE_ACROSS + column) * 4;
+      pixels.fill(painted ? 255 : STALL_ASPHALT, offset, offset + 3);
+      pixels[offset + 3] = 255;
+    }
+  }
+  const texture = repeatingTexture(pixels, STALL_TEXTURE_ACROSS, STALL_TEXTURE_ALONG);
+  texture.magFilter = LinearFilter;
   texture.anisotropy = anisotropy;
   return texture;
 }

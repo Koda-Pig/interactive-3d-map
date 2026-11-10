@@ -20,7 +20,7 @@ function drawLocation(location: Location, surface: GroundSurface, kit: Kit): Obj
     case "road":
       return createRibbon(location, surface);
     case "gate":
-      return createGate(location);
+      return createGate(location, kit);
   }
 }
 

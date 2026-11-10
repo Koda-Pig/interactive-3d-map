@@ -1,6 +1,10 @@
 import type { Object3D, Texture } from "three";
 import { Color, Mesh, MeshLambertMaterial, MeshStandardMaterial } from "three";
-import { createAsphaltTexture, createRippleTexture } from "./textures.ts";
+import {
+  createAsphaltTexture,
+  createParkingStallTexture,
+  createRippleTexture,
+} from "./textures.ts";
 
 /**
  * Flat layers lie almost on top of each other, so depth precision alone can't
@@ -75,6 +79,14 @@ let asphalt: Texture | null = null;
 export function asphaltTexture(): Texture {
   asphalt ??= createAsphaltTexture(ANISOTROPY);
   return asphalt;
+}
+
+let parkingStalls: Texture | null = null;
+
+/** Stall lines, with their coordinates counting stalls along a block. */
+export function parkingStallTexture(): Texture {
+  parkingStalls ??= createParkingStallTexture(ANISOTROPY);
+  return parkingStalls;
 }
 
 const RIPPLE_TILE_METRES = 420;

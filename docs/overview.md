@@ -95,8 +95,8 @@ We keep the list, search, filters and info panels, and replace the flat picture 
 | Hospitality and waterfront | Hotels, lake, promenade, lakeside restaurants | Kit models, with a flat water surface |
 | Academy and automotive | Driving academy, karting track and garages, skid pad, automotive hub | Kit models, a second smaller track ribbon, and a marked flat area for the skid pad |
 | Residential and commercial | Trackside housing, retail, research and technology | Groups of kit models |
-| Parking and transport | Car parks, shuttle drop-off, the N7 and its interchanges, Kalbaskraal station and Station Fan Walk, the aerodrome | Flat areas, road strips and a dotted path, with kit models for the station and aerodrome buildings |
-| Entrances | Gates 1 to 14 (a placeholder count, from the deck's demo data) | Small markers |
+| Parking and transport | Car parks, shuttle drop-off, the N7 and its interchanges, Kalbaskraal station and Station Fan Walk, the aerodrome | Flat areas with marked parking rows, road strips and a dotted path, with kit models for the station and aerodrome buildings |
+| Entrances | Gates 1 to 14 (a placeholder count, from the deck's demo data) | Kit models of turnstile gates |
 | Setting | Farmland, hills, trees, distant Table Mountain silhouette | Gently rolling ground with wheat-coloured fields |
 
 ## Look and feel
@@ -148,7 +148,8 @@ The layout lives in `src/data/locations.json`, as a `locations` list, `grading` 
 - `planting`: on an area, `park` scatters trees through it and `edge` lines its edge with them
 - Tracks and roads use `path` (a list of points, rounded the same way) instead of `footprint`, plus `width`. Optional: `closed`, `branches` (more paths in the same location), `median`, `dashed`, `kerbs`, `runoff`, `runoffColor`, `step` (spacing of the ribbon's cross-sections, for very long roads)
 - The location with the id `circuit` also needs `startFinish`: an `[x, z]` point on the start-finish line, which `pnpm check:layout` uses to find that straight
-- Gates use `position`: one `[x, z]` point
+- Gates use `position`, one `[x, z]` point, and `facing`, the direction people arrive from
+- A location whose id starts with `car-park-` gets marked rows, generated from its footprint. It needs a road branch entering through the middle of its long side
 
 ## Not in scope yet
 

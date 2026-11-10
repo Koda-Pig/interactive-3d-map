@@ -138,6 +138,8 @@ export interface BridgeProfile {
 export interface GateLocation extends LocationBase {
   readonly type: "gate";
   readonly position: Point;
+  /** Which way the gate's front points, towards the people arriving at it. */
+  readonly facing: Facing;
 }
 
 export type Location = BuildingLocation | AreaLocation | TrackLocation | GateLocation;

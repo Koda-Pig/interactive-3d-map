@@ -15,6 +15,13 @@ import {
   Vector3,
 } from "three";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
+import {
+  BLOCK_DEPTH,
+  isCarPark,
+  parkingBlocks,
+  pointInBlock,
+  stallsOf,
+} from "../layout/car-parks.ts";
 import type {
   AreaLocation,
   BuildingLocation,
@@ -96,6 +103,9 @@ const BARRIER_TILE = 10;
 const BARRIER_LIFT = 0.8;
 const MARSHAL_SPACING = 380;
 const SPECTATOR_RANGE = 45;
+/** Car park light poles go on every this many lanes, and this far apart along them. */
+const POLE_LANES = 4;
+const POLE_SPACING = 90;
 
 const TWO_PI = Math.PI * 2;
 
@@ -589,14 +599,12 @@ function placeLightPoles(context: Context, instances: Instances): void {
     }
   }
 
+  // On the line between back-to-back stalls, where a pole doesn't block an aisle.
   for (const park of carParks()) {
-    const outline = resolveOutline(park.footprint);
-    const { minX, minZ, maxX, maxZ } = boundsOf(outline);
-    for (let z = minZ + 45; z < maxZ - 20; z += 90) {
-      for (let x = minX + 45; x < maxX - 20; x += 90) {
-        if (signedDistance(x, z, outline) < -12) {
-          placeModel(context, instances, LIGHT_POLE, { x, z });
-        }
+    for (const block of parkingBlocks(park).filter(({ lane }) => lane % POLE_LANES === 1)) {
+      for (let along = POLE_SPACING / 3; along < block.to - block.from; along += POLE_SPACING) {
+        const [x, z] = pointInBlock(block, BLOCK_DEPTH / 2, along);
+        placeModel(context, instances, LIGHT_POLE, { x, z });
       }
     }
   }
@@ -616,13 +624,10 @@ function placeAircraft(context: Context, instances: Instances): void {
 }
 
 function carParks(): AreaLocation[] {
-  return layout.locations.filter(
-    (location): location is AreaLocation =>
-      location.type === "area" && location.id.startsWith("car-park-"),
-  );
+  return layout.locations.filter(isCarPark);
 }
 
-/** Rows of cars, thick and thin, back to back across aisles. */
+/** Cars in the marked stalls, thick and thin, parked back to back. */
 function parkCars(
   context: Context,
   instances: Instances,
@@ -630,29 +635,20 @@ function parkCars(
   park: AreaLocation,
   fill: number,
 ): void {
-  const outline = resolveOutline(park.footprint);
-  const { minX, minZ, maxX, maxZ } = boundsOf(outline);
-  const rowsAlongX = maxX - minX > maxZ - minZ;
   const { random, surface } = context;
-
-  for (let across = 4; across < (rowsAlongX ? maxZ - minZ : maxX - minX) - 4; across += 18) {
-    for (const facing of [0, 1]) {
-      const rowOffset = across + facing * 5.5;
-      for (let along = 4; along < (rowsAlongX ? maxX - minX : maxZ - minZ) - 4; along += 3) {
-        const x = rowsAlongX ? minX + along : minX + rowOffset;
-        const z = rowsAlongX ? minZ + rowOffset : minZ + along;
-        const crowding = 0.5 + 0.5 * noise2(x, z, 120, 37);
-        if (signedDistance(x, z, outline) > -3 || random() > fill * (0.25 + 1.5 * crowding)) {
-          continue;
-        }
-        instances.add(car, {
-          x,
-          y: surface.heightAt(x, z) + 0.3,
-          z,
-          yaw: (rowsAlongX ? 0 : Math.PI / 2) + (facing ? Math.PI : 0),
-          tint: pickOne(random, CAR_PAINTS),
-        });
+  for (const block of parkingBlocks(park)) {
+    for (const { x, z, row } of stallsOf(block)) {
+      const crowding = 0.5 + 0.5 * noise2(x, z, 120, 37);
+      if (random() > fill * (0.25 + 1.5 * crowding)) {
+        continue;
       }
+      instances.add(car, {
+        x,
+        y: surface.heightAt(x, z) + 0.3,
+        z,
+        yaw: (block.rowsAlongX ? 0 : Math.PI / 2) + (row ? Math.PI : 0),
+        tint: pickOne(random, CAR_PAINTS),
+      });
     }
   }
 }

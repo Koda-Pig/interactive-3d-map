@@ -26,10 +26,28 @@ const KERB_WHITE = new Color("#F2F2F2");
 const FINISH_DEPTH = 3;
 const FINISH_COLOR = "#F2F2F2";
 
+/** Paved runoff is asphalt, so that it can't be mistaken for the water nearby. */
+const PAVED_RUNOFF = "#70757A";
+const GRAVEL_RUNOFF = "#CFC4A6";
+const GRASS_VERGE = "#8C9860";
+/** Width of the band of brand colour painted along the track's edge. */
+const RUNOFF_PAINT_WIDTH = 5;
+
 interface Band {
   readonly from: number;
   readonly to: number;
 }
+
+type RunoffEdge = ReturnType<ReturnType<typeof createTrackSafety>>;
+
+/** One band of a runoff area, with distances measured out from the track's edge. */
+interface RunoffSurface {
+  readonly from: (edge: RunoffEdge) => number;
+  readonly to: (edge: RunoffEdge) => number;
+  readonly color: (edge: RunoffEdge) => string;
+}
+
+const paintEdge = (edge: RunoffEdge): number => Math.min(RUNOFF_PAINT_WIDTH, edge.paved);
 
 function isDashOn(sample: PathSample): boolean {
   return Math.floor(sample.distance / DASH_LENGTH) % 2 === 0;
@@ -280,26 +298,31 @@ export function createRibbon(location: TrackLocation, surface: GroundSurface): G
   if (location.safetyZones || location.runoffCatchments) {
     const safety = createTrackSafety(location);
     const half = location.width / 2;
+    const verge = location.runoff ?? 0;
+    const surfaces: readonly RunoffSurface[] = [
+      { from: () => 0, to: paintEdge, color: (edge) => edge.color },
+      { from: paintEdge, to: (edge) => edge.paved, color: () => PAVED_RUNOFF },
+      {
+        from: (edge) => edge.paved,
+        to: (edge) => edge.width,
+        color: (edge) => (edge.width > verge + 1 ? GRAVEL_RUNOFF : GRASS_VERGE),
+      },
+    ];
     for (const side of [-1, 1]) {
-      for (const paved of [false, true]) {
+      for (const { from, to, color } of surfaces) {
         const geometry = bandGeometry(
           samples,
           (sample) => {
             const edge = safety(sample, side);
-            const a = half + (paved ? 0 : edge.paved);
-            const b = half + (paved ? edge.paved : edge.width);
+            const a = half + from(edge);
+            const b = half + to(edge);
             return side > 0 ? { from: a, to: b } : { from: -b, to: -a };
           },
           closed,
           surface,
           undefined,
           undefined,
-          (sample) =>
-            paved
-              ? safety(sample, side).color
-              : safety(sample, side).width > (location.runoff ?? 0) + 1
-                ? "#CFC4A6"
-                : "#8C9860",
+          (sample) => color(safety(sample, side)),
         );
         const mesh = new Mesh(geometry, vertexColorMaterial(Layer.verge));
         mesh.receiveShadow = true;

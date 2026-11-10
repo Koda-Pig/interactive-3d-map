@@ -1,12 +1,22 @@
 import { BufferAttribute, BufferGeometry, Mesh, Shape, ShapeGeometry, Vector2 } from "three";
+import {
+  BLOCK_DEPTH,
+  isCarPark,
+  parkingBlocks,
+  pointInBlock,
+  stallCount,
+} from "../layout/car-parks.ts";
 import type { AreaLocation } from "../layout/locations.ts";
 import { resolveOutline } from "../layout/path.ts";
 import { centreOf } from "../layout/polygon.ts";
 import type { GroundSurface } from "../terrain/ground.ts";
 import { heightAt } from "../terrain/height.ts";
-import { Layer, layerMaterial, waterMaterial } from "./materials.ts";
+import { Layer, layerMaterial, parkingStallTexture, waterMaterial } from "./materials.ts";
 
 const LIFT = 0.3;
+const STALL_LIFT = 0.02;
+/** The lines' colour. The stall texture darkens it to asphalt between them. */
+const STALL_PAINT = "#EDEFF0";
 
 /** Subdivide before projection so wide grass reserves follow the terrain mesh. */
 function drape(source: ShapeGeometry, surface: GroundSurface, lift: number): BufferGeometry {
@@ -44,6 +54,49 @@ function drape(source: ShapeGeometry, surface: GroundSurface, lift: number): Buf
   return geometry;
 }
 
+/** The marked rows of a car park, one quad per block, just above its surface. */
+function createStallBlocks(park: AreaLocation, y: number): Mesh {
+  const positions: number[] = [];
+  const uvs: number[] = [];
+  const indices: number[] = [];
+  for (const block of parkingBlocks(park)) {
+    const length = block.to - block.from;
+    const stalls = stallCount(block);
+    const first = positions.length / 3;
+    // Round in this order, so the quad faces up whichever way the rows run.
+    const corners = block.rowsAlongX
+      ? [
+          [0, 0, 0, 0],
+          [BLOCK_DEPTH, 0, 1, 0],
+          [BLOCK_DEPTH, length, 1, stalls],
+          [0, length, 0, stalls],
+        ]
+      : [
+          [0, 0, 0, 0],
+          [0, length, 0, stalls],
+          [BLOCK_DEPTH, length, 1, stalls],
+          [BLOCK_DEPTH, 0, 1, 0],
+        ];
+    for (const [across, along, u, v] of corners) {
+      const [x, z] = pointInBlock(block, across, along);
+      positions.push(x, y, z);
+      uvs.push(u, v);
+    }
+    indices.push(first, first + 1, first + 2, first, first + 2, first + 3);
+  }
+  const geometry = new BufferGeometry();
+  geometry.setAttribute("position", new BufferAttribute(Float32Array.from(positions), 3));
+  geometry.setAttribute("uv", new BufferAttribute(Float32Array.from(uvs), 2));
+  geometry.setIndex(indices);
+  geometry.computeVertexNormals();
+  const mesh = new Mesh(
+    geometry,
+    layerMaterial(STALL_PAINT, Layer.area + 0.5, parkingStallTexture()),
+  );
+  mesh.receiveShadow = true;
+  return mesh;
+}
+
 export function createArea(location: AreaLocation, surface: GroundSurface): Mesh {
   const outline = resolveOutline(location.footprint);
   const [x, z] = centreOf(outline);
@@ -60,5 +113,8 @@ export function createArea(location: AreaLocation, surface: GroundSurface): Mesh
       : layerMaterial(location.color, Layer.area + (location.overlay ? 0.5 : 0));
   const mesh = new Mesh(geometry, material);
   mesh.receiveShadow = true;
+  if (isCarPark(location)) {
+    mesh.add(createStallBlocks(location, heightAt(x, z) + lift + STALL_LIFT));
+  }
   return mesh;
 }

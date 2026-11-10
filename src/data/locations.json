@@ -1417,7 +1417,17 @@
       "closed": true,
       "width": 12,
       "color": "#777B7F",
-      "path": [[-1040, -800, 70], [1000, -800, 170], [1000, 345, 170], [-1040, 345, 70]]
+      "path": [[-1040, -800, 70], [1000, -800, 170], [1000, 345, 170], [-1040, 345, 70]],
+      "branches": [
+        [[-1040, -470], [-1202, -470]],
+        [[-1040, -90], [-1202, -90]],
+        [[-1040, 182.5], [-1202, 182.5]],
+        [[-810, -800], [-810, -1112]],
+        [[-330, -800], [-330, -1112]],
+        [[190, -800], [190, -1112]],
+        [[1000, -450], [1192, -450]],
+        [[-1040, 590], [-728, 590]]
+      ]
     },
     {
       "id": "waterfront-drive",
@@ -1646,7 +1656,8 @@
       "category": "entrances",
       "type": "gate",
       "description": "Spectator entrance. The number of gates is a placeholder.",
-      "position": [-1025, -420]
+      "position": [-1025, -420],
+      "facing": "west"
     },
     {
       "id": "gate-2",
@@ -1654,7 +1665,8 @@
       "category": "entrances",
       "type": "gate",
       "description": "Spectator entrance. The number of gates is a placeholder.",
-      "position": [-1025, -60]
+      "position": [-1025, -60],
+      "facing": "west"
     },
     {
       "id": "gate-3",
@@ -1662,7 +1674,8 @@
       "category": "entrances",
       "type": "gate",
       "description": "Spectator entrance. The number of gates is a placeholder.",
-      "position": [-1025, 60]
+      "position": [-1025, 60],
+      "facing": "west"
     },
     {
       "id": "gate-4",
@@ -1670,7 +1683,8 @@
       "category": "entrances",
       "type": "gate",
       "description": "Spectator entrance. The number of gates is a placeholder.",
-      "position": [-1025, 230]
+      "position": [-1025, 230],
+      "facing": "west"
     },
     {
       "id": "gate-5",
@@ -1678,7 +1692,8 @@
       "category": "entrances",
       "type": "gate",
       "description": "Spectator entrance. The number of gates is a placeholder.",
-      "position": [-760, -785]
+      "position": [-760, -785],
+      "facing": "north"
     },
     {
       "id": "gate-6",
@@ -1686,7 +1701,8 @@
       "category": "entrances",
       "type": "gate",
       "description": "Spectator entrance. The number of gates is a placeholder.",
-      "position": [-300, -785]
+      "position": [-300, -785],
+      "facing": "north"
     },
     {
       "id": "gate-7",
@@ -1694,7 +1710,8 @@
       "category": "entrances",
       "type": "gate",
       "description": "Spectator entrance. The number of gates is a placeholder.",
-      "position": [200, -785]
+      "position": [200, -785],
+      "facing": "north"
     },
     {
       "id": "gate-8",
@@ -1702,7 +1719,8 @@
       "category": "entrances",
       "type": "gate",
       "description": "Spectator entrance. The number of gates is a placeholder.",
-      "position": [620, -785]
+      "position": [620, -785],
+      "facing": "north"
     },
     {
       "id": "gate-9",
@@ -1710,7 +1728,8 @@
       "category": "entrances",
       "type": "gate",
       "description": "Spectator entrance. The number of gates is a placeholder.",
-      "position": [985, -520]
+      "position": [985, -490],
+      "facing": "east"
     },
     {
       "id": "gate-10",
@@ -1718,7 +1737,8 @@
       "category": "entrances",
       "type": "gate",
       "description": "Spectator entrance. The number of gates is a placeholder.",
-      "position": [985, -100]
+      "position": [985, -100],
+      "facing": "east"
     },
     {
       "id": "gate-11",
@@ -1726,7 +1746,8 @@
       "category": "entrances",
       "type": "gate",
       "description": "Spectator entrance. The number of gates is a placeholder.",
-      "position": [985, 150]
+      "position": [985, 150],
+      "facing": "east"
     },
     {
       "id": "gate-12",
@@ -1734,7 +1755,8 @@
       "category": "entrances",
       "type": "gate",
       "description": "Spectator entrance. The number of gates is a placeholder.",
-      "position": [640, 330]
+      "position": [640, 330],
+      "facing": "south"
     },
     {
       "id": "gate-13",
@@ -1742,7 +1764,8 @@
       "category": "entrances",
       "type": "gate",
       "description": "Spectator entrance. The number of gates is a placeholder.",
-      "position": [150, 330]
+      "position": [150, 330],
+      "facing": "south"
     },
     {
       "id": "gate-14",
@@ -1750,7 +1773,8 @@
       "category": "entrances",
       "type": "gate",
       "description": "Spectator entrance. The number of gates is a placeholder.",
-      "position": [-420, 330]
+      "position": [-305, 330],
+      "facing": "south"
     },
     {
       "id": "pit-working-apron",
