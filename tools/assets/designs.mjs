@@ -178,7 +178,105 @@ export function design(a) {
     for (const p of s.parts) p.g.rotateY(-Math.PI / 2);
     return s.finish(a);
   }
-  if (id.startsWith("grandstand") || id === "temporary-bleacher") {
+  if (id === "paddle-boat") {
+    // Tapered bow and stern, with two open footwells ahead of the bench.
+    const hull = new THREE.Shape([
+      new THREE.Vector2(-0.8, -1.7),
+      new THREE.Vector2(0.8, -1.7),
+      new THREE.Vector2(1.1, -1.1),
+      new THREE.Vector2(1.1, 1.0),
+      new THREE.Vector2(0.6, 1.7),
+      new THREE.Vector2(-0.6, 1.7),
+      new THREE.Vector2(-1.1, 1.0),
+      new THREE.Vector2(-1.1, -1.1),
+    ]);
+    const g = new THREE.ExtrudeGeometry(hull, { depth: 0.35, bevelEnabled: false, steps: 1 });
+    g.rotateX(Math.PI / 2);
+    s.add(g, "canopy-white", 0, 0.35, 0);
+    for (const x of [-1, 1]) s.box(0.2, 0.3, 2.3, x, 0.5, -0.1, "wall-white");
+    s.box(1.7, 0.25, 0.65, 0, 0.65, -0.4, "brand-teal");
+    s.box(1.7, 0.45, 0.15, 0, 0.92, -0.7, "brand-teal");
+    s.box(0.45, 0.4, 1.1, 0, 0.55, 0.6, "wall-grey");
+    for (const x of [-0.9, 0.9])
+      for (const z of [-0.95, 1.05]) s.box(0.08, 1.6, 0.08, x, 1.2, z, "metal");
+    s.box(2.1, 0.1, 2.35, 0, 2.05, 0.05, "canopy-white");
+  } else if (id === "boom-gate") {
+    s.box(0.6, 1.4, 0.6, -2.5, 0.7, 0, "brand-navy");
+    s.box(0.2, 0.7, 0.5, -2.1, 0.35, 0, "metal");
+    for (let stripe = 0; stripe < 10; stripe++)
+      s.box(
+        0.5,
+        0.18,
+        0.16,
+        -1.95 + stripe * 0.5,
+        1.2,
+        0,
+        stripe % 2 ? "safety-red" : "canopy-white",
+      );
+  } else if (id === "lake-fountain") {
+    s.cylinder(5.8, 0.35, 0, 0.175, 0, "stone", 24);
+    const ring = (outer, inner, bottom, top, material) => {
+      const profile = [
+        [inner, bottom],
+        [outer, bottom],
+        [outer, top],
+        [inner, top],
+        [inner, bottom],
+      ];
+      s.add(
+        new THREE.LatheGeometry(
+          profile.map(([x, y]) => new THREE.Vector2(x, y)),
+          24,
+        ),
+        material,
+      );
+    };
+    ring(6, 5.35, 0.15, 0.9, "stone");
+    ring(1.65, 1.05, 0.35, 2, "wall-grey");
+  } else if (id === "guard-hut") {
+    s.box(4.2, 2.95, 5.2, 0, 1.475, 0, "wall-white");
+    s.box(3.6, 1.15, 0.08, 0, 2, 2.64, "glass");
+    for (const x of [-2.14, 2.14]) {
+      s.box(0.08, 1.15, 4.4, x, 2, 0, "glass");
+      s.box(0.12, 1.2, 0.1, x, 2, 0, "metal");
+    }
+    s.box(0.1, 1.2, 0.12, 0, 2, 2.65, "metal");
+    s.box(1, 2.3, 0.1, 0, 1.15, -2.65, "brand-teal");
+    s.box(w, 0.45, d, 0, 3.175, 0, "brand-navy");
+  } else if (id === "residents-clubhouse") {
+    s.box(w, 0.25, d, 0, 0.125, 0, "timber");
+    s.box(29, 4.25, 6.6, 0, 2.375, -1.1, "wall-white");
+    s.box(28, 3.6, 0.12, 0, 2.3, 2.26, "glass");
+    for (const x of [-14, -7, 0, 7, 14]) {
+      s.box(0.22, 3.8, 0.18, x, 2.3, 2.38, "timber");
+      s.box(0.35, 4.3, 0.35, x, 2.4, 4.3, "timber");
+    }
+    s.box(w, 0.45, d, 0, 4.775, 0, "brand-navy");
+  } else if (id === "fireworks-barge") {
+    s.box(w, 0.65, d, 0, 0.325, 0, "roof-dark");
+    s.box(23.5, 0.15, 11.5, 0, 0.725, 0, "wall-grey");
+    s.box(6, 1.7, 3, 0, 1.65, -3.5, "brand-navy");
+    s.box(1, 1.3, 0.1, 0, 1.45, -1.95, "wall-grey");
+    for (const z of [-5.6, 5.6]) {
+      s.box(23, 0.1, 0.1, 0, 1.75, z, "metal");
+      for (const x of [-11.5, -6, 0, 6, 11.5]) s.box(0.1, 1, 0.1, x, 1.25, z, "metal");
+    }
+    for (const x of [-11.5, 11.5]) s.box(0.1, 0.1, 11.2, x, 1.75, 0, "metal");
+    for (const x of [-7, 7]) {
+      s.box(3.8, 0.3, 2, x, 0.95, 0.8, "brand-navy");
+      for (const dx of [-1.2, 0, 1.2]) {
+        const tube = new THREE.CylinderGeometry(0.25, 0.25, 1.3, 6, 1, true);
+        s.add(tube, "roof-dark", x + dx, 1.65, 0.8, [0, 0, -dx * 0.25]);
+      }
+    }
+  } else if (id === "jetty-kiosk") {
+    s.box(5.2, 3.1, 3.2, 0, 1.55, 0, "timber");
+    s.box(3.5, 1.25, 0.1, 0, 1.95, 1.65, "screen-dark");
+    s.box(3.9, 0.15, 0.6, 0, 1.25, 1.7, "timber");
+    s.box(3.9, 0.12, 0.9, 0, 2.65, 1.55, "roof-dark", [-0.2, 0, 0]);
+    for (const x of [-2.5, 2.5]) s.box(0.18, 3.1, 0.18, x, 1.55, 1.65, "wall-grey");
+    s.roof(w, d, 0.55, 3.25, "roof-dark");
+  } else if (id.startsWith("grandstand") || id === "temporary-bleacher") {
     stand(
       s,
       w,

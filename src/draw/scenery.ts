@@ -74,6 +74,8 @@ const SHUTTLE = "props/shuttle-bus.glb";
 const FOOD_STALL = "props/food-stall.glb";
 const MARQUEE = "hospitality/hospitality-marquee.glb";
 const FARMHOUSE = "setting/farmhouse.glb";
+const PADDLE_BOAT = "props/paddle-boat.glb";
+const BOOM_GATE = "props/boom-gate.glb";
 const SILOS = "setting/farm-silo-group.glb";
 
 /** Every model the scenery can use. */
@@ -95,6 +97,8 @@ export const SCENERY_MODELS: readonly string[] = [
   MARQUEE,
   FARMHOUSE,
   SILOS,
+  PADDLE_BOAT,
+  BOOM_GATE,
 ];
 
 const AVENUE_ROADS = ["ring-road", "waterfront-drive"];
@@ -320,21 +324,21 @@ function createTransporter(): BufferGeometry {
   return truck;
 }
 
-/** A boom gate: a post at the origin with a striped arm reaching along X. */
-function createBoom(): BufferGeometry {
+/** A centred fallback matching the kit gate, with its arm reaching along +X. */
+function createBoomFallback(): BufferGeometry {
   const parts = [colorize(openBox(0.6, 1.4, 0.6, 0.7, 0), () => [0.13, 0.19, 0.24])];
   for (let stripe = 0; stripe < BOOM_REACH; stripe += 1) {
     const arm = openBox(1, 0.3, 0.3, 1.2, 0);
-    arm.translate(stripe + 0.6, 0, 0);
+    arm.translate(stripe + 0.8, 0, 0);
     parts.push(colorize(arm, () => (stripe % 2 === 0 ? [0.85, 0.12, 0.1] : [0.96, 0.96, 0.94])));
   }
   const boom = mergeGeometries(parts);
   if (!boom) throw new Error("The boom gate's parts could not be merged");
-  return boom;
+  return boom.translate(-2.5, 0, 0);
 }
 
 /** A two-seat pedal boat with a sun canopy. The hull and canopy take the tint. */
-function createPaddleBoat(): BufferGeometry {
+function createPaddleBoatFallback(): BufferGeometry {
   const dark = (): readonly [number, number, number] => [0.16, 0.19, 0.23];
   const parts = [
     colorize(openBox(2.2, 0.7, 3.4, 0.35, 0), () => [1, 1, 1]),
@@ -405,8 +409,9 @@ function placeModel(
   instances: Instances,
   file: string,
   placement: Omit<Placement, "y"> & { readonly sink?: number },
+  fallback?: BufferGeometry,
 ): void {
-  const geometry = context.model(file);
+  const geometry = context.model(file) ?? fallback;
   if (geometry) {
     const { x, z, sink = 0 } = placement;
     instances.add(geometry, { ...placement, y: context.surface.heightAt(x, z) - sink });
@@ -928,15 +933,22 @@ function placeCheckpointBooms(context: Context, instances: Instances): void {
   const road = locationById<TrackLocation>("infield-road");
   const [, z] = centreOf(buildingParts(hut).flatMap((part) => resolveOutline(part.footprint)));
   const roadX = road.path[0][0];
-  const boom = createBoom();
+  const boom = context.model(BOOM_GATE) ? undefined : createBoomFallback();
   for (const side of [-1, 1]) {
-    const x = roadX + side * (road.width / 2 + 0.4);
-    instances.add(boom, {
-      x,
-      z,
-      y: context.surface.heightAt(x, z) + 0.3,
-      yaw: side < 0 ? 0 : Math.PI,
-    });
+    // The cabinet is 2.5 m left of the model origin, before rotation.
+    const x = roadX + side * (road.width / 2 + 0.4 - 2.5);
+    placeModel(
+      context,
+      instances,
+      BOOM_GATE,
+      {
+        x,
+        z,
+        sink: -0.3,
+        yaw: side < 0 ? 0 : Math.PI,
+      },
+      boom,
+    );
   }
 }
 
@@ -944,7 +956,6 @@ function placeCheckpointBooms(context: Context, instances: Instances): void {
 function placeLakeFeatures(context: Context, instances: Instances): void {
   const { random, surface } = context;
   const lake = resolveOutline(locationById<AreaLocation>("lake").footprint);
-  const water = (x: number, z: number): number => surface.heightAt(x, z) + 0.3;
 
   const fountain = locationById<BuildingLocation>("lake-fountain");
   const [fountainX, fountainZ] = centreOf(resolveOutline(fountain.footprint ?? []));
@@ -954,13 +965,19 @@ function placeLakeFeatures(context: Context, instances: Instances): void {
     y: surface.heightAt(fountainX, fountainZ) + (fountain.height ?? 0),
   });
 
-  const boat = createPaddleBoat();
+  const boat = context.model(PADDLE_BOAT) ? undefined : createPaddleBoatFallback();
   const tint = (): Color => new Color(pickOne(random, BOAT_PAINTS));
-  // The jetty's last part is its head, with boats moored along the lake side.
+  // The jetty's third part is its head, with boats moored along the lake side.
   const jetty = buildingParts(locationById<BuildingLocation>("paddle-boats"));
   const head = boundsOf(resolveOutline(jetty[2].footprint));
   for (let x = head.minX + 3; x <= head.maxX - 3; x += 4) {
-    instances.add(boat, { x, z: head.maxZ + 2.4, y: water(x, head.maxZ), tint: tint() });
+    placeModel(
+      context,
+      instances,
+      PADDLE_BOAT,
+      { x, z: head.maxZ + 2.4, sink: -0.3, tint: tint() },
+      boat,
+    );
   }
   const barge = centreOf(
     buildingParts(locationById<BuildingLocation>(FIREWORKS_LOCATION)).flatMap((part) =>
@@ -976,7 +993,13 @@ function placeLakeFeatures(context: Context, instances: Instances): void {
       Math.hypot(x - fountainX, z - fountainZ) > 45 &&
       Math.hypot(x - barge[0], z - barge[1]) > 60;
     if (clear) {
-      instances.add(boat, { x, z, y: water(x, z), yaw: random() * TWO_PI, tint: tint() });
+      placeModel(
+        context,
+        instances,
+        PADDLE_BOAT,
+        { x, z, sink: -0.3, yaw: random() * TWO_PI, tint: tint() },
+        boat,
+      );
       placed += 1;
     }
   }

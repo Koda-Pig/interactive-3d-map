@@ -212,9 +212,9 @@ export function createBuilding(location: BuildingLocation, kit: Kit): Group {
 
   const byColor = new Map<string, ExtrudeGeometry[]>();
   for (const part of parts) {
-    const partTop = (part.base ?? 0) + part.height;
+    const partGround = groundY + (part.base ?? 0);
     const partOutline = resolveOutline(part.footprint);
-    if (part.model && addModel(pieces, part.model, partOutline, partTop, groundY, kit)) {
+    if (part.model && addModel(pieces, part.model, partOutline, part.height, partGround, kit)) {
       continue;
     }
     const color = part.color ?? location.color;

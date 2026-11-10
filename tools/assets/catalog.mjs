@@ -25,6 +25,9 @@ const rows = {
     ["plaza-tower", 12, 12, 24],
   ],
   hospitality: [
+    ["lake-fountain", 12, 12, 2, "modular"],
+    ["fireworks-barge", 24, 12, 2.5, "modular"],
+    ["jetty-kiosk", 6, 4, 3.8, "modular"],
     ["hotel-tower", 45, 25, 48],
     ["hotel-low", 80, 25, 18],
     ["lakeside-pavilion", 26, 16, 7],
@@ -32,6 +35,7 @@ const rows = {
     ["hospitality-marquee", 30, 15, 8],
   ],
   "mixed-use": [
+    ["residents-clubhouse", 32, 10, 5, "modular"],
     ["residential-trackside", 60, 18, 24],
     ["townhouse-row", 40, 12, 10],
     ["retail-block", 30, 60, 12],
@@ -42,6 +46,7 @@ const rows = {
     ["karting-clubhouse", 24, 14, 7],
   ],
   transport: [
+    ["guard-hut", 5, 6, 3.4, "modular"],
     ["kalbaskraal-station", 70, 14, 8],
     ["aerodrome-hangar", 40, 30, 12],
     ["aerodrome-terminal", 30, 15, 7],
@@ -50,6 +55,8 @@ const rows = {
     ["entrance-gate", 24, 4, 6],
   ],
   props: [
+    ["paddle-boat", 2.2, 3.4, 2.1],
+    ["boom-gate", 5.6, 0.6, 1.4],
     ["light-pole", 3, 0.8, 12],
     ["race-fence-segment", 10, 0.3, 4, "instanced", true],
     ["barrier-segment", 10, 0.7, 1, "instanced", true],
@@ -67,6 +74,8 @@ const rows = {
   ],
 };
 const noSkirt = new Set([
+  "lake-fountain",
+  "fireworks-barge",
   "start-finish-gantry",
   "footbridge-over-track",
   "big-screen",
@@ -116,4 +125,12 @@ for (const a of catalog)
 for (const base of ["retail-block", "research-block", "residential-trackside"]) {
   const spec = catalog.find((a) => a.id === base);
   for (const variant of [2, 3]) catalog.push({ ...spec, id: `${base}-${variant}` });
+}
+
+// Waterborne structures have no rectangular building foundation beneath them.
+for (const a of catalog) {
+  if (["lake-fountain", "fireworks-barge"].includes(a.id))
+    a.notes = "Above-ground envelope measured from the lake bed; no building skirt.";
+  if (a.id === "boom-gate")
+    a.notes = "Centred envelope; cabinet centre at X=-2.5, arm extends 5 m along +X.";
 }

@@ -1167,6 +1167,178 @@
       }
     },
     {
+      "id": "lake-fountain",
+      "file": "/models/hospitality/lake-fountain.glb",
+      "category": "hospitality",
+      "boundingBox": {
+        "min": [
+          -6,
+          0,
+          -6
+        ],
+        "max": [
+          6,
+          2,
+          6
+        ],
+        "size": [
+          12,
+          2,
+          12
+        ]
+      },
+      "triangleCount": 480,
+      "fileSize": 35956,
+      "materials": [
+        "stone",
+        "wall-grey"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -6,
+          -6
+        ],
+        [
+          6,
+          -6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          -6,
+          6
+        ]
+      ],
+      "spec": {
+        "width": 12,
+        "depth": 12,
+        "height": 2,
+        "skirtDepth": 0,
+        "triangleBudget": 1500
+      },
+      "notes": "Above-ground envelope measured from the lake bed; no building skirt."
+    },
+    {
+      "id": "fireworks-barge",
+      "file": "/models/hospitality/fireworks-barge.glb",
+      "category": "hospitality",
+      "boundingBox": {
+        "min": [
+          -12,
+          0,
+          -6
+        ],
+        "max": [
+          12,
+          2.5,
+          6
+        ],
+        "size": [
+          24,
+          2.5,
+          12
+        ]
+      },
+      "triangleCount": 312,
+      "fileSize": 24980,
+      "materials": [
+        "roof-dark",
+        "wall-grey",
+        "brand-navy",
+        "metal"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -12,
+          -6
+        ],
+        [
+          12,
+          -6
+        ],
+        [
+          12,
+          6
+        ],
+        [
+          -12,
+          6
+        ]
+      ],
+      "spec": {
+        "width": 24,
+        "depth": 12,
+        "height": 2.5,
+        "skirtDepth": 0,
+        "triangleBudget": 1500
+      },
+      "notes": "Above-ground envelope measured from the lake bed; no building skirt."
+    },
+    {
+      "id": "jetty-kiosk",
+      "file": "/models/hospitality/jetty-kiosk.glb",
+      "category": "hospitality",
+      "boundingBox": {
+        "min": [
+          -3,
+          -3,
+          -2
+        ],
+        "max": [
+          3,
+          3.799999952316284,
+          2
+        ],
+        "size": [
+          6,
+          6.799999952316284,
+          4
+        ]
+      },
+      "triangleCount": 98,
+      "fileSize": 10116,
+      "materials": [
+        "timber",
+        "screen-dark",
+        "roof-dark",
+        "wall-grey",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -3,
+          -2
+        ],
+        [
+          3,
+          -2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          -3,
+          2
+        ]
+      ],
+      "spec": {
+        "width": 6,
+        "depth": 4,
+        "height": 3.8,
+        "skirtDepth": 3,
+        "triangleBudget": 1500
+      }
+    },
+    {
       "id": "hotel-tower",
       "file": "/models/hospitality/hotel-tower.glb",
       "category": "hospitality",
@@ -1457,6 +1629,64 @@
         "height": 8,
         "skirtDepth": 3,
         "triangleBudget": 4000
+      }
+    },
+    {
+      "id": "residents-clubhouse",
+      "file": "/models/mixed-use/residents-clubhouse.glb",
+      "category": "mixed-use",
+      "boundingBox": {
+        "min": [
+          -16,
+          -3,
+          -5
+        ],
+        "max": [
+          16,
+          5,
+          5
+        ],
+        "size": [
+          32,
+          8,
+          10
+        ]
+      },
+      "triangleCount": 178,
+      "fileSize": 15748,
+      "materials": [
+        "timber",
+        "wall-white",
+        "glass",
+        "brand-navy",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -16,
+          -5
+        ],
+        [
+          16,
+          -5
+        ],
+        [
+          16,
+          5
+        ],
+        [
+          -16,
+          5
+        ]
+      ],
+      "spec": {
+        "width": 32,
+        "depth": 10,
+        "height": 5,
+        "skirtDepth": 3,
+        "triangleBudget": 1500
       }
     },
     {
@@ -1944,6 +2174,65 @@
       }
     },
     {
+      "id": "guard-hut",
+      "file": "/models/transport/guard-hut.glb",
+      "category": "transport",
+      "boundingBox": {
+        "min": [
+          -2.5,
+          -3,
+          -3
+        ],
+        "max": [
+          2.5,
+          3.4000000953674316,
+          3
+        ],
+        "size": [
+          5,
+          6.400000095367432,
+          6
+        ]
+      },
+      "triangleCount": 118,
+      "fileSize": 12140,
+      "materials": [
+        "wall-white",
+        "glass",
+        "metal",
+        "brand-teal",
+        "brand-navy",
+        "concrete"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -2.5,
+          -3
+        ],
+        [
+          2.5,
+          -3
+        ],
+        [
+          2.5,
+          3
+        ],
+        [
+          -2.5,
+          3
+        ]
+      ],
+      "spec": {
+        "width": 5,
+        "depth": 6,
+        "height": 3.4,
+        "skirtDepth": 3,
+        "triangleBudget": 1500
+      }
+    },
+    {
       "id": "kalbaskraal-station",
       "file": "/models/transport/kalbaskraal-station.glb",
       "category": "transport",
@@ -2288,6 +2577,122 @@
         "skirtDepth": 3,
         "triangleBudget": 4000
       }
+    },
+    {
+      "id": "paddle-boat",
+      "file": "/models/props/paddle-boat.glb",
+      "category": "props",
+      "boundingBox": {
+        "min": [
+          -1.100000023841858,
+          0,
+          -1.7000000476837158
+        ],
+        "max": [
+          1.100000023841858,
+          2.0999999046325684,
+          1.7000000476837158
+        ],
+        "size": [
+          2.200000047683716,
+          2.0999999046325684,
+          3.4000000953674316
+        ]
+      },
+      "triangleCount": 148,
+      "fileSize": 13888,
+      "materials": [
+        "canopy-white",
+        "wall-white",
+        "brand-teal",
+        "wall-grey",
+        "metal"
+      ],
+      "tileable": false,
+      "instanced": true,
+      "footprint": [
+        [
+          -1.1,
+          -1.7
+        ],
+        [
+          1.1,
+          -1.7
+        ],
+        [
+          1.1,
+          1.7
+        ],
+        [
+          -1.1,
+          1.7
+        ]
+      ],
+      "spec": {
+        "width": 2.2,
+        "depth": 3.4,
+        "height": 2.1,
+        "skirtDepth": 0,
+        "triangleBudget": 200
+      }
+    },
+    {
+      "id": "boom-gate",
+      "file": "/models/props/boom-gate.glb",
+      "category": "props",
+      "boundingBox": {
+        "min": [
+          -2.799999952316284,
+          0,
+          -0.30000001192092896
+        ],
+        "max": [
+          2.799999952316284,
+          1.399999976158142,
+          0.30000001192092896
+        ],
+        "size": [
+          5.599999904632568,
+          1.399999976158142,
+          0.6000000238418579
+        ]
+      },
+      "triangleCount": 144,
+      "fileSize": 13020,
+      "materials": [
+        "brand-navy",
+        "metal",
+        "canopy-white",
+        "safety-red"
+      ],
+      "tileable": false,
+      "instanced": true,
+      "footprint": [
+        [
+          -2.8,
+          -0.3
+        ],
+        [
+          2.8,
+          -0.3
+        ],
+        [
+          2.8,
+          0.3
+        ],
+        [
+          -2.8,
+          0.3
+        ]
+      ],
+      "spec": {
+        "width": 5.6,
+        "depth": 0.6,
+        "height": 1.4,
+        "skirtDepth": 0,
+        "triangleBudget": 200
+      },
+      "notes": "Centred envelope; cabinet centre at X=-2.5, arm extends 5 m along +X."
     },
     {
       "id": "light-pole",

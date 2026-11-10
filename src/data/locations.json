@@ -772,8 +772,12 @@
       "type": "building",
       "description": "Fountain in the middle of the lake, with a tall central jet and a ring of arcing jets. Illustrative.",
       "color": "#C9CFD4",
-      "footprint": [[24.6, 651.9], [21.9, 654.6], [18.1, 654.6], [15.4, 651.9], [15.4, 648.1], [18.1, 645.4], [21.9, 645.4], [24.6, 648.1]],
-      "height": 1
+      "footprint": [[14, 644], [26, 644], [26, 656], [14, 656]],
+      "height": 2,
+      "model": {
+        "file": "hospitality/lake-fountain.glb",
+        "facing": "south"
+      }
     },
     {
       "id": "paddle-boats",
@@ -797,15 +801,13 @@
         },
         {
           "footprint": [[26, 529], [32, 529], [32, 533], [26, 533]],
-          "height": 3.4,
+          "height": 3.8,
           "base": 0.9,
-          "color": "#E8ECEF"
-        },
-        {
-          "footprint": [[25.5, 528.5], [32.5, 528.5], [32.5, 533.5], [25.5, 533.5]],
-          "height": 0.4,
-          "base": 4.3,
-          "color": "#004272"
+          "color": "#E8ECEF",
+          "model": {
+            "file": "hospitality/jetty-kiosk.glb",
+            "facing": "south"
+          }
         }
       ]
     },
@@ -816,18 +818,12 @@
       "type": "building",
       "description": "Launch barge moored on the lake for evening fireworks displays after race days, concerts and conferences. Illustrative.",
       "color": "#3A4149",
-      "parts": [
-        {
-          "footprint": [[170, 700], [194, 700], [194, 712], [170, 712]],
-          "height": 1.2
-        },
-        {
-          "footprint": [[174, 703], [190, 703], [190, 709], [174, 709]],
-          "height": 0.8,
-          "base": 1.2,
-          "color": "#004272"
-        }
-      ]
+      "footprint": [[170, 700], [194, 700], [194, 712], [170, 712]],
+      "height": 2.5,
+      "model": {
+        "file": "hospitality/fireworks-barge.glb",
+        "facing": "south"
+      }
     },
     {
       "id": "restaurant-west",
@@ -1362,13 +1358,11 @@
       "parts": [
         {
           "footprint": [[944, -184], [976, -184], [976, -174], [944, -174]],
-          "height": 4.5
-        },
-        {
-          "footprint": [[943, -185], [977, -185], [977, -173], [943, -173]],
-          "height": 0.5,
-          "base": 4.5,
-          "color": "#004272"
+          "height": 5,
+          "model": {
+            "file": "mixed-use/residents-clubhouse.glb",
+            "facing": "north"
+          }
         },
         {
           "footprint": [[948, -228], [972.5, -228], [972.5, -222], [948, -222]],
@@ -1506,14 +1500,12 @@
       "color": "#E8ECEF",
       "parts": [
         {
-          "footprint": [[326, 304], [364, 304], [364, 314], [326, 314]],
-          "height": 4.5
-        },
-        {
-          "footprint": [[325, 303], [365, 303], [365, 315], [325, 315]],
-          "height": 0.5,
-          "base": 4.5,
-          "color": "#004272"
+          "footprint": [[329, 304], [361, 304], [361, 314], [329, 314]],
+          "height": 5,
+          "model": {
+            "file": "mixed-use/residents-clubhouse.glb",
+            "facing": "north"
+          }
         },
         {
           "footprint": [[334, 262], [358.5, 262], [358.5, 268], [334, 268]],
@@ -1817,13 +1809,11 @@
       "parts": [
         {
           "footprint": [[-112, 315], [-107, 315], [-107, 321], [-112, 321]],
-          "height": 3
-        },
-        {
-          "footprint": [[-113, 314], [-106.5, 314], [-106.5, 322], [-113, 322]],
-          "height": 0.4,
-          "base": 3,
-          "color": "#004272"
+          "height": 3.4,
+          "model": {
+            "file": "transport/guard-hut.glb",
+            "facing": "south"
+          }
         }
       ]
     },

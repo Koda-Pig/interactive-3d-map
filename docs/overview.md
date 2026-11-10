@@ -92,7 +92,7 @@ We keep the list, search, filters and info panels, and replace the flat picture 
 | --- | --- | --- |
 | Racing | Circuit, pit lane, pit / conference building, grandstands, general admission banks | The track is a ribbon along a closed curve that follows the ground. The pit / conference building and grandstands are kit models. The banks are footprint shapes raised to a height, curved where the track beside them is |
 | Conference and events | Expo Centre, exhibition halls, amphitheatre, arrival plaza, gateway arch and Grandstand Fan Walk | Kit models, with flat areas for the plaza and forecourt and a road strip for the walk |
-| Hospitality and waterfront | Hotels, lake, promenade, lakeside restaurants, fountain, paddle boats, fireworks barge | Kit models, with a flat water surface. The jets, boats and fireworks are simple shapes built in code |
+| Hospitality and waterfront | Hotels, lake, promenade, lakeside restaurants, fountain, paddle boats, fireworks barge | Kit models, with a flat water surface. The boats, fountain basin and barge are kit models; jets and fireworks are drawn in code |
 | Academy and automotive | Driving academy, karting track and garages, skid pad, automotive hub | Kit models, a second smaller track ribbon, and a marked flat area for the skid pad |
 | Residential and commercial | Trackside housing with its streets, tennis courts and pools, retail, research and technology | Groups of kit models, with painted court lines and small water surfaces |
 | Parking and transport | Car parks, shuttle drop-off, the N7 and its interchanges, Kalbaskraal station and Station Fan Walk, the aerodrome | Flat areas with marked parking rows, road strips and a dotted path, with kit models for the station and aerodrome buildings |

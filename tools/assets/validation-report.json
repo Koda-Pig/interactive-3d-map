@@ -1,6 +1,6 @@
 {
-  "assetCount": 72,
-  "totalBytesIncludingManifest": 1569713,
+  "assetCount": 79,
+  "totalBytesIncludingManifest": 1702805,
   "errors": 0,
   "warnings": 0,
   "reports": [
@@ -125,6 +125,24 @@
       "messages": []
     },
     {
+      "id": "lake-fountain",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "fireworks-barge",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "jetty-kiosk",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
       "id": "hotel-tower",
       "errors": 0,
       "warnings": 0,
@@ -150,6 +168,12 @@
     },
     {
       "id": "hospitality-marquee",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "residents-clubhouse",
       "errors": 0,
       "warnings": 0,
       "messages": []
@@ -203,6 +227,12 @@
       "messages": []
     },
     {
+      "id": "guard-hut",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
       "id": "kalbaskraal-station",
       "errors": 0,
       "warnings": 0,
@@ -234,6 +264,18 @@
     },
     {
       "id": "entrance-gate",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "paddle-boat",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "boom-gate",
       "errors": 0,
       "warnings": 0,
       "messages": []
