@@ -35,6 +35,8 @@
       </div>
     </aside>
     <main id="app"></main>
+    <!-- Before the details panel, so the panel covers it where they meet on a phone. -->
+    <p id="hint" class="hint"></p>
     <aside id="info-panel" class="info-panel" aria-label="Location details" aria-live="polite" hidden>
       <div class="info-panel__bar">
         <p class="info-panel__precinct"></p>
@@ -51,6 +53,20 @@
       <p class="event-switch__summary" role="status" hidden></p>
     </section>
     <p class="notice">Concept layout, for illustration only</p>
+    <section id="map-controls" class="map-controls" aria-label="Map view">
+      <button class="map-controls__button map-controls__compass" type="button" aria-label="Face north">
+        <svg class="map-controls__needle" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 2.5 16 12H8z" fill="#ff6b6b" />
+          <path d="M12 21.5 8 12h8z" fill="#fff" opacity="0.75" />
+        </svg>
+      </button>
+      <button class="map-controls__button map-controls__zoom-in" type="button" aria-label="Zoom in">
+        +
+      </button>
+      <button class="map-controls__button map-controls__zoom-out" type="button" aria-label="Zoom out">
+        &minus;
+      </button>
+    </section>
     <div id="loading" class="loading" role="status">Loading the map&hellip;</div>
     <script type="module" src="/src/main.ts"></script>
   </body>

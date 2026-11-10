@@ -7,7 +7,13 @@ import { roadTier } from "../layout/road-order.ts";
 import { createTrackSafety } from "../layout/track-safety.ts";
 import type { GroundSurface } from "../terrain/ground.ts";
 import { createCrossing } from "./crossings.ts";
-import { asphaltTexture, Layer, layerMaterial, vertexColorMaterial } from "./materials.ts";
+import {
+  asphaltTexture,
+  Layer,
+  layerMaterial,
+  markSurround,
+  vertexColorMaterial,
+} from "./materials.ts";
 
 const ASPHALT_TILE_LENGTH = 9;
 const DEFAULT_STEP = 6;
@@ -326,6 +332,8 @@ export function createRibbon(location: TrackLocation, surface: GroundSurface): G
         );
         const mesh = new Mesh(geometry, vertexColorMaterial(Layer.verge));
         mesh.receiveShadow = true;
+        // Runoff is much wider than the track, and would swamp it when highlighted.
+        markSurround(mesh);
         group.add(mesh);
       }
     }
@@ -337,6 +345,7 @@ export function createRibbon(location: TrackLocation, surface: GroundSurface): G
     ]);
     const mesh = new Mesh(verge, layerMaterial(location.runoffColor, Layer.verge));
     mesh.receiveShadow = true;
+    markSurround(mesh);
     group.add(mesh);
   }
   if (location.kerbs) {

@@ -1,9 +1,11 @@
 import type { PerspectiveCamera } from "three";
-import { Box3, MathUtils, Sphere, Spherical, Vector3 } from "three";
+import { Box3, MathUtils, Spherical, Vector3 } from "three";
 import type { MapControls } from "three/addons/controls/MapControls.js";
 import { MAP_HALF_SIZE } from "../site.ts";
 import { heightAt } from "../terrain/height.ts";
-import { MAX_ZOOM_DISTANCE } from "./view.ts";
+import type { ClearArea } from "../ui/overlays.ts";
+import type { View } from "./view.ts";
+import { homeView, MAX_ZOOM_DISTANCE, MIN_ZOOM_DISTANCE } from "./view.ts";
 
 const FRAME_MARGIN = 1.25;
 const MIN_FRAME_DISTANCE = 240;
@@ -18,20 +20,15 @@ const MAX_DURATION = 1800;
 const BASE_DURATION = 600;
 const DURATION_PER_METRE = 0.4;
 const DURATION_PER_ZOOM = 250;
+/** Short enough that pressing a zoom button several times feels like one move. */
+const ZOOM_STEP_DURATION = 260;
+const TURN_DURATION = 500;
 
 // Long roads run off the map, so only the part you can fly to is framed.
 const MAP_AREA = new Box3(
   new Vector3(-MAP_HALF_SIZE, Number.NEGATIVE_INFINITY, -MAP_HALF_SIZE),
   new Vector3(MAP_HALF_SIZE, Number.POSITIVE_INFINITY, MAP_HALF_SIZE),
 );
-
-/** A place to fly to: the orbit point, and the camera's position around it. */
-interface Destination {
-  readonly target: Vector3;
-  readonly radius: number;
-  readonly phi: number;
-  readonly theta: number;
-}
 
 interface Leg {
   readonly fromTarget: Vector3;
@@ -50,43 +47,92 @@ const offset = new Vector3();
 /** Moves the camera smoothly to frame something. Any user input cancels it. */
 export class CameraFlight {
   private leg: Leg | null = null;
-  private readonly home: Destination;
 
-  /** The camera's position when this is created becomes its home view. */
+  /** `clearArea` says which part of the map has no panel or button over it. */
   constructor(
     private readonly camera: PerspectiveCamera,
     private readonly controls: MapControls,
+    private readonly clearArea: () => ClearArea,
   ) {
-    const { radius, phi, theta } = this.currentView();
-    this.home = { target: controls.target.clone(), radius, phi, theta };
     controls.addEventListener("start", () => {
       this.leg = null;
     });
   }
 
-  /** Flies back to the view the map opened on. */
+  /** Flies back to the opening view, as it would be for the map's shape now. */
   flyHome(): void {
-    this.fly(this.home);
+    this.fly(homeView(this.camera.aspect));
   }
 
-  /** Flies to frame a box, keeping the direction the camera is facing. */
+  /**
+   * Flies to frame a box in the clear part of the map, keeping the direction
+   * the camera is facing.
+   */
   frame(bounds: Box3): void {
     const { camera } = this;
     const reachable = bounds.clone().intersect(MAP_AREA);
-    const sphere = reachable.getBoundingSphere(new Sphere());
+    const centre = reachable.getCenter(new Vector3());
+    const size = reachable.getSize(new Vector3());
+    const clear = this.clearArea();
+    const current = this.currentView();
+    const phi = MathUtils.clamp(current.phi, MIN_FRAME_TILT, MAX_FRAME_TILT);
+    const { theta } = current;
 
-    const halfHeight = MathUtils.degToRad(camera.fov) / 2;
-    const halfWidth = Math.atan(Math.tan(halfHeight) * camera.aspect);
-    const fit = (sphere.radius * FRAME_MARGIN) / Math.sin(Math.min(halfHeight, halfWidth));
-    const { x, z } = sphere.center;
-    const { phi, theta } = this.currentView();
+    // Seen at a tilt, the ground the box stands on is foreshortened up the
+    // screen, and its height shows instead.
+    const across = Math.hypot(size.x, size.z) / 2;
+    const upScreen = across * Math.cos(phi) + (size.y / 2) * Math.sin(phi);
 
-    this.fly({
-      target: new Vector3(x, heightAt(x, z), z),
-      radius: MathUtils.clamp(fit, MIN_FRAME_DISTANCE, MAX_ZOOM_DISTANCE),
-      phi: MathUtils.clamp(phi, MIN_FRAME_TILT, MAX_FRAME_TILT),
-      theta,
-    });
+    // The tangent of the angle one pixel covers at the middle of the view.
+    const pixel = (2 * Math.tan(MathUtils.degToRad(camera.fov) / 2)) / clear.viewHeight;
+    const halfWidth = Math.atan((pixel * (clear.right - clear.left)) / 2);
+    const halfHeight = Math.atan((pixel * (clear.bottom - clear.top)) / 2);
+    const fit =
+      FRAME_MARGIN * Math.max(across / Math.sin(halfWidth), upScreen / Math.sin(halfHeight));
+    const radius = MathUtils.clamp(fit, MIN_FRAME_DISTANCE, MAX_ZOOM_DISTANCE);
+
+    // The camera looks at the middle of the map, so it aims past the box to
+    // put it in the middle of the clear part. These are tangents of the
+    // angles from the middle of the view to there.
+    const right = ((clear.left + clear.right - clear.viewWidth) / 2) * pixel;
+    const down = ((clear.top + clear.bottom - clear.viewHeight) / 2) * pixel;
+    // How far beyond the box the camera aims, along the ground, and how far
+    // the box then is from the camera along its line of sight.
+    const ahead = (down * radius) / (Math.cos(phi) + down * Math.sin(phi));
+    const aside = right * (radius - ahead * Math.sin(phi));
+    const x = centre.x - aside * Math.cos(theta) - ahead * Math.sin(theta);
+    const z = centre.z + aside * Math.sin(theta) - ahead * Math.cos(theta);
+
+    this.fly({ target: new Vector3(x, heightAt(x, z), z), radius, phi, theta });
+  }
+
+  /** Moves the camera closer or further by a factor, from wherever it's heading. */
+  zoomBy(factor: number): void {
+    const { radius, phi, theta } = this.heading();
+    this.fly(
+      {
+        target: this.leg?.toTarget ?? this.controls.target.clone(),
+        radius: MathUtils.clamp(radius * factor, MIN_ZOOM_DISTANCE, MAX_ZOOM_DISTANCE),
+        phi,
+        theta,
+      },
+      ZOOM_STEP_DURATION,
+    );
+  }
+
+  /** Turns the view so that north is at the top. */
+  faceNorth(): void {
+    const { radius, phi } = this.heading();
+    this.fly(
+      { target: this.leg?.toTarget ?? this.controls.target.clone(), radius, phi, theta: 0 },
+      TURN_DURATION,
+    );
+  }
+
+  /** Where the camera will be around its orbit point once any flight ends. */
+  private heading(): { radius: number; phi: number; theta: number } {
+    const { leg } = this;
+    return leg ? { radius: leg.toRadius, phi: leg.toPhi, theta: leg.toTheta } : this.currentView();
   }
 
   private currentView(): Spherical {
@@ -95,7 +141,7 @@ export class CameraFlight {
     );
   }
 
-  private fly(to: Destination): void {
+  private fly(to: View, fixedDuration?: number): void {
     const { controls } = this;
     const from = this.currentView();
 
@@ -115,11 +161,12 @@ export class CameraFlight {
       hop: travel * HOP_SHARE,
       duration: reduceMotion
         ? 0
-        : MathUtils.clamp(
+        : (fixedDuration ??
+          MathUtils.clamp(
             BASE_DURATION + travel * DURATION_PER_METRE + zoom * DURATION_PER_ZOOM,
             MIN_DURATION,
             MAX_DURATION,
-          ),
+          )),
       startedAt: null,
     };
   }

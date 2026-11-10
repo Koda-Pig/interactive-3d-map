@@ -29,6 +29,8 @@ interface MutedTwin {
 
 interface Precinct {
   readonly objects: Object3D[];
+  /** Drawn whether the precinct is on or off, but only pickable while it's on. */
+  readonly fixed: Object3D[];
   /** Added to `objects` for fading, but left out of picking. */
   readonly dressing: Object3D[];
   /** Each precinct's own copies, so that fading one leaves the others alone. */
@@ -76,6 +78,27 @@ function createTwin(own: SiteMaterial, precinct: Precinct): MutedTwin {
   };
 }
 
+function emptyPrecinct(): Precinct {
+  return {
+    objects: [],
+    fixed: [],
+    dressing: [],
+    materials: new Map(),
+    twins: [],
+    shown: true,
+    opacity: 1,
+    fade: null,
+  };
+}
+
+/**
+ * The road network belongs to "Parking and transport", but the other
+ * precincts make no sense without it, so it stays when that one is off.
+ */
+function isAlwaysDrawn(location: Location): boolean {
+  return location.type === "road" && location.category === "transport";
+}
+
 function setOpacity(material: Material, opacity: number): void {
   const transparent = opacity < 1;
   material.opacity = opacity;
@@ -119,30 +142,26 @@ export class Precincts {
    */
   constructor(site: Object3D, dressing: ReadonlyMap<Category, Object3D>) {
     for (const category of CATEGORIES) {
-      this.precincts.set(category, {
-        objects: [],
-        dressing: [],
-        materials: new Map(),
-        twins: [],
-        shown: true,
-        opacity: 1,
-        fade: null,
-      });
+      this.precincts.set(category, emptyPrecinct());
     }
+    // Holds the materials of everything that never fades, so no precinct's fade reaches them.
+    const alwaysDrawn = emptyPrecinct();
     for (const location of layout.locations) {
       const object = site.getObjectByName(location.id);
       if (!object) {
         throw new Error(`Nothing was drawn for "${location.id}"`);
       }
       const precinct = this.precinct(location.category);
-      precinct.objects.push(object);
-      ownMaterials(object, precinct);
+      const fixed = isAlwaysDrawn(location);
+      const owner = fixed ? alwaysDrawn : precinct;
+      (fixed ? precinct.fixed : precinct.objects).push(object);
+      ownMaterials(object, owner);
 
       const meshes: LocationMesh[] = [];
       object.traverse((child) => {
         if (child instanceof Mesh) {
           const own = child.material as SiteMaterial;
-          meshes.push({ mesh: child, own, twin: createTwin(own, precinct) });
+          meshes.push({ mesh: child, own, twin: createTwin(own, owner) });
         }
       });
       this.muting.set(location, { meshes, amount: 0 });
@@ -189,15 +208,21 @@ export class Precincts {
     this.focus = location;
   }
 
-  /** Advances any changes to `now`, and says what needs drawing again. */
+  /**
+   * Advances any changes to `now`, and says what needs drawing again. Shadows
+   * are all or nothing, so they're redrawn when a precinct's objects appear
+   * or go and not on every frame of a fade.
+   */
   update(now: number): { readonly redraw: boolean; readonly shadows: boolean } {
     const recoloured = this.updateMuting(now);
     let faded = false;
+    let shadows = false;
     for (const precinct of this.precincts.values()) {
       const { fade } = precinct;
       if (!fade) {
         continue;
       }
+      const wasDrawn = precinct.opacity > 0;
       fade.startedAt ??= now;
       const elapsed = now - fade.startedAt;
       const progress = fade.duration === 0 ? 1 : Math.min(1, elapsed / fade.duration);
@@ -206,12 +231,14 @@ export class Precincts {
         precinct.fade = null;
       }
       faded = true;
+      shadows ||= wasDrawn !== precinct.opacity > 0;
     }
-    return { redraw: recoloured || faded, shadows: faded };
+    return { redraw: recoloured || faded, shadows };
   }
 
   private muteTarget(location: Location): number {
-    if (location === this.focus) {
+    // Muted water turns grey and reads as paving.
+    if (location === this.focus || location.type === "water") {
       return 0;
     }
     if (this.eventMuted.has(location)) {
@@ -267,7 +294,9 @@ export class Precincts {
   }
 
   private collectShown(): Object3D[] {
-    return [...this.precincts.values()].flatMap(({ shown, objects }) => (shown ? objects : []));
+    return [...this.precincts.values()].flatMap(({ shown, objects, fixed }) =>
+      shown ? [...objects, ...fixed] : [],
+    );
   }
 }
 

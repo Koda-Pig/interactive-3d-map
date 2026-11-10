@@ -14,6 +14,15 @@ import type { SelectionOutline } from "./selection-outline.ts";
 /** A press that moves further than this, in pixels, is a drag and not a click. */
 const CLICK_TOLERANCE = 6;
 
+/**
+ * Whether clicking this on the map should move the camera. Roads, tracks and
+ * flat ground cover most of the site, so a click meant for nothing in
+ * particular usually lands on one. Those open their details where they are.
+ */
+function fliesOnClick(location: Location): boolean {
+  return location.type === "building" || location.type === "gate";
+}
+
 export interface InteractionParts {
   readonly canvas: HTMLCanvasElement;
   readonly site: Object3D;
@@ -50,9 +59,10 @@ export class MapInteraction {
 
   /**
    * Opens a location's details and frames it, or closes them when given `null`.
-   * A location in a hidden precinct brings that precinct back.
+   * A location in a hidden precinct brings that precinct back. With `fly` off
+   * the camera stays where it is.
    */
-  select(location: Location | null): void {
+  select(location: Location | null, fly = true): void {
     if (location) {
       this.setPrecinctShown(location.category, true);
     }
@@ -62,7 +72,7 @@ export class MapInteraction {
     this.parts.precincts.setFocus(location);
     this.parts.outline.show(location);
     this.refresh();
-    if (location) {
+    if (location && fly) {
       this.parts.flight.frame(new Box3().setFromObject(this.objectOf(location)));
     }
   }
@@ -169,7 +179,10 @@ export class MapInteraction {
     const { press } = this;
     this.press = null;
     if (press && Math.hypot(event.offsetX - press.x, event.offsetY - press.y) <= CLICK_TOLERANCE) {
-      this.select(this.locationAt(event.offsetX, event.offsetY));
+      // A name label is a small target, so clicking one is always deliberate.
+      const labelled = this.parts.labels.at(event.offsetX, event.offsetY);
+      const location = labelled ?? this.locationAt(event.offsetX, event.offsetY);
+      this.select(location, labelled !== null || (location !== null && fliesOnClick(location)));
     }
   };
 

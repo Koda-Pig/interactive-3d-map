@@ -179,10 +179,15 @@ function highlightMaterial(base: SiteMaterial, look: HighlightLook): SiteMateria
   return material;
 }
 
+/** Marks a mesh as the ground around a location, which the highlight leaves alone. */
+export function markSurround(mesh: Mesh): void {
+  mesh.userData.surround = true;
+}
+
 /** Sets the highlight on everything drawn by a location, or clears it with `null`. */
 export function setHighlight(object: Object3D, look: HighlightLook | null): void {
   object.traverse((child) => {
-    if (!(child instanceof Mesh)) {
+    if (!(child instanceof Mesh) || child.userData.surround) {
       return;
     }
     const base = baseMaterials.get(child) ?? (child.material as SiteMaterial);

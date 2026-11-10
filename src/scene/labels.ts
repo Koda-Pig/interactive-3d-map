@@ -5,6 +5,7 @@ import type { Location } from "../layout/locations.ts";
 import { resolvePath, samplePath } from "../layout/path.ts";
 import { MAP_HALF_SIZE } from "../site.ts";
 import { heightAt } from "../terrain/height.ts";
+import type { Box } from "../ui/overlays.ts";
 import type { Precincts } from "./precincts.ts";
 
 /** How close the camera must be before a minor label shows, in metres. */
@@ -13,10 +14,15 @@ const ANCHOR_LIFT = 4;
 const PATH_STEP = 20;
 /** Clear space kept around each label, in pixels. */
 const LABEL_MARGIN = 3;
+/** Matches the fade in `style.css`, with a frame or two to spare, in milliseconds. */
+const FADE_TIME = 200;
 
 interface Label {
   readonly location: Location;
   readonly element: HTMLElement;
+  readonly marker: CSS2DObject;
+  /** When the label last stopped showing, so it can leave the page once it has faded. */
+  hiddenAt: number;
   readonly anchor: Vector3;
   readonly width: number;
   readonly height: number;
@@ -48,6 +54,15 @@ function overlaps(a: Label, b: Label): boolean {
   );
 }
 
+function isUnder(label: Label, box: Box): boolean {
+  return (
+    label.left < box.right + LABEL_MARGIN &&
+    box.left < label.left + label.width + LABEL_MARGIN &&
+    label.top < box.bottom + LABEL_MARGIN &&
+    box.top < label.top + label.height + LABEL_MARGIN
+  );
+}
+
 /** Floating name labels, thinned out on screen so that none overlap. */
 export class SiteLabels {
   /** Render this with a `CSS2DRenderer`. */
@@ -73,6 +88,8 @@ export class SiteLabels {
 
       const marker = new CSS2DObject(element);
       marker.center.set(0.5, 1);
+      // Until a label shows it stays off the page, where it costs nothing to move.
+      marker.visible = false;
       const anchor = anchorFor(location, object);
       marker.position.copy(anchor);
       this.root.add(marker);
@@ -80,6 +97,8 @@ export class SiteLabels {
       return {
         location,
         element,
+        marker,
+        hiddenAt: Number.NEGATIVE_INFINITY,
         anchor,
         width: element.offsetWidth,
         height: element.offsetHeight,
@@ -103,10 +122,21 @@ export class SiteLabels {
     }
   }
 
-  /** Decides which labels show for this view. Call after the camera has moved. */
-  layout(camera: Camera, viewWidth: number, viewHeight: number): void {
+  /**
+   * Decides which labels show for this view. Call after the camera has moved.
+   * `blocked` holds the panels and buttons that labels mustn't sit under.
+   * Returns whether it needs calling again next frame, to fade a label in.
+   */
+  layout(
+    camera: Camera,
+    viewWidth: number,
+    viewHeight: number,
+    blocked: readonly Box[],
+    now: number,
+  ): boolean {
     const placed: Label[] = [];
     const projected = new Vector3();
+    let again = false;
 
     const place = (label: Label, active: boolean): void => {
       projected.copy(label.anchor).project(camera);
@@ -123,32 +153,49 @@ export class SiteLabels {
         active ||
         label.location.major === true ||
         label.anchor.distanceTo(camera.position) <= MINOR_LABEL_RANGE;
-      const shown =
+      const wanted =
         this.precincts.isShown(label.location.category) &&
         (active || !this.precincts.isMuted(label.location)) &&
         onScreen &&
         inRange &&
+        !blocked.some((box) => isUnder(label, box)) &&
         !placed.some((other) => overlaps(label, other));
 
-      if (shown) {
+      if (wanted) {
         placed.push(label);
+      }
+      // A label coming back onto the page needs a frame there before it can fade in.
+      const shown = wanted && label.marker.visible;
+      if (wanted && !label.marker.visible) {
+        label.marker.visible = true;
+        again = true;
       }
       if (shown !== label.shown) {
         label.shown = shown;
+        label.hiddenAt = now;
         label.element.classList.toggle("label--hidden", !shown);
+      }
+      if (!wanted && !label.shown && now - label.hiddenAt > FADE_TIME) {
+        label.marker.visible = false;
       }
     };
 
-    for (const label of this.labels) {
-      if (this.active.has(label.location)) {
-        place(label, true);
+    // Within each rank, labels that are already up go first. Otherwise two
+    // that overlap swap places as the camera moves.
+    const passes: readonly ((label: Label) => boolean)[] = [
+      (label) => this.active.has(label.location),
+      (label) => !this.active.has(label.location) && label.location.major === true && label.shown,
+      (label) => !this.active.has(label.location) && label.location.major === true && !label.shown,
+      (label) => !this.active.has(label.location) && label.location.major !== true && label.shown,
+      (label) => !this.active.has(label.location) && label.location.major !== true && !label.shown,
+    ];
+    const ranked = passes.map((pass) => this.labels.filter(pass));
+    ranked.forEach((labels, rank) => {
+      for (const label of labels) {
+        place(label, rank === 0);
       }
-    }
-    for (const label of this.labels) {
-      if (!this.active.has(label.location)) {
-        place(label, false);
-      }
-    }
+    });
+    return again;
   }
 
   /** The location whose label is showing at a point on screen, in pixels. */

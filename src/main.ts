@@ -21,17 +21,37 @@ import "./style.css";
 import { createGround } from "./terrain/ground.ts";
 import { createEventSwitch } from "./ui/event-switch.ts";
 import { createInfoPanel } from "./ui/info-panel.ts";
+import { createHint, createMapControls } from "./ui/map-controls.ts";
+import { MapOverlays } from "./ui/overlays.ts";
 import { createSidebar } from "./ui/sidebar.ts";
 
 /** How much of the sky's light reaches materials that reflect it. */
 const ENVIRONMENT_INTENSITY = 0.4;
+/** How much closer or further one press of a zoom button or key takes the camera. */
+const ZOOM_STEP = 0.6;
+/** Matches the phone layout in `style.css`, where the sidebar lies over the map. */
+const PHONE_LAYOUT = window.matchMedia("(max-width: 600px)");
 
 const host = document.querySelector<HTMLElement>("#app");
 const infoPanelElement = document.querySelector<HTMLElement>("#info-panel");
 const sidebarElement = document.querySelector<HTMLElement>("#sidebar");
 const eventSwitchElement = document.querySelector<HTMLElement>("#event-switch");
 const loadingElement = document.querySelector<HTMLElement>("#loading");
-if (!host || !infoPanelElement || !sidebarElement || !eventSwitchElement || !loadingElement) {
+const mapControlsElement = document.querySelector<HTMLElement>("#map-controls");
+const hintElement = document.querySelector<HTMLElement>("#hint");
+const noticeElement = document.querySelector<HTMLElement>(".notice");
+const sheetHandle = document.querySelector<HTMLElement>(".sidebar__handle");
+if (
+  !host ||
+  !infoPanelElement ||
+  !sidebarElement ||
+  !eventSwitchElement ||
+  !loadingElement ||
+  !mapControlsElement ||
+  !hintElement ||
+  !noticeElement ||
+  !sheetHandle
+) {
   throw new Error("The page is missing one of its main elements");
 }
 
@@ -53,6 +73,11 @@ renderer.shadowMap.type = PCFShadowMap;
 // is skipped while the camera moves, which is most of the work on a phone.
 renderer.shadowMap.autoUpdate = false;
 renderer.shadowMap.needsUpdate = true;
+renderer.domElement.tabIndex = 0;
+renderer.domElement.setAttribute(
+  "aria-label",
+  "Map of the site. Arrow keys move it, and plus and minus zoom.",
+);
 host.append(renderer.domElement);
 
 const labelRenderer = new CSS2DRenderer();
@@ -91,7 +116,26 @@ constrainView(camera, controls);
 
 const precincts = new Precincts(site, scenery.precincts);
 const labels = new SiteLabels(site, labelRenderer.domElement, precincts);
-const flight = new CameraFlight(camera, controls);
+// Everything that sits on top of the map. Flights and labels keep clear of them.
+const overlays = new MapOverlays(host, [
+  () => infoPanelElement.getBoundingClientRect(),
+  () => eventSwitchElement.getBoundingClientRect(),
+  () => noticeElement.getBoundingClientRect(),
+  () => mapControlsElement.getBoundingClientRect(),
+  // On a phone the closed sidebar is a strip along the bottom. It's measured
+  // as if closed, because picking from the open list closes it.
+  () =>
+    PHONE_LAYOUT.matches
+      ? {
+          left: 0,
+          top: window.innerHeight - sheetHandle.offsetHeight,
+          right: window.innerWidth,
+          bottom: window.innerHeight,
+        }
+      : null,
+]);
+
+const flight = new CameraFlight(camera, controls, () => overlays.clearArea());
 const panel = createInfoPanel(infoPanelElement, () => interaction.select(null));
 const sidebar = createSidebar(sidebarElement, {
   pick: (location) => interaction.select(location),
@@ -119,6 +163,7 @@ const interaction = new MapInteraction({
   precincts,
   outline,
   onChange: () => {
+    overlays.invalidate();
     needsRender = true;
   },
 });
@@ -126,8 +171,25 @@ const interaction = new MapInteraction({
 createEventSwitch(eventSwitchElement, (mode) => {
   setEventMode(mode, precincts, scenery.events);
   renderer.shadowMap.needsUpdate = true;
+  overlays.invalidate();
   needsRender = true;
 });
+
+const mapControls = createMapControls(mapControlsElement, {
+  zoomIn: () => flight.zoomBy(ZOOM_STEP),
+  zoomOut: () => flight.zoomBy(1 / ZOOM_STEP),
+  faceNorth: () => flight.faceNorth(),
+});
+renderer.domElement.addEventListener("keydown", (event) => {
+  if (event.key === "+" || event.key === "=") {
+    flight.zoomBy(ZOOM_STEP);
+  } else if (event.key === "-" || event.key === "_") {
+    flight.zoomBy(1 / ZOOM_STEP);
+  }
+});
+
+const hint = createHint(hintElement);
+controls.addEventListener("start", () => hint.dismiss());
 
 let pixelRatio = Math.min(window.devicePixelRatio, quality.maxPixelRatio);
 
@@ -143,12 +205,15 @@ const frames = new FrameMonitor(renderer, quality, (ratio) => {
   needsRender = true;
 });
 
-function render(): void {
+function render(now: number): void {
   sky.follow(camera);
   renderer.render(scene, camera);
   const { width, height } = labelRenderer.getSize();
-  labels.layout(camera, width, height);
+  if (labels.layout(camera, width, height, overlays.boxes(), now)) {
+    needsRender = true;
+  }
   labelRenderer.render(labels.root, camera);
+  mapControls.showBearing(controls.getAzimuthalAngle());
 }
 
 new ResizeObserver(() => {
@@ -162,7 +227,8 @@ new ResizeObserver(() => {
   setPixelRatio(pixelRatio);
   labelRenderer.setSize(width, height);
   sunShadow.refit();
-  render();
+  overlays.invalidate();
+  render(performance.now());
 }).observe(host);
 
 // The scene is static, so frames are only drawn when something has changed.
@@ -186,7 +252,7 @@ renderer.setAnimationLoop((now) => {
   const drawing = moved || changes.redraw || needsRender;
   if (drawing) {
     needsRender = false;
-    render();
+    render(now);
   }
   frames.tick(now, drawing);
 });

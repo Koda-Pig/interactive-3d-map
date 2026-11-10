@@ -32,6 +32,11 @@ body {
   height: 100%;
 }
 
+#app canvas:focus-visible {
+  outline: 2px solid #1ca7ec;
+  outline-offset: -2px;
+}
+
 /* Clicks reach the canvas, so dragging from a label still moves the map. */
 .labels {
   position: absolute;
@@ -154,6 +159,74 @@ body {
   pointer-events: none;
 }
 
+/* Sits above the notice until the visitor has moved the map. */
+.hint {
+  position: fixed;
+  left: calc(var(--sidebar-width) + 16px);
+  bottom: calc(max(16px, env(safe-area-inset-bottom)) + 44px);
+  max-width: calc(100vw - var(--sidebar-width) - 96px);
+  margin: 0;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: rgb(255 255 255 / 94%);
+  box-shadow: 0 4px 14px rgb(0 36 63 / 18%);
+  color: #26343d;
+  font:
+    400 13px / 1.3 Roboto,
+    system-ui,
+    sans-serif;
+  pointer-events: none;
+  transition: opacity 400ms ease;
+}
+
+.hint--gone {
+  opacity: 0;
+}
+
+.map-controls {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 8px;
+  background: #004272;
+  box-shadow: 0 4px 14px rgb(0 36 63 / 28%);
+}
+
+.map-controls__button {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #fff;
+  font:
+    400 22px / 1 Roboto,
+    system-ui,
+    sans-serif;
+  cursor: pointer;
+}
+
+.map-controls__button:hover {
+  background: rgb(255 255 255 / 14%);
+}
+
+.map-controls__button:focus-visible {
+  outline: 2px solid #1ca7ec;
+  outline-offset: 1px;
+}
+
+.map-controls__needle {
+  width: 24px;
+  height: 24px;
+}
+
 .event-switch {
   position: fixed;
   top: max(16px, env(safe-area-inset-top));
@@ -229,7 +302,7 @@ body {
 
 .stats {
   position: fixed;
-  right: max(16px, env(safe-area-inset-right));
+  right: calc(max(16px, env(safe-area-inset-right)) + 54px);
   bottom: max(16px, env(safe-area-inset-bottom));
   padding: 4px 8px;
   border-radius: 8px;
@@ -565,5 +638,25 @@ body {
     right: 16px;
     bottom: calc(var(--sheet-peek) + 12px);
     font-size: 10px;
+  }
+
+  .hint {
+    right: 16px;
+    bottom: calc(var(--sheet-peek) + 12px);
+    left: 16px;
+    max-width: none;
+    text-align: center;
+  }
+
+  /* Pinching zooms on a phone, so only the compass is worth the room. */
+  .map-controls {
+    top: calc(max(16px, env(safe-area-inset-top)) + 92px);
+    right: max(16px, env(safe-area-inset-right));
+    bottom: auto;
+  }
+
+  .map-controls__zoom-in,
+  .map-controls__zoom-out {
+    display: none;
   }
 }

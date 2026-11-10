@@ -12,6 +12,7 @@ The layout is illustrative. There's no published masterplan yet.
 - [docs/overview.md](docs/overview.md): what we're building, the reference we're improving on, and the feature list
 - [docs/plan.md](docs/plan.md): the simplified build plan, phase by phase
 - [docs/improvements.md](docs/improvements.md): how the map compares with high-end site maps, and the visual work still to do
+- [docs/interaction-issues.md](docs/interaction-issues.md): problems with the camera, clicking and labels, which are fixed and which are still open
 
 ## Stack
 
