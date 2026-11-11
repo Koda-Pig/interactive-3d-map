@@ -22,11 +22,11 @@ from the edges (the sidebar crops with `object-fit: cover`).
 ## Status (11 November 2026)
 
 All 57 files exist in `public/images/locations/` and every location's `image` field is
-set, so the coverage test passes. That does not mean the images are done: 25 are finished
-illustrations and 32 are screenshots of the 3D map standing in until their illustration
+set, so the coverage test passes. That does not mean the images are done: 31 are finished
+illustrations and 26 are screenshots of the 3D map standing in until their illustration
 is generated. Some stand-ins show a cyan highlight artefact.
 
-**Finished illustrations (25). Don't regenerate these without a reason.**
+**Finished illustrations (31). Don't regenerate these without a reason.**
 
 - Racing: `circuit`, `pit-lane`, `pit-conference-building`, `grandstands-main-straight`,
   `grandstand-d`, `grandstand-e`, `ga-bank`, `paddock`, `team-logistics-yard`
@@ -35,6 +35,18 @@ is generated. Some stand-ins show a cyan highlight artefact.
   `amphitheatre`, `conference-footbridge`, `conference-entrance`, `infield-reserve`
 - Hospitality and waterfront: `lake`, `promenade`, `lake-fountain`, `paddle-boats`
 - Entrances: `gate`
+
+- Newly finished: `fireworks-barge`
+
+- Newly finished: `lakeside-restaurant`
+
+- Newly finished: `hotel-waterfront`
+
+- Newly finished: `hotel-lakeside`
+
+- Newly finished: `hotel-promenade`
+
+- Newly finished: `infield-hospitality`
 
 **To check among the finished ones**
 
@@ -46,10 +58,8 @@ is generated. Some stand-ins show a cyan highlight artefact.
   two files if not.
 - None of the 25 has been checked against the running map since being saved.
 
-**Outstanding (32). Each is a map screenshot to replace with an illustration.**
+**Outstanding (26). Each is a map screenshot to replace with an illustration.**
 
-- Hospitality and waterfront (6): `fireworks-barge`, `lakeside-restaurant`,
-  `hotel-waterfront`, `hotel-lakeside`, `hotel-promenade`, `infield-hospitality`
 - Academy and automotive (9): `karting-track`, `karting-clubhouse`, `karting-garages`,
   `driving-academy`, `skid-pan`, `academy-handling-ground`, `automotive-hub`,
   `automotive-test-pad`, `automotive-demonstration-court`
@@ -161,7 +171,7 @@ A public pedestrian bridge carrying a walkway over the start-finish straight and
 The public south lobby of the pit and conference building: a glazed entrance under the building's canopy, delegates arriving and doors open, separate from any garage or loading side. Conference-day mood.
 
 **infield-reserve.webp** — G — `infield-park`, `infield-drainage`
-Low grass reserve ground inside the circuit: a shallow drainage swale crossing open turf with a planted buffer of trees, the track and its protective boundary visible in the distance, no people. Golden-hour mood. Composed so it reads as both the reserve and the drainage strip.
+Low grass reserve ground inside the circuit: a shallow drainage swale crossing open turf behind the team compound, with no trees, the track and its protective boundary visible in the distance, no people. Golden-hour mood. Composed so it reads as both the reserve and the drainage strip.
 
 ### Hospitality and waterfront
 
@@ -268,7 +278,7 @@ The small Kalbaskraal railway station: a modest station building on a single lin
 The station fan walk: a marked walking route from the station around the outside of the automotive campus towards the eastern ring-road entrance, crowds walking it, flags and signage posts, wheat fields on one side. Race-day mood.
 
 **aerodrome-runway.webp** — G — `aerodrome-runway`, `aerodrome-apron`, `aerodrome-helipad`
-The adjacent aerodrome: a runway with its taxiway and a small apron in front of the hangars and terminal, a helipad with a painted circle and H at the apron's eastern end, a few light aircraft parked, dry grass around. Golden-hour mood. Composed so it reads as both the runway and the apron.
+The adjacent aerodrome: a runway with its taxiway and a small apron in front of the hangars and terminal, a helipad with a painted circle without lettering at the apron's eastern end, a few light aircraft parked, dry grass around. Golden-hour mood. Composed so it reads as both the runway and the apron.
 
 **aerodrome-terminal.webp** — G — `aerodrome-terminal`
 The aerodrome's small terminal for arrivals by light aircraft: a simple low building beside the apron, a light aircraft at the stand, a few passengers. Golden-hour mood.
