@@ -121,6 +121,10 @@ The user asked for the lake to read as a built waterfront, with Battery Park at 
 - **Grading.** The waterfront terrace was extended north to `z = 400` and east to `x = 540` to hold the cove, piazza and terraces.
 - **Not done.** No new kit models were made. The bridge, terraces, decks and landing are plain extruded parts, and the kiosks, pavilions and fountain basins reuse existing models. The location pictures for the lake and promenade still show the earlier lake.
 
+### Amphitheatre, 11 November 2026
+
+The user asked for the amphitheatre to stand further back, with a grassy bank behind it. It moved 50 m north, away from Exhibition Hall 1 and the plaza. The Amphitheatre Lawn is a grass bank around the back of the bowl, 36 m deep and level with the top tier, falling away outwards and tapering to nothing towards the two ends of the seating. It is a separate location, because the amphitheatre's model replaces all of its own parts. The user found a stepped bank too tiered, so it is drawn as one smooth slope from a crest line to a toe line, which a building part can now carry as `slope`. Its inner edge follows the rim of the model as drawn, which is an ellipse inside the parts' bounding box. The arrival terrace was extended north to `z = -620` between `x = -1030` and `x = -740`, so both stand on one level.
+
 ### Land use outside the circuit, 10 November 2026
 
 The user found that the true-scale site read as empty ground around a small developed core, and asked for believable use of the spare land without changing the scale or moving the circuit, pits, paddock, roads or buildings. Nothing in `locations` moved. The layout data gained a `landUse` list of zones, which are not locations: they have no label or sidebar entry, and scenery fills only the parts of a zone that the shared occupancy leaves free, so everything in them stands behind the protective boundary.

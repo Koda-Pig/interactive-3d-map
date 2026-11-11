@@ -1,6 +1,7 @@
-import type { BufferGeometry, MeshStandardMaterial } from "three";
+import type { MeshStandardMaterial } from "three";
 import {
-  type BufferAttribute,
+  BufferAttribute,
+  BufferGeometry,
   ExtrudeGeometry,
   Group,
   MathUtils,
@@ -13,6 +14,7 @@ import {
 } from "three";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import type {
+  BankSlope,
   BuildingLocation,
   BuildingPart,
   Facing,
@@ -47,6 +49,53 @@ function partGeometry(part: BuildingPart, groundY: number): ExtrudeGeometry {
   });
   geometry.rotateX(-Math.PI / 2);
   geometry.translate(0, groundY + (part.base ?? 0) - sink, 0);
+  return geometry;
+}
+
+// A bank's toe goes just under the ground, so the terrain can't show a gap below it.
+const TOE_SINK = 0.4;
+
+/**
+ * A bank as one smooth slope from its crest down to its toe. It has no inner
+ * wall, so the crest belongs inside whatever the bank stands against.
+ */
+function slopeGeometry(slope: BankSlope, groundY: number): BufferGeometry {
+  const count = Math.min(slope.crest.length, slope.toe.length);
+  const positions: number[] = [];
+  for (let index = 0; index < count; index += 1) {
+    const [crestX, crestZ, height] = slope.crest[index];
+    const [toeX, toeZ] = slope.toe[index];
+    positions.push(crestX, groundY + height, crestZ, toeX, groundY - TOE_SINK, toeZ);
+  }
+
+  const indices: number[] = [];
+  for (let index = 0; index < count - 1; index += 1) {
+    const crest = index * 2;
+    indices.push(crest, crest + 1, crest + 2, crest + 2, crest + 1, crest + 3);
+  }
+
+  const smooth = new BufferGeometry();
+  smooth.setAttribute("position", new BufferAttribute(new Float32Array(positions), 3));
+  smooth.setIndex(indices);
+  smooth.computeVertexNormals();
+  // Faces up whichever way round the crest was listed.
+  const normals = smooth.getAttribute("normal");
+  let up = 0;
+  for (let index = 0; index < normals.count; index += 1) {
+    up += normals.getY(index);
+  }
+  if (up < 0) {
+    for (let corner = 0; corner < indices.length; corner += 3) {
+      [indices[corner], indices[corner + 1]] = [indices[corner + 1], indices[corner]];
+    }
+    smooth.setIndex(indices);
+    smooth.computeVertexNormals();
+  }
+
+  // Unindexed with texture coordinates, as extruded parts are, so the two merge.
+  const geometry = smooth.toNonIndexed();
+  const vertices = geometry.getAttribute("position").count;
+  geometry.setAttribute("uv", new BufferAttribute(new Float32Array(vertices * 2), 2));
   return geometry;
 }
 
@@ -210,7 +259,7 @@ export function createBuilding(location: BuildingLocation, kit: Kit): Group {
     return group;
   }
 
-  const byColor = new Map<string, ExtrudeGeometry[]>();
+  const byColor = new Map<string, BufferGeometry[]>();
   for (const part of parts) {
     const partGround = groundY + (part.base ?? 0);
     const partOutline = resolveOutline(part.footprint);
@@ -219,7 +268,7 @@ export function createBuilding(location: BuildingLocation, kit: Kit): Group {
     }
     const color = part.color ?? location.color;
     const geometries = byColor.get(color) ?? [];
-    geometries.push(partGeometry(part, groundY));
+    geometries.push(part.slope ? slopeGeometry(part.slope, groundY) : partGeometry(part, groundY));
     byColor.set(color, geometries);
   }
 

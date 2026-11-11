@@ -63,6 +63,17 @@ export interface BuildingPart {
   readonly color?: string;
   /** Drawn in place of this part. */
   readonly model?: ModelPlacement;
+  /** Draws the part as a smooth earth bank in place of a flat-topped block. */
+  readonly slope?: BankSlope;
+}
+
+/**
+ * A bank's surface: it falls from each crest point, at that point's height,
+ * to the ground at the toe point with the same index.
+ */
+export interface BankSlope {
+  readonly crest: readonly (readonly [x: number, z: number, height: number])[];
+  readonly toe: readonly Point[];
 }
 
 export interface BuildingLocation extends LocationBase {
