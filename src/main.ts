@@ -29,6 +29,12 @@ import { createSidebar } from "./ui/sidebar.ts";
 const ENVIRONMENT_INTENSITY = 0.4;
 /** How much closer or further one press of a zoom button or key takes the camera. */
 const ZOOM_STEP = 0.6;
+/** How far one press of an arrow moves the map, as a share of the camera's distance. */
+const PAN_STEP = 0.18;
+/** How far one press turns the view, in radians. */
+const TURN_STEP = Math.PI / 12;
+/** How far one press tilts the view, in radians. */
+const TILT_STEP = Math.PI / 24;
 /** Matches the phone layout in `style.css`, where the sidebar lies over the map. */
 const PHONE_LAYOUT = window.matchMedia("(max-width: 600px)");
 
@@ -41,6 +47,7 @@ const mapControlsElement = document.querySelector<HTMLElement>("#map-controls");
 const hintElement = document.querySelector<HTMLElement>("#hint");
 const noticeElement = document.querySelector<HTMLElement>(".notice");
 const sheetHandle = document.querySelector<HTMLElement>(".sidebar__handle");
+const sidebarOpenElement = document.querySelector<HTMLElement>("#sidebar-open");
 if (
   !host ||
   !infoPanelElement ||
@@ -50,7 +57,8 @@ if (
   !mapControlsElement ||
   !hintElement ||
   !noticeElement ||
-  !sheetHandle
+  !sheetHandle ||
+  !sidebarOpenElement
 ) {
   throw new Error("The page is missing one of its main elements");
 }
@@ -122,6 +130,7 @@ const overlays = new MapOverlays(host, [
   () => eventSwitchElement.getBoundingClientRect(),
   () => noticeElement.getBoundingClientRect(),
   () => mapControlsElement.getBoundingClientRect(),
+  () => sidebarOpenElement.getBoundingClientRect(),
   // On a phone the closed sidebar is a strip along the bottom. It's measured
   // as if closed, because picking from the open list closes it.
   () =>
@@ -137,7 +146,7 @@ const overlays = new MapOverlays(host, [
 
 const flight = new CameraFlight(camera, controls, () => overlays.clearArea());
 const panel = createInfoPanel(infoPanelElement, () => interaction.select(null));
-const sidebar = createSidebar(sidebarElement, {
+const sidebar = createSidebar(sidebarElement, sidebarOpenElement, {
   pick: (location) => interaction.select(location),
   togglePrecinct: (category, shown) => interaction.setPrecinctShown(category, shown),
   resetView: () => interaction.resetView(),
@@ -178,7 +187,11 @@ createEventSwitch(eventSwitchElement, (mode) => {
 const mapControls = createMapControls(mapControlsElement, {
   zoomIn: () => flight.zoomBy(ZOOM_STEP),
   zoomOut: () => flight.zoomBy(1 / ZOOM_STEP),
+  zoomTo: (distance) => flight.zoomTo(distance),
+  pan: (right, up) => flight.panBy(right * PAN_STEP, up * PAN_STEP),
+  orbit: (turn, tilt) => flight.orbitBy(turn * TURN_STEP, tilt * TILT_STEP),
   faceNorth: () => flight.faceNorth(),
+  resetView: () => interaction.resetView(),
 });
 renderer.domElement.addEventListener("keydown", (event) => {
   if (event.key === "+" || event.key === "=") {
@@ -214,6 +227,7 @@ function render(now: number): void {
   }
   labelRenderer.render(labels.root, camera);
   mapControls.showBearing(controls.getAzimuthalAngle());
+  mapControls.showDistance(camera.position.distanceTo(controls.target));
 }
 
 new ResizeObserver(() => {

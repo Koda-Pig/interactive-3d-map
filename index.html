@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="sidebar-closed">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -18,6 +18,7 @@
         <div class="sidebar__bar">
           <h1 class="sidebar__title">Blue Mountain Racing</h1>
           <button class="sidebar__reset" type="button">Reset view</button>
+          <button class="sidebar__close" type="button" aria-label="Hide locations">&times;</button>
         </div>
       </div>
       <div class="sidebar__body">
@@ -34,6 +35,18 @@
         <div class="sidebar__list"></div>
       </div>
     </aside>
+    <button
+      id="sidebar-open"
+      class="sidebar-open"
+      type="button"
+      aria-controls="sidebar"
+      aria-expanded="false"
+    >
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+        <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+      </svg>
+      Locations
+    </button>
     <main id="app"></main>
     <!-- Before the details panel, so the panel covers it where they meet on a phone. -->
     <p id="hint" class="hint"></p>
@@ -42,6 +55,7 @@
         <p class="info-panel__precinct"></p>
         <button class="info-panel__close" type="button" aria-label="Close details">&times;</button>
       </div>
+      <img class="info-panel__image" alt="" hidden />
       <div class="info-panel__body">
         <!-- biome-ignore lint/a11y/useHeadingContent: filled in when a location is picked -->
         <h2 class="info-panel__name"></h2>
@@ -53,20 +67,7 @@
       <p class="event-switch__summary" role="status" hidden></p>
     </section>
     <p class="notice">Concept layout, for illustration only</p>
-    <section id="map-controls" class="map-controls" aria-label="Map view">
-      <button class="map-controls__button map-controls__compass" type="button" aria-label="Face north">
-        <svg class="map-controls__needle" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M12 2.5 16 12H8z" fill="#ff6b6b" />
-          <path d="M12 21.5 8 12h8z" fill="#fff" opacity="0.75" />
-        </svg>
-      </button>
-      <button class="map-controls__button map-controls__zoom-in" type="button" aria-label="Zoom in">
-        +
-      </button>
-      <button class="map-controls__button map-controls__zoom-out" type="button" aria-label="Zoom out">
-        &minus;
-      </button>
-    </section>
+    <section id="map-controls" class="map-controls" aria-label="Map view"></section>
     <div id="loading" class="loading" role="status">Loading the map&hellip;</div>
     <script type="module" src="/src/main.ts"></script>
   </body>

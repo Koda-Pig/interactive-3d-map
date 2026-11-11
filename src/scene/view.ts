@@ -5,18 +5,27 @@ import { heightAt } from "../terrain/height.ts";
 
 export const MIN_ZOOM_DISTANCE = 120;
 export const MAX_ZOOM_DISTANCE = 4500;
-const MAX_TILT = MathUtils.degToRad(80);
+export const MAX_TILT = MathUtils.degToRad(80);
+/** Straight down. A hair off zero, so the camera keeps a sense of which way is up. */
+export const MIN_TILT = MathUtils.degToRad(1);
 const GROUND_CLEARANCE = 5;
 const FIELD_OF_VIEW = 40;
 /** How far an arrow key moves the map, in pixels. */
 const KEY_PAN_SPEED = 40;
 
-// The opening view looks north-north-east over the circuit and the lake.
-const HOME_CENTRE = { x: 90, z: 40 };
+// The opening view uses the standard isometric angles: turned 45 degrees from
+// north, and looking down at atan(1 / sqrt(2)), about 35.26 degrees below the
+// horizon. It looks north-east over the lake to the circuit. The camera keeps
+// its perspective, so this is the isometric angle and not a true isometric
+// projection.
+const HOME_CENTRE = { x: -525, z: 415 };
 /** The opening view holds a circle of this radius around its centre, in metres. */
 const HOME_RADIUS = 900;
-const HOME_TILT = MathUtils.degToRad(46);
-const HOME_BEARING = MathUtils.degToRad(-22);
+/** How steeply the opening view looks down, in radians below the horizon.
+ * The isometric angle is atan(1 / sqrt(2)), about 35.26 degrees. Larger
+ * looks more top-down, smaller more level. */
+const HOME_TILT = Math.atan(Math.SQRT1_2);
+const HOME_BEARING = MathUtils.degToRad(-45);
 
 /** A camera position: the orbit point, and where the camera sits around it. */
 export interface View {
@@ -38,7 +47,7 @@ export function homeView(aspect: number): View {
       MIN_ZOOM_DISTANCE,
       MAX_ZOOM_DISTANCE,
     ),
-    phi: HOME_TILT,
+    phi: Math.PI / 2 - HOME_TILT,
     theta: HOME_BEARING,
   };
 }

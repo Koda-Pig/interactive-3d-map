@@ -267,8 +267,8 @@ The small Kalbaskraal railway station: a modest station building on a single lin
 **station-fan-walk.webp** — R — `fan-walk`
 The station fan walk: a marked walking route from the station around the outside of the automotive campus towards the eastern ring-road entrance, crowds walking it, flags and signage posts, wheat fields on one side. Race-day mood.
 
-**aerodrome-runway.webp** — G — `aerodrome-runway`, `aerodrome-apron`
-The adjacent aerodrome: a runway with its taxiway and a small apron in front of the hangars and terminal, a few light aircraft parked, dry grass around. Golden-hour mood. Composed so it reads as both the runway and the apron.
+**aerodrome-runway.webp** — G — `aerodrome-runway`, `aerodrome-apron`, `aerodrome-helipad`
+The adjacent aerodrome: a runway with its taxiway and a small apron in front of the hangars and terminal, a helipad with a painted circle and H at the apron's eastern end, a few light aircraft parked, dry grass around. Golden-hour mood. Composed so it reads as both the runway and the apron.
 
 **aerodrome-terminal.webp** — G — `aerodrome-terminal`
 The aerodrome's small terminal for arrivals by light aircraft: a simple low building beside the apron, a light aircraft at the stand, a few passengers. Golden-hour mood.
@@ -356,7 +356,7 @@ images exist, so the map never shows broken previews and the test stays green:
 | shuttle-drop-off | shuttle-drop-off |
 | kalbaskraal-station | kalbaskraal-station, railway-line |
 | station-fan-walk | fan-walk |
-| aerodrome-runway | aerodrome-runway, aerodrome-apron |
+| aerodrome-runway | aerodrome-runway, aerodrome-apron, aerodrome-helipad |
 | aerodrome-terminal | aerodrome-terminal |
 | aerodrome-hangars | aerodrome-hangars |
 | aerodrome-control-tower | aerodrome-control-tower |
@@ -428,7 +428,7 @@ mapping = {
     "shuttle-drop-off": ["shuttle-drop-off"],
     "kalbaskraal-station": ["kalbaskraal-station", "railway-line"],
     "station-fan-walk": ["fan-walk"],
-    "aerodrome-runway": ["aerodrome-runway", "aerodrome-apron"],
+    "aerodrome-runway": ["aerodrome-runway", "aerodrome-apron", "aerodrome-helipad"],
     "aerodrome-terminal": ["aerodrome-terminal"],
     "aerodrome-hangars": ["aerodrome-hangars"],
     "aerodrome-control-tower": ["aerodrome-control-tower"],

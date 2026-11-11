@@ -5,7 +5,7 @@ import { MAP_HALF_SIZE } from "../site.ts";
 import { heightAt } from "../terrain/height.ts";
 import type { ClearArea } from "../ui/overlays.ts";
 import type { View } from "./view.ts";
-import { homeView, MAX_ZOOM_DISTANCE, MIN_ZOOM_DISTANCE } from "./view.ts";
+import { homeView, MAX_TILT, MAX_ZOOM_DISTANCE, MIN_TILT, MIN_ZOOM_DISTANCE } from "./view.ts";
 
 const FRAME_MARGIN = 1.25;
 const MIN_FRAME_DISTANCE = 240;
@@ -23,6 +23,8 @@ const DURATION_PER_ZOOM = 250;
 /** Short enough that pressing a zoom button several times feels like one move. */
 const ZOOM_STEP_DURATION = 260;
 const TURN_DURATION = 500;
+/** Short enough that the view keeps up with a slider being dragged. */
+const SLIDER_DURATION = 120;
 
 // Long roads run off the map, so only the part you can fly to is framed.
 const MAP_AREA = new Box3(
@@ -115,6 +117,57 @@ export class CameraFlight {
         radius: MathUtils.clamp(radius * factor, MIN_ZOOM_DISTANCE, MAX_ZOOM_DISTANCE),
         phi,
         theta,
+      },
+      ZOOM_STEP_DURATION,
+    );
+  }
+
+  /** Moves the camera to a set distance from its orbit point. */
+  zoomTo(radius: number): void {
+    const { phi, theta } = this.heading();
+    this.fly(
+      {
+        target: this.leg?.toTarget ?? this.controls.target.clone(),
+        radius: MathUtils.clamp(radius, MIN_ZOOM_DISTANCE, MAX_ZOOM_DISTANCE),
+        phi,
+        theta,
+      },
+      SLIDER_DURATION,
+    );
+  }
+
+  /**
+   * Slides the view across the ground. `right` and `up` are shares of the
+   * camera's distance, in the directions they have on screen.
+   */
+  panBy(right: number, up: number): void {
+    const { radius, phi, theta } = this.heading();
+    const from = this.leg?.toTarget ?? this.controls.target;
+    const x = MathUtils.clamp(
+      from.x + radius * (right * Math.cos(theta) - up * Math.sin(theta)),
+      -MAP_HALF_SIZE,
+      MAP_HALF_SIZE,
+    );
+    const z = MathUtils.clamp(
+      from.z - radius * (right * Math.sin(theta) + up * Math.cos(theta)),
+      -MAP_HALF_SIZE,
+      MAP_HALF_SIZE,
+    );
+    this.fly({ target: new Vector3(x, heightAt(x, z), z), radius, phi, theta }, ZOOM_STEP_DURATION);
+  }
+
+  /**
+   * Swings the camera around its orbit point. `turn` is the change in yaw and
+   * `tilt` the change in pitch, in radians. A positive tilt looks more steeply down.
+   */
+  orbitBy(turn: number, tilt: number): void {
+    const { radius, phi, theta } = this.heading();
+    this.fly(
+      {
+        target: this.leg?.toTarget ?? this.controls.target.clone(),
+        radius,
+        phi: MathUtils.clamp(phi - tilt, MIN_TILT, MAX_TILT),
+        theta: theta + turn,
       },
       ZOOM_STEP_DURATION,
     );

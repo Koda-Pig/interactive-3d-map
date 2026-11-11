@@ -1,7 +1,7 @@
 import type { Category, Location } from "../layout/locations.ts";
 import { CATEGORIES, layout, PRECINCT_NAMES } from "../layout/locations.ts";
 import { createBottomSheet } from "./bottom-sheet.ts";
-import { requirePart } from "./dom.ts";
+import { publicUrl, requirePart } from "./dom.ts";
 
 export interface SidebarActions {
   pick(location: Location): void;
@@ -115,7 +115,7 @@ function createPreview(location: Location): HTMLElement {
   if (location.image) {
     const image = document.createElement("img");
     image.className = "sidebar__preview-image";
-    image.src = `${import.meta.env.BASE_URL}${location.image}`;
+    image.src = publicUrl(location.image);
     image.alt = location.name;
     figure.append(image);
   } else {
@@ -149,17 +149,49 @@ function revealRow(list: HTMLElement, row: Row): void {
   }
 }
 
-export function createSidebar(root: HTMLElement, actions: SidebarActions): Sidebar {
+/** On `<html>` while the sidebar is put away. It starts there, in `index.html`. */
+const CLOSED_CLASS = "sidebar-closed";
+
+export function createSidebar(
+  root: HTMLElement,
+  openButton: HTMLElement,
+  actions: SidebarActions,
+): Sidebar {
   const search = requirePart<HTMLInputElement>(root, ".sidebar__search");
   const empty = requirePart(root, ".sidebar__empty");
   const list = requirePart(root, ".sidebar__list");
   const reset = requirePart(root, ".sidebar__reset");
+
+  let selected: Row | null = null;
+  let preview: HTMLElement | null = null;
 
   const sheet = createBottomSheet({
     sheet: root,
     handle: requirePart(root, ".sidebar__handle"),
     grabber: requirePart(root, ".sidebar__grabber"),
     handleAction: reset,
+  });
+
+  // On a wide screen the sidebar is put away until asked for. On a phone it's
+  // the bottom sheet, which has its own way of opening.
+  function setShown(shown: boolean): void {
+    document.documentElement.classList.toggle(CLOSED_CLASS, !shown);
+    openButton.setAttribute("aria-expanded", String(shown));
+    if (shown) {
+      if (selected) {
+        revealRow(list, selected);
+      }
+      search.focus();
+    } else {
+      openButton.focus();
+    }
+  }
+  openButton.addEventListener("click", () => setShown(true));
+  requirePart(root, ".sidebar__close").addEventListener("click", () => setShown(false));
+  root.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && search.value === "") {
+      setShown(false);
+    }
   });
 
   function pick(location: Location): void {
@@ -173,9 +205,6 @@ export function createSidebar(root: HTMLElement, actions: SidebarActions): Sideb
   );
   const rows = [...groups.values()].flatMap((group) => group.rows);
   list.append(...[...groups.values()].map((group) => group.section));
-
-  let selected: Row | null = null;
-  let preview: HTMLElement | null = null;
 
   function applySearch(): void {
     const query = wordsIn(search.value);

@@ -73,9 +73,10 @@ We keep the list, search, filters and info panels, and replace the flat picture 
 ## What it does
 
 - **Real geometry.** The circuit, buildings, grandstands, car parks, roads and water are all 3D objects.
-- **Free camera.** Rotate, tilt and zoom within limits that keep the view sensible.
+- **Free camera.** Rotate, tilt and zoom within limits that keep the view sensible. The opening view uses the standard isometric angles: turned 45° from north and looking down at about 35°, through a perspective camera.
+- **On-screen controls.** A zoom slider, arrows that move the map, and arrows that rotate and tilt it around a compass, for people without a wheel or a right mouse button. On a phone only the compass shows, because gestures do the rest.
 - **Interactive objects.** Pointing at something highlights it. Clicking it opens an info panel and moves the camera to it.
-- **Sidebar and search.** Picking "Grandstand B" from the list moves the camera to Grandstand B.
+- **Sidebar and search.** The sidebar starts put away on a wide screen and opens from a "Locations" button. Picking "Grandstand B" from the list moves the camera to Grandstand B.
 - **Category filters.** Turn a precinct on or off (Racing, Conference, Hospitality, Parking and transport, and so on).
 - **Labels in the scene.** Names float above places and stay readable while you move.
 - **Content from a data file.** Every location is described in JSON, so the layout can change without code changes.
@@ -95,7 +96,7 @@ We keep the list, search, filters and info panels, and replace the flat picture 
 | Hospitality and waterfront | Hotels, lake, promenade, lakeside restaurants, fountain, paddle boats, fireworks barge | Kit models, with a flat water surface. The boats, fountain basin and barge are kit models; jets and fireworks are drawn in code |
 | Academy and automotive | Driving academy, karting track and garages, skid pad, automotive hub | Kit models, a second smaller track ribbon, and a marked flat area for the skid pad |
 | Residential and commercial | Trackside housing with its streets, tennis courts and pools, retail, research and technology | Groups of kit models, with painted court lines and small water surfaces |
-| Parking and transport | Car parks, shuttle drop-off, the N7 and its interchanges, Kalbaskraal station and Station Fan Walk, the aerodrome | Flat areas with marked parking rows, road strips and a dotted path, with kit models for the station and aerodrome buildings |
+| Parking and transport | Car parks, shuttle drop-off, the N7 and its interchanges, Kalbaskraal station and Station Fan Walk, the aerodrome and its helipad | Flat areas with marked parking rows, road strips and a dotted path, with kit models for the station and aerodrome buildings |
 | Entrances | Gates 1 to 14 (a placeholder count, from the deck's demo data) | Kit models of turnstile gates |
 | Setting | Farmland, hills, trees, distant Table Mountain silhouette | Gently rolling ground with wheat-coloured fields |
 
@@ -145,7 +146,7 @@ The layout lives in `src/data/locations.json`, as a `locations` list, `grading` 
 - `height`: how tall a building is, in metres
 - `parts`: used instead of `footprint` and `height` by buildings with several volumes. Each part has its own `footprint` and `height`, and can add `base` (how far above the ground it starts) and `color`
 - `model`: on a building or one of its `parts`, a `.glb` from `public/models` that replaces the simple shape and is fitted to its footprint. It has a `file`, a `facing` (`north`, `east`, `south` or `west`), and optionally a `grid` of `[columns, rows]`, or an `endCap` file that makes `file` a tile repeated between two end pieces. If the file can't be loaded, the simple shape is drawn
-- `image`: a path relative to `public/`, such as `images/locations/lake.webp`, with no leading slash. The sidebar resolves it against the site's base URL, so images also work when hosted under a sub-path. Without one, a placeholder is shown
+- `image`: a path relative to `public/`, such as `images/locations/lake.webp`, with no leading slash. It's shown in the details card and under the location in the sidebar. Both resolve it against the site's base URL, so images also work when hosted under a sub-path. Without one, a placeholder is shown
 - `markings`: on an area, lines painted on it, such as a tennis court's. It has a `color`, a `width` and a list of `lines`, each a path
 - `planting`: on an area, `park` scatters trees through it and `edge` lines its edge with them
 - Tracks and roads use `path` (a list of points, rounded the same way) instead of `footprint`, plus `width`. Optional: `closed`, `branches` (more paths in the same location), `median`, `dashed`, `kerbs`, `runoff`, `runoffColor`, `step` (spacing of the ribbon's cross-sections, for very long roads)
