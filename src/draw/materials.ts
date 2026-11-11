@@ -184,6 +184,83 @@ export function markSurround(mesh: Mesh): void {
   mesh.userData.surround = true;
 }
 
+/** How long a highlight takes to fade in or out, matching the labels, in milliseconds. */
+const FADE_TIME = 150;
+
+interface HighlightFade {
+  readonly mesh: Mesh;
+  readonly base: SiteMaterial;
+  /** The look whose appearance the fade moves through. */
+  readonly look: HighlightLook;
+  /** 0 is the base material's appearance, 1 the full highlight. */
+  t: number;
+  /** +1 fading in, -1 fading out. */
+  direction: 1 | -1;
+  /** When the fade last advanced, in the render loop's clock. */
+  at: number | null;
+  readonly material: SiteMaterial;
+}
+
+const highlightFades = new Map<Mesh, HighlightFade>();
+
+/** Paints `material` part way between the base's appearance and the full highlight. */
+function paintFade(
+  material: SiteMaterial,
+  base: SiteMaterial,
+  look: HighlightLook,
+  t: number,
+): void {
+  const eased = t * t * (3 - 2 * t);
+  material.color.copy(base.color).lerp(HIGHLIGHT, look.tint * eased);
+  material.emissive.copy(HIGHLIGHT);
+  material.emissiveIntensity = look.glow * eased;
+}
+
+/** Points a mesh's material where its highlight is heading, starting a fade if needed. */
+function aimHighlight(
+  mesh: Mesh,
+  base: SiteMaterial,
+  from: HighlightLook | null,
+  to: HighlightLook | null,
+): void {
+  const fade = highlightFades.get(mesh);
+  if (fade && to && fade.look !== to) {
+    // The level changed while lit (hover to selected): both are on, so go straight there.
+    mesh.material = highlightMaterial(base, to);
+    highlightFades.delete(mesh);
+    return;
+  }
+  if (fade) {
+    fade.direction = to ? 1 : -1;
+    return;
+  }
+  if (to && from) {
+    // Already lit at another level: no fade between two on-states.
+    mesh.material = highlightMaterial(base, to);
+    return;
+  }
+  const look = to ?? from;
+  if (!look) {
+    return;
+  }
+  const material = base.clone();
+  material.vertexColors &&= look.keepsVertexColors;
+  // The base may be caught partway through a precinct fade.
+  material.transparent = false;
+  material.opacity = 1;
+  paintFade(material, base, look, to ? 0 : 1);
+  mesh.material = material;
+  highlightFades.set(mesh, {
+    mesh,
+    base,
+    look,
+    t: to ? 0 : 1,
+    direction: to ? 1 : -1,
+    at: null,
+    material,
+  });
+}
+
 /** Sets the highlight on everything drawn by a location, or clears it with `null`. */
 export function setHighlight(object: Object3D, look: HighlightLook | null): void {
   object.traverse((child) => {
@@ -192,20 +269,42 @@ export function setHighlight(object: Object3D, look: HighlightLook | null): void
     }
     const base = baseMaterials.get(child) ?? (child.material as SiteMaterial);
     baseMaterials.set(child, base);
+    const from = meshLooks.get(child) ?? null;
     if (look) {
       meshLooks.set(child, look);
     } else {
       meshLooks.delete(child);
     }
-    child.material = look ? highlightMaterial(base, look) : base;
+    aimHighlight(child, base, from, look);
   });
 }
 
 /** Changes a mesh's normal material, without losing a highlight it has on. */
 export function setBaseMaterial(mesh: Mesh, material: SiteMaterial): void {
+  highlightFades.delete(mesh);
   baseMaterials.set(mesh, material);
   const look = meshLooks.get(mesh);
   mesh.material = look ? highlightMaterial(material, look) : material;
+}
+
+/** Advances every highlight fade. Call once a frame, with the render loop's clock. */
+export function updateHighlights(now: number): boolean {
+  let fading = false;
+  for (const [mesh, fade] of highlightFades) {
+    fade.at ??= now;
+    const step = (now - fade.at) / FADE_TIME;
+    fade.at = now;
+    const goal = fade.direction === 1 ? 1 : 0;
+    fade.t = goal > fade.t ? Math.min(fade.t + step, 1) : Math.max(fade.t - step, 0);
+    if (fade.t === goal) {
+      mesh.material = fade.direction === 1 ? highlightMaterial(fade.base, fade.look) : fade.base;
+      highlightFades.delete(mesh);
+    } else {
+      paintFade(fade.material, fade.base, fade.look, fade.t);
+      fading = true;
+    }
+  }
+  return fading;
 }
 
 /** Call after changing a material's colour, so its highlighted copies follow. */

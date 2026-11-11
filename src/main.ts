@@ -3,6 +3,7 @@ import "@fontsource/roboto/latin-500.css";
 import { NeutralToneMapping, PCFShadowMap, Scene, WebGLRenderer } from "three";
 import { CSS2DRenderer } from "three/addons/renderers/CSS2DRenderer.js";
 import { layoutModelFiles, loadKit } from "./draw/kit.ts";
+import { updateHighlights } from "./draw/materials.ts";
 import { createScenery, FIREWORKS_LOCATION, SCENERY_MODELS } from "./draw/scenery.ts";
 import { createSite } from "./draw/site.ts";
 import { setEventMode } from "./scene/event-modes.ts";
@@ -255,6 +256,9 @@ renderer.setAnimationLoop((now) => {
     constrainView(camera, controls);
   }
   interaction.update(moved);
+  if (updateHighlights(now) || outline.update(now)) {
+    needsRender = true;
+  }
   const changes = precincts.update(now);
   if (changes.shadows) {
     renderer.shadowMap.needsUpdate = true;

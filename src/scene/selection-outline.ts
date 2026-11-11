@@ -17,6 +17,8 @@ const OUTSET = 3;
 const LIFT = 0.8;
 /** How often the line touches down on the terrain, in metres. */
 const STEP = 12;
+/** Matches the highlight fade in `materials.ts`, in milliseconds. */
+const FADE_TIME = 150;
 
 function addLoop(positions: number[], loop: readonly Point[], surface: GroundSurface): void {
   const addPoint = (x: number, z: number): void => {
@@ -34,14 +36,20 @@ function addLoop(positions: number[], loop: readonly Point[], surface: GroundSur
 
 /** A cyan line on the ground around the selected building. */
 export class SelectionOutline {
-  readonly object = new LineSegments2(
-    new LineSegmentsGeometry(),
-    new LineMaterial({
-      color: HIGHLIGHT.getHex(),
-      linewidth: WIDTH_PIXELS,
-      ...offsetParameters(Layer.outline),
-    }),
-  );
+  private readonly material = new LineMaterial({
+    color: HIGHLIGHT.getHex(),
+    linewidth: WIDTH_PIXELS,
+    transparent: true,
+    opacity: 0,
+    ...offsetParameters(Layer.outline),
+  });
+
+  readonly object = new LineSegments2(new LineSegmentsGeometry(), this.material);
+
+  /** 0 is invisible and 1 fully shown; the direction says which way it's heading. */
+  private strength = 0;
+  private direction: 0 | 1 | -1 = 0;
+  private at: number | null = null;
 
   constructor(private readonly surface: GroundSurface) {
     this.object.visible = false;
@@ -50,7 +58,9 @@ export class SelectionOutline {
   /** Draws around a building. Anything else, or `null`, clears the line. */
   show(location: Location | null): void {
     if (location?.type !== "building") {
-      this.object.visible = false;
+      if (this.strength > 0) {
+        this.direction = -1;
+      }
       return;
     }
     const positions: number[] = [];
@@ -60,5 +70,32 @@ export class SelectionOutline {
     this.object.geometry.dispose();
     this.object.geometry = new LineSegmentsGeometry().setPositions(positions);
     this.object.visible = true;
+    this.direction = 1;
+  }
+
+  /** Advances the fade. Call once a frame, with the render loop's clock. */
+  update(now: number): boolean {
+    if (this.direction === 0) {
+      return false;
+    }
+    this.at ??= now;
+    const step = (now - this.at) / FADE_TIME;
+    this.at = now;
+    const goal = this.direction === 1 ? 1 : 0;
+    this.strength =
+      goal > this.strength ? Math.min(this.strength + step, 1) : Math.max(this.strength - step, 0);
+    const eased = this.strength * this.strength * (3 - 2 * this.strength);
+    this.material.opacity = eased;
+    if (this.strength === 0) {
+      this.object.visible = false;
+      this.direction = 0;
+      this.at = null;
+      return false;
+    }
+    if (this.strength === 1) {
+      this.direction = 0;
+      this.at = null;
+    }
+    return true;
   }
 }
