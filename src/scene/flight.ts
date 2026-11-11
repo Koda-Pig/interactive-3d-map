@@ -173,8 +173,9 @@ export class CameraFlight {
   /**
    * Swings the camera around its orbit point. `turn` is the change in yaw and
    * `tilt` the change in pitch, in radians. A positive tilt looks more steeply down.
+   * A `duration` of zero moves it at once, to follow a drag.
    */
-  orbitBy(turn: number, tilt: number): void {
+  orbitBy(turn: number, tilt: number, duration = ZOOM_STEP_DURATION): void {
     const { radius, phi, theta } = this.heading();
     this.fly(
       {
@@ -183,7 +184,7 @@ export class CameraFlight {
         phi: MathUtils.clamp(phi - tilt, MIN_TILT, MAX_TILT),
         theta: theta + turn,
       },
-      ZOOM_STEP_DURATION,
+      duration,
     );
   }
 

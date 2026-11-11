@@ -22,9 +22,8 @@ const HOME_CENTRE = { x: -525, z: 415 };
 /** The opening view holds a circle of this radius around its centre, in metres. */
 const HOME_RADIUS = 900;
 /** How steeply the opening view looks down, in radians below the horizon.
- * The isometric angle is atan(1 / sqrt(2)), about 35.26 degrees. Larger
- * looks more top-down, smaller more level. */
-const HOME_TILT = Math.atan(Math.SQRT1_2);
+ * Larger looks more top-down, smaller more level. */
+const HOME_TILT = MathUtils.degToRad(28);
 const HOME_BEARING = MathUtils.degToRad(-45);
 
 /** A camera position: the orbit point, and where the camera sits around it. */

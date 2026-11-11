@@ -74,7 +74,7 @@ We keep the list, search, filters and info panels, and replace the flat picture 
 
 - **Real geometry.** The circuit, buildings, grandstands, car parks, roads and water are all 3D objects.
 - **Free camera.** Rotate, tilt and zoom within limits that keep the view sensible. The opening view uses the standard isometric angles: turned 45° from north and looking down at about 35°, through a perspective camera.
-- **On-screen controls.** A zoom slider, arrows that move the map, and arrows that rotate and tilt it around a compass, for people without a wheel or a right mouse button. On a phone only the compass shows, because gestures do the rest.
+- **On-screen controls.** A zoom slider, arrows that move the map, and a compass to drag that rotates and tilts it, for people without a wheel or a right mouse button. Pressing the compass faces north. On a phone only the compass shows, because gestures do the rest.
 - **Interactive objects.** Pointing at something highlights it. Clicking it opens an info panel and moves the camera to it.
 - **Sidebar and search.** The sidebar starts put away on a wide screen and opens from a "Locations" button. Picking "Grandstand B" from the list moves the camera to Grandstand B.
 - **Category filters.** Turn a precinct on or off (Racing, Conference, Hospitality, Parking and transport, and so on).

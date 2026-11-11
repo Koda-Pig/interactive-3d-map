@@ -212,6 +212,7 @@ const mapControls = createMapControls(mapControlsElement, {
   zoomTo: (distance) => flight.zoomTo(distance),
   pan: (right, up) => flight.panBy(right * PAN_STEP, up * PAN_STEP),
   orbit: (turn, tilt) => flight.orbitBy(turn * TURN_STEP, tilt * TILT_STEP),
+  dragOrbit: (turn, tilt) => flight.orbitBy(turn, tilt, 0),
   faceNorth: () => flight.faceNorth(),
   resetView: () => interaction.resetView(),
 });
@@ -248,7 +249,7 @@ function render(now: number): void {
     needsRender = true;
   }
   labelRenderer.render(labels.root, camera);
-  mapControls.showBearing(controls.getAzimuthalAngle());
+  mapControls.showOrbit(controls.getAzimuthalAngle(), controls.getPolarAngle());
   mapControls.showDistance(camera.position.distanceTo(controls.target));
 }
 
