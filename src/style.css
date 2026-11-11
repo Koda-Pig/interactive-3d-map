@@ -2,6 +2,10 @@
   /* The pane's own width, which never changes; the sidebar clips it. */
   --sidebar-pane-width: calc(320px + env(safe-area-inset-left));
   --sidebar-width: var(--sidebar-pane-width);
+  /* Strong decelerate: the panel gets moving at once and lands softly.
+     The sidebar and every chip that tracks its edge share this curve. */
+  --sidebar-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --sidebar-duration: 300ms;
   --sheet-handle: 76px;
   --sheet-peek: calc(var(--sheet-handle) + env(safe-area-inset-bottom));
   --open-button-width: 122px;
@@ -172,7 +176,7 @@ body {
   position: fixed;
   left: calc(var(--sidebar-width) + 16px);
   bottom: max(16px, env(safe-area-inset-bottom));
-  transition: left 300ms ease;
+  transition: left var(--sidebar-duration) var(--sidebar-ease);
   margin: 0;
   padding: 8px 12px;
   border-radius: 8px;
@@ -192,8 +196,8 @@ body {
   bottom: calc(max(16px, env(safe-area-inset-bottom)) + 44px);
   max-width: calc(100vw - var(--sidebar-width) - 96px);
   transition:
-    left 300ms ease,
-    max-width 300ms ease,
+    left var(--sidebar-duration) var(--sidebar-ease),
+    max-width var(--sidebar-duration) var(--sidebar-ease),
     opacity 400ms ease;
   margin: 0;
   padding: 6px 12px;
@@ -383,6 +387,7 @@ body {
 }
 
 @media (min-width: 601px) {
+
   /* The sidebar animates its own width between full and collapsed, so the
      space it reserves next to the map shrinks with it and no background
      shows through mid-animation. The pane keeps its width on the inner
@@ -393,15 +398,15 @@ body {
     min-width: 0;
     overflow: hidden;
     transition:
-      width 300ms ease-out,
+      width var(--sidebar-duration) var(--sidebar-ease),
       visibility 0s;
   }
 
   .sidebar-closed .sidebar {
     visibility: hidden;
     transition:
-      width 300ms ease-out,
-      visibility 0s 300ms;
+      width var(--sidebar-duration) var(--sidebar-ease),
+      visibility 0s var(--sidebar-duration);
   }
 
   .sidebar__inner {
@@ -419,6 +424,7 @@ body {
   }
 
   @media (prefers-reduced-motion: reduce) {
+
     .sidebar,
     .sidebar-closed .sidebar {
       transition: visibility 0s;
@@ -437,8 +443,8 @@ body {
   width: max-content;
   max-width: calc(100vw - var(--sidebar-width) - var(--open-button-space) - 32px);
   transition:
-    left 300ms ease,
-    max-width 300ms ease;
+    left var(--sidebar-duration) var(--sidebar-ease),
+    max-width var(--sidebar-duration) var(--sidebar-ease);
   font:
     500 13px / 1.3 Roboto,
     system-ui,
