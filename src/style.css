@@ -387,7 +387,6 @@ body {
 }
 
 @media (min-width: 601px) {
-
   /* The sidebar animates its own width between full and collapsed, so the
      space it reserves next to the map shrinks with it and no background
      shows through mid-animation. The pane keeps its width on the inner
@@ -424,7 +423,6 @@ body {
   }
 
   @media (prefers-reduced-motion: reduce) {
-
     .sidebar,
     .sidebar-closed .sidebar {
       transition: visibility 0s;
@@ -808,7 +806,7 @@ body {
     border-radius: 8px 8px 0 0;
     background: #004272;
     transform: translateY(calc(100% - var(--sheet-peek)));
-    transition: transform 240ms ease;
+    transition: transform 240ms var(--sidebar-ease);
   }
 
   .sidebar--open {
