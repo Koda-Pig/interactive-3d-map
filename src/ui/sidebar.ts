@@ -181,7 +181,7 @@ export function createSidebar(
       if (selected) {
         revealRow(list, selected);
       }
-      search.focus();
+      search.focus({ preventScroll: true });
     } else {
       openButton.focus();
     }

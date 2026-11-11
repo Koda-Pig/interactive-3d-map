@@ -1,5 +1,7 @@
 :root {
-  --sidebar-width: calc(320px + env(safe-area-inset-left));
+  /* The pane's own width, which never changes; the sidebar clips it. */
+  --sidebar-pane-width: calc(320px + env(safe-area-inset-left));
+  --sidebar-width: var(--sidebar-pane-width);
   --sheet-handle: 76px;
   --sheet-peek: calc(var(--sheet-handle) + env(safe-area-inset-bottom));
   --open-button-width: 122px;
@@ -170,6 +172,7 @@ body {
   position: fixed;
   left: calc(var(--sidebar-width) + 16px);
   bottom: max(16px, env(safe-area-inset-bottom));
+  transition: left 300ms ease;
   margin: 0;
   padding: 8px 12px;
   border-radius: 8px;
@@ -188,6 +191,10 @@ body {
   left: calc(var(--sidebar-width) + 16px);
   bottom: calc(max(16px, env(safe-area-inset-bottom)) + 44px);
   max-width: calc(100vw - var(--sidebar-width) - 96px);
+  transition:
+    left 300ms ease,
+    max-width 300ms ease,
+    opacity 400ms ease;
   margin: 0;
   padding: 6px 12px;
   border-radius: 8px;
@@ -199,7 +206,6 @@ body {
     system-ui,
     sans-serif;
   pointer-events: none;
-  transition: opacity 400ms ease;
 }
 
 .hint--gone {
@@ -227,6 +233,7 @@ body {
 /* A cross of four arrows around a middle button. */
 .map-controls__pad {
   display: grid;
+  padding: 4px;
   grid-template: repeat(3, 32px) / repeat(3, 32px);
   grid-template-areas:
     ". up ."
@@ -308,6 +315,7 @@ body {
     sans-serif;
   cursor: pointer;
   touch-action: manipulation;
+  transition: 0.15s ease-out background-color;
 }
 
 .map-controls__button:hover {
@@ -364,17 +372,46 @@ body {
 }
 
 @media (min-width: 601px) {
+  /* The sidebar animates its own width between full and collapsed, so the
+     space it reserves next to the map shrinks with it and no background
+     shows through mid-animation. The pane keeps its width on the inner
+     element, so only the clip edge moves and nothing inside reflows. */
+  .sidebar {
+    flex: none;
+    width: var(--sidebar-width);
+    min-width: 0;
+    overflow: hidden;
+    transition:
+      width 300ms ease,
+      visibility 0s;
+  }
+
+  .sidebar-closed .sidebar {
+    visibility: hidden;
+    transition:
+      width 300ms ease,
+      visibility 0s 300ms;
+  }
+
+  .sidebar__inner {
+    width: var(--sidebar-pane-width);
+    padding-left: env(safe-area-inset-left);
+  }
+
   .sidebar-closed {
     --sidebar-width: 0px;
     --open-button-space: calc(var(--open-button-width) + 8px);
   }
 
-  .sidebar-closed .sidebar {
-    display: none;
-  }
-
   .sidebar-closed .sidebar-open {
     display: flex;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sidebar,
+    .sidebar-closed .sidebar {
+      transition: visibility 0s;
+    }
   }
 }
 
@@ -388,6 +425,9 @@ body {
   gap: 8px;
   width: max-content;
   max-width: calc(100vw - var(--sidebar-width) - var(--open-button-space) - 32px);
+  transition:
+    left 300ms ease,
+    max-width 300ms ease;
   font:
     500 13px / 1.3 Roboto,
     system-ui,
@@ -469,11 +509,9 @@ body {
 
 .sidebar {
   display: flex;
-  flex: 0 0 var(--sidebar-width);
   flex-direction: column;
   box-sizing: border-box;
   height: 100dvh;
-  padding-left: env(safe-area-inset-left);
   background: #fff;
   box-shadow: 0 0 16px rgb(0 36 63 / 24%);
   color: #26343d;
@@ -481,6 +519,15 @@ body {
     400 14px / 1.4 Roboto,
     system-ui,
     sans-serif;
+}
+
+/* Holds the pane at its full width while the sidebar collapses, so nothing
+   inside reflows while the sidebar opens and closes. */
+.sidebar__inner {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .sidebar [hidden] {
