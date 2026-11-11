@@ -747,20 +747,65 @@ body {
   align-items: center;
   gap: 8px;
   min-height: 44px;
-  padding-left: 16px;
+  border-bottom: 1px solid #dfe6ea;
   background: #eef2f5;
 }
 
 .sidebar__group-name {
+  flex: 1;
+  align-self: stretch;
+  min-width: 0;
   margin: 0;
+  font: inherit;
+}
+
+/* The whole header beside the switch opens and closes the precinct's list. */
+.sidebar__group-expand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+  padding: 0 0 0 16px;
+  border: 0;
+  background: transparent;
   color: #004272;
+  font: inherit;
   font-size: 13px;
   font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+}
+
+.sidebar__group-expand::before {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  margin-right: 2px;
+  border-right: 2px solid currentcolor;
+  border-bottom: 2px solid currentcolor;
+  content: "";
+  transform: translateX(-2px) rotate(-45deg);
+  transition: transform 150ms ease;
+}
+
+.sidebar__group-expand[aria-expanded="true"]::before {
+  transform: translateY(-2px) rotate(45deg);
+}
+
+/* A search opens every precinct with a match, so there's nothing to press. */
+.sidebar__group-expand:disabled {
+  cursor: default;
+}
+
+.sidebar__group-expand:enabled:hover {
+  background: #e1e8ed;
 }
 
 .sidebar__group-count {
   color: #51626d;
   font-size: 12px;
+  font-weight: 400;
 }
 
 /* A bigger target than the switch itself, for fingers. */
@@ -805,8 +850,61 @@ body {
 
 .sidebar__items {
   margin: 0;
-  padding: 4px 0;
+  padding: 0;
   list-style: none;
+}
+
+/* A fold's one row grows from nothing to the height of what's inside, which
+   can be animated where a height of `auto` can't. Shut, it's also hidden, so
+   nothing inside takes focus; that waits for the slide to finish. */
+.sidebar__fold {
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition:
+    grid-template-rows var(--sidebar-duration) var(--sidebar-ease),
+    visibility 0s var(--sidebar-duration);
+}
+
+.sidebar__fold--open {
+  grid-template-rows: 1fr;
+  /* Not `visible`, which would show a fold that's inside a shut one. */
+  visibility: inherit;
+  transition-delay: 0s;
+}
+
+.sidebar__fold-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.sidebar__list--instant .sidebar__fold {
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar__fold {
+    transition: none;
+  }
+}
+
+.sidebar__more {
+  display: block;
+  width: 100%;
+  min-height: 36px;
+  padding: 6px 16px;
+  border: 0;
+  background: transparent;
+  color: #00678c;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+}
+
+.sidebar__more:hover {
+  background: #e3f4fd;
 }
 
 .sidebar__item {
@@ -867,6 +965,8 @@ body {
 .sidebar__search:focus-visible,
 .sidebar__switch:focus-visible,
 .sidebar__item:focus-visible,
+.sidebar__more:focus-visible,
+.sidebar__group-expand:focus-visible,
 .sidebar__grabber:focus-visible {
   outline: 2px solid #1ca7ec;
   outline-offset: -2px;

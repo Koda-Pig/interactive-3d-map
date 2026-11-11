@@ -35,7 +35,21 @@ interface Group {
   readonly section: HTMLElement;
   readonly count: HTMLElement;
   readonly toggle: HTMLInputElement;
+  /** The precinct's name, which opens and closes its list. */
+  readonly expand: HTMLButtonElement;
+  /** Holds everything under the header, and folds away with it. */
+  readonly body: HTMLElement;
+  /** Holds the locations that aren't featured, and folds away on its own. */
+  readonly restBody: HTMLElement;
+  /** Under the featured locations, and brings in the rest. */
+  readonly more: HTMLButtonElement;
+  /** Featured locations first, then the rest. */
   readonly rows: readonly Row[];
+  /** The locations behind "Show more". None when nothing is featured. */
+  readonly rest: readonly Row[];
+  open: boolean;
+  /** Whether the rest are listed along with the featured locations. */
+  showAll: boolean;
 }
 
 function wordsIn(text: string): string[] {
@@ -69,17 +83,39 @@ function createRow(location: Location, header: HTMLElement, onPick: () => void):
   };
 }
 
+const FOLD_OPEN_CLASS = "sidebar__fold--open";
+
+/**
+ * A box that slides open and shut. Its one grid row grows from nothing to its
+ * contents' height, which CSS can animate without knowing that height.
+ */
+function createFold(...contents: HTMLElement[]): HTMLElement {
+  const inner = document.createElement("div");
+  inner.className = "sidebar__fold-inner";
+  inner.append(...contents);
+  const fold = document.createElement("div");
+  fold.className = "sidebar__fold";
+  fold.append(inner);
+  return fold;
+}
+
 function createGroup(
   category: Category,
   actions: SidebarActions,
   onPick: (location: Location) => void,
+  onChange: () => void,
 ): Group {
-  const name = document.createElement("h2");
-  name.className = "sidebar__group-name";
-  name.textContent = PRECINCT_NAMES[category];
-
   const count = document.createElement("span");
   count.className = "sidebar__group-count";
+
+  const expand = document.createElement("button");
+  expand.type = "button";
+  expand.className = "sidebar__group-expand";
+  expand.append(PRECINCT_NAMES[category], count);
+
+  const name = document.createElement("h2");
+  name.className = "sidebar__group-name";
+  name.append(expand);
 
   const toggle = document.createElement("input");
   toggle.type = "checkbox";
@@ -97,19 +133,58 @@ function createGroup(
 
   const header = document.createElement("div");
   header.className = "sidebar__group-header";
-  header.append(name, count, switchArea);
+  header.append(name, switchArea);
 
-  const rows = layout.locations
+  const all = layout.locations
     .filter((location) => location.category === category)
     .map((location) => createRow(location, header, () => onPick(location)));
+  const featured = all.filter((row) => row.location.featured);
+  // With nothing featured there's no short list to lead with, so all of it shows.
+  const lead = featured.length > 0 ? featured : all;
+  const rest = all.filter((row) => !lead.includes(row));
 
-  const list = document.createElement("ul");
-  list.className = "sidebar__items";
-  list.append(...rows.map((row) => row.item));
+  const leadList = document.createElement("ul");
+  leadList.className = "sidebar__items";
+  leadList.append(...lead.map((row) => row.item));
+
+  const restList = document.createElement("ul");
+  restList.className = "sidebar__items";
+  restList.append(...rest.map((row) => row.item));
+  const restBody = createFold(restList);
+
+  const more = document.createElement("button");
+  more.type = "button";
+  more.className = "sidebar__more";
+
+  const body = createFold(leadList, restBody, more);
+  body.id = `sidebar-precinct-${category}`;
+  expand.setAttribute("aria-controls", body.id);
 
   const section = document.createElement("section");
-  section.append(header, list);
-  return { section, count, toggle, rows };
+  section.append(header, body);
+
+  const group: Group = {
+    section,
+    count,
+    toggle,
+    expand,
+    body,
+    restBody,
+    more,
+    rows: [...lead, ...rest],
+    rest,
+    open: false,
+    showAll: false,
+  };
+  expand.addEventListener("click", () => {
+    group.open = !group.open;
+    onChange();
+  });
+  more.addEventListener("click", () => {
+    group.showAll = !group.showAll;
+    onChange();
+  });
+  return group;
 }
 
 const PLACEHOLDER_ICON =
@@ -229,27 +304,50 @@ export function createSidebar(
   }
 
   const groups = new Map<Category, Group>(
-    CATEGORIES.map((category) => [category, createGroup(category, actions, pick)]),
+    CATEGORIES.map((category) => [category, createGroup(category, actions, pick, render)]),
   );
   const rows = [...groups.values()].flatMap((group) => group.rows);
   list.append(...[...groups.values()].map((group) => group.section));
 
-  function applySearch(): void {
+  /**
+   * Shows what belongs on screen. A search lists every match, whatever is
+   * folded away. Otherwise an open precinct lists its featured locations, and
+   * the rest once asked.
+   */
+  function render(): void {
     const query = wordsIn(search.value);
-    for (const { section, count, rows: groupRows } of groups.values()) {
+    const searching = query.length > 0;
+    let anyMatched = false;
+    for (const group of groups.values()) {
       let matched = 0;
-      for (const row of groupRows) {
+      for (const row of group.rows) {
         row.item.hidden = !matches(row, query);
         matched += row.item.hidden ? 0 : 1;
       }
-      section.hidden = matched === 0;
-      count.textContent = String(matched);
+      anyMatched ||= matched > 0;
+      group.section.hidden = matched === 0;
+      group.count.textContent = String(matched);
+      group.expand.disabled = searching;
+      group.expand.setAttribute("aria-expanded", String(searching || group.open));
+      group.body.classList.toggle(FOLD_OPEN_CLASS, searching || group.open);
+      group.restBody.classList.toggle(FOLD_OPEN_CLASS, searching || group.showAll);
+      group.more.hidden = searching || group.rest.length === 0;
+      group.more.textContent = group.showAll ? "Show fewer" : `Show ${group.rest.length} more`;
+      group.more.setAttribute("aria-expanded", String(group.showAll));
     }
-    const anyMatched = rows.some((row) => !row.item.hidden);
     empty.textContent = anyMatched ? "" : `No locations match "${search.value.trim()}"`;
   }
 
-  search.addEventListener("input", applySearch);
+  /** Runs a change to the list with its folds snapping, not sliding. */
+  function withoutSliding(change: () => void): void {
+    list.classList.add("sidebar__list--instant");
+    change();
+    // Reading the height applies the change before the slide is allowed again.
+    void list.offsetHeight;
+    list.classList.remove("sidebar__list--instant");
+  }
+
+  search.addEventListener("input", render);
   search.addEventListener("keydown", (event) => {
     if (event.key !== "Enter") {
       return;
@@ -265,7 +363,7 @@ export function createSidebar(
     sheet.close();
   });
 
-  applySearch();
+  render();
 
   return {
     panelWidth() {
@@ -280,6 +378,13 @@ export function createSidebar(
         selected.button.setAttribute("aria-current", "true");
         preview = createPreview(selected.location);
         selected.item.append(preview);
+        const group = groups.get(selected.location.category);
+        if (group) {
+          group.open = true;
+          group.showAll ||= group.rest.includes(selected);
+        }
+        // The row is scrolled to at once, so it has to be in its final place.
+        withoutSliding(render);
         revealRow(list, selected);
       }
     },

@@ -34,6 +34,8 @@ interface LocationBase {
   readonly description: string;
   /** Keeps the name label up when zoomed out, ahead of the minor labels. */
   readonly major?: boolean;
+  /** Leads its precinct's list in the sidebar, ahead of "Show more". */
+  readonly featured?: boolean;
   /** A picture for the sidebar, as a URL. A placeholder is shown without one. */
   readonly image?: string;
 }
