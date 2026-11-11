@@ -22,61 +22,27 @@ from the edges (the sidebar crops with `object-fit: cover`).
 ## Status (11 November 2026)
 
 All 57 files exist in `public/images/locations/` and every location's `image` field is
-set, so the coverage test passes. That does not mean the images are done: 46 are finished
-illustrations and 11 are screenshots of the 3D map standing in until their illustration
+set, so the coverage test passes. That does not mean the images are done: 47 are finished
+illustrations and 10 are screenshots of the 3D map standing in until their illustration
 is generated. Some stand-ins show a cyan highlight artefact.
 
-**Finished illustrations (46). Don't regenerate these without a reason.**
+**Finished illustrations (47). Don't regenerate these without a reason.**
 
 - Racing: `circuit`, `pit-lane`, `pit-conference-building`, `grandstands-main-straight`,
   `grandstand-d`, `grandstand-e`, `ga-bank`, `paddock`, `team-logistics-yard`
 - Conference and events: `arrival-plaza`, `gateway-arch`, `plaza-tower`,
   `grandstand-fan-walk`, `exhibition-hall`, `expo-centre`, `expo-loading-yard`,
   `amphitheatre`, `conference-footbridge`, `conference-entrance`, `infield-reserve`
-- Hospitality and waterfront: `lake`, `promenade`, `lake-fountain`, `paddle-boats`
+- Hospitality and waterfront: `lake`, `promenade`, `lake-fountain`, `paddle-boats`,
+  `fireworks-barge`, `lakeside-restaurant`, `hotel-waterfront`, `hotel-lakeside`,
+  `hotel-promenade`, `infield-hospitality`
+- Academy and automotive: `karting-track`, `karting-clubhouse`, `karting-garages`,
+  `driving-academy`, `skid-pan`, `academy-handling-ground`, `automotive-hub`,
+  `automotive-test-pad`, `automotive-demonstration-court`
+- Residential and commercial: `trackside-residences`, `residents-club`, `tennis-courts`,
+  `swimming-pool`, `retail-quarter`, `research-park`
+- Parking and transport: `n7`
 - Entrances: `gate`
-
-- Newly finished: `fireworks-barge`
-
-- Newly finished: `lakeside-restaurant`
-
-- Newly finished: `hotel-waterfront`
-
-- Newly finished: `hotel-lakeside`
-
-- Newly finished: `hotel-promenade`
-
-- Newly finished: `infield-hospitality`
-
-- Newly finished: `karting-track`
-
-- Newly finished: `karting-clubhouse`
-
-- Newly finished: `karting-garages`
-
-- Newly finished: `driving-academy`
-
-- Newly finished: `skid-pan`
-
-- Newly finished: `academy-handling-ground`
-
-- Newly finished: `automotive-hub`
-
-- Newly finished: `automotive-test-pad`
-
-- Newly finished: `automotive-demonstration-court`
-
-- Newly finished: `trackside-residences`
-
-- Newly finished: `residents-club`
-
-- Newly finished: `tennis-courts`
-
-- Newly finished: `swimming-pool`
-
-- Newly finished: `retail-quarter`
-
-- Newly finished: `research-park`
 
 **To check among the finished ones**
 
@@ -86,14 +52,11 @@ is generated. Some stand-ins show a cyan highlight artefact.
 - `grandstand-d` and `grandstand-e`: assigned from generation order. Confirm D shows the
   hairpin at the end of the long straight and E the braking zone into Turn 1; swap the
   two files if not.
-- None of the 25 has been checked against the running map since being saved.
+- None of the original 25 has been checked against the running map since being saved.
 
-**Outstanding (11). Each is a map screenshot to replace with an illustration.**
+**Outstanding (10). Each is a map screenshot to replace with an illustration.**
 
-
-
-
-- Parking and transport (11): `n7`, `ring-road`, `infield-checkpoint`, `car-park`, `shuttle-drop-off`, `kalbaskraal-station`, `station-fan-walk`, `aerodrome-runway`, `aerodrome-terminal`, `aerodrome-hangars`, `aerodrome-control-tower`
+- Parking and transport (10): `ring-road`, `infield-checkpoint`, `car-park`, `shuttle-drop-off`, `kalbaskraal-station`, `station-fan-walk`, `aerodrome-runway`, `aerodrome-terminal`, `aerodrome-hangars`, `aerodrome-control-tower`
 
 
 
