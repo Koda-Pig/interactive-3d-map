@@ -115,7 +115,7 @@ function createPreview(location: Location): HTMLElement {
   if (location.image) {
     const image = document.createElement("img");
     image.className = "sidebar__preview-image";
-    image.src = location.image;
+    image.src = `${import.meta.env.BASE_URL}${location.image}`;
     image.alt = location.name;
     figure.append(image);
   } else {

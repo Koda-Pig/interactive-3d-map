@@ -105,6 +105,16 @@ The user reviewed the running map and asked for facilities to sit as close to th
 - **Waterfront.** The lake is 10% smaller in each direction, about a fifth less water, with the promenade scaled to match. The restaurants moved onto the promenade, and Waterfront Drive's southern leg moved north to `z = 915`, 25 m behind the hotels. The lake has a fountain, a jetty with paddle boats, and a fireworks barge.
 - **Protection test.** Buildings and banks are now checked against the two barrier lines the map draws, not against a radius around each point of the track, because a bank that follows an irregular catchment is closer to some parts of the track than that catchment is deep.
 
+### Land use outside the circuit, 10 November 2026
+
+The user found that the true-scale site read as empty ground around a small developed core, and asked for believable use of the spare land without changing the scale or moving the circuit, pits, paddock, roads or buildings. Nothing in `locations` moved. The layout data gained a `landUse` list of zones, which are not locations: they have no label or sidebar entry, and scenery fills only the parts of a zone that the shared occupancy leaves free, so everything in them stands behind the protective boundary.
+
+- **Farmland inside the boundary.** Wheat blocks run along the north edge and in the north-west, north-east, south-west and south-east corners. Vineyard blocks stand in the north-east and across the south, below Waterfront Drive and the hotels. Both are drawn every day, with gum windbreaks along their edges.
+- **Event fields.** The ground between the response road and the eastern residences is a campsite. Two fields are overflow parking: north of the ring road beside Aerodrome Road, and between Car Park P8 and the academy campus. They are mown fields with windbreaks every day, and fill with tents, caravans and cars in race mode only. The campsite has no road of its own. It is a grass field reached on foot from Gates 9 and 10, which is a simplification.
+- **Fan villages.** Three race-mode villages, each with a big screen, a bleacher, a street of food stalls and marquees: between Grandstand E and Bank 7 by Gate 6, east of the response road behind Bank 2, and inside Gate 13 south of Bank 3.
+- **Race mode** also fills the car parks to about 80% and puts spectators on the eight banks. The crowd drawn is a sample, about one figure per 9 m², not the capacity estimate.
+- **Every day** has staff cars in about 5% of the stalls, two shuttles, works vehicles inside the gates, olive trees between car park rows, trees along the campus roads, streets and walks, planting around the hotels, halls, residences and campuses, and clumps of trees on the remaining open ground outside the circuit. The infield keeps its defined grass and drainage and gained no trees.
+
 ### Implementation review
 
 The running app is reviewed from above and in close views of the pits, VIP compound, access crossings, corner catchments, and both external campuses. Checks cover whole-site, race weekend, and conference day modes. The fan walk and campus access are inspected because relocation can create conflicts outside the main circuit.

@@ -135,7 +135,7 @@ Colours:
 }
 ```
 
-The layout lives in `src/data/locations.json`, as a `locations` list, `grading` zones (terraces levelled as one, so everything standing on them shares a ground height) and `events`: the ways the venue is used, each naming the precincts and locations in use.
+The layout lives in `src/data/locations.json`, as a `locations` list, `grading` zones (terraces levelled as one, so everything standing on them shares a ground height), `landUse` zones (open ground with a use: `wheat`, `vineyard`, `overflow-parking`, `camping` or `fan-village`, which scenery fills wherever nothing else stands) and `events`: the ways the venue is used, each naming the precincts and locations in use.
 
 - Every location has an `id`, a `name`, a `category`, a `type` and a `description`. All but gates also need a `color`
 - `category`: `racing`, `conference`, `hospitality`, `academy`, `commercial`, `transport` or `entrances`
@@ -145,7 +145,7 @@ The layout lives in `src/data/locations.json`, as a `locations` list, `grading` 
 - `height`: how tall a building is, in metres
 - `parts`: used instead of `footprint` and `height` by buildings with several volumes. Each part has its own `footprint` and `height`, and can add `base` (how far above the ground it starts) and `color`
 - `model`: on a building or one of its `parts`, a `.glb` from `public/models` that replaces the simple shape and is fitted to its footprint. It has a `file`, a `facing` (`north`, `east`, `south` or `west`), and optionally a `grid` of `[columns, rows]`, or an `endCap` file that makes `file` a tile repeated between two end pieces. If the file can't be loaded, the simple shape is drawn
-- `image`: a picture's URL, shown in the sidebar under the location when it's selected. Without one, a placeholder is shown
+- `image`: a path relative to `public/`, such as `images/locations/lake.webp`, with no leading slash. The sidebar resolves it against the site's base URL, so images also work when hosted under a sub-path. Without one, a placeholder is shown
 - `markings`: on an area, lines painted on it, such as a tennis court's. It has a `color`, a `width` and a list of `lines`, each a path
 - `planting`: on an area, `park` scatters trees through it and `edge` lines its edge with them
 - Tracks and roads use `path` (a list of points, rounded the same way) instead of `footprint`, plus `width`. Optional: `closed`, `branches` (more paths in the same location), `median`, `dashed`, `kerbs`, `runoff`, `runoffColor`, `step` (spacing of the ribbon's cross-sections, for very long roads)

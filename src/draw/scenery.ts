@@ -1451,8 +1451,9 @@ function plantFieldEdges(context: Context, instances: Instances): void {
     zone.outline.forEach(([ax, az], index) => {
       const [bx, bz] = zone.outline[(index + 1) % zone.outline.length];
       // The site's own edge already has its row of trees.
-      const onBoundary = [ax, az, bx, bz].filter((value) => Math.abs(value) > boundary);
-      if (onBoundary.length >= 2 && Math.abs(ax) > boundary === Math.abs(bx) > boundary) {
+      const alongSiteEdge =
+        (ax === bx && Math.abs(ax) > boundary) || (az === bz && Math.abs(az) > boundary);
+      if (alongSiteEdge) {
         return;
       }
       const length = Math.hypot(bx - ax, bz - az);
@@ -1574,11 +1575,11 @@ function plantParkland(context: Context, instances: Instances): void {
     ({ x, z }): Point => [x, z],
   );
   const reach = SITE_SIZE / 2 - 15;
-  for (let attempt = 0; attempt < 2600; attempt += 1) {
+  for (let attempt = 0; attempt < 3600; attempt += 1) {
     const x = random() * reach * 2 - reach;
     const z = random() * reach * 2 - reach;
     if (
-      noise2(x, z, 150, 41) < 0.3 ||
+      noise2(x, z, 150, 41) < 0.12 ||
       occupied.isTaken(x, z) ||
       landUseAt(x, z) ||
       signedDistance(x, z, infield) < 0 ||

@@ -162,6 +162,7 @@
   "locations": [
     {
       "id": "circuit",
+      "image": "images/locations/circuit.webp",
       "name": "Blue Mountain Racing Circuit",
       "major": true,
       "category": "racing",
@@ -229,6 +230,8 @@
     },
     {
       "id": "pit-lane",
+      "image": "images/locations/pit-lane.webp",
+      "image": "images/locations/pit-lane.webp",
       "name": "Pit Lane",
       "category": "racing",
       "type": "track",
@@ -239,6 +242,8 @@
     },
     {
       "id": "pit-conference-building",
+      "image": "images/locations/pit-conference-building.webp",
+      "image": "images/locations/pit-conference-building.webp",
       "name": "Pit / Conference Building",
       "major": true,
       "category": "racing",
@@ -269,6 +274,7 @@
     },
     {
       "id": "paddock",
+      "image": "images/locations/paddock.webp",
       "name": "Paddock",
       "category": "racing",
       "type": "area",
@@ -278,6 +284,8 @@
     },
     {
       "id": "grandstand-a",
+      "image": "images/locations/grandstands-main-straight.webp",
+      "image": "images/locations/grandstands-main-straight.webp",
       "name": "Grandstand A",
       "major": true,
       "category": "racing",
@@ -308,6 +316,8 @@
     },
     {
       "id": "grandstand-b",
+      "image": "images/locations/grandstands-main-straight.webp",
+      "image": "images/locations/grandstands-main-straight.webp",
       "name": "Grandstand B",
       "major": true,
       "category": "racing",
@@ -338,6 +348,8 @@
     },
     {
       "id": "grandstand-c",
+      "image": "images/locations/grandstands-main-straight.webp",
+      "image": "images/locations/grandstands-main-straight.webp",
       "name": "Grandstand C",
       "major": true,
       "category": "racing",
@@ -368,6 +380,8 @@
     },
     {
       "id": "grandstand-d",
+      "image": "images/locations/grandstand-d.webp",
+      "image": "images/locations/grandstand-d.webp",
       "name": "Grandstand D",
       "major": true,
       "category": "racing",
@@ -398,6 +412,8 @@
     },
     {
       "id": "grandstand-e",
+      "image": "images/locations/grandstand-e.webp",
+      "image": "images/locations/grandstand-e.webp",
       "name": "Grandstand E",
       "major": true,
       "category": "racing",
@@ -428,6 +444,8 @@
     },
     {
       "id": "ga-bank-1",
+      "image": "images/locations/ga-bank.webp",
+      "image": "images/locations/ga-bank.webp",
       "name": "General Admission Bank 1",
       "category": "racing",
       "type": "building",
@@ -438,6 +456,8 @@
     },
     {
       "id": "ga-bank-2",
+      "image": "images/locations/ga-bank.webp",
+      "image": "images/locations/ga-bank.webp",
       "name": "General Admission Bank 2",
       "category": "racing",
       "type": "building",
@@ -448,6 +468,8 @@
     },
     {
       "id": "ga-bank-3",
+      "image": "images/locations/ga-bank.webp",
+      "image": "images/locations/ga-bank.webp",
       "name": "General Admission Bank 3",
       "category": "racing",
       "type": "building",
@@ -458,6 +480,8 @@
     },
     {
       "id": "ga-bank-4",
+      "image": "images/locations/ga-bank.webp",
+      "image": "images/locations/ga-bank.webp",
       "name": "General Admission Bank 4",
       "category": "racing",
       "type": "building",
@@ -468,6 +492,8 @@
     },
     {
       "id": "ga-bank-5",
+      "image": "images/locations/ga-bank.webp",
+      "image": "images/locations/ga-bank.webp",
       "name": "General Admission Bank 5",
       "category": "racing",
       "type": "building",
@@ -478,6 +504,8 @@
     },
     {
       "id": "ga-bank-6",
+      "image": "images/locations/ga-bank.webp",
+      "image": "images/locations/ga-bank.webp",
       "name": "General Admission Bank 6",
       "category": "racing",
       "type": "building",
@@ -488,6 +516,8 @@
     },
     {
       "id": "ga-bank-7",
+      "image": "images/locations/ga-bank.webp",
+      "image": "images/locations/ga-bank.webp",
       "name": "General Admission Bank 7",
       "category": "racing",
       "type": "building",
@@ -498,6 +528,8 @@
     },
     {
       "id": "ga-bank-8",
+      "image": "images/locations/ga-bank.webp",
+      "image": "images/locations/ga-bank.webp",
       "name": "General Admission Bank 8",
       "category": "racing",
       "type": "building",
@@ -508,6 +540,7 @@
     },
     {
       "id": "arrival-plaza",
+      "image": "images/locations/arrival-plaza.webp",
       "name": "Arrival Plaza",
       "major": true,
       "category": "conference",
@@ -519,6 +552,7 @@
     },
     {
       "id": "grandstand-fan-walk",
+      "image": "images/locations/grandstand-fan-walk.webp",
       "name": "Grandstand Fan Walk",
       "major": true,
       "category": "conference",
@@ -531,6 +565,7 @@
     },
     {
       "id": "gateway-arch",
+      "image": "images/locations/gateway-arch.webp",
       "name": "Gateway Arch",
       "category": "conference",
       "type": "building",
@@ -558,6 +593,7 @@
     },
     {
       "id": "plaza-tower-north",
+      "image": "images/locations/plaza-tower.webp",
       "name": "Plaza Tower North",
       "category": "conference",
       "type": "building",
@@ -572,6 +608,7 @@
     },
     {
       "id": "plaza-tower-south",
+      "image": "images/locations/plaza-tower.webp",
       "name": "Plaza Tower South",
       "category": "conference",
       "type": "building",
@@ -586,6 +623,7 @@
     },
     {
       "id": "exhibition-hall-1",
+      "image": "images/locations/exhibition-hall.webp",
       "name": "Exhibition Hall 1",
       "category": "conference",
       "type": "building",
@@ -601,6 +639,7 @@
     },
     {
       "id": "exhibition-hall-2",
+      "image": "images/locations/exhibition-hall.webp",
       "name": "Exhibition Hall 2",
       "category": "conference",
       "type": "building",
@@ -616,6 +655,7 @@
     },
     {
       "id": "expo-centre",
+      "image": "images/locations/expo-centre.webp",
       "name": "Expo Centre",
       "major": true,
       "category": "conference",
@@ -697,6 +737,7 @@
     },
     {
       "id": "expo-forecourt",
+      "image": "images/locations/expo-centre.webp",
       "name": "Expo forecourt",
       "category": "conference",
       "type": "area",
@@ -706,6 +747,7 @@
     },
     {
       "id": "expo-loading-yard",
+      "image": "images/locations/expo-loading-yard.webp",
       "name": "Expo loading yard",
       "category": "conference",
       "type": "area",
@@ -715,6 +757,7 @@
     },
     {
       "id": "expo-walk",
+      "image": "images/locations/expo-centre.webp",
       "name": "Expo Walk",
       "category": "conference",
       "type": "road",
@@ -726,6 +769,7 @@
     },
     {
       "id": "amphitheatre",
+      "image": "images/locations/amphitheatre.webp",
       "name": "Amphitheatre",
       "major": true,
       "category": "conference",
@@ -762,6 +806,8 @@
     },
     {
       "id": "lake",
+      "image": "images/locations/lake.webp",
+      "image": "images/locations/lake.webp",
       "name": "The Lake",
       "major": true,
       "category": "hospitality",
@@ -772,6 +818,7 @@
     },
     {
       "id": "promenade",
+      "image": "images/locations/promenade.webp",
       "name": "Lakeside Promenade",
       "category": "hospitality",
       "type": "road",
@@ -783,6 +830,7 @@
     },
     {
       "id": "lake-fountain",
+      "image": "images/locations/lake-fountain.webp",
       "name": "Lake Fountain",
       "category": "hospitality",
       "type": "building",
@@ -797,6 +845,7 @@
     },
     {
       "id": "paddle-boats",
+      "image": "images/locations/paddle-boats.webp",
       "name": "Paddle Boat Rides",
       "category": "hospitality",
       "type": "building",
@@ -829,6 +878,7 @@
     },
     {
       "id": "fireworks-barge",
+      "image": "images/locations/fireworks-barge.webp",
       "name": "Lake Fireworks Display",
       "category": "hospitality",
       "type": "building",
@@ -843,6 +893,7 @@
     },
     {
       "id": "restaurant-west",
+      "image": "images/locations/lakeside-restaurant.webp",
       "name": "Lakeside Restaurant West",
       "category": "hospitality",
       "type": "building",
@@ -867,6 +918,7 @@
     },
     {
       "id": "restaurant-central",
+      "image": "images/locations/lakeside-restaurant.webp",
       "name": "Lakeside Restaurant Central",
       "category": "hospitality",
       "type": "building",
@@ -891,6 +943,7 @@
     },
     {
       "id": "restaurant-east",
+      "image": "images/locations/lakeside-restaurant.webp",
       "name": "Lakeside Restaurant East",
       "category": "hospitality",
       "type": "building",
@@ -915,6 +968,7 @@
     },
     {
       "id": "hotel-waterfront",
+      "image": "images/locations/hotel-waterfront.webp",
       "name": "Waterfront Hotel",
       "major": true,
       "category": "hospitality",
@@ -930,6 +984,7 @@
     },
     {
       "id": "hotel-lakeside",
+      "image": "images/locations/hotel-lakeside.webp",
       "name": "Lakeside Lodge",
       "category": "hospitality",
       "type": "building",
@@ -944,6 +999,7 @@
     },
     {
       "id": "hotel-promenade",
+      "image": "images/locations/hotel-promenade.webp",
       "name": "Promenade Hotel",
       "category": "hospitality",
       "type": "building",
@@ -958,6 +1014,7 @@
     },
     {
       "id": "karting-track",
+      "image": "images/locations/karting-track.webp",
       "name": "Karting Track",
       "major": true,
       "category": "academy",
@@ -973,6 +1030,7 @@
     },
     {
       "id": "karting-clubhouse",
+      "image": "images/locations/karting-clubhouse.webp",
       "name": "Karting Clubhouse",
       "category": "academy",
       "type": "building",
@@ -987,6 +1045,7 @@
     },
     {
       "id": "karting-garages",
+      "image": "images/locations/karting-garages.webp",
       "name": "Karting Garages",
       "category": "academy",
       "type": "building",
@@ -1145,6 +1204,7 @@
     },
     {
       "id": "karting-pit-apron",
+      "image": "images/locations/karting-track.webp",
       "name": "Karting pit apron",
       "category": "academy",
       "type": "area",
@@ -1154,6 +1214,7 @@
     },
     {
       "id": "driving-academy",
+      "image": "images/locations/driving-academy.webp",
       "name": "Driving Academy",
       "category": "academy",
       "type": "building",
@@ -1168,6 +1229,7 @@
     },
     {
       "id": "skid-pan",
+      "image": "images/locations/skid-pan.webp",
       "name": "Academy Skid Pad",
       "category": "academy",
       "type": "area",
@@ -1177,6 +1239,7 @@
     },
     {
       "id": "skid-pad-markings",
+      "image": "images/locations/skid-pan.webp",
       "name": "Skid pad markings",
       "category": "academy",
       "type": "road",
@@ -1189,6 +1252,7 @@
     },
     {
       "id": "skid-pad-control",
+      "image": "images/locations/skid-pan.webp",
       "name": "Skid pad control cabin",
       "category": "academy",
       "type": "building",
@@ -1199,6 +1263,7 @@
     },
     {
       "id": "automotive-hub",
+      "image": "images/locations/automotive-hub.webp",
       "name": "Automotive Hub",
       "major": true,
       "category": "academy",
@@ -1223,6 +1288,7 @@
     },
     {
       "id": "automotive-test-pad",
+      "image": "images/locations/automotive-test-pad.webp",
       "name": "Automotive Test Pad",
       "category": "academy",
       "type": "area",
@@ -1232,6 +1298,7 @@
     },
     {
       "id": "infield-park",
+      "image": "images/locations/infield-reserve.webp",
       "name": "Infield drainage and grass reserve",
       "category": "conference",
       "type": "area",
@@ -1243,6 +1310,7 @@
     },
     {
       "id": "trackside-residences-east",
+      "image": "images/locations/trackside-residences.webp",
       "name": "Trackside Residences East",
       "major": true,
       "category": "commercial",
@@ -1332,6 +1400,7 @@
     },
     {
       "id": "residences-east-street",
+      "image": "images/locations/trackside-residences.webp",
       "name": "Residences East Street",
       "category": "commercial",
       "type": "road",
@@ -1343,6 +1412,7 @@
     },
     {
       "id": "tennis-courts-east",
+      "image": "images/locations/tennis-courts.webp",
       "name": "Tennis Courts East",
       "category": "commercial",
       "type": "area",
@@ -1357,6 +1427,7 @@
     },
     {
       "id": "swimming-pool-east",
+      "image": "images/locations/swimming-pool.webp",
       "name": "Swimming Pool East",
       "category": "commercial",
       "type": "water",
@@ -1366,6 +1437,7 @@
     },
     {
       "id": "residents-club-east",
+      "image": "images/locations/residents-club.webp",
       "name": "Residents' Club East",
       "category": "commercial",
       "type": "building",
@@ -1414,6 +1486,7 @@
     },
     {
       "id": "trackside-residences-south",
+      "image": "images/locations/trackside-residences.webp",
       "name": "Trackside Residences South",
       "category": "commercial",
       "type": "building",
@@ -1476,6 +1549,7 @@
     },
     {
       "id": "residences-south-street",
+      "image": "images/locations/trackside-residences.webp",
       "name": "Residences South Street",
       "category": "commercial",
       "type": "road",
@@ -1486,6 +1560,7 @@
     },
     {
       "id": "tennis-courts-south",
+      "image": "images/locations/tennis-courts.webp",
       "name": "Tennis Courts South",
       "category": "commercial",
       "type": "area",
@@ -1500,6 +1575,7 @@
     },
     {
       "id": "swimming-pool-south",
+      "image": "images/locations/swimming-pool.webp",
       "name": "Swimming Pool South",
       "category": "commercial",
       "type": "water",
@@ -1509,6 +1585,7 @@
     },
     {
       "id": "residents-club-south",
+      "image": "images/locations/residents-club.webp",
       "name": "Residents' Club South",
       "category": "commercial",
       "type": "building",
@@ -1557,6 +1634,7 @@
     },
     {
       "id": "retail-quarter",
+      "image": "images/locations/retail-quarter.webp",
       "name": "Retail Quarter",
       "major": true,
       "category": "commercial",
@@ -1648,6 +1726,7 @@
     },
     {
       "id": "retail-street",
+      "image": "images/locations/retail-quarter.webp",
       "name": "Retail Street",
       "category": "commercial",
       "type": "road",
@@ -1658,6 +1737,7 @@
     },
     {
       "id": "research-park",
+      "image": "images/locations/research-park.webp",
       "name": "Research and Technology Park",
       "major": true,
       "category": "commercial",
@@ -1733,6 +1813,7 @@
     },
     {
       "id": "research-park-street",
+      "image": "images/locations/research-park.webp",
       "name": "Research Park Street",
       "category": "commercial",
       "type": "road",
@@ -1743,6 +1824,7 @@
     },
     {
       "id": "n7",
+      "image": "images/locations/n7.webp",
       "name": "N7 National Road",
       "major": true,
       "category": "transport",
@@ -1756,6 +1838,7 @@
     },
     {
       "id": "n7-north-interchange",
+      "image": "images/locations/n7.webp",
       "name": "N7 North Interchange",
       "category": "transport",
       "type": "road",
@@ -1767,6 +1850,7 @@
     },
     {
       "id": "n7-south-interchange",
+      "image": "images/locations/n7.webp",
       "name": "N7 South Interchange",
       "category": "transport",
       "type": "road",
@@ -1778,6 +1862,7 @@
     },
     {
       "id": "ring-road",
+      "image": "images/locations/ring-road.webp",
       "name": "Ring Road",
       "category": "transport",
       "type": "road",
@@ -1790,6 +1875,7 @@
     },
     {
       "id": "waterfront-drive",
+      "image": "images/locations/ring-road.webp",
       "name": "Waterfront Drive",
       "category": "transport",
       "type": "road",
@@ -1800,6 +1886,7 @@
     },
     {
       "id": "infield-road",
+      "image": "images/locations/infield-checkpoint.webp",
       "name": "Infield Road",
       "category": "transport",
       "type": "road",
@@ -1817,6 +1904,7 @@
     },
     {
       "id": "infield-checkpoint",
+      "image": "images/locations/infield-checkpoint.webp",
       "name": "Infield Security Checkpoint",
       "category": "transport",
       "type": "building",
@@ -1835,6 +1923,7 @@
     },
     {
       "id": "car-park-1",
+      "image": "images/locations/car-park.webp",
       "name": "Car Park P1",
       "category": "transport",
       "type": "area",
@@ -1845,6 +1934,7 @@
     },
     {
       "id": "car-park-2",
+      "image": "images/locations/car-park.webp",
       "name": "Car Park P2",
       "category": "transport",
       "type": "area",
@@ -1855,6 +1945,7 @@
     },
     {
       "id": "car-park-3",
+      "image": "images/locations/car-park.webp",
       "name": "Car Park P3",
       "category": "transport",
       "type": "area",
@@ -1865,6 +1956,7 @@
     },
     {
       "id": "car-park-4",
+      "image": "images/locations/car-park.webp",
       "name": "Car Park P4",
       "category": "transport",
       "type": "area",
@@ -1875,6 +1967,7 @@
     },
     {
       "id": "car-park-5",
+      "image": "images/locations/car-park.webp",
       "name": "Car Park P5",
       "category": "transport",
       "type": "area",
@@ -1885,6 +1978,7 @@
     },
     {
       "id": "car-park-6",
+      "image": "images/locations/car-park.webp",
       "name": "Car Park P6",
       "category": "transport",
       "type": "area",
@@ -1895,6 +1989,7 @@
     },
     {
       "id": "car-park-7",
+      "image": "images/locations/car-park.webp",
       "name": "Car Park P7",
       "category": "transport",
       "type": "area",
@@ -1905,6 +2000,7 @@
     },
     {
       "id": "car-park-8",
+      "image": "images/locations/car-park.webp",
       "name": "Car Park P8",
       "category": "transport",
       "type": "area",
@@ -1915,6 +2011,7 @@
     },
     {
       "id": "shuttle-drop-off",
+      "image": "images/locations/shuttle-drop-off.webp",
       "name": "Shuttle Drop-off",
       "category": "transport",
       "type": "area",
@@ -1924,6 +2021,7 @@
     },
     {
       "id": "kalbaskraal-station",
+      "image": "images/locations/kalbaskraal-station.webp",
       "name": "Kalbaskraal Station",
       "major": true,
       "category": "transport",
@@ -1939,6 +2037,7 @@
     },
     {
       "id": "railway-line",
+      "image": "images/locations/kalbaskraal-station.webp",
       "name": "Railway Line",
       "category": "transport",
       "type": "road",
@@ -1950,6 +2049,7 @@
     },
     {
       "id": "fan-walk",
+      "image": "images/locations/station-fan-walk.webp",
       "name": "Station Fan Walk",
       "category": "transport",
       "type": "road",
@@ -1961,6 +2061,7 @@
     },
     {
       "id": "aerodrome-road",
+      "image": "images/locations/ring-road.webp",
       "name": "Aerodrome Road",
       "category": "transport",
       "type": "road",
@@ -1971,6 +2072,7 @@
     },
     {
       "id": "aerodrome-runway",
+      "image": "images/locations/aerodrome-runway.webp",
       "name": "Aerodrome Runway",
       "major": true,
       "category": "transport",
@@ -1983,6 +2085,7 @@
     },
     {
       "id": "aerodrome-apron",
+      "image": "images/locations/aerodrome-runway.webp",
       "name": "Aerodrome Apron",
       "category": "transport",
       "type": "area",
@@ -1992,6 +2095,7 @@
     },
     {
       "id": "aerodrome-terminal",
+      "image": "images/locations/aerodrome-terminal.webp",
       "name": "Aerodrome Terminal",
       "category": "transport",
       "type": "building",
@@ -2006,6 +2110,7 @@
     },
     {
       "id": "aerodrome-hangars",
+      "image": "images/locations/aerodrome-hangars.webp",
       "name": "Aerodrome Hangars",
       "category": "transport",
       "type": "building",
@@ -2032,6 +2137,7 @@
     },
     {
       "id": "aerodrome-control-tower",
+      "image": "images/locations/aerodrome-control-tower.webp",
       "name": "Aerodrome Control Tower",
       "category": "transport",
       "type": "building",
@@ -2046,6 +2152,8 @@
     },
     {
       "id": "gate-1",
+      "image": "images/locations/gate.webp",
+      "image": "images/locations/gate.webp",
       "name": "Gate 1",
       "category": "entrances",
       "type": "gate",
@@ -2055,6 +2163,8 @@
     },
     {
       "id": "gate-2",
+      "image": "images/locations/gate.webp",
+      "image": "images/locations/gate.webp",
       "name": "Gate 2",
       "category": "entrances",
       "type": "gate",
@@ -2064,6 +2174,8 @@
     },
     {
       "id": "gate-3",
+      "image": "images/locations/gate.webp",
+      "image": "images/locations/gate.webp",
       "name": "Gate 3",
       "category": "entrances",
       "type": "gate",
@@ -2073,6 +2185,8 @@
     },
     {
       "id": "gate-4",
+      "image": "images/locations/gate.webp",
+      "image": "images/locations/gate.webp",
       "name": "Gate 4",
       "category": "entrances",
       "type": "gate",
@@ -2082,6 +2196,8 @@
     },
     {
       "id": "gate-5",
+      "image": "images/locations/gate.webp",
+      "image": "images/locations/gate.webp",
       "name": "Gate 5",
       "category": "entrances",
       "type": "gate",
@@ -2091,6 +2207,8 @@
     },
     {
       "id": "gate-6",
+      "image": "images/locations/gate.webp",
+      "image": "images/locations/gate.webp",
       "name": "Gate 6",
       "category": "entrances",
       "type": "gate",
@@ -2100,6 +2218,8 @@
     },
     {
       "id": "gate-7",
+      "image": "images/locations/gate.webp",
+      "image": "images/locations/gate.webp",
       "name": "Gate 7",
       "category": "entrances",
       "type": "gate",
@@ -2109,6 +2229,8 @@
     },
     {
       "id": "gate-8",
+      "image": "images/locations/gate.webp",
+      "image": "images/locations/gate.webp",
       "name": "Gate 8",
       "category": "entrances",
       "type": "gate",
@@ -2118,6 +2240,8 @@
     },
     {
       "id": "gate-9",
+      "image": "images/locations/gate.webp",
+      "image": "images/locations/gate.webp",
       "name": "Gate 9",
       "category": "entrances",
       "type": "gate",
@@ -2127,6 +2251,8 @@
     },
     {
       "id": "gate-10",
+      "image": "images/locations/gate.webp",
+      "image": "images/locations/gate.webp",
       "name": "Gate 10",
       "category": "entrances",
       "type": "gate",
@@ -2136,6 +2262,8 @@
     },
     {
       "id": "gate-11",
+      "image": "images/locations/gate.webp",
+      "image": "images/locations/gate.webp",
       "name": "Gate 11",
       "category": "entrances",
       "type": "gate",
@@ -2145,6 +2273,8 @@
     },
     {
       "id": "gate-12",
+      "image": "images/locations/gate.webp",
+      "image": "images/locations/gate.webp",
       "name": "Gate 12",
       "category": "entrances",
       "type": "gate",
@@ -2154,6 +2284,8 @@
     },
     {
       "id": "gate-13",
+      "image": "images/locations/gate.webp",
+      "image": "images/locations/gate.webp",
       "name": "Gate 13",
       "category": "entrances",
       "type": "gate",
@@ -2163,6 +2295,8 @@
     },
     {
       "id": "gate-14",
+      "image": "images/locations/gate.webp",
+      "image": "images/locations/gate.webp",
       "name": "Gate 14",
       "category": "entrances",
       "type": "gate",
@@ -2172,6 +2306,8 @@
     },
     {
       "id": "pit-working-apron",
+      "image": "images/locations/pit-lane.webp",
+      "image": "images/locations/pit-lane.webp",
       "name": "Pit working apron",
       "category": "racing",
       "type": "area",
@@ -2181,6 +2317,7 @@
     },
     {
       "id": "paddock-service-aisles",
+      "image": "images/locations/paddock.webp",
       "name": "Paddock service aisles",
       "category": "racing",
       "type": "road",
@@ -2192,6 +2329,7 @@
     },
     {
       "id": "team-support-rows",
+      "image": "images/locations/paddock.webp",
       "name": "Team support rows",
       "category": "racing",
       "type": "building",
@@ -2492,6 +2630,7 @@
     },
     {
       "id": "conference-footbridge",
+      "image": "images/locations/conference-footbridge.webp",
       "name": "Conference pedestrian bridge",
       "category": "conference",
       "type": "road",
@@ -2508,6 +2647,7 @@
     },
     {
       "id": "conference-approach",
+      "image": "images/locations/grandstand-fan-walk.webp",
       "name": "Conference entrance walk",
       "category": "conference",
       "type": "road",
@@ -2518,6 +2658,7 @@
     },
     {
       "id": "infield-guest-walk",
+      "image": "images/locations/conference-footbridge.webp",
       "name": "Infield guest walk",
       "category": "conference",
       "type": "road",
@@ -2529,6 +2670,7 @@
     },
     {
       "id": "conference-entrance",
+      "image": "images/locations/conference-entrance.webp",
       "name": "Conference entrance",
       "category": "conference",
       "type": "building",
@@ -2543,6 +2685,7 @@
     },
     {
       "id": "infield-hospitality",
+      "image": "images/locations/infield-hospitality.webp",
       "name": "Infield hospitality courtyard",
       "category": "hospitality",
       "type": "area",
@@ -2553,6 +2696,7 @@
     },
     {
       "id": "hospitality-pavilions",
+      "image": "images/locations/infield-hospitality.webp",
       "name": "Infield hospitality pavilions",
       "category": "hospitality",
       "type": "building",
@@ -2587,6 +2731,7 @@
     },
     {
       "id": "hospitality-terrace",
+      "image": "images/locations/infield-hospitality.webp",
       "name": "Infield viewing terrace",
       "category": "hospitality",
       "type": "area",
@@ -2597,6 +2742,7 @@
     },
     {
       "id": "hospitality-paths",
+      "image": "images/locations/infield-hospitality.webp",
       "name": "Hospitality courtyard paths",
       "category": "hospitality",
       "type": "road",
@@ -2608,6 +2754,7 @@
     },
     {
       "id": "hospitality-shade",
+      "image": "images/locations/infield-hospitality.webp",
       "name": "Hospitality shade court",
       "category": "hospitality",
       "type": "building",
@@ -2640,6 +2787,7 @@
     },
     {
       "id": "infield-drainage",
+      "image": "images/locations/infield-reserve.webp",
       "name": "Infield drainage swale",
       "category": "conference",
       "type": "area",
@@ -2650,6 +2798,7 @@
     },
     {
       "id": "academy-handling-ground",
+      "image": "images/locations/academy-handling-ground.webp",
       "name": "Academy handling ground",
       "category": "academy",
       "type": "area",
@@ -2660,6 +2809,7 @@
     },
     {
       "id": "academy-handling-course",
+      "image": "images/locations/academy-handling-ground.webp",
       "name": "Academy handling course",
       "category": "academy",
       "type": "road",
@@ -2672,6 +2822,7 @@
     },
     {
       "id": "academy-briefing-bays",
+      "image": "images/locations/academy-handling-ground.webp",
       "name": "Academy briefing bays",
       "category": "academy",
       "type": "building",
@@ -2692,6 +2843,7 @@
     },
     {
       "id": "automotive-demonstration-court",
+      "image": "images/locations/automotive-demonstration-court.webp",
       "name": "Automotive demonstration court",
       "category": "academy",
       "type": "area",
@@ -2702,6 +2854,7 @@
     },
     {
       "id": "automotive-demonstration-loop",
+      "image": "images/locations/automotive-demonstration-court.webp",
       "name": "Automotive demonstration loop",
       "category": "academy",
       "type": "road",
@@ -2713,6 +2866,7 @@
     },
     {
       "id": "vehicle-display-courts",
+      "image": "images/locations/automotive-demonstration-court.webp",
       "name": "Vehicle display courts",
       "category": "academy",
       "type": "area",
@@ -2724,6 +2878,7 @@
     },
     {
       "id": "automotive-preparation-bays",
+      "image": "images/locations/automotive-demonstration-court.webp",
       "name": "Automotive preparation bays",
       "category": "academy",
       "type": "building",
@@ -2749,6 +2904,7 @@
     },
     {
       "id": "vehicle-display-markings",
+      "image": "images/locations/automotive-demonstration-court.webp",
       "name": "Demonstration bay markings",
       "category": "academy",
       "type": "road",
@@ -2761,6 +2917,7 @@
     },
     {
       "id": "academy-campus-road",
+      "image": "images/locations/ring-road.webp",
       "name": "Academy campus access",
       "category": "transport",
       "type": "road",
@@ -2772,6 +2929,7 @@
     },
     {
       "id": "automotive-campus-road",
+      "image": "images/locations/ring-road.webp",
       "name": "Automotive campus access",
       "category": "transport",
       "type": "road",
@@ -2783,6 +2941,7 @@
     },
     {
       "id": "team-logistics-yard",
+      "image": "images/locations/team-logistics-yard.webp",
       "name": "Team logistics yard",
       "category": "racing",
       "type": "area",
@@ -2793,6 +2952,7 @@
     },
     {
       "id": "logistics-service-aisle",
+      "image": "images/locations/team-logistics-yard.webp",
       "name": "Team logistics service aisle",
       "category": "racing",
       "type": "road",
@@ -2805,6 +2965,7 @@
     },
     {
       "id": "team-equipment-tents",
+      "image": "images/locations/team-logistics-yard.webp",
       "name": "Team equipment tents",
       "category": "racing",
       "type": "building",
@@ -2831,6 +2992,7 @@
     },
     {
       "id": "circuit-response-road",
+      "image": "images/locations/ring-road.webp",
       "name": "Circuit response access",
       "category": "transport",
       "type": "road",
