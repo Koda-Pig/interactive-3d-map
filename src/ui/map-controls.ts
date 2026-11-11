@@ -296,7 +296,7 @@ export function createMapControls(
   };
 }
 
-const TOUCH_HINT = "Drag to move. Use two fingers to turn and zoom.";
+const TOUCH_HINT = "Drag to move. Pinch to zoom and twist to turn. Drag two fingers up to tilt.";
 const MOUSE_HINT = "Drag to move. Right-drag, or drag the compass, to turn. Scroll to zoom.";
 /** How long the hint stays up after the first move, in milliseconds. */
 const HINT_LINGER = 2500;

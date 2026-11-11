@@ -17,6 +17,7 @@ import { Precincts } from "./scene/precincts.ts";
 import { detectQuality } from "./scene/quality.ts";
 import { SelectionOutline } from "./scene/selection-outline.ts";
 import { createSky, TABLE_MOUNTAIN_MODEL } from "./scene/sky.ts";
+import { addTouchGestures } from "./scene/touch-gestures.ts";
 import { constrainView, createCamera, createControls } from "./scene/view.ts";
 import "./style.css";
 import { createGround } from "./terrain/ground.ts";
@@ -122,6 +123,7 @@ scene.add(
 
 const camera = createCamera(host.clientWidth / host.clientHeight);
 const controls = createControls(camera, renderer.domElement);
+addTouchGestures(camera, controls, renderer.domElement);
 constrainView(camera, controls);
 
 const precincts = new Precincts(site, scenery.precincts);

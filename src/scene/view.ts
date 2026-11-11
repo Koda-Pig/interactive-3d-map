@@ -60,7 +60,7 @@ export function createCamera(aspect: number): PerspectiveCamera {
 
 export function createControls(camera: PerspectiveCamera, element: HTMLElement): MapControls {
   // MapControls defaults to left-drag pan, right-drag rotate and wheel zoom,
-  // with one-finger pan and two-finger zoom and rotate on touch.
+  // with one-finger pan on touch. Two fingers are handled in touch-gestures.ts.
   const controls = new MapControls(camera, element);
   controls.target.copy(homeView(camera.aspect).target);
   controls.enableDamping = true;
