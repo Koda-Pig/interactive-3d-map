@@ -14,6 +14,8 @@ const ANCHOR_LIFT = 4;
 const PATH_STEP = 20;
 /** Clear space kept around each label, in pixels. */
 const LABEL_MARGIN = 3;
+/** Clear space kept around the selected thing on screen, in pixels. */
+const SELECTION_CLEARANCE = 10;
 /** Matches the fade in `style.css`, with a frame or two to spare, in milliseconds. */
 const FADE_TIME = 200;
 
@@ -21,6 +23,7 @@ interface Label {
   readonly location: Location;
   readonly element: HTMLElement;
   readonly marker: CSS2DObject;
+  readonly object: Object3D;
   /** When the label last stopped showing, so it can leave the page once it has faded. */
   hiddenAt: number;
   readonly anchor: Vector3;
@@ -70,6 +73,11 @@ export class SiteLabels {
 
   private readonly labels: Label[];
   private active: ReadonlySet<Location> = new Set();
+  /**
+   * The selected thing's bounds, which minor labels keep clear of so they
+   * don't sit on its outline. Tracks and roads span the site, so they have none.
+   */
+  private selectedBounds: Box3 | null = null;
 
   /** `container` must be the `CSS2DRenderer`'s element. */
   constructor(
@@ -98,6 +106,7 @@ export class SiteLabels {
         location,
         element,
         marker,
+        object,
         hiddenAt: Number.NEGATIVE_INFINITY,
         anchor,
         width: element.offsetWidth,
@@ -120,6 +129,11 @@ export class SiteLabels {
    */
   setActive(locations: ReadonlySet<Location>, selected: Location | null): void {
     this.active = locations;
+    const label = this.labels.find((candidate) => candidate.location === selected);
+    this.selectedBounds =
+      label && label.location.type !== "track" && label.location.type !== "road"
+        ? new Box3().setFromObject(label.object)
+        : null;
     for (const { element, location } of this.labels) {
       element.classList.toggle("label--active", locations.has(location));
       element.classList.toggle("label--selected", location === selected);
@@ -141,6 +155,7 @@ export class SiteLabels {
     const placed: Label[] = [];
     const projected = new Vector3();
     let again = false;
+    const clearOfSelection = this.selectionBox(camera, viewWidth, viewHeight);
 
     const place = (label: Label, active: boolean): void => {
       projected.copy(label.anchor).project(camera);
@@ -163,6 +178,10 @@ export class SiteLabels {
         onScreen &&
         inRange &&
         !blocked.some((box) => isUnder(label, box)) &&
+        (active ||
+          label.location.major === true ||
+          !clearOfSelection ||
+          !isUnder(label, clearOfSelection)) &&
         !placed.some((other) => overlaps(label, other));
 
       if (wanted) {
@@ -200,6 +219,44 @@ export class SiteLabels {
       }
     });
     return again;
+  }
+
+  /** The selected thing's outline on screen, with room around it, or `null` if there's none to keep clear of. */
+  private selectionBox(camera: Camera, viewWidth: number, viewHeight: number): Box | null {
+    const bounds = this.selectedBounds;
+    if (!bounds) {
+      return null;
+    }
+    const corner = new Vector3();
+    let left = Number.POSITIVE_INFINITY;
+    let top = Number.POSITIVE_INFINITY;
+    let right = Number.NEGATIVE_INFINITY;
+    let bottom = Number.NEGATIVE_INFINITY;
+    for (let i = 0; i < 8; i++) {
+      corner
+        .set(
+          i & 1 ? bounds.max.x : bounds.min.x,
+          i & 2 ? bounds.max.y : bounds.min.y,
+          i & 4 ? bounds.max.z : bounds.min.z,
+        )
+        .project(camera);
+      // Part of it is behind the camera, so its outline on screen is unbounded.
+      if (corner.z > 1) {
+        return null;
+      }
+      const x = ((corner.x + 1) / 2) * viewWidth;
+      const y = ((1 - corner.y) / 2) * viewHeight;
+      left = Math.min(left, x);
+      right = Math.max(right, x);
+      top = Math.min(top, y);
+      bottom = Math.max(bottom, y);
+    }
+    return {
+      left: left - SELECTION_CLEARANCE,
+      top: top - SELECTION_CLEARANCE,
+      right: right + SELECTION_CLEARANCE,
+      bottom: bottom + SELECTION_CLEARANCE,
+    };
   }
 
   /** The location whose label is showing at a point on screen, in pixels. */

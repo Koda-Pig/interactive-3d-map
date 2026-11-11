@@ -86,10 +86,14 @@ export class CameraFlight {
     const phi = MathUtils.clamp(current.phi, MIN_FRAME_TILT, MAX_FRAME_TILT);
     const { theta } = current;
 
-    // Seen at a tilt, the ground the box stands on is foreshortened up the
-    // screen, and its height shows instead.
-    const across = Math.hypot(size.x, size.z) / 2;
-    const upScreen = across * Math.cos(phi) + (size.y / 2) * Math.sin(phi);
+    // How far the box reaches either side of its centre across the screen and
+    // into it, turned to the way the camera faces. Seen at a tilt, the depth
+    // is foreshortened up the screen, and the box's height shows instead.
+    const cos = Math.abs(Math.cos(theta));
+    const sin = Math.abs(Math.sin(theta));
+    const across = (size.x / 2) * cos + (size.z / 2) * sin;
+    const deep = (size.x / 2) * sin + (size.z / 2) * cos;
+    const upScreen = deep * Math.cos(phi) + (size.y / 2) * Math.sin(phi);
 
     // The tangent of the angle one pixel covers at the middle of the view.
     const pixel = (2 * Math.tan(MathUtils.degToRad(camera.fov) / 2)) / clear.viewHeight;
@@ -168,6 +172,19 @@ export class CameraFlight {
       MAP_HALF_SIZE,
     );
     this.fly({ target: new Vector3(x, heightAt(x, z), z), radius, phi, theta }, ZOOM_STEP_DURATION);
+  }
+
+  /**
+   * Slides the view sideways by a number of pixels, measured at the orbit
+   * point, in a map `viewHeight` pixels tall. Positive moves the view right,
+   * so the map appears to move left.
+   */
+  shiftBy(pixels: number, viewHeight: number): void {
+    if (pixels === 0 || viewHeight === 0) {
+      return;
+    }
+    const pixel = (2 * Math.tan(MathUtils.degToRad(this.camera.fov) / 2)) / viewHeight;
+    this.panBy(pixels * pixel, 0);
   }
 
   /**

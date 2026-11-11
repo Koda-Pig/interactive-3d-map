@@ -169,10 +169,16 @@ const sidebar = createSidebar(sidebarElement, sidebarOpenElement, {
   togglePrecinct: (category, shown) => interaction.setPrecinctShown(category, shown),
   resetView: () => interaction.resetView(),
   shownChanged: () => {
+    // The panel covers the map's left edge, so the view slides by half its
+    // width to keep what was in the middle in the middle of what's left.
+    const width = sidebar.panelWidth();
+    flight.shiftBy(-(width - sidebarWidth) / 2, host.clientHeight);
+    sidebarWidth = width;
     overlays.invalidate();
     needsRender = true;
   },
 });
+let sidebarWidth = sidebar.panelWidth();
 
 let needsRender = false;
 
@@ -226,6 +232,9 @@ renderer.domElement.addEventListener("keydown", (event) => {
 
 const hint = createHint(hintElement);
 controls.addEventListener("start", () => hint.dismiss());
+// Using anything at all, the sidebar or a button included, means the visitor has found their way.
+window.addEventListener("pointerdown", () => hint.dismiss(), { once: true });
+window.addEventListener("keydown", () => hint.dismiss(), { once: true });
 
 let pixelRatio = Math.min(window.devicePixelRatio, quality.maxPixelRatio);
 

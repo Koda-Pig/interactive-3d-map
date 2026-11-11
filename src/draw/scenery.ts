@@ -43,7 +43,7 @@ import { boundsOf, centreOf, outsetPolygon, signedDistance } from "../layout/pol
 import { createTrackSafety } from "../layout/track-safety.ts";
 import type { Quality } from "../scene/quality.ts";
 import { MAP_HALF_SIZE, SITE_SIZE } from "../site.ts";
-import { fieldEdgeX } from "../terrain/fields.ts";
+import { fieldEdgeX, siteEdgeDistance, siteEdgePoint } from "../terrain/fields.ts";
 import type { GroundSurface } from "../terrain/ground.ts";
 import { heightAt } from "../terrain/height.ts";
 import { hash2, noise2 } from "../terrain/noise.ts";
@@ -531,32 +531,6 @@ function plantedAreas(): AreaLocation[] {
   );
 }
 
-function plantSiteEdge(context: Context, instances: Instances): void {
-  const edge = SITE_SIZE / 2 + 18;
-  for (let along = -edge; along <= edge; along += 34) {
-    for (const [x, z] of [
-      [along, -edge],
-      [along, edge],
-      [-edge, along],
-      [edge, along],
-    ]) {
-      if (
-        noise2(x, z, 260, 31) > -0.25 &&
-        !context.occupied.isTaken(x, z) &&
-        context.random() < context.density
-      ) {
-        placeTree(
-          context,
-          instances,
-          "gum",
-          x + context.random() * 8 - 4,
-          z + context.random() * 8 - 4,
-        );
-      }
-    }
-  }
-}
-
 function plantAvenues(context: Context, instances: Instances): void {
   for (const id of AVENUE_ROADS) {
     const road = locationById<TrackLocation>(id);
@@ -614,7 +588,38 @@ function plantAreas(context: Context, instances: Instances): void {
 }
 
 function insideSite(x: number, z: number): boolean {
-  return Math.max(Math.abs(x), Math.abs(z)) < SITE_SIZE / 2;
+  return Math.max(Math.abs(x), Math.abs(z)) < SITE_SIZE / 2 || siteEdgeDistance(x, z) < 0;
+}
+
+/** How far apart the trees in the hedge around the site are, in metres. */
+const HEDGE_SPACING = 22;
+
+/**
+ * A broken line of trees just outside the site's edge, so the mown grass ends
+ * at a hedge instead of fading into the wheat.
+ */
+function plantSiteHedge(context: Context, instances: Instances): void {
+  const { random, occupied } = context;
+  const reach = SITE_SIZE / 2 + 200;
+  for (let side = 0; side < 4; side += 1) {
+    for (let along = -reach; along <= reach; along += HEDGE_SPACING) {
+      const point = siteEdgePoint(side, along + random() * 6 - 3);
+      if (!point) {
+        continue;
+      }
+      // Out past the verge, onto the wheat side.
+      const x = point[0] + [1, 0, -1, 0][side] * 7;
+      const z = point[1] + [0, 1, 0, -1][side] * 7;
+      if (
+        noise2(x, z, 260, 42) < -0.35 ||
+        occupied.isTaken(x, z) ||
+        random() > context.density * 0.9
+      ) {
+        continue;
+      }
+      placeTree(context, instances, random() < 0.7 ? "gum" : "pine", x, z);
+    }
+  }
 }
 
 /** Stands of trees on the farms in view around the site. */
@@ -2001,7 +2006,7 @@ export function createScenery(kit: Kit, surface: GroundSurface, quality: Quality
 
   const trees = new Instances();
   const farTrees = new Instances();
-  plantSiteEdge(context, trees);
+  plantSiteHedge(context, trees);
   plantAvenues(context, trees);
   plantAreas(context, trees);
   plantFanWalk(context, trees);

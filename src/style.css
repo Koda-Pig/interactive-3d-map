@@ -187,14 +187,16 @@ body {
   bottom: max(16px, env(safe-area-inset-bottom));
   transition: left var(--sidebar-duration) var(--sidebar-ease);
   margin: 0;
-  padding: 8px 12px;
-  border-radius: 8px;
-  background: #004272;
-  color: #fff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  /* A caption, not a control: quieter than the navy buttons. */
+  background: rgb(255 255 255 / 78%);
+  color: #26343d;
   font:
-    500 13px / 1.3 Roboto,
+    400 12px / 1.3 Roboto,
     system-ui,
     sans-serif;
+  letter-spacing: 0.01em;
   pointer-events: none;
 }
 
@@ -202,7 +204,7 @@ body {
 .hint {
   position: fixed;
   left: calc(var(--sidebar-width) + 16px);
-  bottom: calc(max(16px, env(safe-area-inset-bottom)) + 44px);
+  bottom: calc(max(16px, env(safe-area-inset-bottom)) + 32px);
   max-width: calc(100vw - var(--sidebar-width) - 96px);
   transition:
     left var(--sidebar-duration) var(--sidebar-ease),
@@ -960,6 +962,13 @@ body {
   background: #e3f4fd;
 }
 
+/* On a wide screen the details card shows the same picture beside it. */
+@media (min-width: 601px) {
+  .sidebar__preview {
+    display: none;
+  }
+}
+
 .sidebar__preview-image {
   display: block;
   width: 100%;
@@ -1083,19 +1092,20 @@ body {
     width: auto;
   }
 
+  /* The switch and the compass share the top row, with the notice tucked under the switch. */
   .notice {
-    top: max(16px, env(safe-area-inset-top));
+    top: calc(max(16px, env(safe-area-inset-top)) + 44px);
     bottom: auto;
     left: max(16px, env(safe-area-inset-left));
-    font-size: 12px;
+    padding: 3px 8px;
+    font-size: 11px;
   }
 
   .event-switch {
-    top: calc(max(16px, env(safe-area-inset-top)) + 40px);
+    top: max(16px, env(safe-area-inset-top));
     left: max(16px, env(safe-area-inset-left));
-    align-items: center;
-    width: calc(100vw - 32px);
-    max-width: none;
+    width: max-content;
+    max-width: calc(100vw - 32px - 64px);
     font-size: 12px;
   }
 
@@ -1103,8 +1113,10 @@ body {
     padding: 7px 9px;
   }
 
+  /* The summary drops below the notice, so the two never touch. */
   .event-switch__summary {
     max-width: 100%;
+    margin-top: 26px;
   }
 
   .stats {
@@ -1123,7 +1135,7 @@ body {
 
   /* Pinching zooms on a phone, so only the compass is worth the room. */
   .map-controls {
-    top: calc(max(16px, env(safe-area-inset-top)) + 92px);
+    top: max(16px, env(safe-area-inset-top));
     right: max(16px, env(safe-area-inset-right));
     bottom: auto;
   }
@@ -1146,5 +1158,12 @@ body {
   /* Short enough to leave the map in view above it. */
   .info-panel__image {
     aspect-ratio: 3 / 1;
+  }
+}
+
+/* Small phones: the switch tightens so the compass still fits beside it. */
+@media (max-width: 380px) {
+  .event-switch__button {
+    padding: 7px 6px;
   }
 }

@@ -7,7 +7,12 @@ const FIELD_WIDTH = 460;
 const FIELD_LENGTH = 360;
 const EDGE_WARP = 110;
 const EDGE_SOLVE_STEPS = 3;
-const GRASS_EDGE_WIDTH = 30;
+/** How soft the line between the site's mown grass and the wheat is, in metres. */
+const GRASS_EDGE_WIDTH = 7;
+/** How far the site's edge wanders out past the square, in metres, so it doesn't read as a rectangle. */
+const SITE_EDGE_WANDER = 70;
+/** The darker verge along the site's edge, where a hedge runs, in metres either side of it. */
+const VERGE_WIDTH = 9;
 const GRASS_TONE: readonly [number, number, number] = [150, 158, 96];
 
 // sRGB. Wheat tones are listed more often so gold dominates the patchwork.
@@ -41,6 +46,40 @@ const COVER_TAPS: readonly (readonly [number, number])[] = [
   [1, 1],
 ];
 
+/**
+ * How far a point lies outside the site's grass, in metres, negative inside.
+ * The edge follows the warp of the field edges and wanders outward, never in,
+ * so nothing built near the edge ends up standing in the wheat.
+ */
+export function siteEdgeDistance(x: number, z: number): number {
+  const warpedX = x + EDGE_WARP * noise2(x, z, 900, 11);
+  const warpedZ = z + EDGE_WARP * noise2(x, z, 900, 12);
+  const wander = (SITE_EDGE_WANDER / 2) * (1 + noise2(x, z, 420, 41));
+  return Math.max(Math.abs(warpedX), Math.abs(warpedZ)) - SITE_SIZE / 2 - wander;
+}
+
+/**
+ * The point on the site's edge reached by heading straight out from the
+ * middle of one side. `side` is 0 to 3 for east, south, west and north, and
+ * `along` is the distance along that side from its middle. Returns `null` near
+ * the corners, where the neighbouring side takes over.
+ */
+export function siteEdgePoint(side: number, along: number): readonly [number, number] | null {
+  const normalX = [1, 0, -1, 0][side];
+  const normalZ = [0, 1, 0, -1][side];
+  let out = SITE_SIZE / 2;
+  let x = 0;
+  let z = 0;
+  for (let iteration = 0; iteration < EDGE_SOLVE_STEPS + 2; iteration += 1) {
+    x = normalX * out + -normalZ * along;
+    z = normalZ * out + normalX * along;
+    out -= siteEdgeDistance(x, z);
+  }
+  x = normalX * out + -normalZ * along;
+  z = normalZ * out + normalX * along;
+  return Math.abs(siteEdgeDistance(x, z)) < 2 ? [x, z] : null;
+}
+
 /** The land-use zone at a position, and how much of the ground around it is that zone's. */
 function landCover(x: number, z: number) {
   const zone = landUseAt(x, z);
@@ -73,15 +112,17 @@ export function writeFieldColor(x: number, z: number, pixels: Uint8Array, offset
   const row = Math.floor(warpedZ / FIELD_LENGTH + hash2(column, 0, 13));
   const tone = FIELD_TONES[Math.floor(hash2(column, row, 14) * FIELD_TONES.length)];
 
-  // Inside the site the wheat gives way to mown grass.
-  const edge = Math.max(Math.abs(warpedX), Math.abs(warpedZ)) - SITE_SIZE / 2;
+  // Inside the site the wheat gives way to mown grass, behind a darker verge.
+  const edge = siteEdgeDistance(x, z);
   const grass = 1 - Math.min(1, Math.max(0, edge / GRASS_EDGE_WIDTH + 0.5));
+  const verge = Math.max(0, 1 - Math.abs(edge) / VERGE_WIDTH);
 
   const shade =
     1 +
     0.06 * noise2(x, z, 170, 15) +
     0.03 * noise2(x, z, 45, 16) +
-    grass * (0.07 * noise2(x, z, 70, 18) + 0.05 * noise2(x, z, 24, 19));
+    grass * (0.07 * noise2(x, z, 70, 18) + 0.05 * noise2(x, z, 24, 19)) -
+    0.16 * verge * verge;
 
   // Land in use inside the site: wheat blocks get a field tone and crop rows.
   const land = grass > 0 ? landCover(x, z) : null;

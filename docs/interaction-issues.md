@@ -18,6 +18,10 @@ A review of how the map behaves in use, from November 2026. [improvements.md](im
 | Two overlapping labels could swap as the camera moved | Within each rank, a label that's already up keeps its place | [labels.ts](../src/scene/labels.ts) |
 | Every label was repositioned on every frame, shown or not | Hidden labels leave the page once they've faded. In a close view that was 9 of 114 on the page | [labels.ts](../src/scene/labels.ts) |
 | A precinct fade redrew the shadow map on every frame | Shadows are redrawn once, when the precinct's objects appear or go | [precincts.ts](../src/scene/precincts.ts) |
+| Opening the sidebar covered the left third of the site | The view slides by half the panel's width as it opens or closes | [main.ts](../src/main.ts), [flight.ts](../src/scene/flight.ts) |
+| Flights framed a selection by its diagonal, so on a phone a selection stayed small | Flights fit the selection's width and depth as seen from the camera's bearing | [flight.ts](../src/scene/flight.ts) |
+| Minor labels sat on top of the selection's outline | Minor labels keep clear of the selected building or area on screen. Tracks and roads, which span the site, are exempt | [labels.ts](../src/scene/labels.ts) |
+| The how-to hint stayed up until the map itself was dragged | Any press or key anywhere dismisses it | [main.ts](../src/main.ts) |
 | Nothing out of view could be skipped. The ground was one mesh and each kind of tree one site-wide batch, so both were always drawn | The ground is drawn in 49 pieces and scenery batches are split into regions, so the ones out of view are skipped | [ground.ts](../src/terrain/ground.ts), [scenery.ts](../src/draw/scenery.ts) |
 
 ## Still open
