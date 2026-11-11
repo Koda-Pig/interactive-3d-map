@@ -219,6 +219,9 @@ body {
   display: flex;
   gap: 6px;
   padding: 4px;
+  /* One square cell: the pad grid, the zoom buttons and the needle all
+     size from this, so shrinking the controls is a one-value change. */
+  --map-cell: 24px;
   border-radius: 8px;
   background: #004272;
   box-shadow: 0 4px 14px rgb(0 36 63 / 28%);
@@ -234,7 +237,7 @@ body {
 .map-controls__pad {
   display: grid;
   padding: 4px;
-  grid-template: repeat(3, 32px) / repeat(3, 32px);
+  grid-template: repeat(3, var(--map-cell)) / repeat(3, var(--map-cell));
   grid-template-areas:
     ". up ."
     "left middle right"
@@ -302,8 +305,8 @@ body {
 .map-controls__button {
   display: grid;
   place-items: center;
-  width: 32px;
-  height: 32px;
+  width: 100%;
+  height: 100%;
   padding: 0;
   border: 0;
   border-radius: 6px;
@@ -333,8 +336,16 @@ body {
 }
 
 .map-controls__needle {
-  width: 24px;
-  height: 24px;
+  width: var(--map-cell);
+  height: var(--map-cell);
+}
+
+/* The zoom buttons are flex children, not grid items, so 100% would mean
+   the whole column; size them from the shared cell instead. */
+.map-controls__zoom .map-controls__button {
+  width: var(--map-cell);
+  height: var(--map-cell);
+  flex: none;
 }
 
 /* Opens the sidebar, which starts put away on a wide screen. */
@@ -382,14 +393,14 @@ body {
     min-width: 0;
     overflow: hidden;
     transition:
-      width 300ms ease,
+      width 300ms ease-out,
       visibility 0s;
   }
 
   .sidebar-closed .sidebar {
     visibility: hidden;
     transition:
-      width 300ms ease,
+      width 300ms ease-out,
       visibility 0s 300ms;
   }
 
