@@ -9,6 +9,7 @@
   --sheet-handle: 76px;
   --sheet-peek: calc(var(--sheet-handle) + env(safe-area-inset-bottom));
   --open-button-width: 122px;
+  --open-button-height: 38px;
   /* Room beside the button that opens the sidebar, while it's showing. */
   --open-button-space: 0px;
 }
@@ -352,7 +353,8 @@ body {
   flex: none;
 }
 
-/* Opens the sidebar, which starts put away on a wide screen. */
+/* The sidebar's collapsed state on a wide screen. The shell behind it draws
+   the shape, so the button only brings its label, hover and focus ring. */
 .sidebar-open {
   position: fixed;
   top: max(16px, env(safe-area-inset-top));
@@ -363,17 +365,17 @@ body {
   align-items: center;
   box-sizing: border-box;
   width: var(--open-button-width);
-  height: 38px;
+  height: var(--open-button-height);
   padding: 0 12px;
   border: 0;
   border-radius: 8px;
-  background: #004272;
-  box-shadow: 0 4px 14px rgb(0 36 63 / 28%);
+  background: transparent;
   color: #fff;
   font:
     500 13px / 1 Roboto,
     system-ui,
     sans-serif;
+  white-space: nowrap;
   cursor: pointer;
 }
 
@@ -387,30 +389,87 @@ body {
 }
 
 @media (min-width: 601px) {
-  /* The sidebar animates its own width between full and collapsed, so the
-     space it reserves next to the map shrinks with it and no background
-     shows through mid-animation. The pane keeps its width on the inner
-     element, so only the clip edge moves and nothing inside reflows. */
+  /* The sidebar itself only reserves room beside the map, and animates that
+     width so the map grows and shrinks with the panel. What's seen is the
+     shell: one shape that is the full panel when open and the button when
+     closed, and moves between the two. */
   .sidebar {
+    position: relative;
+    z-index: 1;
     flex: none;
     width: var(--sidebar-width);
     min-width: 0;
+    background: none;
+    box-shadow: none;
+    transition: width var(--sidebar-duration) var(--sidebar-ease);
+  }
+
+  /* The button's blue, which is also the panel's title bar, so the bar is
+     what the panel shrinks into. */
+  .sidebar__shell {
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: block;
+    width: var(--sidebar-pane-width);
+    height: 100dvh;
     overflow: hidden;
+    background: #004272;
+    box-shadow: 0 0 16px rgb(0 36 63 / 24%);
+    transition-property: top, left, width, height, border-radius, box-shadow;
+    transition-duration: var(--sidebar-duration);
+    transition-timing-function: var(--sidebar-ease);
+  }
+
+  .sidebar-closed .sidebar__shell {
+    top: max(16px, env(safe-area-inset-top));
+    left: max(16px, env(safe-area-inset-left));
+    width: var(--open-button-width);
+    height: var(--open-button-height);
+    border-radius: 8px;
+    box-shadow: 0 4px 14px rgb(0 36 63 / 28%);
+  }
+
+  /* The pane keeps its full size while the shell clips it, so nothing inside
+     reflows. It fades in late and out early, and the button's label does the
+     opposite, so the two never show at full strength together. */
+  .sidebar__inner {
+    width: var(--sidebar-pane-width);
+    height: 100dvh;
+    box-sizing: border-box;
+    padding-left: env(safe-area-inset-left);
     transition:
-      width var(--sidebar-duration) var(--sidebar-ease),
+      opacity calc(var(--sidebar-duration) * 0.6) ease calc(var(--sidebar-duration) * 0.15),
       visibility 0s;
   }
 
-  .sidebar-closed .sidebar {
+  .sidebar-closed .sidebar__inner {
+    opacity: 0;
     visibility: hidden;
     transition:
-      width var(--sidebar-duration) var(--sidebar-ease),
+      opacity calc(var(--sidebar-duration) * 0.4) ease,
       visibility 0s var(--sidebar-duration);
   }
 
-  .sidebar__inner {
-    width: var(--sidebar-pane-width);
-    padding-left: env(safe-area-inset-left);
+  .sidebar-open {
+    display: flex;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity calc(var(--sidebar-duration) * 0.3) ease,
+      background-color 0.15s ease-out,
+      visibility 0s var(--sidebar-duration);
+  }
+
+  .sidebar-closed .sidebar-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition:
+      opacity calc(var(--sidebar-duration) * 0.5) ease calc(var(--sidebar-duration) * 0.4),
+      background-color 0.15s ease-out,
+      visibility 0s;
   }
 
   .sidebar-closed {
@@ -418,14 +477,16 @@ body {
     --open-button-space: calc(var(--open-button-width) + 8px);
   }
 
-  .sidebar-closed .sidebar-open {
-    display: flex;
-  }
-
+  /* An instant switch. `visibility` has no duration either way, so the part
+     that's put away stops being focusable at once. */
   @media (prefers-reduced-motion: reduce) {
     .sidebar,
-    .sidebar-closed .sidebar {
-      transition: visibility 0s;
+    .sidebar__shell,
+    .sidebar__inner,
+    .sidebar-open,
+    .sidebar-closed .sidebar__inner,
+    .sidebar-closed .sidebar-open {
+      transition: none;
     }
   }
 }
@@ -536,8 +597,9 @@ body {
     sans-serif;
 }
 
-/* Holds the pane at its full width while the sidebar collapses, so nothing
-   inside reflows while the sidebar opens and closes. */
+/* The shell is the panel's outline, and the pane inside it holds the contents.
+   On a phone both just pass the sheet's column layout through. */
+.sidebar__shell,
 .sidebar__inner {
   display: flex;
   flex: 1;

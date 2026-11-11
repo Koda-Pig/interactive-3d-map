@@ -1,6 +1,6 @@
 import type { Category, Location } from "../layout/locations.ts";
 import { CATEGORIES, layout, PRECINCT_NAMES } from "../layout/locations.ts";
-import { createBottomSheet } from "./bottom-sheet.ts";
+import { createBottomSheet, PHONE_LAYOUT } from "./bottom-sheet.ts";
 import { publicUrl, requirePart } from "./dom.ts";
 
 export interface SidebarActions {
@@ -172,11 +172,28 @@ export function createSidebar(
     handleAction: reset,
   });
 
-  // On a wide screen the sidebar is put away until asked for. On a phone it's
-  // the bottom sheet, which has its own way of opening.
+  const pane = requirePart(root, ".sidebar__inner");
+  const phone = window.matchMedia(PHONE_LAYOUT);
+
+  function isShown(): boolean {
+    return !document.documentElement.classList.contains(CLOSED_CLASS);
+  }
+
+  // On a wide screen the panel and the button are one shape, and whichever
+  // half is put away fades out. `inert` takes it out of the tab order and
+  // away from screen readers at once, not when the fade ends. On a phone the
+  // sidebar is the bottom sheet, which is always in reach.
+  function syncInert(): void {
+    const morphs = !phone.matches;
+    pane.inert = morphs && !isShown();
+    openButton.inert = morphs && isShown();
+  }
+
   function setShown(shown: boolean): void {
     document.documentElement.classList.toggle(CLOSED_CLASS, !shown);
     openButton.setAttribute("aria-expanded", String(shown));
+    // Focus moves to the half that's arriving before the other goes inert.
+    (shown ? pane : openButton).inert = false;
     if (shown) {
       if (selected) {
         revealRow(list, selected);
@@ -185,7 +202,10 @@ export function createSidebar(
     } else {
       openButton.focus();
     }
+    syncInert();
   }
+  syncInert();
+  phone.addEventListener("change", syncInert);
   openButton.addEventListener("click", () => setShown(true));
   requirePart(root, ".sidebar__close").addEventListener("click", () => setShown(false));
   root.addEventListener("keydown", (event) => {
