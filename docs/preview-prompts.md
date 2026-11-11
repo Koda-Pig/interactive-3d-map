@@ -22,11 +22,11 @@ from the edges (the sidebar crops with `object-fit: cover`).
 ## Status (11 November 2026)
 
 All 57 files exist in `public/images/locations/` and every location's `image` field is
-set, so the coverage test passes. That does not mean the images are done: 40 are finished
-illustrations and 17 are screenshots of the 3D map standing in until their illustration
+set, so the coverage test passes. That does not mean the images are done: 46 are finished
+illustrations and 11 are screenshots of the 3D map standing in until their illustration
 is generated. Some stand-ins show a cyan highlight artefact.
 
-**Finished illustrations (40). Don't regenerate these without a reason.**
+**Finished illustrations (46). Don't regenerate these without a reason.**
 
 - Racing: `circuit`, `pit-lane`, `pit-conference-building`, `grandstands-main-straight`,
   `grandstand-d`, `grandstand-e`, `ga-bank`, `paddock`, `team-logistics-yard`
@@ -66,6 +66,18 @@ is generated. Some stand-ins show a cyan highlight artefact.
 
 - Newly finished: `automotive-demonstration-court`
 
+- Newly finished: `trackside-residences`
+
+- Newly finished: `residents-club`
+
+- Newly finished: `tennis-courts`
+
+- Newly finished: `swimming-pool`
+
+- Newly finished: `retail-quarter`
+
+- Newly finished: `research-park`
+
 **To check among the finished ones**
 
 - `infield-reserve`: the saved draft is almost all empty grass with a strip of track.
@@ -76,12 +88,13 @@ is generated. Some stand-ins show a cyan highlight artefact.
   two files if not.
 - None of the 25 has been checked against the running map since being saved.
 
-**Outstanding (17). Each is a map screenshot to replace with an illustration.**
+**Outstanding (11). Each is a map screenshot to replace with an illustration.**
 
 
-- Residential and commercial (6): `trackside-residences`, `residents-club`, `tennis-courts`, `swimming-pool`, `retail-quarter`, `research-park`
+
 
 - Parking and transport (11): `n7`, `ring-road`, `infield-checkpoint`, `car-park`, `shuttle-drop-off`, `kalbaskraal-station`, `station-fan-walk`, `aerodrome-runway`, `aerodrome-terminal`, `aerodrome-hangars`, `aerodrome-control-tower`
+
 
 
 **How to finish**
