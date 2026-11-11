@@ -117,7 +117,8 @@ Colours:
 - Ground: warm wheat golds and dry greens, with low hills around and through the site
 - Track: dark asphalt with red and white kerbs
 - Buildings: off-white and light grey, with BMR navy `#004272` and teal `#00678C` as accents
-- Highlight and selection: cyan `#1CA7EC`, Protium's accent colour for this client
+- Selection on the map: an amber `#FFB81C` line around the selected thing, and the same amber on its label. Cyan was tried and disappeared against the lake
+- Focus rings and the selected sidebar row: cyan `#1CA7EC`, Protium's accent colour for this client
 - Interface (sidebar, panels): BMR's style from the deck. Roboto, navy bars, teal buttons, 8px corners
 
 ## Location data

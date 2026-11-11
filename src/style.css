@@ -84,8 +84,15 @@ body {
   font-size: 12px;
 }
 
+/* Hovered: a pale step up from the resting pill, in either size. */
 .label--active {
-  background: #1ca7ec;
+  background: #e3f4fd;
+  color: #004272;
+}
+
+/* Selected: the colour of the line around it on the map (`SELECTION` in materials.ts). */
+.label--selected {
+  background: #ffb81c;
   color: #00243f;
 }
 

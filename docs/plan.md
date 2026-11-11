@@ -39,7 +39,7 @@ BMR hasn't published a track map or masterplan, so we draw our own to fit its pu
 
 ## Phase 3: Interaction
 
-- Pointing at something highlights it in cyan and changes the cursor to a pointer
+- Pointing at something brightens it and changes the cursor to a pointer. The selected thing gets an amber line around it
 - Clicking opens an info panel (name, precinct, short description) and smoothly moves the camera to frame it
 - Floating name labels. Minor labels hide when you're zoomed out, so they don't overlap
 

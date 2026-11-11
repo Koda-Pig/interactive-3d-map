@@ -70,7 +70,7 @@ export class MapInteraction {
     this.parts.panel.show(location);
     this.parts.sidebar.showSelected(location);
     this.parts.precincts.setFocus(location);
-    this.parts.outline.show(location);
+    this.parts.outline.show(location && this.objectOf(location));
     this.refresh();
     if (location && fly) {
       this.parts.flight.frame(new Box3().setFromObject(this.objectOf(location)));
@@ -152,7 +152,7 @@ export class MapInteraction {
       }
     }
     this.lit = next;
-    this.parts.labels.setActive(new Set(next.keys()));
+    this.parts.labels.setActive(new Set(next.keys()), this.selected);
     this.parts.onChange();
   }
 

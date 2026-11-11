@@ -18,7 +18,6 @@ export const Layer = {
   verge: 5,
   track: 6,
   marking: 7,
-  outline: 8,
 } as const;
 
 export type SiteMaterial = MeshLambertMaterial | MeshStandardMaterial;
@@ -121,28 +120,30 @@ export function vertexColorMaterial(layer: number = Layer.marking): MeshLambertM
   return material;
 }
 
-export const HIGHLIGHT = new Color("#1CA7EC");
+/** The colour of the line around the selection, and of its label. Warm, so it stands clear of water, grass and paving. */
+export const SELECTION = new Color("#FFB81C");
+/** What a highlight adds to a surface's own colour, lifting it without recolouring it. */
+const LIFT = new Color("#FFF1DC");
 
 export type HighlightLevel = "hover" | "selected";
 
 export interface HighlightLook {
-  readonly tint: number;
+  /** How much of `LIFT` is added. */
   readonly glow: number;
-  readonly keepsVertexColors: boolean;
 }
 
 type HighlightLooks = Readonly<Record<HighlightLevel, HighlightLook>>;
 
-/** Buildings stay recognisable: their roofs, glass and shading all still show. */
+/** Buildings keep their roofs, glass and shading. The line around the selection does the rest. */
 const BUILDING_LOOKS: HighlightLooks = {
-  hover: { tint: 0.07, glow: 0.03, keepsVertexColors: true },
-  selected: { tint: 0.15, glow: 0.05, keepsVertexColors: true },
+  hover: { glow: 0.06 },
+  selected: { glow: 0.09 },
 };
 
-/** Flat shapes and markers have no form to lose, and no ground outline to help them. */
+/** Flat shapes have no shading to wash out, and are often dark, so they take more. */
 const FLAT_LOOKS: HighlightLooks = {
-  hover: { tint: 0.5, glow: 0.2, keepsVertexColors: false },
-  selected: { tint: 0.8, glow: 0.35, keepsVertexColors: false },
+  hover: { glow: 0.12 },
+  selected: { glow: 0.16 },
 };
 
 export function highlightLook(building: boolean, level: HighlightLevel): HighlightLook {
@@ -153,11 +154,7 @@ const highlightMaterials = new WeakMap<SiteMaterial, Map<HighlightLook, SiteMate
 const baseMaterials = new WeakMap<Mesh, SiteMaterial>();
 const meshLooks = new WeakMap<Mesh, HighlightLook>();
 
-function paintHighlight(material: SiteMaterial, base: SiteMaterial, look: HighlightLook): void {
-  material.color.copy(base.color).lerp(HIGHLIGHT, look.tint);
-}
-
-/** A cyan-tinted copy that keeps the original's layer. */
+/** A brightened copy that keeps the original's layer. */
 function highlightMaterial(base: SiteMaterial, look: HighlightLook): SiteMaterial {
   let copies = highlightMaterials.get(base);
   if (!copies) {
@@ -167,12 +164,10 @@ function highlightMaterial(base: SiteMaterial, look: HighlightLook): SiteMateria
   let material = copies.get(look);
   if (!material) {
     material = base.clone();
-    material.vertexColors &&= look.keepsVertexColors;
     // The original may be caught partway through a precinct fade.
     material.transparent = false;
     material.opacity = 1;
-    paintHighlight(material, base, look);
-    material.emissive.copy(HIGHLIGHT);
+    material.emissive.copy(LIFT);
     material.emissiveIntensity = look.glow;
     copies.set(look, material);
   }
@@ -204,15 +199,9 @@ interface HighlightFade {
 const highlightFades = new Map<Mesh, HighlightFade>();
 
 /** Paints `material` part way between the base's appearance and the full highlight. */
-function paintFade(
-  material: SiteMaterial,
-  base: SiteMaterial,
-  look: HighlightLook,
-  t: number,
-): void {
+function paintFade(material: SiteMaterial, look: HighlightLook, t: number): void {
   const eased = t * t * (3 - 2 * t);
-  material.color.copy(base.color).lerp(HIGHLIGHT, look.tint * eased);
-  material.emissive.copy(HIGHLIGHT);
+  material.emissive.copy(LIFT);
   material.emissiveIntensity = look.glow * eased;
 }
 
@@ -244,11 +233,10 @@ function aimHighlight(
     return;
   }
   const material = base.clone();
-  material.vertexColors &&= look.keepsVertexColors;
   // The base may be caught partway through a precinct fade.
   material.transparent = false;
   material.opacity = 1;
-  paintFade(material, base, look, to ? 0 : 1);
+  paintFade(material, look, to ? 0 : 1);
   mesh.material = material;
   highlightFades.set(mesh, {
     mesh,
@@ -300,7 +288,7 @@ export function updateHighlights(now: number): boolean {
       mesh.material = fade.direction === 1 ? highlightMaterial(fade.base, fade.look) : fade.base;
       highlightFades.delete(mesh);
     } else {
-      paintFade(fade.material, fade.base, fade.look, fade.t);
+      paintFade(fade.material, fade.look, fade.t);
       fading = true;
     }
   }
@@ -309,7 +297,7 @@ export function updateHighlights(now: number): boolean {
 
 /** Call after changing a material's colour, so its highlighted copies follow. */
 export function refreshHighlights(base: SiteMaterial): void {
-  for (const [look, material] of highlightMaterials.get(base) ?? []) {
-    paintHighlight(material, base, look);
+  for (const material of highlightMaterials.get(base)?.values() ?? []) {
+    material.color.copy(base.color);
   }
 }

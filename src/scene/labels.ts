@@ -114,11 +114,15 @@ export class SiteLabels {
     );
   }
 
-  /** The labels of these locations are marked, and shown ahead of all others. */
-  setActive(locations: ReadonlySet<Location>): void {
+  /**
+   * The labels of these locations are marked, and shown ahead of all others.
+   * The selected one takes the colour of the line around it.
+   */
+  setActive(locations: ReadonlySet<Location>, selected: Location | null): void {
     this.active = locations;
     for (const { element, location } of this.labels) {
       element.classList.toggle("label--active", locations.has(location));
+      element.classList.toggle("label--selected", location === selected);
     }
   }
 

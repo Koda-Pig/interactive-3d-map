@@ -116,15 +116,8 @@ scene.environmentIntensity = ENVIRONMENT_INTENSITY;
 const ground = createGround(renderer.capabilities.getMaxAnisotropy(), quality.fieldTextureSize);
 const site = createSite(ground.surface, kit);
 const scenery = createScenery(kit, ground.surface, quality);
-const outline = new SelectionOutline(ground.surface);
-scene.add(
-  sky.object,
-  ground.mesh,
-  site,
-  scenery.setting,
-  outline.object,
-  ...scenery.precincts.values(),
-);
+const outline = new SelectionOutline();
+scene.add(sky.object, ground.mesh, site, scenery.setting, ...scenery.precincts.values());
 
 const camera = createCamera(host.clientWidth / host.clientHeight);
 const controls = createControls(camera, renderer.domElement);
@@ -251,6 +244,7 @@ const frames = new FrameMonitor(renderer, quality, (ratio) => {
 function render(now: number): void {
   sky.follow(camera);
   renderer.render(scene, camera);
+  outline.render(renderer, scene, camera);
   const { width, height } = labelRenderer.getSize();
   if (labels.layout(camera, width, height, overlays.boxes(), now)) {
     needsRender = true;
@@ -285,7 +279,8 @@ renderer.setAnimationLoop((now) => {
     constrainView(camera, controls);
   }
   interaction.update(moved);
-  if (updateHighlights(now) || outline.update(now)) {
+  const highlightsFading = updateHighlights(now);
+  if (outline.update(now) || highlightsFading) {
     needsRender = true;
   }
   const changes = precincts.update(now);
