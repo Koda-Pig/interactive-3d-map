@@ -502,6 +502,53 @@ test("lake features stand in the water, and the lake stays inside its promenade"
   }
 });
 
+test("the waterfront's buildings stand on the quay or over the water", () => {
+  const lake = resolveOutline(locations.find((location) => location.id === "lake").footprint);
+  const promenade = locations.find((location) => location.id === "promenade");
+  const walk = samplePath(resolvePath(promenade.path, true), 4, true);
+  const onWalk = (x, z) =>
+    walk.some((sample) => Math.hypot(sample.x - x, sample.z - z) < promenade.width / 2);
+  for (const id of ["hotel-waterfront", "hotel-lakeside", "hotel-promenade"]) {
+    const corners = outlinesOf(locations.find((location) => location.id === id)).flat();
+    const fromWater = Math.min(...corners.map(([x, z]) => signedDistance(x, z, lake)));
+    assert.ok(fromWater > promenade.width, `${id} stands on the promenade`);
+    assert.ok(
+      fromWater < promenade.width + 12,
+      `${id} is ${fromWater.toFixed(0)} m from the water`,
+    );
+  }
+  for (const id of ["restaurant-west", "restaurant-central", "restaurant-east"]) {
+    const [deck, pavilion] = outlinesOf(locations.find((location) => location.id === id));
+    for (const [x, z] of pavilion) assert.ok(signedDistance(x, z, lake) < 0, `${id} pavilion`);
+    assert.ok(
+      deck.some(([x, z]) => Math.abs(signedDistance(x, z, lake)) < 0.5),
+      `${id} deck is not joined to the quay`,
+    );
+  }
+  // The footbridge lands on the quay at both ends and is over water in between.
+  const bridge = outlinesOf(locations.find((location) => location.id === "lake-footbridge"));
+  const xs = bridge.flat().map(([x]) => x);
+  const zs = bridge.flat().map(([, z]) => z);
+  const middleX = (Math.min(...xs) + Math.max(...xs)) / 2;
+  const middleZ = (Math.min(...zs) + Math.max(...zs)) / 2;
+  for (const z of [Math.min(...zs), Math.max(...zs)]) {
+    assert.ok(Math.abs(signedDistance(middleX, z, lake)) < 0.5, "bridge end is off the quay");
+    assert.ok(onWalk(middleX, z + Math.sign(z - middleZ) * 4), "bridge misses the walk");
+  }
+  assert.ok(signedDistance(middleX, middleZ, lake) < -30, "bridge is not over the neck");
+  // The piazza and the Expo forecourt open straight onto the promenade.
+  for (const id of ["lake-piazza", "expo-forecourt"]) {
+    const outline = resolveOutline(locations.find((location) => location.id === id).footprint);
+    assert.ok(
+      walk.some(
+        (sample) => signedDistance(sample.x, sample.z, outline) < promenade.width / 2 + 0.5,
+      ),
+      `${id} does not reach the promenade`,
+    );
+    for (const [x, z] of outline) assert.ok(signedDistance(x, z, lake) > 0, `${id} is in the lake`);
+  }
+});
+
 test("the checkpoint's hut stands beside the Infield Road before its ramp", () => {
   const road = locations.find((location) => location.id === "infield-road");
   const hut = outlinesOf(locations.find((location) => location.id === "infield-checkpoint")).flat();

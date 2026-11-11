@@ -4,7 +4,12 @@ import { NeutralToneMapping, PCFShadowMap, Scene, WebGLRenderer } from "three";
 import { CSS2DRenderer } from "three/addons/renderers/CSS2DRenderer.js";
 import { layoutModelFiles, loadKit } from "./draw/kit.ts";
 import { updateHighlights } from "./draw/materials.ts";
-import { createScenery, FIREWORKS_LOCATION, SCENERY_MODELS } from "./draw/scenery.ts";
+import {
+  createScenery,
+  FIREWORKS_LOCATION,
+  FOUNTAIN_LOCATION,
+  SCENERY_MODELS,
+} from "./draw/scenery.ts";
 import { createSite } from "./draw/site.ts";
 import { setEventMode } from "./scene/event-modes.ts";
 import { CameraFlight } from "./scene/flight.ts";
@@ -291,9 +296,13 @@ renderer.setAnimationLoop((now) => {
     renderer.shadowMap.needsUpdate = true;
     needsRender = true;
   }
-  // The one thing that moves: fireworks play while their barge is hovered or selected.
+  // The two things that move: the fireworks and the fountain show each play
+  // while their location is hovered or selected.
   scenery.fireworks.setActive(interaction.isLit(FIREWORKS_LOCATION));
-  if (scenery.fireworks.update(now)) {
+  scenery.fountain.setActive(interaction.isLit(FOUNTAIN_LOCATION));
+  // Both are updated, so neither is left mid-pose when the other is playing.
+  const fireworksMoved = scenery.fireworks.update(now);
+  if (scenery.fountain.update(now) || fireworksMoved) {
     needsRender = true;
   }
   const drawing = moved || changes.redraw || needsRender;

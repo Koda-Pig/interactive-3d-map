@@ -120,6 +120,7 @@ const TREE_LINED_ROADS = [
   "research-park-street",
   "fan-walk",
   "expo-walk",
+  "waterfront-walk",
 ];
 /** Buildings with planting around them. */
 const LANDSCAPED_BUILDINGS = [
@@ -157,9 +158,21 @@ const POLE_SPACING = 90;
 const TWO_PI = Math.PI * 2;
 /** Length of a boom gate's arm, in metres. Two of them close a 10 m road. */
 const BOOM_REACH = 5;
-const FOUNTAIN_HEIGHT = 26;
-/** How far in from the shore the paddle boats stay. */
-const BOAT_SHORE_CLEARANCE = 28;
+/** The location whose hover or selection runs the fountain show. */
+export const FOUNTAIN_LOCATION = "lake-fountain";
+/** Jets along the arc between the fountain's two end basins, and how tall they and the centre jet get. */
+const FOUNTAIN_LINE_JETS = 41;
+const FOUNTAIN_LINE_HEIGHT = 24;
+const FOUNTAIN_CENTRE_HEIGHT = 46;
+/** How far the paddle boats stay from the quay, and from anything built on the water. */
+const BOAT_SHORE_CLEARANCE = 20;
+const BOAT_STRUCTURE_CLEARANCE = 28;
+/** The quay's stone coping, in metres: the length of one piece and its height. */
+const COPING_PIECE = 4;
+const COPING_HEIGHT = 1;
+/** Spacing of the trees and lamps along the promenade's landward edge. */
+const QUAY_TREE_SPACING = 24;
+const QUAY_LAMP_SPACING = 48;
 /** The share of the logistics yard's truck bays in use outside race weekends. */
 const YARD_TRUCKS_EVERY_DAY = 0.5;
 /** The share of each car park's stalls in use on any day, and on a race day. */
@@ -430,28 +443,11 @@ function createPaddleBoatFallback(): BufferGeometry {
   return boat;
 }
 
-/** The fountain's water: a tall central jet inside two rings of arcing ones. */
-function createFountainJets(): BufferGeometry {
-  const jets: BufferGeometry[] = [];
-  const jet = (height: number, radius: number, lean: number, turn: number, out: number): void => {
-    const cone = new ConeGeometry(radius, height, 6);
-    cone.translate(0, height / 2, 0);
-    cone.rotateZ(-lean);
-    cone.translate(out, 0, 0);
-    cone.rotateY(turn);
-    jets.push(cone);
-  };
-  jet(FOUNTAIN_HEIGHT, 1.3, 0, 0, 0);
-  for (let index = 0; index < 8; index += 1) {
-    jet(12, 0.7, 0.5, (index / 8) * TWO_PI, 3);
-    jet(7, 0.5, 0.75, ((index + 0.5) / 8) * TWO_PI, 4.5);
-  }
-  const merged = mergeGeometries(jets);
-  if (!merged) throw new Error("The fountain's jets could not be merged");
-  return colorize(merged, (y) => {
-    const t = Math.min(1, y / FOUNTAIN_HEIGHT);
-    return [0.72 + 0.26 * t, 0.88 + 0.1 * t, 1];
-  });
+/** One fountain jet, a metre tall and a metre in radius, to be scaled to its height. */
+function createFountainJet(): BufferGeometry {
+  const cone = new ConeGeometry(1, 1, 6);
+  cone.translate(0, 0.5, 0);
+  return colorize(cone, (y) => [0.72 + 0.26 * y, 0.88 + 0.1 * y, 1]);
 }
 
 function createPerson(): BufferGeometry {
@@ -1053,18 +1049,20 @@ function placeCheckpointBooms(context: Context, instances: Instances): void {
   }
 }
 
-/** The fountain's jets, and paddle boats at the jetty and out on the water. */
-function placeLakeFeatures(context: Context, instances: Instances): void {
-  const { random, surface } = context;
-  const lake = resolveOutline(locationById<AreaLocation>("lake").footprint);
+/** The outline of everything built in the hospitality precinct, part by part. */
+function waterfrontStructures(): Point[][] {
+  return layout.locations.flatMap((location) =>
+    location.type === "building" && location.category === "hospitality"
+      ? buildingParts(location).map((part) => resolveOutline(part.footprint))
+      : [],
+  );
+}
 
-  const fountain = locationById<BuildingLocation>("lake-fountain");
-  const [fountainX, fountainZ] = centreOf(resolveOutline(fountain.footprint ?? []));
-  instances.add(createFountainJets(), {
-    x: fountainX,
-    z: fountainZ,
-    y: surface.heightAt(fountainX, fountainZ) + (fountain.height ?? 0),
-  });
+/** Paddle boats moored at the jetty and out on the water. */
+function placeLakeFeatures(context: Context, instances: Instances): void {
+  const { random } = context;
+  const lake = resolveOutline(locationById<AreaLocation>("lake").footprint);
+  const structures = waterfrontStructures();
 
   const boat = context.model(PADDLE_BOAT) ? undefined : createPaddleBoatFallback();
   const tint = (): Color => new Color(pickOne(random, BOAT_PAINTS));
@@ -1080,19 +1078,20 @@ function placeLakeFeatures(context: Context, instances: Instances): void {
       boat,
     );
   }
-  const barge = centreOf(
-    buildingParts(locationById<BuildingLocation>(FIREWORKS_LOCATION)).flatMap((part) =>
+  // The fountain's jets run between its basins, so boats keep out of the whole stretch.
+  const show = boundsOf(
+    buildingParts(locationById<BuildingLocation>(FOUNTAIN_LOCATION)).flatMap((part) =>
       resolveOutline(part.footprint),
     ),
   );
   const { minX, minZ, maxX, maxZ } = boundsOf(lake);
-  for (let placed = 0, tries = 0; placed < 9 && tries < 200; tries += 1) {
+  for (let placed = 0, tries = 0; placed < 12 && tries < 400; tries += 1) {
     const x = minX + random() * (maxX - minX);
     const z = minZ + random() * (maxZ - minZ);
     const clear =
       signedDistance(x, z, lake) < -BOAT_SHORE_CLEARANCE &&
-      Math.hypot(x - fountainX, z - fountainZ) > 45 &&
-      Math.hypot(x - barge[0], z - barge[1]) > 60;
+      (x < show.minX - 40 || x > show.maxX + 40 || z < show.minZ - 40 || z > show.maxZ + 40) &&
+      structures.every((outline) => signedDistance(x, z, outline) > BOAT_STRUCTURE_CLEARANCE);
     if (clear) {
       placeModel(
         context,
@@ -1106,11 +1105,201 @@ function placeLakeFeatures(context: Context, instances: Instances): void {
   }
 }
 
-/** The fireworks over the lake, which play while their barge is hovered or selected. */
-export interface Fireworks {
+/**
+ * What makes the lake's edge a built quay: a stone coping along the water, and
+ * lamps, trees and people along the promenade behind it.
+ */
+function dressWaterfront(context: Context, trees: Instances, instances: Instances): void {
+  const { random, surface } = context;
+  const water = locationById<AreaLocation>("lake");
+  const lake = resolveOutline(water.footprint);
+  const structures = waterfrontStructures();
+
+  // The coping stops where a deck, a jetty, the bridge or the landing meets the quay.
+  const coping = colorize(
+    openBox(COPING_PIECE + 0.3, COPING_HEIGHT, 0.9, COPING_HEIGHT / 2, 0),
+    (y) => (y > COPING_HEIGHT - 0.01 ? [0.95, 0.93, 0.88] : [0.74, 0.72, 0.67]),
+  );
+  for (const sample of samplePath(resolvePath(water.footprint, true), COPING_PIECE, true)) {
+    const { x, z } = sample;
+    if (structures.every((outline) => signedDistance(x, z, outline) > 1)) {
+      instances.add(coping, { x, z, y: surface.heightAt(x, z), yaw: yawAlong(sample) });
+    }
+  }
+
+  const promenade = locationById<TrackLocation>("promenade");
+  const walk = samplePath(resolvePath(promenade.path, true), 2, true);
+  const half = promenade.width / 2;
+  // The lake can be wound either way, so find which side of the walk is land.
+  const landward = (sample: PathSample): 1 | -1 =>
+    signedDistance(sample.x - sample.dirZ, sample.z + sample.dirX, lake) >
+    signedDistance(sample.x + sample.dirZ, sample.z - sample.dirX, lake)
+      ? 1
+      : -1;
+  const beside = (sample: PathSample, offset: number): Point => {
+    const side = landward(sample) * offset;
+    return [sample.x - sample.dirZ * side, sample.z + sample.dirX * side];
+  };
+  const others = occupancyOf(
+    layout.locations.filter((location) => location !== promenade && location !== water),
+    3,
+  );
+  walk.forEach((sample, index) => {
+    if ((index * 2) % QUAY_LAMP_SPACING === 0) {
+      const [x, z] = beside(sample, half - 1.2);
+      placeModel(context, instances, LIGHT_POLE, { x, z, scale: 0.5, yaw: yawAlong(sample) });
+    }
+    if ((index * 2) % QUAY_TREE_SPACING === QUAY_TREE_SPACING / 2) {
+      const [x, z] = beside(sample, half + 4.5);
+      if (signedDistance(x, z, lake) > half && !others.isTaken(x, z)) {
+        placeTree(context, trees, "olive", x, z);
+      }
+    }
+  });
+
+  const person = createSpectator();
+  const stand = (x: number, z: number): void => {
+    instances.add(person, {
+      x,
+      z,
+      y: surface.heightAt(x, z) + 0.3,
+      tint: pickOne(random, SHIRT_PAINTS),
+    });
+  };
+  const strollers = Math.round(170 * context.density);
+  for (let index = 0; index < strollers; index += 1) {
+    const [x, z] = beside(pickOne(random, walk), (random() * 2 - 1) * (half - 2));
+    if (structures.every((outline) => signedDistance(x, z, outline) > 0.5)) {
+      stand(x, z);
+    }
+  }
+  const piazza = boundsOf(resolveOutline(locationById<AreaLocation>("lake-piazza").footprint));
+  for (let index = 0; index < Math.round(50 * context.density); index += 1) {
+    const x = piazza.minX + 2 + random() * (piazza.maxX - piazza.minX - 4);
+    const z = piazza.minZ + 2 + random() * (piazza.maxZ - piazza.minZ - 4);
+    if (structures.every((outline) => signedDistance(x, z, outline) > 1.5)) {
+      stand(x, z);
+    }
+  }
+}
+
+/** Something on the lake that plays while its location is hovered or selected. */
+export interface Show {
   setActive(active: boolean): void;
-  /** Moves the display on to `now`. True while it needs drawing again. */
+  /** Moves the show on to `now`. True while it needs drawing again. */
   update(now: number): boolean;
+}
+
+/** Runs `pose` with the seconds played while active, and with null to return to rest. */
+function createShow(pose: (elapsed: number | null) => void): Show {
+  let active = false;
+  let startedAt: number | null = null;
+  let stale = false;
+  return {
+    setActive(next) {
+      const playing = next && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (playing === active) return;
+      active = playing;
+      startedAt = null;
+      stale = true;
+      if (!active) pose(null);
+    },
+    update(now) {
+      if (!active) {
+        const redraw = stale;
+        stale = false;
+        return redraw;
+      }
+      startedAt ??= now;
+      pose((now - startedAt) / 1000);
+      return true;
+    },
+  };
+}
+
+interface Jet {
+  readonly x: number;
+  readonly z: number;
+  readonly height: number;
+  /** Where the jet is in the wave that runs along the show, in radians. */
+  readonly phase: number;
+  /** How much of its height the jet keeps at the bottom of the wave. */
+  readonly floor: number;
+}
+
+/**
+ * The fountain show: an arc of jets between the end basins, a ring round each
+ * basin and a tall jet in the middle. At rest the arc stands as a still wave.
+ * While active the wave runs along it and the centre jet pulses.
+ */
+function createFountainShow(context: Context): { object: InstancedMesh; show: Show } {
+  const fountain = locationById<BuildingLocation>(FOUNTAIN_LOCATION);
+  const basins = buildingParts(fountain).map((part) => ({
+    centre: centreOf(resolveOutline(part.footprint)),
+    top: part.height,
+  }));
+  const [middle, west, east] = basins;
+  const jets: Jet[] = [];
+  for (let index = 0; index < FOUNTAIN_LINE_JETS; index += 1) {
+    const along = index / (FOUNTAIN_LINE_JETS - 1);
+    const fromMiddle = along * 2 - 1;
+    const endZ = west.centre[1] + (east.centre[1] - west.centre[1]) * along;
+    jets.push({
+      x: west.centre[0] + (east.centre[0] - west.centre[0]) * along,
+      z: middle.centre[1] + (endZ - middle.centre[1]) * fromMiddle * fromMiddle,
+      height: FOUNTAIN_LINE_HEIGHT * (0.7 + 0.3 * Math.abs(fromMiddle)),
+      phase: along * TWO_PI * 3,
+      floor: 0.2,
+    });
+  }
+  const ring = (basin: (typeof basins)[number], count: number, radius: number, height: number) => {
+    for (let index = 0; index < count; index += 1) {
+      const angle = (index / count) * TWO_PI;
+      jets.push({
+        x: basin.centre[0] + Math.cos(angle) * radius,
+        z: basin.centre[1] + Math.sin(angle) * radius,
+        height,
+        phase: angle * 2,
+        floor: 0.45,
+      });
+    }
+  };
+  ring(middle, 12, 12, 13);
+  ring(west, 8, 8, 9);
+  ring(east, 8, 8, 9);
+  const [centreX, centreZ] = middle.centre;
+  jets.push({ x: centreX, z: centreZ, height: FOUNTAIN_CENTRE_HEIGHT, phase: 0, floor: 0.35 });
+  const tallest = jets.length - 1;
+
+  const object = new InstancedMesh(
+    createFountainJet(),
+    new MeshLambertMaterial({ vertexColors: true }),
+    jets.length,
+  );
+  object.name = "fountain-show";
+  // The jets change height, so the bounds worked out from one pose would go stale.
+  object.frustumCulled = false;
+  const waterY = context.surface.heightAt(centreX, centreZ) + 0.3;
+  const upright = new Quaternion();
+  const pose = (elapsed: number | null): void => {
+    jets.forEach((jet, index) => {
+      // At rest the wave is frozen where it starts, and the centre jet is at full height.
+      const wave =
+        index === tallest
+          ? elapsed === null
+            ? 1
+            : 0.5 + 0.5 * Math.cos(elapsed * 1.3)
+          : 0.5 + 0.5 * Math.sin((elapsed ?? 0) * 2.4 - jet.phase);
+      const height = jet.height * (jet.floor + (1 - jet.floor) * wave);
+      const width = 0.7 + height * 0.05;
+      placedAt.set(jet.x, index === tallest ? waterY + middle.top - 0.3 : waterY, jet.z);
+      placedScale.set(width, height, width);
+      object.setMatrixAt(index, placedMatrix.compose(placedAt, upright, placedScale));
+    });
+    object.instanceMatrix.needsUpdate = true;
+  };
+  pose(null);
+  return { object, show: createShow(pose) };
 }
 
 interface Shell {
@@ -1158,7 +1347,7 @@ function createBloom(radius: number, color: Color): BufferGeometry {
  * against the sky, and they cast no shadows. At rest every shell is shown in
  * full bloom. While active each one climbs, bursts, droops and fades in turn.
  */
-function createFireworks(context: Context): { object: Group; fireworks: Fireworks } {
+function createFireworks(context: Context): { object: Group; show: Show } {
   const barge = buildingParts(locationById<BuildingLocation>(FIREWORKS_LOCATION));
   const [bargeX, bargeZ] = centreOf(barge.flatMap((part) => resolveOutline(part.footprint)));
   const launch = new Vector3(bargeX, context.surface.heightAt(bargeX, bargeZ) + 2, bargeZ);
@@ -1216,32 +1405,11 @@ function createFireworks(context: Context): { object: Group; fireworks: Firework
     setOpacity(shell, 1 - fading);
   };
 
-  let active = false;
-  let startedAt: number | null = null;
-  let stale = false;
   return {
     object,
-    fireworks: {
-      setActive(next) {
-        const playing = next && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        if (playing === active) return;
-        active = playing;
-        startedAt = null;
-        stale = true;
-        if (!active) for (const shell of shells) pose(shell, null);
-      },
-      update(now) {
-        if (!active) {
-          const redraw = stale;
-          stale = false;
-          return redraw;
-        }
-        startedAt ??= now;
-        const elapsed = (now - startedAt) / 1000;
-        for (const shell of shells) pose(shell, elapsed - shell.delay);
-        return true;
-      },
-    },
+    show: createShow((elapsed) => {
+      for (const shell of shells) pose(shell, elapsed === null ? null : elapsed - shell.delay);
+    }),
   };
 }
 
@@ -1788,7 +1956,9 @@ export interface Scenery {
   readonly precincts: ReadonlyMap<Category, Group>;
   /** Dressing that only appears for one way of using the site, by event id. */
   readonly events: ReadonlyMap<string, readonly Object3D[]>;
-  readonly fireworks: Fireworks;
+  /** The fireworks over the barge, and the fountain show. */
+  readonly fireworks: Show;
+  readonly fountain: Show;
 }
 
 function addHidden(group: Group, meshes: readonly InstancedMesh[]): readonly InstancedMesh[] {
@@ -1847,6 +2017,9 @@ export function createScenery(kit: Kit, surface: GroundSurface, quality: Quality
   const vines = new Instances();
   plantVineyards(land, vines);
 
+  // The quay draws from its own stream too, and adds its trees to the rest.
+  const waterfront = new Instances();
+  dressWaterfront({ ...context, random: seededRandom(73) }, trees, waterfront);
   const setting = new Group();
   setting.name = "scenery";
   setting.add(...trees.build(true), ...farTrees.build(false), ...vines.build(false));
@@ -1873,10 +2046,10 @@ export function createScenery(kit: Kit, surface: GroundSurface, quality: Quality
   parkYardTrucks(context, yardTrucks, raceYardTrucks);
   group("racing").add(...trackside.build(true), ...yardTrucks.build(true));
 
-  const waterfront = new Instances();
   placeLakeFeatures(context, waterfront);
   const display = createFireworks(context);
-  group("hospitality").add(...waterfront.build(true), display.object);
+  const fountain = createFountainShow(context);
+  group("hospitality").add(...waterfront.build(true), display.object, fountain.object);
 
   const transport = new Instances();
   placeLightPoles(context, transport);
@@ -1957,5 +2130,5 @@ export function createScenery(kit: Kit, surface: GroundSurface, quality: Quality
     ],
   ]);
 
-  return { setting, precincts, events, fireworks: display.fireworks };
+  return { setting, precincts, events, fireworks: display.show, fountain: fountain.show };
 }

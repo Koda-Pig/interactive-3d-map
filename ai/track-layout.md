@@ -102,8 +102,24 @@ The user reviewed the running map and asked for facilities to sit as close to th
 - **Car parks** stand a 5 m verge from the road that serves them. P8 also grew west to the academy campus road.
 - **Residences** have their own streets. The eastern rows moved 90 m east and the southern rows 28 m south, each with a street between the apartments and the townhouses that joins the ring road, and each with a residents' club of two tennis courts, a 25 m pool and a clubhouse. Each estate is graded as one terrace.
 - **Retail and research** each gained a street off the ring road between their two rows. The Retail Quarter moved 14 m west and the Research and Technology Park 40 m north, towards the ring road.
-- **Waterfront.** The lake is 10% smaller in each direction, about a fifth less water, with the promenade scaled to match. The restaurants moved onto the promenade, and Waterfront Drive's southern leg moved north to `z = 915`, 25 m behind the hotels. The lake has a fountain, a jetty with paddle boats, and a fireworks barge.
+- **Waterfront.** Superseded by the waterfront revision of 11 November 2026 below. As it stood: the lake is 10% smaller in each direction, about a fifth less water, with the promenade scaled to match. The restaurants moved onto the promenade, and Waterfront Drive's southern leg moved north to `z = 915`, 25 m behind the hotels. The lake has a fountain, a jetty with paddle boats, and a fireworks barge.
 - **Protection test.** Buildings and banks are now checked against the two barrier lines the map draws, not against a radius around each point of the track, because a bank that follows an irregular catchment is closer to some parts of the track than that catchment is deep.
+
+### Waterfront revision of 11 November 2026
+
+The user asked for the lake to read as a built waterfront, with Battery Park at the V&A Waterfront in Cape Town and the Burj Khalifa Lake in Dubai as references, at a plainer level of finish. The real lake will be man-made, so its outline is designed and no longer a rounded natural shape. The user allowed the whole waterfront precinct to change, and chose a fountain show line, a footbridge, a marina cove and over-water dining. This replaces the waterfront arrangement of 10 November.
+
+- **Outline.** The lake is two basins joined by a 76 m neck, about 19 hectares against 17 before. The western show basin is a rounded rectangle between the Expo forecourt quay at `x = -360` and the two peninsulas. The eastern boating basin ends in a full arc. Straight quays run where buildings front the water, and the only large curves are the basin ends. A 100 m by 70 m square cove is cut into the north shore of the boating basin.
+- **Edge.** The promenade is a 14 m paved walk directly on the water's edge all the way round, generated as the lake outline moved out by half its width. Scenery adds a stone coping along the quay, lamps, a row of olive trees on the landward side and people. Grass no longer meets the water anywhere. The ground and water are still drawn at one level, so the coping stands in for a quay wall.
+- **Lake Piazza and Lake Terraces.** A paved square on the north quay of the show basin, with four kiosks and a low landing at the water. Stepped stone terraces and lawns flank it and rise away from the water under timber pergolas, as Battery Park's levels step down to its canal. The Waterfront Walk joins the piazza to the ring road. No skate park or basketball court was added.
+- **Peninsulas and footbridge.** Pavilion Point is a park on the northern peninsula. The Waterfront Hotel tower stands on the southern one. The Lake Footbridge crosses the neck between them. It is a building of plain parts, not a `bridge` road, because the tests require every `bridge` road to cross the circuit.
+- **Fountain show.** The single fountain became a 200 m arc of jets between two end basins, with a ring and a tall jet at the centre basin. It plays while hovered or selected, as the fireworks do, and stands still otherwise and under reduced motion. Paddle boats keep out of that stretch. The fireworks barge stays in the boating basin.
+- **Marina cove.** The jetty, kiosk and moored paddle boats moved into the cove.
+- **Dining.** Each restaurant is a pavilion on a timber deck over the water, joined to the quay: one off the south quay of the show basin and one on each side of Pavilion Point.
+- **Hotels.** The Promenade Hotel and Lakeside Lodge front the promenade on the south quays, 3 m behind it, where they stood 60 to 90 m back. Waterfront Drive's southern leg moved north to `z = 880`, with a drop-off spur to each hotel. The spur to the tower stops short of the promenade, so its last 55 m are on the shared walk.
+- **Expo Centre.** The halls, loading yard and Expo Walk did not move. The forecourt was widened east to meet the promenade on the west quay, which replaces the Expo Walk's branch to the old promenade.
+- **Grading.** The waterfront terrace was extended north to `z = 400` and east to `x = 540` to hold the cove, piazza and terraces.
+- **Not done.** No new kit models were made. The bridge, terraces, decks and landing are plain extruded parts, and the kiosks, pavilions and fountain basins reuse existing models. The location pictures for the lake and promenade still show the earlier lake.
 
 ### Land use outside the circuit, 10 November 2026
 
@@ -119,7 +135,7 @@ The user found that the true-scale site read as empty ground around a small deve
 
 The running app is reviewed from above and in close views of the pits, VIP compound, access crossings, corner catchments, and both external campuses. Checks cover whole-site, race weekend, and conference day modes. The fan walk and campus access are inspected because relocation can create conflicts outside the main circuit.
 
-`pnpm check:layout` measures a 4,800 m lap, a 693 m start-finish straight, a separate 1,061 m straight, and 15 m width. Geometry tests cover authored runoff edges, lap continuity, occupied footprint clearances, bridge clearance, paddock aisles, campus placement, ring-road connections, the fan walk, skid-pad access, the karting garages, the Grandstand Fan Walk, Expo Centre size and clearances, response access, and at-grade circuit crossings.
+`pnpm check:layout` measures a 4,800 m lap, a 693 m start-finish straight, a separate 1,061 m straight, and 15 m width. Geometry tests cover authored runoff edges, lap continuity, occupied footprint clearances, bridge clearance, paddock aisles, campus placement, ring-road connections, the fan walk, skid-pad access, the karting garages, the Grandstand Fan Walk, Expo Centre size and clearances, the waterfront's quay, decks, footbridge and piazza, response access, and at-grade circuit crossings.
 
 These checks support a credible concept illustration. They do not establish suitable speeds, vehicle dynamics, impact performance, or homologation compliance. Those require specialist circuit design.
 

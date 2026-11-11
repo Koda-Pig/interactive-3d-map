@@ -120,7 +120,7 @@
     },
     {
       "id": "waterfront-terrace",
-      "footprint": [[-610, 400], [-430, 400], [-430, 440], [510, 440], [510, 900], [-470, 900], [-470, 700], [-610, 700]]
+      "footprint": [[-610, 400], [540, 400], [540, 900], [-470, 900], [-470, 700], [-610, 700]]
     },
     {
       "id": "aerodrome-terrace",
@@ -754,8 +754,8 @@
       "name": "Expo forecourt",
       "category": "conference",
       "type": "area",
-      "description": "Lake-facing public arrival court for the Expo Centre, connected to the lakeside promenade.",
-      "footprint": [[-428, 470], [-402, 470], [-402, 630], [-428, 630]],
+      "description": "Lake-facing public arrival court for the Expo Centre, running out to the promenade on the west quay of the show basin.",
+      "footprint": [[-428, 470], [-374.3, 470], [-374.3, 630], [-428, 630]],
       "color": "#BDB7A8"
     },
     {
@@ -774,11 +774,11 @@
       "name": "Expo Walk",
       "category": "conference",
       "type": "road",
-      "description": "Public walk from the arrival concourse and Car Park P8 to the Expo Centre forecourt, with a branch to the lakeside promenade.",
+      "description": "Public walk from the arrival concourse and Car Park P8 to the Expo Centre forecourt, which opens onto the lakeside promenade.",
       "width": 7,
       "color": "#D8CDB6",
       "path": [[-800, 175], [-800, 375, 12], [-415, 375, 12], [-415, 475]],
-      "branches": [[[-760, 392], [-760, 375]], [[-402, 555], [-262, 555]]]
+      "branches": [[[-760, 392], [-760, 375]]]
     },
     {
       "id": "amphitheatre",
@@ -822,13 +822,12 @@
       "id": "lake",
       "image": "images/locations/lake.webp",
       "featured": true,
-      "image": "images/locations/lake.webp",
       "name": "The Lake",
       "major": true,
       "category": "hospitality",
       "type": "water",
-      "description": "The centrepiece of the waterfront precinct, with a fountain, paddle boats, a fireworks barge and the promenade around its edge.",
-      "footprint": [[-304, 583.7, 79.2], [-95.2, 518.7, 122.4], [142.4, 549.3, 122.4], [333.2, 522.5, 68.4], [383.6, 644.9, 64.8], [275.6, 767.3, 93.6], [48.8, 805.5, 122.4], [-210.4, 767.3, 93.6], [-343.6, 690.8, 64.8]],
+      "description": "A man-made lake of about 19 hectares with a built quay all round. The western show basin faces the Expo Centre and holds the fountain show. A neck crossed by a footbridge joins it to the eastern boating basin and its marina cove.",
+      "footprint": [[-360, 500, 40], [-15, 500, 12], [-15, 612, 20], [75, 612, 20], [75, 520, 12], [130, 520, 16], [130, 450, 10], [230, 450, 10], [230, 520, 16], [400, 520, 125], [400, 780, 125], [75, 780, 12], [75, 688, 20], [-15, 688, 20], [-15, 780, 12], [-360, 780, 40]],
       "color": "#2E7E9E"
     },
     {
@@ -838,50 +837,311 @@
       "featured": true,
       "category": "hospitality",
       "type": "road",
-      "description": "A walking loop around the lake, linking the restaurants and hotels.",
+      "description": "A 14 m paved quay walk on the water's edge all the way round the lake, with a stone coping, lamps and a row of trees. It links the Expo forecourt, the piazza, the marina cove, the restaurants and the hotels.",
       "closed": true,
-      "width": 9,
+      "width": 14,
       "color": "#D8CDB6",
-      "path": [[-328.3, 578.5, 85.1], [-103.8, 508.6, 131.6], [151.6, 541.5, 131.6], [356.7, 512.7, 73.5], [410.9, 644.3, 69.7], [294.8, 775.9, 100.6], [51, 817, 131.6], [-227.7, 775.9, 100.6], [-370.9, 693.6, 69.7]]
+      "path": [[-367.3, 492.7, 47.3], [-7.7, 492.7, 19.3], [-7.7, 604.7, 12.7], [67.7, 604.7, 12.7], [67.7, 512.7, 19.3], [122.7, 512.7, 8.7], [122.7, 442.7, 17.3], [237.3, 442.7, 17.3], [237.3, 512.7, 8.7], [407.3, 512.7, 132.3], [407.3, 787.3, 132.3], [67.7, 787.3, 19.3], [67.7, 695.3, 12.7], [-7.7, 695.3, 12.7], [-7.7, 787.3, 19.3], [-367.3, 787.3, 47.3]]
+    },
+    {
+      "id": "lake-piazza",
+      "image": "images/locations/promenade.webp",
+      "name": "Lake Piazza",
+      "featured": true,
+      "category": "hospitality",
+      "type": "area",
+      "description": "Paved square on the north quay of the show basin, at the end of the Waterfront Walk. Its landing steps down to the water, facing the fountain show.",
+      "footprint": [[-250, 446], [-130, 446], [-130, 486.7], [-250, 486.7]],
+      "color": "#C9BFA9"
+    },
+    {
+      "id": "lake-terraces",
+      "image": "images/locations/promenade.webp",
+      "name": "Lake Terraces",
+      "category": "hospitality",
+      "type": "building",
+      "description": "Stepped stone terraces and lawns either side of the piazza, rising away from the water under timber pergolas, with a low landing at the water's edge. Seating for the fountain show and fireworks.",
+      "color": "#CFC6B4",
+      "parts": [
+        {
+          "footprint": [[-318, 478], [-258, 478], [-258, 486.7], [-318, 486.7]],
+          "height": 0.8
+        },
+        {
+          "footprint": [[-318, 470], [-258, 470], [-258, 478], [-318, 478]],
+          "height": 1.6
+        },
+        {
+          "footprint": [[-318, 462], [-258, 462], [-258, 470], [-318, 470]],
+          "height": 2.4
+        },
+        {
+          "footprint": [[-318, 446], [-258, 446], [-258, 462], [-318, 462]],
+          "height": 3.2,
+          "color": "#8DA35A"
+        },
+        {
+          "footprint": [[-312, 448], [-264, 448], [-264, 457], [-312, 457]],
+          "height": 0.3,
+          "base": 6,
+          "color": "#A98660"
+        },
+        {
+          "footprint": [[-311.5, 448.5], [-310.9, 448.5], [-310.9, 449.1], [-311.5, 449.1]],
+          "height": 2.8,
+          "base": 3.2,
+          "color": "#33404B"
+        },
+        {
+          "footprint": [[-311.5, 455.9], [-310.9, 455.9], [-310.9, 456.5], [-311.5, 456.5]],
+          "height": 2.8,
+          "base": 3.2,
+          "color": "#33404B"
+        },
+        {
+          "footprint": [[-265.1, 448.5], [-264.5, 448.5], [-264.5, 449.1], [-265.1, 449.1]],
+          "height": 2.8,
+          "base": 3.2,
+          "color": "#33404B"
+        },
+        {
+          "footprint": [[-265.1, 455.9], [-264.5, 455.9], [-264.5, 456.5], [-265.1, 456.5]],
+          "height": 2.8,
+          "base": 3.2,
+          "color": "#33404B"
+        },
+        {
+          "footprint": [[-122, 478], [-62, 478], [-62, 486.7], [-122, 486.7]],
+          "height": 0.8
+        },
+        {
+          "footprint": [[-122, 470], [-62, 470], [-62, 478], [-122, 478]],
+          "height": 1.6
+        },
+        {
+          "footprint": [[-122, 462], [-62, 462], [-62, 470], [-122, 470]],
+          "height": 2.4
+        },
+        {
+          "footprint": [[-122, 446], [-62, 446], [-62, 462], [-122, 462]],
+          "height": 3.2,
+          "color": "#8DA35A"
+        },
+        {
+          "footprint": [[-116, 448], [-68, 448], [-68, 457], [-116, 457]],
+          "height": 0.3,
+          "base": 6,
+          "color": "#A98660"
+        },
+        {
+          "footprint": [[-115.5, 448.5], [-114.9, 448.5], [-114.9, 449.1], [-115.5, 449.1]],
+          "height": 2.8,
+          "base": 3.2,
+          "color": "#33404B"
+        },
+        {
+          "footprint": [[-115.5, 455.9], [-114.9, 455.9], [-114.9, 456.5], [-115.5, 456.5]],
+          "height": 2.8,
+          "base": 3.2,
+          "color": "#33404B"
+        },
+        {
+          "footprint": [[-69.1, 448.5], [-68.5, 448.5], [-68.5, 449.1], [-69.1, 449.1]],
+          "height": 2.8,
+          "base": 3.2,
+          "color": "#33404B"
+        },
+        {
+          "footprint": [[-69.1, 455.9], [-68.5, 455.9], [-68.5, 456.5], [-69.1, 456.5]],
+          "height": 2.8,
+          "base": 3.2,
+          "color": "#33404B"
+        },
+        {
+          "footprint": [[-250, 500], [-130, 500], [-130, 506], [-250, 506]],
+          "height": 0.6
+        }
+      ]
+    },
+    {
+      "id": "piazza-kiosks",
+      "image": "images/locations/paddle-boats.webp",
+      "name": "Piazza Kiosks",
+      "category": "hospitality",
+      "type": "building",
+      "description": "Four small kiosks on the piazza for coffee, ice cream and paddle board hire. Illustrative.",
+      "color": "#E8ECEF",
+      "parts": [
+        {
+          "footprint": [[-240, 451], [-234, 451], [-234, 455], [-240, 455]],
+          "height": 3.8,
+          "model": {
+            "file": "hospitality/jetty-kiosk.glb",
+            "facing": "south"
+          }
+        },
+        {
+          "footprint": [[-226, 451], [-220, 451], [-220, 455], [-226, 455]],
+          "height": 3.8,
+          "model": {
+            "file": "hospitality/jetty-kiosk.glb",
+            "facing": "south"
+          }
+        },
+        {
+          "footprint": [[-160, 451], [-154, 451], [-154, 455], [-160, 455]],
+          "height": 3.8,
+          "model": {
+            "file": "hospitality/jetty-kiosk.glb",
+            "facing": "south"
+          }
+        },
+        {
+          "footprint": [[-146, 451], [-140, 451], [-140, 455], [-146, 455]],
+          "height": 3.8,
+          "model": {
+            "file": "hospitality/jetty-kiosk.glb",
+            "facing": "south"
+          }
+        }
+      ]
+    },
+    {
+      "id": "waterfront-walk",
+      "image": "images/locations/promenade.webp",
+      "name": "Waterfront Walk",
+      "category": "hospitality",
+      "type": "road",
+      "description": "Tree-lined public walk from the ring road south to the Lake Piazza.",
+      "width": 7,
+      "color": "#D8CDB6",
+      "path": [[-190, 351], [-190, 446]]
+    },
+    {
+      "id": "pavilion-point",
+      "image": "images/locations/lake.webp",
+      "name": "Pavilion Point",
+      "category": "hospitality",
+      "type": "area",
+      "description": "Park on the northern peninsula between the two basins, with the restaurant decks on either side and the footbridge at its tip.",
+      "footprint": [[-0.5, 500], [60.5, 500], [60.5, 598], [-0.5, 598]],
+      "color": "#8DA35A",
+      "planting": "park"
+    },
+    {
+      "id": "lake-footbridge",
+      "image": "images/locations/promenade.webp",
+      "name": "Lake Footbridge",
+      "featured": true,
+      "category": "hospitality",
+      "type": "building",
+      "description": "Pedestrian bridge over the neck of the lake, from Pavilion Point to the Waterfront Hotel. The best place to watch the fountain show to the west and the boats to the east.",
+      "color": "#E8ECEF",
+      "parts": [
+        {
+          "footprint": [[26, 612], [34, 612], [34, 618], [26, 618]],
+          "height": 0.65
+        },
+        {
+          "footprint": [[26, 618], [34, 618], [34, 624], [26, 624]],
+          "height": 1.3
+        },
+        {
+          "footprint": [[26, 624], [34, 624], [34, 676], [26, 676]],
+          "height": 0.4,
+          "base": 1.5
+        },
+        {
+          "footprint": [[26, 676], [34, 676], [34, 682], [26, 682]],
+          "height": 1.3
+        },
+        {
+          "footprint": [[26, 682], [34, 682], [34, 688], [26, 688]],
+          "height": 0.65
+        },
+        {
+          "footprint": [[27, 640], [33, 640], [33, 642], [27, 642]],
+          "height": 1.5,
+          "color": "#7C858E"
+        },
+        {
+          "footprint": [[27, 658], [33, 658], [33, 660], [27, 660]],
+          "height": 1.5,
+          "color": "#7C858E"
+        },
+        {
+          "footprint": [[25.6, 618], [26, 618], [26, 682], [25.6, 682]],
+          "height": 1,
+          "base": 1.9,
+          "color": "#33404B"
+        },
+        {
+          "footprint": [[34, 618], [34.4, 618], [34.4, 682], [34, 682]],
+          "height": 1,
+          "base": 1.9,
+          "color": "#33404B"
+        }
+      ]
     },
     {
       "id": "lake-fountain",
       "image": "images/locations/lake-fountain.webp",
-      "name": "Lake Fountain",
+      "name": "Lake Fountain Show",
+      "featured": true,
       "category": "hospitality",
       "type": "building",
-      "description": "Fountain in the middle of the lake, with a tall central jet and a ring of arcing jets. Illustrative.",
+      "description": "A 200 m arc of jets across the show basin, between two end basins and a tall central jet, in view of the Expo forecourt, the piazza and the hotels. Hover over it or select it to run the show. Illustrative.",
       "color": "#C9CFD4",
-      "footprint": [[14, 644], [26, 644], [26, 656], [14, 656]],
-      "height": 2,
-      "model": {
-        "file": "hospitality/lake-fountain.glb",
-        "facing": "south"
-      }
+      "parts": [
+        {
+          "footprint": [[-198, 622], [-182, 622], [-182, 638], [-198, 638]],
+          "height": 2,
+          "model": {
+            "file": "hospitality/lake-fountain.glb",
+            "facing": "south"
+          }
+        },
+        {
+          "footprint": [[-295, 653], [-285, 653], [-285, 663], [-295, 663]],
+          "height": 1.4,
+          "model": {
+            "file": "hospitality/lake-fountain.glb",
+            "facing": "south"
+          }
+        },
+        {
+          "footprint": [[-95, 653], [-85, 653], [-85, 663], [-95, 663]],
+          "height": 1.4,
+          "model": {
+            "file": "hospitality/lake-fountain.glb",
+            "facing": "south"
+          }
+        }
+      ]
     },
     {
       "id": "paddle-boats",
       "image": "images/locations/paddle-boats.webp",
-      "name": "Paddle Boat Rides",
+      "name": "Marina Cove and Paddle Boats",
       "category": "hospitality",
       "type": "building",
-      "description": "Jetty and ticket kiosk on the north shore, where paddle boats are hired for a turn around the lake. Illustrative.",
+      "description": "Jetty and ticket kiosk in the square cove on the north shore, where paddle boats are hired for a turn around the boating basin. Illustrative.",
       "color": "#B89A6E",
       "parts": [
         {
-          "footprint": [[13, 528], [33, 528], [33, 537], [13, 537]],
+          "footprint": [[170, 448], [190, 448], [190, 457], [170, 457]],
           "height": 0.9
         },
         {
-          "footprint": [[21, 537], [25, 537], [25, 564], [21, 564]],
+          "footprint": [[178, 457], [182, 457], [182, 484], [178, 484]],
           "height": 0.9
         },
         {
-          "footprint": [[8, 564], [38, 564], [38, 568], [8, 568]],
+          "footprint": [[165, 484], [195, 484], [195, 488], [165, 488]],
           "height": 0.9
         },
         {
-          "footprint": [[26, 529], [32, 529], [32, 533], [26, 533]],
+          "footprint": [[183, 449], [189, 449], [189, 453], [183, 453]],
           "height": 3.8,
           "base": 0.9,
           "color": "#E8ECEF",
@@ -913,22 +1173,22 @@
       "name": "Lakeside Restaurant West",
       "category": "hospitality",
       "type": "building",
-      "model": {
-        "file": "hospitality/lakeside-pavilion.glb",
-        "facing": "south"
-      },
-      "description": "Timber pavilion with a dark metal roof, opening onto the promenade.",
-      "color": "#A98660",
+      "description": "Timber pavilion with a dark metal roof on a deck over the water, off the south quay of the show basin, facing the fountain show.",
+      "color": "#B89A6E",
       "parts": [
         {
-          "footprint": [[-190, 498], [-164, 498], [-164, 514], [-190, 514]],
-          "height": 6
+          "footprint": [[-150, 750], [-100, 750], [-100, 780], [-150, 780]],
+          "height": 0.9
         },
         {
-          "footprint": [[-192, 496], [-162, 496], [-162, 516], [-192, 516]],
-          "height": 2,
-          "base": 6,
-          "color": "#004272"
+          "footprint": [[-138, 761], [-112, 761], [-112, 777], [-138, 777]],
+          "height": 7,
+          "base": 0.9,
+          "color": "#A98660",
+          "model": {
+            "file": "hospitality/lakeside-pavilion.glb",
+            "facing": "north"
+          }
         }
       ]
     },
@@ -938,22 +1198,22 @@
       "name": "Lakeside Restaurant Central",
       "category": "hospitality",
       "type": "building",
-      "model": {
-        "file": "hospitality/lakeside-pavilion.glb",
-        "facing": "south"
-      },
-      "description": "Timber pavilion with a dark metal roof, opening onto the promenade.",
-      "color": "#A98660",
+      "description": "Timber pavilion with a dark metal roof on a deck over the water, on the west side of Pavilion Point, facing the fountain show.",
+      "color": "#B89A6E",
       "parts": [
         {
-          "footprint": [[10, 495], [36, 495], [36, 511], [10, 511]],
-          "height": 6
+          "footprint": [[-45, 545], [-15, 545], [-15, 595], [-45, 595]],
+          "height": 0.9
         },
         {
-          "footprint": [[8, 493], [38, 493], [38, 513], [8, 513]],
-          "height": 2,
-          "base": 6,
-          "color": "#004272"
+          "footprint": [[-34, 557], [-18, 557], [-18, 583], [-34, 583]],
+          "height": 7,
+          "base": 0.9,
+          "color": "#A98660",
+          "model": {
+            "file": "hospitality/lakeside-pavilion.glb",
+            "facing": "west"
+          }
         }
       ]
     },
@@ -963,22 +1223,22 @@
       "name": "Lakeside Restaurant East",
       "category": "hospitality",
       "type": "building",
-      "model": {
-        "file": "hospitality/lakeside-pavilion.glb",
-        "facing": "south"
-      },
-      "description": "Timber pavilion with a dark metal roof, opening onto the promenade.",
-      "color": "#A98660",
+      "description": "Timber pavilion with a dark metal roof on a deck over the water, on the east side of Pavilion Point, facing the boating basin.",
+      "color": "#B89A6E",
       "parts": [
         {
-          "footprint": [[215, 501], [241, 501], [241, 517], [215, 517]],
-          "height": 6
+          "footprint": [[75, 545], [105, 545], [105, 595], [75, 595]],
+          "height": 0.9
         },
         {
-          "footprint": [[213, 499], [243, 499], [243, 519], [213, 519]],
-          "height": 2,
-          "base": 6,
-          "color": "#004272"
+          "footprint": [[78, 557], [94, 557], [94, 583], [78, 583]],
+          "height": 7,
+          "base": 0.9,
+          "color": "#A98660",
+          "model": {
+            "file": "hospitality/lakeside-pavilion.glb",
+            "facing": "east"
+          }
         }
       ]
     },
@@ -994,9 +1254,9 @@
         "file": "hospitality/hotel-tower.glb",
         "facing": "north"
       },
-      "description": "Tower hotel on the south shore, with views over the lake to the circuit.",
+      "description": "Tower hotel on the southern peninsula, at the foot of the footbridge, with views over both basins to the circuit.",
       "color": "#E8ECEF",
-      "footprint": [[-150, 860], [-105, 860], [-105, 885], [-150, 885]],
+      "footprint": [[7.5, 722], [52.5, 722], [52.5, 747], [7.5, 747]],
       "height": 51
     },
     {
@@ -1010,9 +1270,9 @@
         "file": "hospitality/hotel-low.glb",
         "facing": "north"
       },
-      "description": "Low-rise hotel on the south shore.",
+      "description": "Low-rise hotel on the south quay of the boating basin, fronting the promenade.",
       "color": "#CFC6B4",
-      "footprint": [[60, 860], [140, 860], [140, 885], [60, 885]],
+      "footprint": [[180, 797], [260, 797], [260, 822], [180, 822]],
       "height": 21
     },
     {
@@ -1026,9 +1286,9 @@
         "file": "hospitality/hotel-tower.glb",
         "facing": "north"
       },
-      "description": "Mid-rise hotel at the western end of the waterfront.",
+      "description": "Mid-rise hotel on the south quay of the show basin, fronting the promenade and facing the fountain show.",
       "color": "#E8ECEF",
-      "footprint": [[-340, 850], [-280, 850], [-280, 880], [-340, 880]],
+      "footprint": [[-300, 797], [-240, 797], [-240, 827], [-300, 827]],
       "height": 36
     },
     {
@@ -1909,10 +2169,11 @@
       "name": "Waterfront Drive",
       "category": "transport",
       "type": "road",
-      "description": "Loop road serving the hotels, the south side of the lake and the Expo Centre loading yard.",
+      "description": "Loop road around the waterfront, with a drop-off spur to each hotel and access to the Expo Centre loading yard.",
       "width": 11,
       "color": "#777B7F",
-      "path": [[-640, 345], [-640, 915, 90], [660, 915, 90], [660, 345]]
+      "path": [[-640, 345], [-640, 880, 90], [660, 880, 90], [660, 345]],
+      "branches": [[[-270, 880], [-270, 838]], [[30, 880], [30, 802]], [[220, 880], [220, 833]]]
     },
     {
       "id": "infield-road",
