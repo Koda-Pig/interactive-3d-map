@@ -50,20 +50,26 @@ const offset = new Vector3();
 export class CameraFlight {
   private leg: Leg | null = null;
 
-  /** `clearArea` says which part of the map has no panel or button over it. */
+  /**
+   * `clearArea` says which part of the map has no panel or button over it,
+   * and `homeArea` which part the opening view is centred in.
+   */
   constructor(
     private readonly camera: PerspectiveCamera,
     private readonly controls: MapControls,
     private readonly clearArea: () => ClearArea,
+    private readonly homeArea: () => ClearArea,
   ) {
     controls.addEventListener("start", () => {
       this.leg = null;
     });
   }
 
-  /** Flies back to the opening view, as it would be for the map's shape now. */
+  /** Flies back to the opening view, as it would be for the shape of its part of the map now. */
   flyHome(): void {
-    this.fly(homeView(this.camera.aspect));
+    const area = this.homeArea();
+    const home = homeView((area.right - area.left) / (area.bottom - area.top));
+    this.fly({ ...home, target: this.aim(home.target, home, area) });
   }
 
   /**
@@ -93,19 +99,27 @@ export class CameraFlight {
       FRAME_MARGIN * Math.max(across / Math.sin(halfWidth), upScreen / Math.sin(halfHeight));
     const radius = MathUtils.clamp(fit, MIN_FRAME_DISTANCE, MAX_ZOOM_DISTANCE);
 
-    // The camera looks at the middle of the map, so it aims past the box to
-    // put it in the middle of the clear part. These are tangents of the
-    // angles from the middle of the view to there.
-    const right = ((clear.left + clear.right - clear.viewWidth) / 2) * pixel;
-    const down = ((clear.top + clear.bottom - clear.viewHeight) / 2) * pixel;
-    // How far beyond the box the camera aims, along the ground, and how far
-    // the box then is from the camera along its line of sight.
+    const target = this.aim(centre, { radius, phi, theta }, clear);
+    this.fly({ target, radius, phi, theta });
+  }
+
+  /**
+   * The orbit point that puts `centre` in the middle of `area`. The camera
+   * looks at the middle of the map, so it aims past `centre` to do that.
+   */
+  private aim(centre: Vector3, view: Omit<View, "target">, area: ClearArea): Vector3 {
+    const { radius, phi, theta } = view;
+    const pixel = (2 * Math.tan(MathUtils.degToRad(this.camera.fov) / 2)) / area.viewHeight;
+    // The tangents of the angles from the middle of the view to the middle of the area.
+    const right = ((area.left + area.right - area.viewWidth) / 2) * pixel;
+    const down = ((area.top + area.bottom - area.viewHeight) / 2) * pixel;
+    // How far beyond the centre the camera aims, along the ground, and how far
+    // the centre then is from the camera along its line of sight.
     const ahead = (down * radius) / (Math.cos(phi) + down * Math.sin(phi));
     const aside = right * (radius - ahead * Math.sin(phi));
     const x = centre.x - aside * Math.cos(theta) - ahead * Math.sin(theta);
     const z = centre.z + aside * Math.sin(theta) - ahead * Math.cos(theta);
-
-    this.fly({ target: new Vector3(x, heightAt(x, z), z), radius, phi, theta });
+    return new Vector3(x, heightAt(x, z), z);
   }
 
   /** Moves the camera closer or further by a factor, from wherever it's heading. */

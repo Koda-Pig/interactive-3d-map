@@ -1,6 +1,7 @@
 :root {
-  /* The pane's own width, which never changes; the sidebar clips it. */
+  /* The pane's own width, which never changes; the shell clips it. */
   --sidebar-pane-width: calc(320px + env(safe-area-inset-left));
+  /* How far the panel reaches over the map. The chips beside it start here. */
   --sidebar-width: var(--sidebar-pane-width);
   /* Strong decelerate: the panel gets moving at once and lands softly.
      The sidebar and every chip that tracks its edge share this curve. */
@@ -389,19 +390,17 @@ body {
 }
 
 @media (min-width: 601px) {
-  /* The sidebar itself only reserves room beside the map, and animates that
-     width so the map grows and shrinks with the panel. What's seen is the
-     shell: one shape that is the full panel when open and the button when
-     closed, and moves between the two. */
+  /* The sidebar takes no room of its own: the map fills the window and the
+     panel lies over its left edge. What's seen is the shell: one shape that
+     is the full panel when open and the button when closed, and moves
+     between the two. */
   .sidebar {
     position: relative;
     z-index: 1;
     flex: none;
-    width: var(--sidebar-width);
-    min-width: 0;
+    width: 0;
     background: none;
     box-shadow: none;
-    transition: width var(--sidebar-duration) var(--sidebar-ease);
   }
 
   /* The button's blue, which is also the panel's title bar, so the bar is
@@ -431,24 +430,53 @@ body {
   }
 
   /* The pane keeps its full size while the shell clips it, so nothing inside
-     reflows. It fades in late and out early, and the button's label does the
-     opposite, so the two never show at full strength together. */
+     reflows. It stays solid: the clip cuts the white body away and leaves the
+     title bar, which is the button's blue. */
   .sidebar__inner {
     width: var(--sidebar-pane-width);
     height: 100dvh;
-    box-sizing: border-box;
-    padding-left: env(safe-area-inset-left);
-    transition:
-      opacity calc(var(--sidebar-duration) * 0.6) ease calc(var(--sidebar-duration) * 0.15),
-      visibility 0s;
+    transition: visibility 0s;
   }
 
   .sidebar-closed .sidebar__inner {
-    opacity: 0;
     visibility: hidden;
+    transition: visibility 0s var(--sidebar-duration);
+  }
+
+  .sidebar__bar {
+    padding-left: calc(16px + env(safe-area-inset-left));
+  }
+
+  .sidebar__body {
+    padding-left: env(safe-area-inset-left);
+  }
+
+  /* Only what's in the bar fades. It goes early and comes back late, and the
+     button's label does the opposite, so the two never show at full strength
+     together. */
+  .sidebar__bar > * {
+    transition:
+      opacity calc(var(--sidebar-duration) * 0.6) ease calc(var(--sidebar-duration) * 0.15),
+      transform var(--sidebar-duration) var(--sidebar-ease),
+      background-color 0s;
+  }
+
+  .sidebar-closed .sidebar__bar > * {
+    opacity: 0;
     transition:
       opacity calc(var(--sidebar-duration) * 0.4) ease,
-      visibility 0s var(--sidebar-duration);
+      transform var(--sidebar-duration) var(--sidebar-ease);
+  }
+
+  /* The title travels to where the button's label sits, at the label's size,
+     so the swap reads as one line of text changing. The label starts 38px in
+     and is centred 19px down; the title starts 16px in, centred 26px down. */
+  .sidebar__title {
+    transform-origin: left center;
+  }
+
+  .sidebar-closed .sidebar__title {
+    transform: translate(calc(22px - env(safe-area-inset-left)), -7px) scale(calc(13 / 15));
   }
 
   .sidebar-open {
@@ -480,11 +508,12 @@ body {
   /* An instant switch. `visibility` has no duration either way, so the part
      that's put away stops being focusable at once. */
   @media (prefers-reduced-motion: reduce) {
-    .sidebar,
     .sidebar__shell,
     .sidebar__inner,
+    .sidebar__bar > *,
     .sidebar-open,
     .sidebar-closed .sidebar__inner,
+    .sidebar-closed .sidebar__bar > *,
     .sidebar-closed .sidebar-open {
       transition: none;
     }

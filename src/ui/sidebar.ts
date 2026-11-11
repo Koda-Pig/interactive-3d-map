@@ -7,6 +7,8 @@ export interface SidebarActions {
   pick(location: Location): void;
   togglePrecinct(category: Category, shown: boolean): void;
   resetView(): void;
+  /** Called when the panel opens or closes on a wide screen. */
+  shownChanged(): void;
 }
 
 export interface Sidebar {
@@ -14,6 +16,11 @@ export interface Sidebar {
   showSelected(location: Location | null): void;
   /** Sets a precinct's toggle to match the map. */
   showPrecinct(category: Category, shown: boolean): void;
+  /**
+   * How far the open panel reaches over the page from the left, in pixels.
+   * Zero while it's closed, and on a phone, where it's the bottom sheet.
+   */
+  panelWidth(): number;
 }
 
 interface Row {
@@ -203,6 +210,7 @@ export function createSidebar(
       openButton.focus();
     }
     syncInert();
+    actions.shownChanged();
   }
   syncInert();
   phone.addEventListener("change", syncInert);
@@ -260,6 +268,9 @@ export function createSidebar(
   applySearch();
 
   return {
+    panelWidth() {
+      return !phone.matches && isShown() ? pane.offsetWidth : 0;
+    },
     showSelected(location) {
       selected?.button.removeAttribute("aria-current");
       preview?.remove();

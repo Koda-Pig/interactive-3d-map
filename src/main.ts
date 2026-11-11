@@ -23,6 +23,7 @@ import { createGround } from "./terrain/ground.ts";
 import { createEventSwitch } from "./ui/event-switch.ts";
 import { createInfoPanel } from "./ui/info-panel.ts";
 import { createHint, createMapControls } from "./ui/map-controls.ts";
+import type { ClearArea } from "./ui/overlays.ts";
 import { MapOverlays } from "./ui/overlays.ts";
 import { createSidebar } from "./ui/sidebar.ts";
 
@@ -36,7 +37,7 @@ const PAN_STEP = 0.18;
 const TURN_STEP = Math.PI / 12;
 /** How far one press tilts the view, in radians. */
 const TILT_STEP = Math.PI / 24;
-/** Matches the phone layout in `style.css`, where the sidebar lies over the map. */
+/** Matches the phone layout in `style.css`, where the sidebar is a sheet along the bottom. */
 const PHONE_LAYOUT = window.matchMedia("(max-width: 600px)");
 
 const host = document.querySelector<HTMLElement>("#app");
@@ -131,7 +132,15 @@ const overlays = new MapOverlays(host, [
   () => eventSwitchElement.getBoundingClientRect(),
   () => noticeElement.getBoundingClientRect(),
   () => mapControlsElement.getBoundingClientRect(),
-  () => sidebarOpenElement.getBoundingClientRect(),
+  // On a wide screen the sidebar lies over the map's left edge: the whole
+  // panel when it's open, and only its button when it's closed. It's measured
+  // as it will be once it has finished opening or closing.
+  () => {
+    const width = sidebar.panelWidth();
+    return width > 0
+      ? { left: 0, top: 0, right: width, bottom: window.innerHeight }
+      : sidebarOpenElement.getBoundingClientRect();
+  },
   // On a phone the closed sidebar is a strip along the bottom. It's measured
   // as if closed, because picking from the open list closes it.
   () =>
@@ -145,12 +154,24 @@ const overlays = new MapOverlays(host, [
       : null,
 ]);
 
-const flight = new CameraFlight(camera, controls, () => overlays.clearArea());
+/** The map less the strip the open sidebar covers, which the opening view is centred in. */
+const besideSidebar = (): ClearArea => {
+  const viewWidth = host.clientWidth;
+  const viewHeight = host.clientHeight;
+  const left = Math.min(sidebar.panelWidth(), viewWidth / 2);
+  return { left, top: 0, right: viewWidth, bottom: viewHeight, viewWidth, viewHeight };
+};
+
+const flight = new CameraFlight(camera, controls, () => overlays.clearArea(), besideSidebar);
 const panel = createInfoPanel(infoPanelElement, () => interaction.select(null));
 const sidebar = createSidebar(sidebarElement, sidebarOpenElement, {
   pick: (location) => interaction.select(location),
   togglePrecinct: (category, shown) => interaction.setPrecinctShown(category, shown),
   resetView: () => interaction.resetView(),
+  shownChanged: () => {
+    overlays.invalidate();
+    needsRender = true;
+  },
 });
 
 let needsRender = false;
