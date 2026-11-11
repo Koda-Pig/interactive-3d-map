@@ -1,5 +1,5 @@
 /** Matches the phone layout in `style.css`. */
-const PHONE_LAYOUT = "(max-width: 600px)";
+export const PHONE_LAYOUT = "(max-width: 600px)";
 
 /** A press that moves further than this, in pixels, is a drag and not a tap. */
 const DRAG_THRESHOLD = 6;
