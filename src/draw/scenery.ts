@@ -83,6 +83,23 @@ const BOOM_GATE = "props/boom-gate.glb";
 const SILOS = "setting/farm-silo-group.glb";
 const BIG_SCREEN = "racing/big-screen.glb";
 const BLEACHER = "racing/temporary-bleacher.glb";
+/**
+ * Crowd figures built from Kenney's Mini Characters (CC0) by
+ * tools/assets/people.mjs. People near the camera are drawn as a mix of these;
+ * further away they stay simple cones and boxes.
+ */
+const PEOPLE = [
+  "people/person-female-a.glb",
+  "people/person-female-c.glb",
+  "people/person-female-e.glb",
+  "people/person-male-a.glb",
+  "people/person-male-c.glb",
+  "people/person-male-e.glb",
+];
+/** Splits crowds into regions as if each person were this many triangles. */
+const CROWD_REGION_WEIGHT = 20;
+/** Within this distance of the camera, in metres, people are drawn as figures. */
+const NEAR_PEOPLE_DISTANCE = 320;
 
 /** Every model the scenery can use. */
 export const SCENERY_MODELS: readonly string[] = [
@@ -107,6 +124,7 @@ export const SCENERY_MODELS: readonly string[] = [
   BOOM_GATE,
   BIG_SCREEN,
   BLEACHER,
+  ...PEOPLE,
 ];
 
 const AVENUE_ROADS = ["ring-road", "waterfront-drive"];
@@ -324,15 +342,22 @@ class Instances {
    * One instanced mesh per geometry and region. Where `farVersion` gives a
    * simpler geometry, each region also gets a hidden twin drawn with it,
    * sharing the copies' positions, recorded in `levels` to switch between.
+   * Where `figuresFor` gives figures for a stand-in person, each region of
+   * people gets a hidden mix of those figures for when the camera is close.
    */
   build(
     castShadow: boolean,
     farVersion?: (geometry: BufferGeometry) => BufferGeometry | undefined,
     levels?: TreeLevel[],
-  ): InstancedMesh[] {
-    return [...this.batches].flatMap(([geometry, { matrices, colors }]) => {
+    figuresFor?: (geometry: BufferGeometry) => readonly BufferGeometry[] | undefined,
+  ): Object3D[] {
+    return [...this.batches].flatMap(([geometry, { matrices, colors }]): Object3D[] => {
       const all = Array.from({ length: colors.length / 3 }, (_, copy) => copy);
       const far = farVersion?.(geometry);
+      const figures = figuresFor?.(geometry);
+      if (figures && figures.length > 0 && levels) {
+        return this.buildCrowd(geometry, figures, matrices, colors, castShadow, levels);
+      }
       return regionsOf(matrices, all, trianglesIn(geometry)).flatMap((copies) => {
         const mesh = new InstancedMesh(geometry, sceneryMaterial, copies.length);
         const tints = new Float32Array(copies.length * 3);
@@ -360,9 +385,79 @@ class Instances {
           far: twin,
           centre: sphere ? sphere.center.clone() : new Vector3(),
           radius: sphere?.radius ?? 0,
+          distance: FAR_TREE_DISTANCE,
         });
         return [mesh, twin];
       });
+    });
+  }
+
+  /**
+   * People in regions, each a group of the stand-in shapes, tinted as placed,
+   * and a hidden set of figures in their own colours, one batch per figure.
+   */
+  private buildCrowd(
+    standIn: BufferGeometry,
+    figures: readonly BufferGeometry[],
+    matrices: readonly number[],
+    colors: readonly number[],
+    castShadow: boolean,
+    levels: TreeLevel[],
+  ): Object3D[] {
+    const all = Array.from({ length: colors.length / 3 }, (_, copy) => copy);
+    // Regions of about 250 people: few enough draws far away, and few enough
+    // figures when the camera comes close to one.
+    return regionsOf(matrices, all, CROWD_REGION_WEIGHT).map((copies) => {
+      const far = new InstancedMesh(standIn, sceneryMaterial, copies.length);
+      const tints = new Float32Array(copies.length * 3);
+      copies.forEach((copy, index) => {
+        far.instanceMatrix.array.set(
+          matrices.slice(copy * MATRIX_SIZE, (copy + 1) * MATRIX_SIZE),
+          index * MATRIX_SIZE,
+        );
+        tints.set(colors.slice(copy * 3, copy * 3 + 3), index * 3);
+      });
+      far.instanceColor = new InstancedBufferAttribute(tints, 3);
+      far.castShadow = castShadow;
+
+      // Each person keeps the same figure every time the map loads.
+      const byFigure = figures.map(() => [] as number[]);
+      for (const copy of copies) {
+        const x = matrices[copy * MATRIX_SIZE + 12];
+        const z = matrices[copy * MATRIX_SIZE + 14];
+        const pick = Math.floor(hash2(Math.round(x * 10), Math.round(z * 10), 81) * figures.length);
+        byFigure[Math.min(pick, figures.length - 1)].push(copy);
+      }
+      const near = new Group();
+      near.visible = false;
+      byFigure.forEach((chosen, figure) => {
+        if (chosen.length === 0) {
+          return;
+        }
+        const mesh = new InstancedMesh(figures[figure], sceneryMaterial, chosen.length);
+        chosen.forEach((copy, index) => {
+          mesh.instanceMatrix.array.set(
+            matrices.slice(copy * MATRIX_SIZE, (copy + 1) * MATRIX_SIZE),
+            index * MATRIX_SIZE,
+          );
+        });
+        mesh.castShadow = castShadow;
+        near.add(mesh);
+      });
+
+      far.computeBoundingSphere();
+      const sphere = far.boundingSphere;
+      levels.push({
+        near,
+        far,
+        centre: sphere ? sphere.center.clone() : new Vector3(),
+        radius: sphere?.radius ?? 0,
+        // People switch the other way round from trees: simple until the camera comes close.
+        distance: NEAR_PEOPLE_DISTANCE,
+      });
+      const region = new Group();
+      region.add(far, near);
+      return region;
     });
   }
 }
@@ -430,18 +525,23 @@ function farVersionOf(geometry: BufferGeometry): BufferGeometry {
   });
 }
 
-/** A batch of trees drawn either as their models or, far from the camera, as simple shapes. */
+/**
+ * A batch of trees or people drawn either as their models or, far from the
+ * camera, as simple shapes.
+ */
 interface TreeLevel {
-  readonly near: InstancedMesh;
-  readonly far: InstancedMesh;
+  readonly near: Object3D;
+  readonly far: Object3D;
   readonly centre: Vector3;
   readonly radius: number;
+  /** Beyond this distance from the camera, in metres, the simple shapes are drawn. */
+  readonly distance: number;
 }
 
 /** Beyond this distance from the camera, in metres, a batch of trees is drawn simply. */
 const FAR_TREE_DISTANCE = 1500;
 
-/** Switches batches of trees between their models and simple shapes by distance. */
+/** Switches batches of trees and people between their models and simple shapes by distance. */
 export class TreeLevels {
   constructor(private readonly levels: readonly TreeLevel[]) {}
 
@@ -449,7 +549,7 @@ export class TreeLevels {
   update(camera: Vector3): boolean {
     let changed = false;
     for (const level of this.levels) {
-      const far = camera.distanceTo(level.centre) - level.radius > FAR_TREE_DISTANCE;
+      const far = camera.distanceTo(level.centre) - level.radius > level.distance;
       if (level.far.visible !== far) {
         level.far.visible = far;
         level.near.visible = !far;
@@ -544,6 +644,15 @@ function createFountainJet(): BufferGeometry {
 
 function createPerson(): BufferGeometry {
   return colorize(openBox(0.6, 1.7, 0.6, 0.85, 0), () => [0.05, 0.4, 0.55]);
+}
+
+/** A person seen from afar, in a crowd. Close up, the crowd figures replace it. */
+const PERSON = createPerson();
+
+/** A turn for a person at this spot, the same on every load and without using up the random stream. */
+function personYaw(x: number, z: number, facing?: number): number {
+  const turn = hash2(Math.round(x * 10), Math.round(z * 10), 82);
+  return facing === undefined ? turn * Math.PI * 2 : facing + (turn - 0.5) * 1.2;
 }
 
 const CAR_PAINTS = ["#E8ECEF", "#C9D0D6", "#7C858E", "#22303C", "#8A2B2B", "#004272"].map(
@@ -1254,12 +1363,12 @@ function dressWaterfront(context: Context, trees: Instances, instances: Instance
     }
   });
 
-  const person = createSpectator();
   const stand = (x: number, z: number): void => {
-    instances.add(person, {
+    instances.add(SPECTATOR, {
       x,
       z,
       y: surface.heightAt(x, z) + 0.3,
+      yaw: personYaw(x, z),
       tint: pickOne(random, SHIRT_PAINTS),
     });
   };
@@ -1523,11 +1632,10 @@ function placeTeamActivity(context: Context, teams: Instances, guests: Instances
   for (const x of [-225, -170]) {
     placeModel(context, guests, MARQUEE, { x, z: -93, scale: 0.65 });
   }
-  const person = createPerson();
   for (let index = 0; index < 36; index += 1) {
     const x = -243 + (index % 12) * 8;
     const z = -124 + Math.floor(index / 12) * 5;
-    guests.add(person, { x, z, y: context.surface.heightAt(x, z) + 0.3 });
+    guests.add(PERSON, { x, z, y: context.surface.heightAt(x, z) + 0.3, yaw: personYaw(x, z) });
   }
 }
 
@@ -1641,7 +1749,6 @@ function placeFanWalkCrowd(context: Context, instances: Instances): void {
       placeModel(context, instances, FOOD_STALL, { x, z, yaw: Math.PI / 2 });
     }
   }
-  const person = createPerson();
   const crowd = Math.round(320 * context.density);
   for (let index = 0; index < crowd; index += 1) {
     const onAvenue = index % 3 !== 0;
@@ -1649,7 +1756,7 @@ function placeFanWalkCrowd(context: Context, instances: Instances): void {
     const along = context.random();
     const x = onAvenue ? startX + along * (endX - startX) : concourseX + across;
     const z = onAvenue ? axisZ + across : northZ + along * (southZ - northZ);
-    instances.add(person, { x, z, y: context.surface.heightAt(x, z) + 0.3 });
+    instances.add(PERSON, { x, z, y: context.surface.heightAt(x, z) + 0.3, yaw: personYaw(x, z) });
   }
 }
 
@@ -1702,6 +1809,9 @@ function createSpectator(): BufferGeometry {
   figure.translate(0, 0.85, 0);
   return colorize(figure.toNonIndexed(), () => [1, 1, 1]);
 }
+
+/** A spectator seen from afar. Close up, the crowd figures replace it. */
+const SPECTATOR = createSpectator();
 
 function insideLand(zone: ResolvedZone, x: number, z: number, inset: number): boolean {
   return signedDistance(x, z, zone.outline) < -inset;
@@ -1944,9 +2054,8 @@ function pitchCampsites(context: Context, instances: Instances, car: BufferGeome
 }
 
 /** Spectators standing on the general admission banks, thicker in some places. */
-function crowdBanks(context: Context, instances: Instances): void {
+function crowdBanks(context: Context, instances: Instances, track: readonly PathSample[]): void {
   const { random } = context;
-  const spectator = createSpectator();
   for (const bank of layout.locations) {
     if (bank.type !== "building" || !bank.id.startsWith("ga-bank-")) {
       continue;
@@ -1956,13 +2065,36 @@ function crowdBanks(context: Context, instances: Instances): void {
     // A bank is raised from the ground at its centre, as buildings are.
     const [centreX, centreZ] = centreOf(outline);
     const y = heightAt(centreX, centreZ) + (bank.height ?? 0);
+    // Spectators face the nearest stretch of track.
+    const reach = Math.max(maxX - minX, maxZ - minZ) + 200;
+    const nearby = track.filter(
+      (sample) => Math.abs(sample.x - centreX) < reach && Math.abs(sample.z - centreZ) < reach,
+    );
+    const facingTrack = (x: number, z: number): number => {
+      let best = nearby[0];
+      let bestDistance = Number.POSITIVE_INFINITY;
+      for (const sample of nearby) {
+        const distance = (sample.x - x) ** 2 + (sample.z - z) ** 2;
+        if (distance < bestDistance) {
+          best = sample;
+          bestDistance = distance;
+        }
+      }
+      return best ? Math.atan2(best.x - x, best.z - z) : 0;
+    };
     const tries = ((maxX - minX) * (maxZ - minZ) * context.density) / BANK_AREA_PER_PERSON;
     for (let attempt = 0; attempt < tries; attempt += 1) {
       const x = minX + random() * (maxX - minX);
       const z = minZ + random() * (maxZ - minZ);
       const packed = 0.35 + 0.65 * (0.5 + 0.5 * noise2(x, z, 30, 43));
       if (signedDistance(x, z, outline) < -1.2 && random() < packed) {
-        instances.add(spectator, { x, y, z, tint: pickOne(random, SHIRT_PAINTS) });
+        instances.add(SPECTATOR, {
+          x,
+          y,
+          z,
+          yaw: personYaw(x, z, facingTrack(x, z)),
+          tint: pickOne(random, SHIRT_PAINTS),
+        });
       }
     }
   }
@@ -1974,7 +2106,6 @@ function crowdBanks(context: Context, instances: Instances): void {
  */
 function placeFanVillages(context: Context, structures: Instances, crowd: Instances): void {
   const { random, occupied, surface } = context;
-  const spectator = createSpectator();
   for (const zone of landUseZones("fan-village")) {
     const { minX, minZ, maxX, maxZ } = zone.bounds;
     const alongX = maxX - minX >= maxZ - minZ;
@@ -2002,10 +2133,12 @@ function placeFanVillages(context: Context, structures: Instances, crowd: Instan
     for (let person = 0; person < watching; person += 1) {
       const [x, z] = at(14 + random() * (lawn - 8), (random() - 0.5) * (width - 8));
       if (!occupied.isTaken(x, z)) {
-        crowd.add(spectator, {
+        crowd.add(SPECTATOR, {
           x,
           z,
           y: surface.heightAt(x, z),
+          // Watching the screen at the lawn's near end.
+          yaw: personYaw(x, z, facing(-1, 0)),
           tint: pickOne(random, SHIRT_PAINTS),
         });
       }
@@ -2025,10 +2158,11 @@ function placeFanVillages(context: Context, structures: Instances, crowd: Instan
         (random() - 0.5) * (width - 22),
       );
       if (!occupied.isTaken(x, z)) {
-        crowd.add(spectator, {
+        crowd.add(SPECTATOR, {
           x,
           z,
           y: surface.heightAt(x, z),
+          yaw: personYaw(x, z),
           tint: pickOne(random, SHIRT_PAINTS),
         });
       }
@@ -2060,7 +2194,7 @@ export interface Scenery {
   readonly trees: TreeLevels;
 }
 
-function addHidden(group: Group, meshes: readonly InstancedMesh[]): readonly InstancedMesh[] {
+function addHidden(group: Group, meshes: readonly Object3D[]): readonly Object3D[] {
   for (const mesh of meshes) {
     mesh.visible = false;
     group.add(mesh);
@@ -2140,6 +2274,10 @@ export function createScenery(kit: Kit, surface: GroundSurface, quality: Quality
     return far;
   };
   const levels: TreeLevel[] = [];
+  const figures = PEOPLE.map(model).filter((geometry) => geometry !== undefined);
+  // Without the figures, people stay as simple shapes however close the camera is.
+  const figuresFor = (geometry: BufferGeometry): readonly BufferGeometry[] | undefined =>
+    geometry === SPECTATOR || geometry === PERSON ? figures : undefined;
   setting.add(
     ...trees.build(true, farVersion, levels),
     ...farTrees.build(false),
@@ -2171,7 +2309,11 @@ export function createScenery(kit: Kit, surface: GroundSurface, quality: Quality
   placeLakeFeatures(context, waterfront);
   const display = createFireworks(context);
   const fountain = createFountainShow(context);
-  group("hospitality").add(...waterfront.build(true), display.object, fountain.object);
+  group("hospitality").add(
+    ...waterfront.build(true, undefined, levels, figuresFor),
+    display.object,
+    fountain.object,
+  );
 
   const transport = new Instances();
   placeLightPoles(context, transport);
@@ -2220,7 +2362,11 @@ export function createScenery(kit: Kit, surface: GroundSurface, quality: Quality
   placeTeamActivity(context, raceTrackside, raceGuests);
   // Small and many, so they're drawn without shadows, as the parked cars are.
   const raceCrowds = new Instances();
-  crowdBanks(land, raceCrowds);
+  crowdBanks(
+    land,
+    raceCrowds,
+    samplePath(resolvePath(locationById<TrackLocation>("circuit").path, true), 10, true),
+  );
   pitchCampsites(land, raceCrowds, car);
   placeFanVillages(land, raceTrackside, raceCrowds);
 
@@ -2236,10 +2382,10 @@ export function createScenery(kit: Kit, surface: GroundSurface, quality: Quality
       [
         ...addHidden(group("transport"), raceCars.build(false)),
         ...addHidden(group("transport"), raceShuttles.build(true)),
-        ...addHidden(group("racing"), raceTrackside.build(true)),
+        ...addHidden(group("racing"), raceTrackside.build(true, undefined, levels, figuresFor)),
         ...addHidden(group("racing"), raceYardTrucks.build(true)),
-        ...addHidden(group("racing"), raceCrowds.build(false)),
-        ...addHidden(group("hospitality"), raceGuests.build(true)),
+        ...addHidden(group("racing"), raceCrowds.build(false, undefined, levels, figuresFor)),
+        ...addHidden(group("hospitality"), raceGuests.build(true, undefined, levels, figuresFor)),
       ],
     ],
     [

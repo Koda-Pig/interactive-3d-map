@@ -11,6 +11,10 @@ pnpm assets:determinism
 
 `pnpm assets` rebuilds 82 GLBs and `public/models/manifest.json`. Every model gets ambient occlusion baked into its vertex colours ([occlusion.mjs](occlusion.mjs)): corners, undersides and the foot of each wall darken, and tileable models are baked between copies of themselves so their seams match. The map multiplies the shade into each material's colour. The fixed nature seeds and locked dependencies produce byte-identical model files. The determinism command compares SHA-256 hashes before and after regeneration.
 
+## Crowd figures
+
+The six people in `public/models/people/` aren't generated from the catalog. `pnpm assets:people` builds them from Kenney's [Mini Characters](https://kenney.nl/assets/mini-characters-1) (CC0), whose source GLBs, texture and licence are in `sources/kenney-mini-characters/` ([people.mjs](people.mjs)). It poses each character in the first frame of its "idle" animation and takes every face's colour from the texture. It scales the figure to about 1.7 m, simplifies it from about 800 to about 150 triangles and bakes ambient occlusion into it. The output is byte-identical on every run. `pnpm assets:validate` skips that folder. To use another character, copy its GLB into the sources folder and add it to `PEOPLE` in both `people.mjs` and `src/draw/scenery.ts`.
+
 ## Inspect the assets
 
 Start the local preview server:

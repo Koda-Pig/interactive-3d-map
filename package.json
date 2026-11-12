@@ -20,6 +20,7 @@
     "assets:preview": "node tools/assets/serve.mjs",
     "assets:render": "node tools/assets/render.mjs",
     "assets:determinism": "node tools/assets/determinism.mjs",
+    "assets:people": "node tools/assets/people.mjs",
     "perf": "node tools/perf.mjs"
   },
   "devDependencies": {
@@ -28,6 +29,7 @@
     "@gltf-transform/core": "4.5.1",
     "@types/three": "0.187.0",
     "gltf-validator": "2.0.0-dev.3.10",
+    "meshoptimizer": "1.1.1",
     "playwright": "1.65.0",
     "three": "0.187.0",
     "typescript": "7.0.2",

@@ -53,6 +53,8 @@ The details list the closest gate and car park, which fly there when picked. On 
 
 The switch at the top of the map shows the site as a whole, on a race weekend or on a conference day. The locations in use stay in full colour and the rest are muted, with crowds of parked cars, the race grid or conference marquees appearing to match.
 
+People on the banks, walks, fan villages and waterfront are simple cones and boxes from a distance. Within about 320 m of the camera they become a mix of six small figures, turned to face the track on the banks and the screen in the fan villages.
+
 The sidebar lists every location by precinct. Typing in the search box filters the list, and Enter goes to the first match. Each precinct's switch fades it and its labels in or out. Picking a location in a hidden precinct brings that precinct back. "Reset view" closes the details and returns to the opening view. On a phone the sidebar is a sheet along the bottom: tap or drag its top strip to open it.
 
 ## Checking performance
@@ -62,3 +64,7 @@ The map draws less on phones. It picks its tier from the device, and `?quality=l
 `pnpm perf` starts the dev server, opens six fixed views on the high and low tiers in headless Chrome, and prints draw calls, triangles and a median frame time for each. `--compare tools/perf/baseline.json` shows the change from the saved baseline, and `--out` saves a new one. The counts are exact. The times only compare runs on the same machine.
 
 Add `?stats` to the address to see the frame rate, draw calls and triangles once you've moved the map. To try it on a phone on the same Wi-Fi, run the dev server with `pnpm dev --host` and open the "Network" address it prints, with `?stats` added.
+
+## Credits
+
+The crowd figures are built from [Mini Characters](https://kenney.nl/assets/mini-characters-1) by [Kenney](https://www.kenney.nl), released under [CC0](http://creativecommons.org/publicdomain/zero/1.0/). Credit isn't required, but it's given here with thanks. The source models and their licence are in [tools/assets/sources/kenney-mini-characters](tools/assets/sources/kenney-mini-characters).

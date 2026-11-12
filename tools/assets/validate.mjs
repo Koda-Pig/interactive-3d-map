@@ -138,6 +138,8 @@ async function glbs(dir) {
   const out = [];
   for (const ent of await readdir(dir, { withFileTypes: true })) {
     const p = `${dir}/${ent.name}`;
+    // The crowd figures are built from Kenney's characters by people.mjs, not from the catalog.
+    if (ent.isDirectory() && p === "public/models/people") continue;
     if (ent.isDirectory()) out.push(...(await glbs(p)));
     else if (p.endsWith(".glb")) out.push(p);
   }
