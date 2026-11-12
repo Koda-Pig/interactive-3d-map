@@ -19,14 +19,16 @@ If the image tool accepts reference images, pass a screenshot of the running map
 each request. Output: 1280×720, saved as `.webp` under about 150 KB, subject kept away
 from the edges (the sidebar crops with `object-fit: cover`).
 
-## Status (11 November 2026)
+## Status (12 November 2026)
 
-All 57 files exist in `public/images/locations/` and every location's `image` field is
-set, so the coverage test passes. That does not mean the images are done: 53 are finished
-illustrations and 4 are screenshots of the 3D map standing in until their illustration
-is generated. Some stand-ins show a cyan highlight artefact.
+All 57 previews are now illustrations in `public/images/locations/`, and every
+location's `image` field is set. The final ten transport previews were generated
+with the unchanged style paragraph, their subject and mood, fresh map screenshots,
+and `n7`, `gate` and `lake` as style references. Each is 1280×720 WebP under 150 KB.
+The station fan walk uses plain flags and bare posts without signs or lettering;
+the aerodrome helipad circles have no letters.
 
-**Finished illustrations (53). Don't regenerate these without a reason.**
+**Finished illustrations (57). Don't regenerate these without a reason.**
 
 - Racing: `circuit`, `pit-lane`, `pit-conference-building`, `grandstands-main-straight`,
   `grandstand-d`, `grandstand-e`, `ga-bank`, `paddock`, `team-logistics-yard`
@@ -41,7 +43,9 @@ is generated. Some stand-ins show a cyan highlight artefact.
   `automotive-test-pad`, `automotive-demonstration-court`
 - Residential and commercial: `trackside-residences`, `residents-club`, `tennis-courts`,
   `swimming-pool`, `retail-quarter`, `research-park`
-- Parking and transport: `n7`, `station-fan-walk`, `kalbaskraal-station`, `shuttle-drop-off`, `car-park`, `infield-checkpoint`, `ring-road`
+- Parking and transport: `n7`, `ring-road`, `infield-checkpoint`, `car-park`,
+  `shuttle-drop-off`, `kalbaskraal-station`, `station-fan-walk`, `aerodrome-runway`,
+  `aerodrome-terminal`, `aerodrome-hangars`, `aerodrome-control-tower`
 - Entrances: `gate`
 
 **To check among the finished ones**
@@ -53,26 +57,6 @@ is generated. Some stand-ins show a cyan highlight artefact.
   hairpin at the end of the long straight and E the braking zone into Turn 1; swap the
   two files if not.
 - None of the original 25 has been checked against the running map since being saved.
-
-**Outstanding (4). Each is a map screenshot to replace with an illustration.**
-
-- Parking and transport (4): `aerodrome-runway`, `aerodrome-terminal`, `aerodrome-hangars`, `aerodrome-control-tower`
-
-
-
-**How to finish**
-
-- Generate each outstanding image from its prompt below, convert it to 1280×720 WebP
-  under about 150 KB, and save it over the stand-in of the same name
-  (`cwebp -q 80 -resize 1280 720 in.png -o out.webp` works; ffmpeg here has no WebP encoder).
-- Save each image to the repo as soon as it's accepted. The image tool's own output
-  folder is not the deliverable.
-- Only one agent should write to `public/images/locations/` at a time. An earlier run
-  lost finished images when a second tool overwrote them with screenshots.
-- The wiring, the sidebar change and the coverage test are done. No `image` field needs
-  to change.
-- Move a name from Outstanding to Finished in this section as each one lands, and delete
-  the section when the list is empty.
 
 ## Style paragraph
 
