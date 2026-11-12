@@ -22,11 +22,11 @@ from the edges (the sidebar crops with `object-fit: cover`).
 ## Status (11 November 2026)
 
 All 57 files exist in `public/images/locations/` and every location's `image` field is
-set, so the coverage test passes. That does not mean the images are done: 47 are finished
-illustrations and 10 are screenshots of the 3D map standing in until their illustration
+set, so the coverage test passes. That does not mean the images are done: 49 are finished
+illustrations and 8 are screenshots of the 3D map standing in until their illustration
 is generated. Some stand-ins show a cyan highlight artefact.
 
-**Finished illustrations (47). Don't regenerate these without a reason.**
+**Finished illustrations (49). Don't regenerate these without a reason.**
 
 - Racing: `circuit`, `pit-lane`, `pit-conference-building`, `grandstands-main-straight`,
   `grandstand-d`, `grandstand-e`, `ga-bank`, `paddock`, `team-logistics-yard`
@@ -41,7 +41,7 @@ is generated. Some stand-ins show a cyan highlight artefact.
   `automotive-test-pad`, `automotive-demonstration-court`
 - Residential and commercial: `trackside-residences`, `residents-club`, `tennis-courts`,
   `swimming-pool`, `retail-quarter`, `research-park`
-- Parking and transport: `n7`
+- Parking and transport: `n7`, `infield-checkpoint`, `ring-road`
 - Entrances: `gate`
 
 **To check among the finished ones**
@@ -54,9 +54,9 @@ is generated. Some stand-ins show a cyan highlight artefact.
   two files if not.
 - None of the original 25 has been checked against the running map since being saved.
 
-**Outstanding (10). Each is a map screenshot to replace with an illustration.**
+**Outstanding (8). Each is a map screenshot to replace with an illustration.**
 
-- Parking and transport (10): `ring-road`, `infield-checkpoint`, `car-park`, `shuttle-drop-off`, `kalbaskraal-station`, `station-fan-walk`, `aerodrome-runway`, `aerodrome-terminal`, `aerodrome-hangars`, `aerodrome-control-tower`
+- Parking and transport (8): `car-park`, `shuttle-drop-off`, `kalbaskraal-station`, `station-fan-walk`, `aerodrome-runway`, `aerodrome-terminal`, `aerodrome-hangars`, `aerodrome-control-tower`
 
 
 
