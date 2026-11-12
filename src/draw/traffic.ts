@@ -1,9 +1,7 @@
 import type { BufferGeometry, Texture } from "three";
 import { Color, InstancedMesh, MeshLambertMaterial, Object3D } from "three";
-import type { TrackLocation } from "../layout/locations.ts";
-import { layout } from "../layout/locations.ts";
-import type { PathSample } from "../layout/path.ts";
-import { resolvePath, samplePath } from "../layout/path.ts";
+import type { Route } from "../layout/route.ts";
+import { pointAt, routeOf } from "../layout/route.ts";
 import type { GroundSurface } from "../terrain/ground.ts";
 
 /** Race cars on track at once, spread round the lap. */
@@ -16,59 +14,12 @@ const SHUTTLES = 3;
 const SHUTTLE_SPEED = 11;
 /** Shuttles keep to the left-hand lane, this far from the road's middle. */
 const SHUTTLE_LANE = 2.6;
-/** How far apart the stored points along each route are, in metres. */
-const ROUTE_STEP = 2;
 /** How far the lake's ripples drift each second, as a share of their tile. */
 const RIPPLE_DRIFT = 0.004;
 
 /** The views that have something moving. */
 const RACE_MODE = "race";
 const CONFERENCE_MODE = "conference";
-
-interface Route {
-  readonly samples: readonly PathSample[];
-  readonly length: number;
-}
-
-function routeOf(id: string): Route {
-  const track = layout.locations.find((location) => location.id === id) as
-    | TrackLocation
-    | undefined;
-  if (!track) {
-    throw new Error(`No route "${id}" in the layout`);
-  }
-  const segments = resolvePath(track.path, true);
-  const samples = samplePath(segments, ROUTE_STEP, true);
-  const length = segments.reduce((total, segment) => total + segment.length, 0);
-  return { samples, length };
-}
-
-/** The point `distance` metres round a closed route, between its stored points. */
-function pointAt(route: Route, distance: number): PathSample {
-  const { samples, length } = route;
-  const along = ((distance % length) + length) % length;
-  let low = 0;
-  let high = samples.length - 1;
-  while (low < high) {
-    const middle = (low + high + 1) >> 1;
-    if (samples[middle].distance <= along) {
-      low = middle;
-    } else {
-      high = middle - 1;
-    }
-  }
-  const from = samples[low];
-  const to = samples[(low + 1) % samples.length];
-  const span = (to.distance > from.distance ? to.distance : length) - from.distance;
-  const t = span > 0 ? (along - from.distance) / span : 0;
-  return {
-    ...from,
-    x: from.x + (to.x - from.x) * t,
-    z: from.z + (to.z - from.z) * t,
-    dirX: from.dirX + (to.dirX - from.dirX) * t,
-    dirZ: from.dirZ + (to.dirZ - from.dirZ) * t,
-  };
-}
 
 const placer = new Object3D();
 

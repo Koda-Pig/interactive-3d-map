@@ -1,6 +1,6 @@
 # Visual improvements
 
-A review of the map against high-end interactive site maps, from November 2026, and the work that would close the gap. Items 1 to 6 are built, and items 7 and 8 in part. The scores are from before them.
+A review of the map against high-end interactive site maps, from November 2026, and the work that would close the gap. Items 1 to 7 are built, and item 8 in part. The scores are from before them.
 
 The map already does its job as a product. Search, precinct filters, fly-to and the event switch are as good as most maps of this kind. It falls behind on finish. From the air it reads clearly, but up close it looks like an architectural blockout, and the close view is where every click takes you.
 
@@ -99,7 +99,13 @@ Render continuously only while something visible is animating, and keep moving o
 
 **Done when:** a race weekend has visible movement and the map stays idle in the other views when nothing is happening, with the frame rate holding on a phone.
 
-**Built in part.** On a race weekend eight race cars lap the circuit at about 170 km/h, running down the middle of the track clear of the grid. On a race weekend or a conference day, three shuttles circle the ring road and the lake's ripples drift ([traffic.ts](../src/draw/traffic.ts)). The map draws continuously only in those two views. The whole-site view stays still, and reduced motion turns all of it off. The moving vehicles stay out of the shadow pass. **Still to do:** a camera lap of the circuit and arrival routes, and checking the frame rate on a phone.
+**Built.** On a race weekend eight race cars lap the circuit at about 170 km/h, running down the middle of the track clear of the grid. On a race weekend or a conference day, three shuttles circle the ring road and the lake's ripples drift ([traffic.ts](../src/draw/traffic.ts)). The map draws continuously only in those two views. The whole-site view stays still, and reduced motion turns all of it off. The moving vehicles stay out of the shadow pass.
+
+A race weekend also draws five arrival routes, from the layout data's `arrivals` list ([arrival-routes.ts](../src/draw/arrival-routes.ts)). Cyan lines with white arrows run along the roads from both directions of the N7 and from the aerodrome to the car parks. White lines with navy dots run along the walks from the car parks and Kalbaskraal station to the gates. The lines keep about the same width on screen at any distance, and their marks move. Each mode is one mesh, so the routes add 2 draw calls and about 5,000 triangles. A small legend sits under the race weekend summary. A test checks that every route stays on a road, walk or paved area and ends at a gate. The routes follow existing roads and change none of the layout that [track-layout.md](../ai/track-layout.md) fixes.
+
+Two tour buttons sit under the event switch ([tour.ts](../src/scene/tour.ts), [tours.ts](../src/scene/tours.ts)). **Lap the circuit** flies to the grid and rides once round from just before the start-finish line, slowing through the bends, in about 41 seconds, then flies back to the opening view. **Arrive for a race** switches to race weekend and rides the Cape Town route: up the N7, off at the south interchange, round the ring road into Car Park P2, then on foot through Gate 2 and along the Grandstand Fan Walk, in about 41 seconds. It ends on a view over Grandstands A and B, looking across to the pits. Dragging, zooming, a map control or a pick from the list stops a tour where it is. Under reduced motion the buttons are hidden.
+
+**Still to do:** checking the frame rate on a phone, now with these running too.
 
 ### 8. The info panels are thin
 
@@ -124,7 +130,7 @@ Below the description, the panel lists the closest gate and the closest car park
 | 5 | Shadow quality (built) | Small | Medium |
 | 6 | Model detail (built) | Large | High |
 | 7 | Info panels and links (links built, BMR facts to come) | Medium | Medium |
-| 8 | Movement, lap and arrival routes (vehicles built) | Large | Medium |
+| 8 | Movement, lap and arrival routes (built) | Large | Medium |
 
 The map still hasn't been timed on a real phone. `pnpm perf` counts draw calls and triangles in six fixed views, on the high tier at desktop size and the low tier at phone size, and compares them with `tools/perf/baseline.json`. Items 2 to 4 and 7 added 5 to 28 draw calls per view. Simpler far trees took 13,000 to 330,000 triangles off. For example, the opening view on the low tier at phone size went from 593,000 triangles in 588 draws to 443,000 in 601. Its timings come from this machine's GPU in headless Chrome and say nothing about a phone.
 

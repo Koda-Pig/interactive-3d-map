@@ -84,8 +84,8 @@ We keep the list, search, filters and info panels, and replace the flat picture 
 ### Nice to have (it would make the pitch land harder)
 
 - **Race weekend / conference day toggle** (built). The same site in two modes: grandstands and gates active, or halls and the amphitheatre highlighted. It shows the "one venue, used all year" point from the deck.
-- **A lap of the circuit.** The camera follows the track once round.
-- **Arrival routes.** Animated lines from the N7, the car parks and Kalbaskraal station to the gates.
+- **A lap of the circuit** (built). The camera follows the track once round.
+- **Arrival routes** (built). Animated lines from the N7, the car parks and Kalbaskraal station to the gates, and a camera ride along one of them from the N7 to the grandstands.
 
 ## What goes on the map
 

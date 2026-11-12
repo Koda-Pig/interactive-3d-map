@@ -34,11 +34,11 @@ The full picture of the site and circuit targets is in [overview.md](overview.md
 
 **Phone performance is unverified.** The frame rate has never been timed on a real device, and BMR executives will open this on their phones in the meeting. This is the single biggest demo risk. Time it on a mid-range phone before anything else, and know the `?quality=low` escape hatch.
 
-**Close-up detail is the weakest visual.** The visual review scores it 3/10, and every click flies the camera into exactly that view. The pit / conference building, their centrepiece, is 1,288 triangles. Either fix the priority models first or script the demo path so it doesn't dwell on blockout views.
+**Close-up detail is the weakest visual.** The visual review scored it 3/10, and every click flies the camera into exactly that view. Since then the priority models have more detail: the pit / conference building went from 1,288 to 3,930 triangles ([improvements.md](improvements.md), item 4). Still script the demo path so it doesn't dwell on the plainer models.
 
-**The opening frame undersells.** The first impression is mostly wheat field. A demo starts there.
+**The opening frame undersold the site.** Fixed: the opening view now holds the circuit and lake, and the camera flies in on load ([improvements.md](improvements.md), item 6).
 
-**Nothing moves.** A race weekend with a completely still scene undersells the mode that carries the best point.
+**Nothing moved.** Fixed: race cars lap on a race weekend, shuttles run, and the arrival routes move ([improvements.md](improvements.md), item 7).
 
 **Made-up specifics.** Capacities and similar facts stay off the map unless BMR supplies them, per [improvements.md](improvements.md). Keep that discipline: an invented number in a pitch becomes a commitment.
 
@@ -46,15 +46,15 @@ The full picture of the site and circuit targets is in [overview.md](overview.md
 
 In rough order of payoff for the effort:
 
-1. **A lap of the circuit and animated arrival routes** (designed as nice-to-haves in [overview.md](overview.md), not built). A camera flying from the N7 through a gate to a grandstand is literally their fan-journey story.
+1. **A lap of the circuit and animated arrival routes** (built). The **Arrive for a race** button flies the camera from the N7 through Gate 2 to the grandstands, which is their fan-journey story. **Lap the circuit** rides once round.
 2. **The event toggle, live.** One venue, 365 days, shown in one click.
 3. **Movement in race mode.** Cars lapping, the shuttle running. The scene stops feeling like a model and starts feeling like a place.
-4. **Shareable links to a location** (not built). Froneman forwards a link to his board and the demo sells itself a second time.
+4. **Shareable links to a location** (built). Froneman forwards a link to his board and the demo sells itself a second time.
 5. **The engineering story underneath.** This repo is the evidence for the partnership itself: built fast, deterministic asset pipeline, tested, a checker that validates geometry against BMR's published specs. That is what separates Protium from an agency that delivers renders. The map is the proof of capability; the pitch is the partnership.
 
 ## Before the demo, in priority order
 
 1. Time the map on a real mid-range phone. The budget is unknown until someone does.
-2. Reframe the opening view so the circuit and lake fill the frame ([improvements.md](improvements.md), item 6).
-3. Script the demo flight path: opening view, toggle to race weekend, fly to the pit complex, fly to a grandstand, toggle to conference day, fly to the Expo Centre. Avoid dwelling on the weakest close-ups.
+2. Reframe the opening view so the circuit and lake fill the frame (done, [improvements.md](improvements.md), item 6).
+3. Script the demo flight path: opening view, **Arrive for a race** (it switches to race weekend and ends at the grandstands), fly to the pit complex, **Lap the circuit**, toggle to conference day, fly to the Expo Centre. Avoid dwelling on the weakest close-ups.
 4. Keep the "concept layout, for illustration only" notice visible throughout, and rehearse the one-liner that turns it into the pitch: your data in, our map redraws.

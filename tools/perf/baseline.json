@@ -4,17 +4,17 @@
     "view": "opening",
     "calls": 826,
     "triangles": 688752,
-    "medianMs": 5.4000000059604645,
+    "medianMs": 6.5999999940395355,
     "geometries": 550,
     "textures": 12
   },
   {
     "run": "high desktop",
     "view": "opening, race weekend",
-    "calls": 908,
-    "triangles": 1014044,
-    "medianMs": 7,
-    "geometries": 562,
+    "calls": 910,
+    "triangles": 1019018,
+    "medianMs": 7.799999997019768,
+    "geometries": 564,
     "textures": 12
   },
   {
@@ -22,7 +22,7 @@
     "view": "pit building",
     "calls": 377,
     "triangles": 586050,
-    "medianMs": 5.0999999940395355,
+    "medianMs": 4.300000011920929,
     "geometries": 490,
     "textures": 13
   },
@@ -31,7 +31,7 @@
     "view": "grandstand A",
     "calls": 319,
     "triangles": 549554,
-    "medianMs": 6.100000008940697,
+    "medianMs": 6,
     "geometries": 486,
     "textures": 12
   },
@@ -40,7 +40,7 @@
     "view": "lake",
     "calls": 571,
     "triangles": 616052,
-    "medianMs": 5.199999988079071,
+    "medianMs": 5.700000002980232,
     "geometries": 517,
     "textures": 13
   },
@@ -49,7 +49,7 @@
     "view": "car park",
     "calls": 341,
     "triangles": 514716,
-    "medianMs": 6.4000000059604645,
+    "medianMs": 5.299999997019768,
     "geometries": 483,
     "textures": 12
   },
@@ -58,17 +58,17 @@
     "view": "opening",
     "calls": 601,
     "triangles": 442665,
-    "medianMs": 5.5999999940395355,
+    "medianMs": 5.600000008940697,
     "geometries": 530,
     "textures": 12
   },
   {
     "run": "low phone",
     "view": "opening, race weekend",
-    "calls": 658,
-    "triangles": 576305,
-    "medianMs": 6,
-    "geometries": 542,
+    "calls": 660,
+    "triangles": 581279,
+    "medianMs": 3,
+    "geometries": 544,
     "textures": 12
   },
   {
@@ -76,7 +76,7 @@
     "view": "pit building",
     "calls": 241,
     "triangles": 369648,
-    "medianMs": 3.7999999970197678,
+    "medianMs": 2.5,
     "geometries": 487,
     "textures": 12
   },
@@ -85,7 +85,7 @@
     "view": "grandstand A",
     "calls": 195,
     "triangles": 342524,
-    "medianMs": 3.3999999910593033,
+    "medianMs": 2.5,
     "geometries": 477,
     "textures": 12
   },
@@ -94,7 +94,7 @@
     "view": "lake",
     "calls": 420,
     "triangles": 370697,
-    "medianMs": 4.299999997019768,
+    "medianMs": 3.3999999910593033,
     "geometries": 503,
     "textures": 13
   },
@@ -103,7 +103,7 @@
     "view": "car park",
     "calls": 155,
     "triangles": 297046,
-    "medianMs": 2.7000000029802322,
+    "medianMs": 3,
     "geometries": 464,
     "textures": 10
   }

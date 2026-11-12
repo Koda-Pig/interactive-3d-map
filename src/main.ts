@@ -2,6 +2,7 @@ import "@fontsource/roboto/latin-400.css";
 import "@fontsource/roboto/latin-500.css";
 import { NeutralToneMapping, PCFShadowMap, Scene, WebGLRenderer } from "three";
 import { CSS2DRenderer } from "three/addons/renderers/CSS2DRenderer.js";
+import { ArrivalRoutes } from "./draw/arrival-routes.ts";
 import { bakedGeometry, layoutModelFiles, loadKit } from "./draw/kit.ts";
 import { rippleTexture, updateHighlights } from "./draw/materials.ts";
 import {
@@ -26,6 +27,8 @@ import { detectQuality } from "./scene/quality.ts";
 import { SelectionOutline } from "./scene/selection-outline.ts";
 import { createSky, TABLE_MOUNTAIN_MODEL } from "./scene/sky.ts";
 import { addTouchGestures } from "./scene/touch-gestures.ts";
+import { CameraTour } from "./scene/tour.ts";
+import { ARRIVAL_TOUR, arrivalTour, lapTour } from "./scene/tours.ts";
 import { constrainView, createCamera, createControls } from "./scene/view.ts";
 import "./style.css";
 import { createGround } from "./terrain/ground.ts";
@@ -36,6 +39,7 @@ import { createHint, createMapControls } from "./ui/map-controls.ts";
 import type { ClearArea } from "./ui/overlays.ts";
 import { MapOverlays } from "./ui/overlays.ts";
 import { createSidebar } from "./ui/sidebar.ts";
+import { createTourButtons } from "./ui/tours.ts";
 
 /** How much of the sky's light reaches materials that reflect it. */
 const ENVIRONMENT_INTENSITY = 0.4;
@@ -47,6 +51,8 @@ const PAN_STEP = 0.18;
 const TURN_STEP = Math.PI / 12;
 /** How far one press tilts the view, in radians. */
 const TILT_STEP = Math.PI / 24;
+/** The event mode that shows the arrival routes. */
+const ARRIVAL_MODE = "race";
 /** Matches the phone layout in `style.css`, where the sidebar is a sheet along the bottom. */
 const PHONE_LAYOUT = window.matchMedia("(max-width: 600px)");
 
@@ -60,6 +66,8 @@ const hintElement = document.querySelector<HTMLElement>("#hint");
 const noticeElement = document.querySelector<HTMLElement>(".notice");
 const sheetHandle = document.querySelector<HTMLElement>(".sidebar__handle");
 const sidebarOpenElement = document.querySelector<HTMLElement>("#sidebar-open");
+const toursElement = document.querySelector<HTMLElement>(".tours");
+const legendElement = document.querySelector<HTMLElement>(".route-legend");
 if (
   !host ||
   !infoPanelElement ||
@@ -70,7 +78,9 @@ if (
   !hintElement ||
   !noticeElement ||
   !sheetHandle ||
-  !sidebarOpenElement
+  !sidebarOpenElement ||
+  !toursElement ||
+  !legendElement
 ) {
   throw new Error("The page is missing one of its main elements");
 }
@@ -137,7 +147,15 @@ if (traffic) {
   scenery.precincts.get("racing")?.add(traffic.raceCars);
   scenery.precincts.get("transport")?.add(traffic.shuttles);
 }
-scene.add(sky.object, ground.mesh, site, scenery.setting, ...scenery.precincts.values());
+const arrivals = new ArrivalRoutes(ground.surface);
+scene.add(
+  sky.object,
+  ground.mesh,
+  site,
+  scenery.setting,
+  ...scenery.precincts.values(),
+  arrivals.object,
+);
 
 const camera = createCamera(host.clientWidth / host.clientHeight);
 const controls = createControls(camera, renderer.domElement);
@@ -230,9 +248,12 @@ const interaction = new MapInteraction({
   onSelect: showInAddress,
 });
 
-createEventSwitch(eventSwitchElement, (mode) => {
+const eventSwitch = createEventSwitch(eventSwitchElement, (mode) => {
   setEventMode(mode, precincts, scenery.events);
   traffic?.setMode(mode?.id ?? null);
+  const arriving = mode?.id === ARRIVAL_MODE;
+  arrivals.setShown(arriving);
+  legendElement.hidden = !arriving;
   renderer.shadowMap.needsUpdate = true;
   overlays.invalidate();
   needsRender = true;
@@ -266,6 +287,25 @@ new ResizeObserver(() => {
 }).observe(mapControlsElement);
 
 const hint = createHint(hintElement);
+
+const tourButtons = createTourButtons(toursElement, {
+  start: (id) => {
+    hint.dismiss();
+    interaction.select(null);
+    if (id === ARRIVAL_TOUR) {
+      // The arrival is a race-day journey, with the routes drawn and the car parks full.
+      eventSwitch.select(ARRIVAL_MODE);
+      tour.start(arrivalTour(flight));
+    } else {
+      tour.start(lapTour(flight));
+    }
+  },
+  stop: () => tour.stop(),
+});
+const tour = new CameraTour(camera, controls, flight, ground.surface, (id) => {
+  tourButtons.showRunning(id);
+  overlays.invalidate();
+});
 controls.addEventListener("start", () => hint.dismiss());
 // Using anything at all, the sidebar or a button included, means the visitor has found their way.
 window.addEventListener("pointerdown", () => hint.dismiss(), { once: true });
@@ -316,8 +356,9 @@ new ResizeObserver(() => {
 // The scene is all but static, so frames are only drawn when something has changed.
 renderer.setAnimationLoop((now) => {
   const flying = flight.update(now);
+  const touring = tour.update(now);
   controls.update();
-  const moved = viewChanged || flying;
+  const moved = viewChanged || flying || touring;
   viewChanged = false;
   if (moved) {
     constrainView(camera, controls);
@@ -348,6 +389,9 @@ renderer.setAnimationLoop((now) => {
     needsRender = true;
   }
   if (traffic?.update(now)) {
+    needsRender = true;
+  }
+  if (arrivals.update(now, camera, controls.target, host.clientHeight)) {
     needsRender = true;
   }
   const drawing = moved || changes.redraw || needsRender;

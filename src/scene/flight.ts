@@ -57,6 +57,8 @@ const offset = new Vector3();
 /** Moves the camera smoothly to frame something. Any user input cancels it. */
 export class CameraFlight {
   private leg: Leg | null = null;
+  /** Counts the flights started, so a caller can tell its own flight from a later one. */
+  private legsStarted = 0;
 
   /**
    * `clearAreas` says which parts of the map have no panel or button over
@@ -308,6 +310,26 @@ export class CameraFlight {
     );
   }
 
+  /** Flies to a given view. */
+  flyTo(view: View, duration?: number): void {
+    this.fly(view, duration);
+  }
+
+  /** Stops any flight where it is. */
+  stop(): void {
+    this.leg = null;
+  }
+
+  /** Whether a flight is under way. */
+  get flying(): boolean {
+    return this.leg !== null;
+  }
+
+  /** A number for the flight under way, or `null` when there's none. Each new flight gets a new one. */
+  get currentLeg(): number | null {
+    return this.leg ? this.legsStarted : null;
+  }
+
   /** Where the camera will be around its orbit point once any flight ends. */
   private heading(): { radius: number; phi: number; theta: number } {
     const { leg } = this;
@@ -330,6 +352,7 @@ export class CameraFlight {
     // The short way round, so a view turned past south doesn't spin all the way back.
     const turn = MathUtils.euclideanModulo(to.theta - from.theta + Math.PI, Math.PI * 2) - Math.PI;
 
+    this.legsStarted += 1;
     this.leg = {
       fromTarget: controls.target.clone(),
       toTarget: to.target,

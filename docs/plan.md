@@ -66,7 +66,7 @@ BMR hasn't published a track map or masterplan, so we draw our own to fit its pu
 
 **Done when:** it's good enough to put in front of BMR.
 
-**Status:** built, with the race weekend / conference day toggle as the nice-to-have. The kit's models replace the key buildings. The phone tier draws about 375,000 triangles in 175 draw calls, or about 430,000 on a race weekend. It hasn't been timed on a real phone yet.
+**Status:** built, with all three nice-to-haves: the race weekend / conference day toggle, a lap of the circuit, and arrival routes with a camera ride from the N7 to the grandstands. The kit's models replace the key buildings. The phone tier draws about 375,000 triangles in 175 draw calls, or about 430,000 on a race weekend. It hasn't been timed on a real phone yet.
 
 ## Decided
 

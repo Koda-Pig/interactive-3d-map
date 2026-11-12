@@ -199,8 +199,25 @@ export interface LandUseZone {
   readonly footprint: readonly PathPoint[];
 }
 
+/** How people travel one stretch of an arrival route. */
+export type ArrivalMode = "drive" | "walk";
+
+/** One stretch of an arrival route, along roads and walks that are on the map. */
+export interface ArrivalLeg {
+  readonly mode: ArrivalMode;
+  readonly path: readonly PathPoint[];
+}
+
+/** A way into the venue on an event day: from a road, station or airfield to a gate. */
+export interface ArrivalRoute {
+  readonly id: string;
+  readonly name: string;
+  readonly legs: readonly ArrivalLeg[];
+}
+
 export interface Layout {
   readonly events: readonly EventMode[];
+  readonly arrivals: readonly ArrivalRoute[];
   readonly landUse: readonly LandUseZone[];
   readonly grading: readonly GradingZone[];
   readonly locations: readonly Location[];

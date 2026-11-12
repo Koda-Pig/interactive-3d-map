@@ -97,6 +97,46 @@
       ]
     }
   ],
+  "arrivals": [
+    {
+      "id": "from-cape-town",
+      "name": "From Cape Town on the N7",
+      "legs": [
+        { "mode": "drive", "path": [[-1310, 1900], [-1310, 600, 100], [-1285, 480, 150], [-1220, 300, 40], [-1040, 300, 30], [-1040, -90, 30], [-1120, -90]] },
+        { "mode": "walk", "path": [[-1120, -90], [-1120, -60, 15], [-990, -60, 30], [-940, 0, 30], [-705, 0]] }
+      ]
+    },
+    {
+      "id": "from-malmesbury-west",
+      "name": "From Malmesbury on the N7, to the western car parks",
+      "legs": [
+        { "mode": "drive", "path": [[-1310, -1900], [-1310, -1000, 100], [-1285, -880, 150], [-1220, -700, 40], [-1040, -700, 25], [-1040, -800, 70], [-810, -800, 25], [-810, -960]] },
+        { "mode": "walk", "path": [[-810, -960], [-780, -930, 20], [-780, -815, 20], [-760, -790]] }
+      ]
+    },
+    {
+      "id": "from-malmesbury-north",
+      "name": "From Malmesbury on the N7, to the northern car parks",
+      "legs": [
+        { "mode": "drive", "path": [[-1310, -1900], [-1310, -1000, 100], [-1285, -880, 150], [-1220, -700, 40], [-1040, -700, 25], [-1040, -800, 70], [190, -800, 25], [190, -960]] },
+        { "mode": "walk", "path": [[190, -960], [230, -920, 20], [230, -815, 20], [205, -790]] }
+      ]
+    },
+    {
+      "id": "from-kalbaskraal-station",
+      "name": "From Kalbaskraal station",
+      "legs": [
+        { "mode": "walk", "path": [[1490, 1185], [1300, 1120, 80], [1280, 380, 80], [1180, 240, 60], [988, 144]] }
+      ]
+    },
+    {
+      "id": "from-the-aerodrome",
+      "name": "From the aerodrome",
+      "legs": [
+        { "mode": "drive", "path": [[445, -1380], [620, -1380, 20], [620, -795]] }
+      ]
+    }
+  ],
   "landUse": [
     { "id": "wheat-north", "use": "wheat", "footprint": [[-1215, -1215], [600, -1215], [600, -1095], [-1215, -1095]] },
     { "id": "wheat-north-west", "use": "wheat", "footprint": [[-1215, -1095], [-1062, -1095], [-1062, -690], [-1215, -690]] },
