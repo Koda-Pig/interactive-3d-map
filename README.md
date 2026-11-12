@@ -47,7 +47,9 @@ pnpm dev
 
 Left-drag pans, right-drag rotates and scrolling zooms. On touch, one finger pans and two fingers zoom and rotate.
 
-Pointing at a location or its label highlights it. Clicking or tapping opens its details and moves the camera to it. Clicking empty ground, the close button or Escape closes the details.
+The map opens with a short fly-in, skipped under reduced motion. Pointing at a location or its label highlights it. Clicking or tapping a building, gate or label opens its details and moves the camera to it. Roads, tracks, flat areas and water open their details where they are, without muting the rest of the site. Clicking empty ground, the close button or Escape closes the details.
+
+The selected location goes into the address as `?location=<id>`, so a copied link opens the map on it. Other parameters such as `?quality` are kept, and an id that doesn't exist is dropped.
 
 The switch at the top of the map shows the site as a whole, on a race weekend or on a conference day. The locations in use stay in full colour and the rest are muted, with crowds of parked cars, the race grid or conference marquees appearing to match.
 

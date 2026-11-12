@@ -12,8 +12,8 @@ export interface SidebarActions {
 }
 
 export interface Sidebar {
-  /** Marks the selected location in the list, scrolling it into view. */
-  showSelected(location: Location | null): void;
+  /** Marks the selected location in the list, scrolling it into view unless `reveal` is off. */
+  showSelected(location: Location | null, reveal?: boolean): void;
   /** Sets a precinct's toggle to match the map. */
   showPrecinct(category: Category, shown: boolean): void;
   /**
@@ -369,7 +369,7 @@ export function createSidebar(
     panelWidth() {
       return !phone.matches && isShown() ? pane.offsetWidth : 0;
     },
-    showSelected(location) {
+    showSelected(location, reveal = true) {
       selected?.button.removeAttribute("aria-current");
       preview?.remove();
       preview = null;
@@ -385,7 +385,9 @@ export function createSidebar(
         }
         // The row is scrolled to at once, so it has to be in its final place.
         withoutSliding(render);
-        revealRow(list, selected);
+        if (reveal) {
+          revealRow(list, selected);
+        }
       }
     },
     showPrecinct(category, shown) {

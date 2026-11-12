@@ -35,6 +35,8 @@ export interface InteractionParts {
   readonly outline: SelectionOutline;
   /** Called when something changed that needs a new frame. */
   readonly onChange: () => void;
+  /** Called whenever the selection is set, including to nothing. */
+  readonly onSelect: (location: Location | null) => void;
 }
 
 /** Hovering and selecting locations, from the 3D view or from anywhere else. */
@@ -60,7 +62,8 @@ export class MapInteraction {
   /**
    * Opens a location's details and frames it, or closes them when given `null`.
    * A location in a hidden precinct brings that precinct back. With `fly` off
-   * the camera stays where it is.
+   * the camera stays where it is, the rest of the site isn't muted and the
+   * sidebar isn't scrolled, so a click on a road changes no more than it must.
    */
   select(location: Location | null, fly = true): void {
     if (location) {
@@ -68,9 +71,10 @@ export class MapInteraction {
     }
     this.selected = location;
     this.parts.panel.show(location);
-    this.parts.sidebar.showSelected(location);
-    this.parts.precincts.setFocus(location);
+    this.parts.sidebar.showSelected(location, fly);
+    this.parts.precincts.setFocus(fly ? location : null);
     this.parts.outline.show(location && this.objectOf(location));
+    this.parts.onSelect(location);
     this.refresh();
     if (location && fly) {
       this.parts.flight.frame(new Box3().setFromObject(this.objectOf(location)));

@@ -11,6 +11,8 @@ const FRAME_MARGIN = 1.25;
 const MIN_FRAME_DISTANCE = 240;
 const MIN_FRAME_TILT = MathUtils.degToRad(30);
 const MAX_FRAME_TILT = MathUtils.degToRad(62);
+/** Below this, the middle of a clear area looks too near the horizon to frame anything in. */
+const MIN_LEAN = 0.15;
 
 /** How far the camera rises mid-flight, as a share of the distance covered. */
 const HOP_SHARE = 0.25;
@@ -25,6 +27,12 @@ const ZOOM_STEP_DURATION = 260;
 const TURN_DURATION = 500;
 /** Short enough that the view keeps up with a slider being dragged. */
 const SLIDER_DURATION = 120;
+
+/** Where the opening fly-in starts, relative to the opening view. */
+const FLY_IN_DISTANCE = 1.9;
+const FLY_IN_TILT = MathUtils.degToRad(22);
+const FLY_IN_TURN = MathUtils.degToRad(-30);
+const FLY_IN_DURATION = 2600;
 
 // Long roads run off the map, so only the part you can fly to is framed.
 const MAP_AREA = new Box3(
@@ -51,13 +59,13 @@ export class CameraFlight {
   private leg: Leg | null = null;
 
   /**
-   * `clearArea` says which part of the map has no panel or button over it,
-   * and `homeArea` which part the opening view is centred in.
+   * `clearAreas` says which parts of the map have no panel or button over
+   * them, and `homeArea` which part the opening view is centred in.
    */
   constructor(
     private readonly camera: PerspectiveCamera,
     private readonly controls: MapControls,
-    private readonly clearArea: () => ClearArea,
+    private readonly clearAreas: () => readonly ClearArea[],
     private readonly homeArea: () => ClearArea,
   ) {
     controls.addEventListener("start", () => {
@@ -66,22 +74,43 @@ export class CameraFlight {
   }
 
   /** Flies back to the opening view, as it would be for the shape of its part of the map now. */
-  flyHome(): void {
+  flyHome(duration?: number): void {
     const area = this.homeArea();
     const home = homeView((area.right - area.left) / (area.bottom - area.top));
-    this.fly({ ...home, target: this.aim(home.target, home, area) });
+    this.fly({ ...home, target: this.aim(home.target, home, area) }, duration);
   }
 
   /**
-   * Flies to frame a box in the clear part of the map, keeping the direction
-   * the camera is facing.
+   * Starts the camera high above the site, turned a little, and settles it
+   * into the opening view. Under reduced motion it goes straight there.
+   */
+  flyIn(): void {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      this.flyHome();
+      return;
+    }
+    const { camera, controls } = this;
+    const view = this.currentView();
+    const radius = MathUtils.clamp(
+      view.radius * FLY_IN_DISTANCE,
+      MIN_ZOOM_DISTANCE,
+      MAX_ZOOM_DISTANCE,
+    );
+    const phi = MathUtils.clamp(view.phi - FLY_IN_TILT, MIN_TILT, MAX_TILT);
+    offset.setFromSphericalCoords(radius, phi, view.theta + FLY_IN_TURN);
+    camera.position.copy(controls.target).add(offset);
+    camera.lookAt(controls.target);
+    this.flyHome(FLY_IN_DURATION);
+  }
+
+  /**
+   * Flies to frame a box in whichever clear part of the map shows it largest,
+   * keeping the direction the camera is facing.
    */
   frame(bounds: Box3): void {
-    const { camera } = this;
     const reachable = bounds.clone().intersect(MAP_AREA);
     const centre = reachable.getCenter(new Vector3());
     const size = reachable.getSize(new Vector3());
-    const clear = this.clearArea();
     const current = this.currentView();
     const phi = MathUtils.clamp(current.phi, MIN_FRAME_TILT, MAX_FRAME_TILT);
     const { theta } = current;
@@ -95,16 +124,81 @@ export class CameraFlight {
     const deep = (size.x / 2) * sin + (size.z / 2) * cos;
     const upScreen = deep * Math.cos(phi) + (size.y / 2) * Math.sin(phi);
 
-    // The tangent of the angle one pixel covers at the middle of the view.
-    const pixel = (2 * Math.tan(MathUtils.degToRad(camera.fov) / 2)) / clear.viewHeight;
-    const halfWidth = Math.atan((pixel * (clear.right - clear.left)) / 2);
-    const halfHeight = Math.atan((pixel * (clear.bottom - clear.top)) / 2);
-    const fit =
-      FRAME_MARGIN * Math.max(across / Math.sin(halfWidth), upScreen / Math.sin(halfHeight));
-    const radius = MathUtils.clamp(fit, MIN_FRAME_DISTANCE, MAX_ZOOM_DISTANCE);
-
-    const target = this.aim(centre, { radius, phi, theta }, clear);
+    // How close the box can be with it inside each clear area. The closest
+    // shows it largest and wins. Among equals (small things all stop at the
+    // minimum distance) the larger area wins, which leaves more room around it.
+    const box = { across, upScreen, deep, phi };
+    const areas = this.clearAreas();
+    let best: { area: ClearArea; depth: number; radius: number } | null = null;
+    for (const area of areas) {
+      const fit = this.fitDistance(area, box);
+      if (fit && (!best || fit.depth < best.depth - 1)) {
+        best = { area, ...fit };
+      }
+    }
+    // Too big for any clear area, even from as far as the camera goes. Pushed
+    // into a strip it would be cut off on one side, so it's centred in the
+    // whole map instead and the panels cover a little of it. That's only
+    // worth it while the middle of the map is clear, which it isn't on a
+    // phone, where the details panel sits across it.
+    const { viewWidth, viewHeight } = areas[0];
+    const middleClear = areas.some(
+      (area) =>
+        area.left <= viewWidth / 2 &&
+        area.right >= viewWidth / 2 &&
+        area.top <= viewHeight / 2 &&
+        area.bottom >= viewHeight / 2,
+    );
+    if ((!best || best.radius > MAX_ZOOM_DISTANCE) && middleClear) {
+      const whole = {
+        left: 0,
+        top: 0,
+        right: viewWidth,
+        bottom: viewHeight,
+        viewWidth,
+        viewHeight,
+      };
+      const fit = this.fitDistance(whole, box);
+      if (fit) {
+        best = { area: whole, ...fit };
+      }
+    }
+    if (!best) {
+      return;
+    }
+    const radius = MathUtils.clamp(best.radius, MIN_FRAME_DISTANCE, MAX_ZOOM_DISTANCE);
+    const target = this.aim(centre, { radius, phi, theta }, best.area);
     this.fly({ target, radius, phi, theta });
+  }
+
+  /**
+   * How far the box's centre has to be from the camera, along its line of
+   * sight, to fit inside `area`, and the orbit radius that puts it there. The
+   * box reaches `across` either side of its centre, `upScreen` above and below
+   * it, and `deep` towards and away from the camera along the ground. Returns
+   * `null` for an area too high in the view to frame anything on the ground.
+   */
+  private fitDistance(
+    area: ClearArea,
+    box: { across: number; upScreen: number; deep: number; phi: number },
+  ): { depth: number; radius: number } | null {
+    const { across, upScreen, deep, phi } = box;
+    // The tangent of the angle one pixel covers, which is the same anywhere in the view.
+    const pixel = (2 * Math.tan(MathUtils.degToRad(this.camera.fov) / 2)) / area.viewHeight;
+    const halfWidth = (pixel * (area.right - area.left)) / 2;
+    const halfHeight = (pixel * (area.bottom - area.top)) / 2;
+    // The near half of the box is closer than its centre, so it looks larger.
+    // Allowing for that keeps the near edge of a long selection in the frame.
+    const depth =
+      FRAME_MARGIN * Math.max(across / halfWidth, upScreen / halfHeight) + deep * Math.sin(phi);
+    // An area low in the view looks at ground nearer the camera than the
+    // orbit point, so the camera sits further back to keep the same depth.
+    const down = ((area.top + area.bottom - area.viewHeight) / 2) * pixel;
+    const lean = Math.cos(phi) + down * Math.sin(phi);
+    if (lean < MIN_LEAN) {
+      return null;
+    }
+    return { depth, radius: Math.max((depth * lean) / Math.cos(phi), MIN_FRAME_DISTANCE) };
   }
 
   /**

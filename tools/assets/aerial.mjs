@@ -54,12 +54,26 @@ function pit(s, { w, d, h }) {
   s.box(20, 4, 20, -w * 0.46, h - 3, -d * 0.23, "glass");
   s.box(22, 1, 22, -w * 0.46, h - 0.5, -d * 0.23, "brand-navy");
 }
+/** Thickness of the wall across a grandstand end cap, in metres. */
+const END_WALL = 0.4;
+
 function stand(s, { w, d, h, id }) {
+  // The end cap's wall stands across its outer 0.4 m. The tiers stop at its
+  // inner face, so their ends don't share the wall's outer face and flicker.
+  const inset = id === "grandstand-end-cap" ? END_WALL : 0;
   for (let n = 0; n < 10; n++) {
     const z = d * 0.45 - (n + 0.5) * d * 0.074;
     const y = 1 + n * h * 0.052;
-    s.box(w, y, d * 0.074, 0, y / 2, z, "concrete");
-    s.box(w, 0.3, d * 0.05, 0, y + 0.15, z, n % 4 < 2 ? "brand-navy" : "brand-teal");
+    s.box(w - inset, y, d * 0.074, inset / 2, y / 2, z, "concrete");
+    s.box(
+      w - inset,
+      0.3,
+      d * 0.05,
+      inset / 2,
+      y + 0.15,
+      z,
+      n % 4 < 2 ? "brand-navy" : "brand-teal",
+    );
   }
   s.box(w, 0.6, d * 0.19, 0, h * 0.36, -d * 0.395, "wall-white");
   for (const x of [-w * 0.36, w * 0.36]) {
@@ -96,7 +110,7 @@ function stand(s, { w, d, h, id }) {
       "wall-grey",
     );
   if (id === "grandstand-end-cap")
-    s.box(0.4, h * 0.34, d * 0.8, -w / 2 + 0.2, h * 0.17, 0, "wall-white");
+    s.box(END_WALL, h * 0.34, d * 0.8, (END_WALL - w) / 2, h * 0.17, 0, "wall-white");
 }
 function hall(s, { w, d, h }) {
   s.box(w, h * 0.7, d, 0, h * 0.35, 0);

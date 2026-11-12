@@ -26,6 +26,7 @@ import { addTouchGestures } from "./scene/touch-gestures.ts";
 import { constrainView, createCamera, createControls } from "./scene/view.ts";
 import "./style.css";
 import { createGround } from "./terrain/ground.ts";
+import { linkedLocation, showInAddress } from "./ui/address.ts";
 import { createEventSwitch } from "./ui/event-switch.ts";
 import { createInfoPanel } from "./ui/info-panel.ts";
 import { createHint, createMapControls } from "./ui/map-controls.ts";
@@ -162,7 +163,7 @@ const besideSidebar = (): ClearArea => {
   return { left, top: 0, right: viewWidth, bottom: viewHeight, viewWidth, viewHeight };
 };
 
-const flight = new CameraFlight(camera, controls, () => overlays.clearArea(), besideSidebar);
+const flight = new CameraFlight(camera, controls, () => overlays.clearAreas(), besideSidebar);
 const panel = createInfoPanel(infoPanelElement, () => interaction.select(null));
 const sidebar = createSidebar(sidebarElement, sidebarOpenElement, {
   pick: (location) => interaction.select(location),
@@ -203,6 +204,7 @@ const interaction = new MapInteraction({
     overlays.invalidate();
     needsRender = true;
   },
+  onSelect: showInAddress,
 });
 
 createEventSwitch(eventSwitchElement, (mode) => {
@@ -229,6 +231,15 @@ renderer.domElement.addEventListener("keydown", (event) => {
     flight.zoomBy(1 / ZOOM_STEP);
   }
 });
+
+// The details panel stops above the map controls, so it needs their height.
+new ResizeObserver(() => {
+  document.documentElement.style.setProperty(
+    "--map-controls-height",
+    `${mapControlsElement.offsetHeight}px`,
+  );
+  overlays.invalidate();
+}).observe(mapControlsElement);
 
 const hint = createHint(hintElement);
 controls.addEventListener("start", () => hint.dismiss());
@@ -320,6 +331,16 @@ renderer.setAnimationLoop((now) => {
 window.removeEventListener("error", showStartupFailure);
 window.removeEventListener("unhandledrejection", showStartupFailure);
 loadingElement.remove();
+
+// A link to a location opens on it. Otherwise the camera settles into the opening view.
+const linked = linkedLocation();
+if (linked) {
+  interaction.select(linked);
+} else {
+  // Drops a stale id, such as one for a location that has since been renamed.
+  showInAddress(null);
+  flight.flyIn();
+}
 
 if (import.meta.env.DEV) {
   // For framing views and reading draw counts from the console while developing.

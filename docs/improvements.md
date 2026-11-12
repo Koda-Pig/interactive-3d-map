@@ -1,6 +1,6 @@
 # Visual improvements
 
-A review of the map against high-end interactive site maps, from November 2026, and the work that would close the gap. Only item 1 is built so far. The scores are from before it.
+A review of the map against high-end interactive site maps, from November 2026, and the work that would close the gap. Items 1, 5 and 6 are built and item 8 in part. The scores are from before them.
 
 The map already does its job as a product. Search, precinct filters, fly-to and the event switch are as good as most maps of this kind. It falls behind on finish. From the air it reads clearly, but up close it looks like an architectural blockout, and the close view is where every click takes you.
 
@@ -39,7 +39,7 @@ The usual alternatives each make a different trade:
 
 ### 1. The selection highlight flattens buildings
 
-**Built.** A selected building keeps its own materials under a light cyan tint, with a cyan line on the ground around its footprint ([selection-outline.ts](../src/scene/selection-outline.ts)), and the rest of the site mutes around it. Hover uses a lighter tint and doesn't mute anything. Closing the details returns to the current event mode's muting. Flat areas, roads and gates keep a strong tint, with no outline.
+**Built.** A selected building keeps its own materials under a light tint, with an amber line drawn around its silhouette ([selection-outline.ts](../src/scene/selection-outline.ts)), and the rest of the site mutes around it. Hover uses a lighter tint and doesn't mute anything. Closing the details returns to the current event mode's muting. Flat areas, roads and gates keep a strong tint, with no outline.
 
 **Done when:** a selected building is obvious from the whole-site view and still recognisable as that building up close.
 
@@ -73,17 +73,17 @@ Add detail in the generator, starting with the buildings people are most likely 
 
 ### 5. Shadows are coarse
 
-One shadow map covers 3.6 km ([lighting.ts:11](../src/scene/lighting.ts:11)). That's about 0.9 m per shadow pixel on the high tier and 1.8 m on the low tier. The end wall of Grandstand A shows blotches that look like shadow artifacts, which still needs confirming.
+**Built.** The shadow map is refitted to the ground in view once the camera stops ([sun-shadow.ts](../src/scene/sun-shadow.ts)), and goes back to covering the whole 3.6 km site only when a move takes the view outside the fitted area. At the distance a fly-to stops, it's about 0.3 m per shadow pixel on the high tier.
 
-Tighten the shadow area to the built part of the site, or bake the static shadows. Adjust the shadow bias if the blotches come from the shadow map.
+The blotches on Grandstand A's end wall weren't shadows. They stayed with shadow casting turned off. The end cap's seating tiers ran to its outer edge, so their ends shared a plane with the end wall and the two flickered through each other. The tiers now stop at the wall's inner face ([aerial.mjs](../tools/assets/aerial.mjs)), which fixes every grandstand that uses the end cap.
 
 **Done when:** building shadows have clean edges at fly-to distance and the grandstand end wall is clear.
 
 ### 6. The opening view undersells the site
 
-The opening camera ([view.ts:13](../src/scene/view.ts:13)) leaves the site in about a third of the frame, off-centre, with farmland in front and a blank haze above. The first impression is mostly wheat.
+**Built.** The opening view ([view.ts](../src/scene/view.ts)) holds a 900 m circle around the circuit and lake, whatever the window's shape, and looks down steeply enough that no sky shows in the first frame. Once loading ends, the camera settles into that view from higher up and turned 30°, over 2.6 seconds ([flight.ts](../src/scene/flight.ts)). The fly-in is skipped under `prefers-reduced-motion`, and a link to a location flies straight to that location instead.
 
-Reframe the opening so the circuit and lake fill the view, and add some cloud or atmosphere to the sky. Add a short fly-in once loading ends, skipped under `prefers-reduced-motion`.
+The sky got no clouds. It only shows when someone tilts the view towards the horizon, so clouds wouldn't change the first impression.
 
 **Done when:** a screenshot of the first frame works as a slide in the deck.
 
@@ -97,9 +97,11 @@ Render continuously only while something visible is animating, and keep moving o
 
 ### 8. The info panels are thin
 
-A panel shows the precinct, the name and one sentence ([info-panel.ts:17](../src/ui/info-panel.ts:17)). High-end maps use this space for images, key facts and a next step. A selection can't be shared either, because the address only carries `?quality` and `?stats`.
+A panel shows the precinct, the name, one sentence and a preview picture ([info-panel.ts](../src/ui/info-panel.ts)). High-end maps use this space for key facts and a next step as well.
 
-The sidebar now shows a picture under the selected location, from the location's `image` field, with a placeholder until the pictures exist. Add an image rendered from our own scene, room for facts BMR supplies, and links between related places such as a grandstand and its nearest gate and car park. Put the selected location in the address so a link opens on it.
+**Built so far:** every location has an illustrated preview, in the panel and under its sidebar row. The selected location goes into the address as `?location=<id>` ([address.ts](../src/ui/address.ts)), so a link opens the map on it.
+
+**Still to do:** room for facts BMR supplies, and links between related places, such as a grandstand and its nearest gate and car park.
 
 **Done when:** someone can send a link to a location, and its panel says more than the label does.
 
@@ -110,10 +112,10 @@ The sidebar now shows a picture under the selected location, from the location's
 | 1 | Selection highlight (built) | Small | High |
 | 2 | Soft shading and ground contact | Medium | High |
 | 3 | Ground dressing | Medium | High |
-| 4 | Opening view and fly-in | Small | Medium |
-| 5 | Shadow quality | Small | Medium |
+| 4 | Opening view and fly-in (built) | Small | Medium |
+| 5 | Shadow quality (built) | Small | Medium |
 | 6 | Model detail | Large | High |
-| 7 | Info panels and links | Medium | Medium |
+| 7 | Info panels and links (shareable links built) | Medium | Medium |
 | 8 | Movement, lap and arrival routes | Large | Medium |
 
 Time the map on a real mid-range phone before item 2 and again after item 3. The budget is unknown until someone does.

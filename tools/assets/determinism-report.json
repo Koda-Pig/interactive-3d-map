@@ -2,11 +2,11 @@
   "algorithm": "SHA-256",
   "matchedFiles": 80,
   "hashes": {
-    "public/models/manifest.json": "23671b0399e70e938f6a2f8b08d0a5d4072ff49e12046671a2fc705eec8f648a",
+    "public/models/manifest.json": "265adefed0102a1a0ffcb180e86e70077371de63e210248ab4dd651c0b390d37",
     "public/models/racing/pit-conference-building.glb": "9066789058464f47ed453f07e908eb5905917e6513bda25721a1de2ebbd7fa43",
     "public/models/racing/grandstand-bay-covered.glb": "69eb6c7e6b531343e4532da82fc08a6a256268e06b7c470ee1ace19d49b6a4d7",
     "public/models/racing/grandstand-bay-open.glb": "e3cd263254fe44639a85b9ecd0b6fa76a4c747eaa135f47509ac7d8b79c91722",
-    "public/models/racing/grandstand-end-cap.glb": "5c543018584aa35cf30a7b21a600da150493d0db6082ed438e375c88db3cf576",
+    "public/models/racing/grandstand-end-cap.glb": "1c913d9e8804fdd998c84dc76433f611fe978d23f85e5bf5074e977b9dd1ba7a",
     "public/models/racing/temporary-bleacher.glb": "3189318681219748348dd1f4461ac00bf9ed0c893540d1fbac7c9b18898d63c1",
     "public/models/racing/start-finish-gantry.glb": "c27dc8cc4217e29ff77e84c5858940bfa5500a7b21b1d3275700e2757c0ec8db",
     "public/models/racing/footbridge-over-track.glb": "39050548d177aad407bcfc0f44177e7e034280ab7a809ebed1139fce2b50556e",

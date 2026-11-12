@@ -22,14 +22,16 @@ A review of how the map behaves in use, from November 2026. [improvements.md](im
 | Flights framed a selection by its diagonal, so on a phone a selection stayed small | Flights fit the selection's width and depth as seen from the camera's bearing | [flight.ts](../src/scene/flight.ts) |
 | Minor labels sat on top of the selection's outline | Minor labels keep clear of the selected building or area on screen. Tracks and roads, which span the site, are exempt | [labels.ts](../src/scene/labels.ts) |
 | The how-to hint stayed up until the map itself was dragged | Any press or key anywhere dismisses it | [main.ts](../src/main.ts) |
+| Selecting a road muted the whole site and scrolled the sidebar to its row, though the camera stayed put | A selection that doesn't move the camera leaves the rest of the site unmuted and the sidebar where it was. Picking from the sidebar still mutes and flies | [interaction.ts](../src/scene/interaction.ts), [sidebar.ts](../src/ui/sidebar.ts) |
+| In a small window a large selection sat low, or ran off one side, because flights used the single largest clear rectangle | Flights try every clear rectangle and use the one that shows the selection largest. The fit now allows for an area being off-centre and for the near half of a deep selection looking larger. When the selection can't fit anywhere at the furthest zoom, it's centred in the whole map, unless the middle of the map is covered, as it is on a phone | [overlays.ts](../src/ui/overlays.ts), [flight.ts](../src/scene/flight.ts) |
+| In a short window the map controls covered the bottom of the details panel | The panel stops above the controls and scrolls. Below 720 px tall its picture is shorter | [style.css](../src/style.css), [main.ts](../src/main.ts) |
 | Nothing out of view could be skipped. The ground was one mesh and each kind of tree one site-wide batch, so both were always drawn | The ground is drawn in 49 pieces and scenery batches are split into regions, so the ones out of view are skipped | [ground.ts](../src/terrain/ground.ts), [scenery.ts](../src/draw/scenery.ts) |
 
 ## Still open
 
 - **Labels vanish when they touch the map's edge.** Letting them run off the edge was tried. Half a name at the edge looked worse, so they still fade out over 150 ms.
 - **Shadows change after the camera stops.** The shadow pass waits 180 ms and then refits to the view ([sun-shadow.ts](../src/scene/sun-shadow.ts)). This comes from reading the code. Nobody has confirmed how visible it is.
-- **Selecting a road still mutes the whole site** and scrolls the sidebar to its row, even though the camera now stays put.
-- **In a small window, a large selection sits low.** The clear part of the map is the strip under the details panel, so the circuit is framed in the lower half.
+- **The circuit doesn't fit some windows whole.** At 700 by 900 it needs a camera about 8 km away, and zoom stops at 4.5 km, so the details panel covers one corner of it.
 
 ## What culling bought
 

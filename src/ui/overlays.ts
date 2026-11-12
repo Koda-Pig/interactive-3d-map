@@ -23,18 +23,44 @@ function overlap(a: Box, b: Box): boolean {
   return a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
 }
 
-/** The biggest piece of `clear` left beside, above or below `box`. */
-function without(clear: Box, box: Box): Box {
+function contains(outer: Box, inner: Box): boolean {
+  return (
+    inner.left >= outer.left &&
+    inner.right <= outer.right &&
+    inner.top >= outer.top &&
+    inner.bottom <= outer.bottom
+  );
+}
+
+/** How many clear rectangles are kept after each overlay, largest first. */
+const MAX_PIECES = 12;
+
+/**
+ * The rectangles of `clear` left beside, above and below `box`. Each is as
+ * large as it can be, so together they cover all of `clear` that `box` doesn't.
+ */
+function without(clear: Box, box: Box): Box[] {
   if (!overlap(clear, box)) {
-    return clear;
+    return [clear];
   }
-  const pieces: Box[] = [
+  return [
     { ...clear, right: box.left },
     { ...clear, left: box.right },
     { ...clear, bottom: box.top },
     { ...clear, top: box.bottom },
-  ];
-  return pieces.reduce((best, piece) => (area(piece) > area(best) ? piece : best));
+  ].filter((piece) => area(piece) > 0);
+}
+
+/** Drops pieces that lie inside another, and keeps the largest few. */
+function prune(pieces: readonly Box[]): Box[] {
+  const sorted = [...pieces].sort((a, b) => area(b) - area(a));
+  const kept: Box[] = [];
+  for (const piece of sorted) {
+    if (!kept.some((other) => contains(other, piece))) {
+      kept.push(piece);
+    }
+  }
+  return kept.slice(0, MAX_PIECES);
 }
 
 /**
@@ -73,12 +99,20 @@ export class MapOverlays {
     return this.cached;
   }
 
-  clearArea(): ClearArea {
+  /**
+   * The largest rectangles of the map with nothing on top of them, largest
+   * first. Which suits best depends on the shape of what's being shown: a
+   * long, low selection may fit a wide strip better than a bigger, narrow one.
+   */
+  clearAreas(): ClearArea[] {
     const viewWidth = this.host.clientWidth;
     const viewHeight = this.host.clientHeight;
     const whole: Box = { left: 0, top: 0, right: viewWidth, bottom: viewHeight };
-    const clear = this.boxes().reduce(without, whole);
+    const clear = this.boxes().reduce<Box[]>(
+      (pieces, box) => prune(pieces.flatMap((piece) => without(piece, box))),
+      [whole],
+    );
     // Overlays that leave nothing usable are ignored, so there's always somewhere to aim.
-    return { ...(area(clear) > 0 ? clear : whole), viewWidth, viewHeight };
+    return (clear.length > 0 ? clear : [whole]).map((box) => ({ ...box, viewWidth, viewHeight }));
   }
 }
