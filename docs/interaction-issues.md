@@ -30,7 +30,7 @@ A review of how the map behaves in use, from November 2026. [improvements.md](im
 ## Still open
 
 - **Labels vanish when they touch the map's edge.** Letting them run off the edge was tried. Half a name at the edge looked worse, so they still fade out over 150 ms.
-- **Shadows change after the camera stops.** The shadow pass waits 180 ms and then refits to the view ([sun-shadow.ts](../src/scene/sun-shadow.ts)). This comes from reading the code. Nobody has confirmed how visible it is.
+- **Shadows sharpen after the camera stops.** The shadow pass waits 180 ms and then refits to the view ([sun-shadow.ts](../src/scene/sun-shadow.ts)). After a 300 m pan, the frames 60 ms and 600 ms after stopping differ in about 0.1% of their pixels, a slight sharpening of shadow edges. That's too small to be worth changing.
 - **The circuit doesn't fit some windows whole.** At 700 by 900 it needs a camera about 8 km away, and zoom stops at 4.5 km, so the details panel covers one corner of it.
 
 ## What culling bought
@@ -47,7 +47,7 @@ The last row compares two different patches of ground, so read it as a rough gui
 
 The saving is smaller than the size of the scene suggests. A tilted view reaches the horizon, so everything in a wedge ahead of the camera is still in view. Two things would cut more:
 
-- **Far trees as simple shapes.** Scenery is about 200,000 triangles and most of it is trees. Windbreaks already use an eight-triangle tree. Swapping every tree to it beyond a set distance would remove most of that, at the cost of a visible change in the whole-site view.
+- **Far trees as simple shapes.** Done. Each batch of trees has a twin drawn with eight-triangle shapes the size and average colour of each model's crown, sharing the batch's positions. Batches more than 1.5 km from the camera switch to the twin ([scenery.ts](../src/draw/scenery.ts)). That took 150,000 to 330,000 triangles off the whole-site views, and the swap is hard to spot at that distance.
 - **A lighter circuit.** The circuit and its runoff are 74,000 triangles in a few meshes that span the site, so they're nearly always drawn.
 
 More pieces mean more draw calls, which is why the opening view went from 260 to 376. `PIECE_CELLS` in ground.ts and `REGION_TRIANGLES` in scenery.ts set that trade.

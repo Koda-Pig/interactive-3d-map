@@ -139,3 +139,63 @@ export function createRippleTexture(anisotropy: number): DataTexture {
   texture.anisotropy = anisotropy;
   return texture;
 }
+
+/** What a paved or mown area is finished with. */
+export type SurfaceFinish = "paving" | "concrete" | "mown";
+
+const SURFACE_SIZE = 128;
+
+/** How many metres one tile of each finish covers. */
+export const SURFACE_TILE_METRES: Readonly<Record<SurfaceFinish, number>> = {
+  paving: 12,
+  concrete: 12,
+  mown: 16,
+};
+
+/** Joints between slabs, darker than the slab, in pixels wide. */
+const JOINT_PIXELS = 2;
+
+function shadeAt(finish: SurfaceFinish, column: number, row: number): number {
+  const fleck = 0.04 * (hash2(column, row, 81) - 0.5);
+  if (finish === "mown") {
+    // Two passes of a mower, light and dark, with soft edges between them.
+    const across = (row / SURFACE_SIZE) * Math.PI * 2;
+    return 0.93 + 0.07 * Math.tanh(3 * Math.sin(across)) + fleck;
+  }
+  // Paving is laid in 3 m slabs, concrete poured in 6 m bays.
+  const slabs = finish === "paving" ? 4 : 2;
+  const slab = SURFACE_SIZE / slabs;
+  const jointX = column % slab < JOINT_PIXELS;
+  const jointY = row % slab < JOINT_PIXELS;
+  if (jointX || jointY) {
+    return finish === "paving" ? 0.84 : 0.88;
+  }
+  // Each slab weathered a little differently.
+  const tone = 0.05 * (hash2(Math.floor(column / slab), Math.floor(row / slab), 82) - 0.5);
+  // Paving has a darker border course round each 12 m square.
+  const border =
+    finish === "paving" && (Math.floor(column / slab) === 0 || Math.floor(row / slab) === 0)
+      ? -0.05
+      : 0;
+  return 0.98 + tone + border + fleck;
+}
+
+/**
+ * A pale pattern that multiplies an area's colour: slab joints for paving and
+ * concrete, light and dark stripes for mown grass.
+ */
+export function createSurfaceTexture(finish: SurfaceFinish, anisotropy: number): DataTexture {
+  const pixels = new Uint8Array(SURFACE_SIZE * SURFACE_SIZE * 4);
+  for (let row = 0; row < SURFACE_SIZE; row += 1) {
+    for (let column = 0; column < SURFACE_SIZE; column += 1) {
+      const value = 255 * Math.min(1, Math.max(0, shadeAt(finish, column, row)));
+      const offset = (row * SURFACE_SIZE + column) * 4;
+      pixels.fill(value, offset, offset + 3);
+      pixels[offset + 3] = 255;
+    }
+  }
+  const texture = repeatingTexture(pixels, SURFACE_SIZE);
+  texture.anisotropy = anisotropy;
+  texture.repeat.setScalar(1 / SURFACE_TILE_METRES[finish]);
+  return texture;
+}

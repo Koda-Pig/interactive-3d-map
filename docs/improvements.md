@@ -1,6 +1,6 @@
 # Visual improvements
 
-A review of the map against high-end interactive site maps, from November 2026, and the work that would close the gap. Items 1, 5 and 6 are built and item 8 in part. The scores are from before them.
+A review of the map against high-end interactive site maps, from November 2026, and the work that would close the gap. Items 1 to 6 are built, and items 7 and 8 in part. The scores are from before them.
 
 The map already does its job as a product. Search, precinct filters, fly-to and the event switch are as good as most maps of this kind. It falls behind on finish. From the air it reads clearly, but up close it looks like an architectural blockout, and the close view is where every click takes you.
 
@@ -53,7 +53,7 @@ Bake ambient occlusion into the kit in the model generator, as vertex colours, a
 - Tiled models such as grandstand bays need to match at their seams
 - The generated files change, so `pnpm assets:validate` and `pnpm assets:determinism` need to pass again
 
-**Done when:** buildings look grounded in a screenshot with the sun's shadows turned off.
+**Built.** The generator bakes ambient occlusion into every model as vertex colours ([occlusion.mjs](../tools/assets/occlusion.mjs)). It fills a grid with the model and marches 32 fixed rays from each vertex, with the ground counting as solid, so corners, undersides and the foot of each wall darken by up to 60%. Tiled models are baked with a copy on each side, so their seams match. The shade is stored as a byte per channel, which added about 270 KB to the kit. A soft dark band lies on the ground round every building footprint, from 1.5 to 6 m wide depending on the building's height, merged into one mesh per precinct so it fades with its buildings ([contact-shadows.ts](../src/draw/contact-shadows.ts)). Raised parts, banks and buildings standing in the lake get none.
 
 ### 3. The ground around the buildings is empty
 
@@ -63,6 +63,8 @@ Add parking bay lines, plaza paving patterns, footpaths between the main buildin
 
 **Done when:** the view from a fly-to has no large featureless area.
 
+**Built.** Car parks already had stall lines. An area can now name a `surface`: `paving` (3 m slabs with a border course), `concrete` (6 m bays with joints) or `mown` (alternating mowing stripes), drawn from small generated textures in the area's metres ([textures.ts](../src/draw/textures.ts)). The plaza, forecourt, piazza and hospitality courts are paved, and the yards, aprons, paddock and drop-off are concrete. Everyday parking went from 5% to 12% of stalls, so the whole-site view shows car parks in use. No new footpaths were added, because they would change the layout that [track-layout.md](../ai/track-layout.md) fixes.
+
 ### 4. The models are plain up close
 
 The kit is flat-shaded with no textures, and facades are strips of colour. The pit / conference building, the most important model on the map, is 1,288 triangles. Selecting something brings the camera close enough to show this.
@@ -70,6 +72,8 @@ The kit is flat-shaded with no textures, and facades are strips of colour. The p
 Add detail in the generator, starting with the buildings people are most likely to select: window mullions, floor bands, roof plant, canopy edges and entrance canopies. Use a small shared texture for facades if geometry gets too expensive. Check the triangle counts against the phone budget after each batch.
 
 **Done when:** the pit / conference building, Grandstand A and the Waterfront Hotel hold up at the distance a fly-to stops at.
+
+**Built.** In [aerial.mjs](../tools/assets/aerial.mjs): the pit / conference building has mullions every 7.5 m through its glazing, a navy band over the garages and rows of rooftop solar panels, and is now 3,930 triangles of its 15,000 budget. The hotels have fins between rooms on every floor: the tower went from 418 to 1,282 triangles and the low hotel from 322 to 1,042. The covered grandstand bay has rear cladding fins and a front rail, at 614 triangles. Three new models replace plain extruded parts on the waterfront: the lake footbridge (ramps, piers and glass-panelled railings), the restaurants' timber decks (planks, piles and a railing open to the quay) and the terrace pergolas (posts, beams and rafters).
 
 ### 5. Shadows are coarse
 
@@ -95,13 +99,17 @@ Render continuously only while something visible is animating, and keep moving o
 
 **Done when:** a race weekend has visible movement and the map stays idle in the other views when nothing is happening, with the frame rate holding on a phone.
 
+**Built in part.** On a race weekend eight race cars lap the circuit at about 170 km/h, running down the middle of the track clear of the grid. On a race weekend or a conference day, three shuttles circle the ring road and the lake's ripples drift ([traffic.ts](../src/draw/traffic.ts)). The map draws continuously only in those two views. The whole-site view stays still, and reduced motion turns all of it off. The moving vehicles stay out of the shadow pass. **Still to do:** a camera lap of the circuit and arrival routes, and checking the frame rate on a phone.
+
 ### 8. The info panels are thin
 
 A panel shows the precinct, the name, one sentence and a preview picture ([info-panel.ts](../src/ui/info-panel.ts)). High-end maps use this space for key facts and a next step as well.
 
 **Built so far:** every location has an illustrated preview, in the panel and under its sidebar row. The selected location goes into the address as `?location=<id>` ([address.ts](../src/ui/address.ts)), so a link opens the map on it.
 
-**Still to do:** room for facts BMR supplies, and links between related places, such as a grandstand and its nearest gate and car park.
+Below the description, the panel lists the closest gate and the closest car park, measured in a straight line ([related.ts](../src/layout/related.ts)). Picking one flies to it. Roads and tracks have none.
+
+**Still to do:** room for facts BMR supplies.
 
 **Done when:** someone can send a link to a location, and its panel says more than the label does.
 
@@ -110,18 +118,18 @@ A panel shows the precinct, the name, one sentence and a preview picture ([info-
 | Order | Item | Size | Effect |
 | --- | --- | --- | --- |
 | 1 | Selection highlight (built) | Small | High |
-| 2 | Soft shading and ground contact | Medium | High |
-| 3 | Ground dressing | Medium | High |
+| 2 | Soft shading and ground contact (built) | Medium | High |
+| 3 | Ground dressing (built) | Medium | High |
 | 4 | Opening view and fly-in (built) | Small | Medium |
 | 5 | Shadow quality (built) | Small | Medium |
-| 6 | Model detail | Large | High |
-| 7 | Info panels and links (shareable links built) | Medium | Medium |
-| 8 | Movement, lap and arrival routes | Large | Medium |
+| 6 | Model detail (built) | Large | High |
+| 7 | Info panels and links (links built, BMR facts to come) | Medium | Medium |
+| 8 | Movement, lap and arrival routes (vehicles built) | Large | Medium |
 
-Time the map on a real mid-range phone before item 2 and again after item 3. The budget is unknown until someone does.
+The map still hasn't been timed on a real phone. `pnpm perf` counts draw calls and triangles in six fixed views, on the high tier at desktop size and the low tier at phone size, and compares them with `tools/perf/baseline.json`. Items 2 to 4 and 7 added 5 to 28 draw calls per view. Simpler far trees took 13,000 to 330,000 triangles off. For example, the opening view on the low tier at phone size went from 593,000 triangles in 588 draws to 443,000 in 601. Its timings come from this machine's GPU in headless Chrome and say nothing about a phone.
 
 ## Not covered by this review
 
 - Frame rate on phones. The desktop figures are 60 fps at 1x resolution, with 85 to 133 draw calls and about 510,000 triangles in close views
-- Accessibility
+- Accessibility. A scripted check on 12 November 2026 found every button and field named, every image with alt text, and text contrast between 5.5:1 and 12.8:1. The closed sidebar is `inert`, so it's out of the tab order. Movement and flights respect reduced motion. Nobody has tested it with a screen reader
 - A side-by-side test against live competitors. The comparison draws on general knowledge of these kinds of map and a few published examples

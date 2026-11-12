@@ -119,7 +119,7 @@ The user asked for the lake to read as a built waterfront, with Battery Park at 
 - **Hotels.** The Promenade Hotel and Lakeside Lodge front the promenade on the south quays, 3 m behind it, where they stood 60 to 90 m back. Waterfront Drive's southern leg moved north to `z = 880`, with a drop-off spur to each hotel. The spur to the tower stops short of the promenade, so its last 55 m are on the shared walk.
 - **Expo Centre.** The halls, loading yard and Expo Walk did not move. The forecourt was widened east to meet the promenade on the west quay, which replaces the Expo Walk's branch to the old promenade.
 - **Grading.** The waterfront terrace was extended north to `z = 400` and east to `x = 540` to hold the cove, piazza and terraces.
-- **Not done.** No new kit models were made. The bridge, terraces, decks and landing are plain extruded parts, and the kiosks, pavilions and fountain basins reuse existing models.
+- **Models.** Added on 12 November 2026: the footbridge, the restaurant decks and the terrace pergolas are drawn with their own kit models (`lake-footbridge`, `timber-deck` and `pergola`), fitted to the same footprints. The terrace steps and the landing are still plain extruded parts, and the kiosks, pavilions and fountain basins reuse existing models.
 
 ### Amphitheatre, 11 November 2026
 

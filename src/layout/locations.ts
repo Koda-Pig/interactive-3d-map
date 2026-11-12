@@ -99,6 +99,8 @@ export interface AreaLocation extends LocationBase {
   readonly overlay?: boolean;
   /** Lines painted on the area, such as the lines of a sports court. */
   readonly markings?: AreaMarkings;
+  /** A pattern on the surface: slabs, poured concrete bays or mowing stripes. */
+  readonly surface?: "paving" | "concrete" | "mown";
 }
 
 export interface AreaMarkings {

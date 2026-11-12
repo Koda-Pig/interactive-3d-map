@@ -4,6 +4,8 @@ import {
   createAsphaltTexture,
   createParkingStallTexture,
   createRippleTexture,
+  createSurfaceTexture,
+  type SurfaceFinish,
 } from "./textures.ts";
 
 /**
@@ -80,6 +82,18 @@ export function asphaltTexture(): Texture {
   return asphalt;
 }
 
+const surfaces = new Map<SurfaceFinish, Texture>();
+
+/** The pattern for a paved or mown area, in its metres. */
+export function surfaceTexture(finish: SurfaceFinish): Texture {
+  let texture = surfaces.get(finish);
+  if (!texture) {
+    texture = createSurfaceTexture(finish, ANISOTROPY);
+    surfaces.set(finish, texture);
+  }
+  return texture;
+}
+
 let parkingStalls: Texture | null = null;
 
 /** Stall lines, with their coordinates counting stalls along a block. */
@@ -91,6 +105,11 @@ export function parkingStallTexture(): Texture {
 const RIPPLE_TILE_METRES = 420;
 
 let ripples: Texture | null = null;
+
+/** The lake's ripples, once any water has been drawn, so they can be set drifting. */
+export function rippleTexture(): Texture | null {
+  return ripples;
+}
 
 export function waterMaterial(color: string): MeshStandardMaterial {
   if (!ripples) {

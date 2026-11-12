@@ -9,7 +9,7 @@ pnpm assets:validate
 pnpm assets:determinism
 ```
 
-`pnpm assets` rebuilds 79 GLBs and `public/models/manifest.json`. The fixed nature seeds and locked dependencies produce byte-identical model files. The determinism command compares SHA-256 hashes before and after regeneration.
+`pnpm assets` rebuilds 82 GLBs and `public/models/manifest.json`. Every model gets ambient occlusion baked into its vertex colours ([occlusion.mjs](occlusion.mjs)): corners, undersides and the foot of each wall darken, and tileable models are baked between copies of themselves so their seams match. The map multiplies the shade into each material's colour. The fixed nature seeds and locked dependencies produce byte-identical model files. The determinism command compares SHA-256 hashes before and after regeneration.
 
 ## Inspect the assets
 

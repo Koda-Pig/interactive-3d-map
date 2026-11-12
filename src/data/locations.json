@@ -277,6 +277,7 @@
     },
     {
       "id": "paddock",
+      "surface": "concrete",
       "image": "images/locations/paddock.webp",
       "name": "Paddock",
       "featured": true,
@@ -549,6 +550,7 @@
     },
     {
       "id": "arrival-plaza",
+      "surface": "paving",
       "image": "images/locations/arrival-plaza.webp",
       "name": "Arrival Plaza",
       "featured": true,
@@ -750,6 +752,7 @@
     },
     {
       "id": "expo-forecourt",
+      "surface": "paving",
       "image": "images/locations/expo-centre.webp",
       "name": "Expo forecourt",
       "category": "conference",
@@ -760,6 +763,7 @@
     },
     {
       "id": "expo-loading-yard",
+      "surface": "concrete",
       "image": "images/locations/expo-loading-yard.webp",
       "name": "Expo loading yard",
       "category": "conference",
@@ -864,6 +868,7 @@
     },
     {
       "id": "lake-piazza",
+      "surface": "paving",
       "image": "images/locations/promenade.webp",
       "name": "Lake Piazza",
       "featured": true,
@@ -901,33 +906,13 @@
         },
         {
           "footprint": [[-312, 448], [-264, 448], [-264, 457], [-312, 457]],
-          "height": 0.3,
-          "base": 6,
-          "color": "#A98660"
-        },
-        {
-          "footprint": [[-311.5, 448.5], [-310.9, 448.5], [-310.9, 449.1], [-311.5, 449.1]],
-          "height": 2.8,
+          "height": 3.1,
           "base": 3.2,
-          "color": "#33404B"
-        },
-        {
-          "footprint": [[-311.5, 455.9], [-310.9, 455.9], [-310.9, 456.5], [-311.5, 456.5]],
-          "height": 2.8,
-          "base": 3.2,
-          "color": "#33404B"
-        },
-        {
-          "footprint": [[-265.1, 448.5], [-264.5, 448.5], [-264.5, 449.1], [-265.1, 449.1]],
-          "height": 2.8,
-          "base": 3.2,
-          "color": "#33404B"
-        },
-        {
-          "footprint": [[-265.1, 455.9], [-264.5, 455.9], [-264.5, 456.5], [-265.1, 456.5]],
-          "height": 2.8,
-          "base": 3.2,
-          "color": "#33404B"
+          "color": "#A98660",
+          "model": {
+            "file": "hospitality/pergola.glb",
+            "facing": "south"
+          }
         },
         {
           "footprint": [[-122, 478], [-62, 478], [-62, 486.7], [-122, 486.7]],
@@ -948,33 +933,13 @@
         },
         {
           "footprint": [[-116, 448], [-68, 448], [-68, 457], [-116, 457]],
-          "height": 0.3,
-          "base": 6,
-          "color": "#A98660"
-        },
-        {
-          "footprint": [[-115.5, 448.5], [-114.9, 448.5], [-114.9, 449.1], [-115.5, 449.1]],
-          "height": 2.8,
+          "height": 3.1,
           "base": 3.2,
-          "color": "#33404B"
-        },
-        {
-          "footprint": [[-115.5, 455.9], [-114.9, 455.9], [-114.9, 456.5], [-115.5, 456.5]],
-          "height": 2.8,
-          "base": 3.2,
-          "color": "#33404B"
-        },
-        {
-          "footprint": [[-69.1, 448.5], [-68.5, 448.5], [-68.5, 449.1], [-69.1, 449.1]],
-          "height": 2.8,
-          "base": 3.2,
-          "color": "#33404B"
-        },
-        {
-          "footprint": [[-69.1, 455.9], [-68.5, 455.9], [-68.5, 456.5], [-69.1, 456.5]],
-          "height": 2.8,
-          "base": 3.2,
-          "color": "#33404B"
+          "color": "#A98660",
+          "model": {
+            "file": "hospitality/pergola.glb",
+            "facing": "south"
+          }
         },
         {
           "footprint": [[-250, 500], [-130, 500], [-130, 506], [-250, 506]],
@@ -1038,6 +1003,7 @@
     },
     {
       "id": "pavilion-point",
+      "surface": "mown",
       "image": "images/locations/lake.webp",
       "name": "Pavilion Point",
       "category": "hospitality",
@@ -1049,6 +1015,10 @@
     },
     {
       "id": "lake-footbridge",
+      "model": {
+        "file": "hospitality/lake-footbridge.glb",
+        "facing": "south"
+      },
       "image": "images/locations/promenade.webp",
       "name": "Lake Footbridge",
       "featured": true,
@@ -1197,7 +1167,12 @@
       "parts": [
         {
           "footprint": [[-150, 750], [-100, 750], [-100, 780], [-150, 780]],
-          "height": 0.9
+          "height": 1.9,
+          "color": "#A9784F",
+          "model": {
+            "file": "hospitality/timber-deck.glb",
+            "facing": "north"
+          }
         },
         {
           "footprint": [[-138, 761], [-112, 761], [-112, 777], [-138, 777]],
@@ -1222,7 +1197,12 @@
       "parts": [
         {
           "footprint": [[-45, 545], [-15, 545], [-15, 595], [-45, 595]],
-          "height": 0.9
+          "height": 1.9,
+          "color": "#A9784F",
+          "model": {
+            "file": "hospitality/timber-deck.glb",
+            "facing": "west"
+          }
         },
         {
           "footprint": [[-34, 557], [-18, 557], [-18, 583], [-34, 583]],
@@ -1247,7 +1227,12 @@
       "parts": [
         {
           "footprint": [[75, 545], [105, 545], [105, 595], [75, 595]],
-          "height": 0.9
+          "height": 1.9,
+          "color": "#A9784F",
+          "model": {
+            "file": "hospitality/timber-deck.glb",
+            "facing": "east"
+          }
         },
         {
           "footprint": [[78, 557], [94, 557], [94, 583], [78, 583]],
@@ -1503,6 +1488,7 @@
     },
     {
       "id": "karting-pit-apron",
+      "surface": "concrete",
       "image": "images/locations/karting-track.webp",
       "name": "Karting pit apron",
       "category": "academy",
@@ -1590,6 +1576,7 @@
     },
     {
       "id": "automotive-test-pad",
+      "surface": "concrete",
       "image": "images/locations/automotive-test-pad.webp",
       "name": "Automotive Test Pad",
       "featured": true,
@@ -1601,6 +1588,7 @@
     },
     {
       "id": "infield-park",
+      "surface": "mown",
       "image": "images/locations/infield-reserve.webp",
       "name": "Infield drainage and grass reserve",
       "category": "conference",
@@ -2321,6 +2309,7 @@
     },
     {
       "id": "shuttle-drop-off",
+      "surface": "concrete",
       "image": "images/locations/shuttle-drop-off.webp",
       "name": "Shuttle Drop-off",
       "featured": true,
@@ -2398,6 +2387,7 @@
     },
     {
       "id": "aerodrome-apron",
+      "surface": "concrete",
       "image": "images/locations/aerodrome-runway.webp",
       "name": "Aerodrome Apron",
       "category": "transport",
@@ -2408,6 +2398,7 @@
     },
     {
       "id": "aerodrome-helipad",
+      "surface": "concrete",
       "image": "images/locations/aerodrome-runway.webp",
       "name": "Aerodrome Helipad",
       "category": "transport",
@@ -2634,6 +2625,7 @@
     },
     {
       "id": "pit-working-apron",
+      "surface": "concrete",
       "image": "images/locations/pit-lane.webp",
       "image": "images/locations/pit-lane.webp",
       "name": "Pit working apron",
@@ -3013,6 +3005,7 @@
     },
     {
       "id": "infield-hospitality",
+      "surface": "paving",
       "image": "images/locations/infield-hospitality.webp",
       "name": "Infield hospitality courtyard",
       "featured": true,
@@ -3060,6 +3053,7 @@
     },
     {
       "id": "hospitality-terrace",
+      "surface": "paving",
       "image": "images/locations/infield-hospitality.webp",
       "name": "Infield viewing terrace",
       "category": "hospitality",
@@ -3127,6 +3121,7 @@
     },
     {
       "id": "academy-handling-ground",
+      "surface": "concrete",
       "image": "images/locations/academy-handling-ground.webp",
       "name": "Academy handling ground",
       "category": "academy",
@@ -3172,6 +3167,7 @@
     },
     {
       "id": "automotive-demonstration-court",
+      "surface": "concrete",
       "image": "images/locations/automotive-demonstration-court.webp",
       "name": "Automotive demonstration court",
       "category": "academy",
@@ -3195,6 +3191,7 @@
     },
     {
       "id": "vehicle-display-courts",
+      "surface": "paving",
       "image": "images/locations/automotive-demonstration-court.webp",
       "name": "Vehicle display courts",
       "category": "academy",
@@ -3270,6 +3267,7 @@
     },
     {
       "id": "team-logistics-yard",
+      "surface": "concrete",
       "image": "images/locations/team-logistics-yard.webp",
       "name": "Team logistics yard",
       "category": "racing",

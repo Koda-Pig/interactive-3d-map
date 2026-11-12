@@ -2,15 +2,18 @@ import "@fontsource/roboto/latin-400.css";
 import "@fontsource/roboto/latin-500.css";
 import { NeutralToneMapping, PCFShadowMap, Scene, WebGLRenderer } from "three";
 import { CSS2DRenderer } from "three/addons/renderers/CSS2DRenderer.js";
-import { layoutModelFiles, loadKit } from "./draw/kit.ts";
-import { updateHighlights } from "./draw/materials.ts";
+import { bakedGeometry, layoutModelFiles, loadKit } from "./draw/kit.ts";
+import { rippleTexture, updateHighlights } from "./draw/materials.ts";
 import {
   createScenery,
   FIREWORKS_LOCATION,
   FOUNTAIN_LOCATION,
+  RACE_CAR,
   SCENERY_MODELS,
+  SHUTTLE,
 } from "./draw/scenery.ts";
 import { createSite } from "./draw/site.ts";
+import { Traffic } from "./draw/traffic.ts";
 import { setEventMode } from "./scene/event-modes.ts";
 import { CameraFlight } from "./scene/flight.ts";
 import { MapInteraction } from "./scene/interaction.ts";
@@ -118,6 +121,22 @@ const ground = createGround(renderer.capabilities.getMaxAnisotropy(), quality.fi
 const site = createSite(ground.surface, kit);
 const scenery = createScenery(kit, ground.surface, quality);
 const outline = new SelectionOutline();
+const raceCarModel = kit.get(RACE_CAR);
+const shuttleModel = kit.get(SHUTTLE);
+// Without either model there's nothing to drive, and the map just stays still.
+const traffic =
+  raceCarModel && shuttleModel
+    ? new Traffic(
+        bakedGeometry(raceCarModel),
+        bakedGeometry(shuttleModel),
+        ground.surface,
+        rippleTexture(),
+      )
+    : null;
+if (traffic) {
+  scenery.precincts.get("racing")?.add(traffic.raceCars);
+  scenery.precincts.get("transport")?.add(traffic.shuttles);
+}
 scene.add(sky.object, ground.mesh, site, scenery.setting, ...scenery.precincts.values());
 
 const camera = createCamera(host.clientWidth / host.clientHeight);
@@ -164,7 +183,11 @@ const besideSidebar = (): ClearArea => {
 };
 
 const flight = new CameraFlight(camera, controls, () => overlays.clearAreas(), besideSidebar);
-const panel = createInfoPanel(infoPanelElement, () => interaction.select(null));
+const panel = createInfoPanel(
+  infoPanelElement,
+  () => interaction.select(null),
+  (location) => interaction.select(location),
+);
 const sidebar = createSidebar(sidebarElement, sidebarOpenElement, {
   pick: (location) => interaction.select(location),
   togglePrecinct: (category, shown) => interaction.setPrecinctShown(category, shown),
@@ -209,6 +232,7 @@ const interaction = new MapInteraction({
 
 createEventSwitch(eventSwitchElement, (mode) => {
   setEventMode(mode, precincts, scenery.events);
+  traffic?.setMode(mode?.id ?? null);
   renderer.shadowMap.needsUpdate = true;
   overlays.invalidate();
   needsRender = true;
@@ -297,6 +321,9 @@ renderer.setAnimationLoop((now) => {
   viewChanged = false;
   if (moved) {
     constrainView(camera, controls);
+    if (scenery.trees.update(camera.position)) {
+      renderer.shadowMap.needsUpdate = true;
+    }
   }
   interaction.update(moved);
   const highlightsFading = updateHighlights(now);
@@ -318,6 +345,9 @@ renderer.setAnimationLoop((now) => {
   // Both are updated, so neither is left mid-pose when the other is playing.
   const fireworksMoved = scenery.fireworks.update(now);
   if (scenery.fountain.update(now) || fireworksMoved) {
+    needsRender = true;
+  }
+  if (traffic?.update(now)) {
     needsRender = true;
   }
   const drawing = moved || changes.redraw || needsRender;

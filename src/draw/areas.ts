@@ -11,7 +11,13 @@ import { resolveOutline } from "../layout/path.ts";
 import { centreOf } from "../layout/polygon.ts";
 import type { GroundSurface } from "../terrain/ground.ts";
 import { heightAt } from "../terrain/height.ts";
-import { Layer, layerMaterial, parkingStallTexture, waterMaterial } from "./materials.ts";
+import {
+  Layer,
+  layerMaterial,
+  parkingStallTexture,
+  surfaceTexture,
+  waterMaterial,
+} from "./materials.ts";
 
 const LIFT = 0.3;
 const STALL_LIFT = 0.02;
@@ -50,6 +56,13 @@ function drape(source: ShapeGeometry, surface: GroundSurface, lift: number): Buf
   source.dispose();
   const geometry = new BufferGeometry();
   geometry.setAttribute("position", new BufferAttribute(Float32Array.from(positions), 3));
+  // Metres, as a flat shape has, so surface patterns keep their size.
+  const uvs = new Float32Array((positions.length / 3) * 2);
+  for (let vertex = 0; vertex < positions.length / 3; vertex += 1) {
+    uvs[vertex * 2] = positions[vertex * 3];
+    uvs[vertex * 2 + 1] = -positions[vertex * 3 + 2];
+  }
+  geometry.setAttribute("uv", new BufferAttribute(uvs, 2));
   geometry.computeVertexNormals();
   return geometry;
 }
@@ -110,7 +123,11 @@ export function createArea(location: AreaLocation, surface: GroundSurface): Mesh
   const material =
     location.type === "water"
       ? waterMaterial(location.color)
-      : layerMaterial(location.color, Layer.area + (location.overlay ? 0.5 : 0));
+      : layerMaterial(
+          location.color,
+          Layer.area + (location.overlay ? 0.5 : 0),
+          location.surface ? surfaceTexture(location.surface) : undefined,
+        );
   const mesh = new Mesh(geometry, material);
   mesh.receiveShadow = true;
   if (isCarPark(location)) {

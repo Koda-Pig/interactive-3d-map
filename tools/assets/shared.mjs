@@ -138,7 +138,8 @@ export async function exportAsset(spec, parts) {
     g.computeBoundingBox();
     bounds.union(g.boundingBox);
     const pos = g.getAttribute("position"),
-      norm = g.getAttribute("normal");
+      norm = g.getAttribute("normal"),
+      shade = g.getAttribute("color");
     triangles += pos.count / 3;
     const c = new THREE.Color(palette[material]);
     const mat = doc
@@ -163,6 +164,18 @@ export async function exportAsset(spec, parts) {
           .createAccessor()
           .setType("VEC3")
           .setArray(new Float32Array(norm.array))
+          .setBuffer(buffer),
+      );
+    // Baked ambient occlusion, multiplied into the base colour. A byte per
+    // channel is plenty for a shade, and a quarter of the size of a float.
+    if (shade)
+      p.setAttribute(
+        "COLOR_0",
+        doc
+          .createAccessor()
+          .setType("VEC3")
+          .setArray(Uint8Array.from(shade.array, (value) => Math.round(value * 255)))
+          .setNormalized(true)
           .setBuffer(buffer),
       );
     mesh.addPrimitive(p);

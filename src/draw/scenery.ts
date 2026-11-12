@@ -47,6 +47,7 @@ import { fieldEdgeX, siteEdgeDistance, siteEdgePoint } from "../terrain/fields.t
 import type { GroundSurface } from "../terrain/ground.ts";
 import { heightAt } from "../terrain/height.ts";
 import { hash2, noise2 } from "../terrain/noise.ts";
+import { createContactShadows } from "./contact-shadows.ts";
 import type { Kit } from "./kit.ts";
 import { bakedGeometry } from "./kit.ts";
 
@@ -72,8 +73,8 @@ const LIGHT_POLE = "props/light-pole.glb";
 const GANTRY = "racing/start-finish-gantry.glb";
 const MARSHAL_POST = "racing/marshal-post.glb";
 const AIRCRAFT = "props/light-aircraft.glb";
-const RACE_CAR = "props/race-car-generic.glb";
-const SHUTTLE = "props/shuttle-bus.glb";
+export const RACE_CAR = "props/race-car-generic.glb";
+export const SHUTTLE = "props/shuttle-bus.glb";
 const FOOD_STALL = "props/food-stall.glb";
 const MARQUEE = "hospitality/hospitality-marquee.glb";
 const FARMHOUSE = "setting/farmhouse.glb";
@@ -176,7 +177,7 @@ const QUAY_LAMP_SPACING = 48;
 /** The share of the logistics yard's truck bays in use outside race weekends. */
 const YARD_TRUCKS_EVERY_DAY = 0.5;
 /** The share of each car park's stalls in use on any day, and on a race day. */
-const STAFF_PARKING = 0.05;
+const STAFF_PARKING = 0.12;
 const RACE_PARKING = 0.8;
 const CONFERENCE_PARKING = 0.22;
 /** Trees along a field edge are this far apart, in metres. */
@@ -319,10 +320,20 @@ class Instances {
     batch.colors.push(tint.r, tint.g, tint.b);
   }
 
-  build(castShadow: boolean): InstancedMesh[] {
+  /**
+   * One instanced mesh per geometry and region. Where `farVersion` gives a
+   * simpler geometry, each region also gets a hidden twin drawn with it,
+   * sharing the copies' positions, recorded in `levels` to switch between.
+   */
+  build(
+    castShadow: boolean,
+    farVersion?: (geometry: BufferGeometry) => BufferGeometry | undefined,
+    levels?: TreeLevel[],
+  ): InstancedMesh[] {
     return [...this.batches].flatMap(([geometry, { matrices, colors }]) => {
       const all = Array.from({ length: colors.length / 3 }, (_, copy) => copy);
-      return regionsOf(matrices, all, trianglesIn(geometry)).map((copies) => {
+      const far = farVersion?.(geometry);
+      return regionsOf(matrices, all, trianglesIn(geometry)).flatMap((copies) => {
         const mesh = new InstancedMesh(geometry, sceneryMaterial, copies.length);
         const tints = new Float32Array(copies.length * 3);
         copies.forEach((copy, index) => {
@@ -334,7 +345,23 @@ class Instances {
         });
         mesh.instanceColor = new InstancedBufferAttribute(tints, 3);
         mesh.castShadow = castShadow;
-        return mesh;
+        if (!far || !levels) {
+          return [mesh];
+        }
+        const twin = new InstancedMesh(far, sceneryMaterial, copies.length);
+        twin.instanceMatrix = mesh.instanceMatrix;
+        twin.instanceColor = mesh.instanceColor;
+        twin.castShadow = castShadow;
+        twin.visible = false;
+        mesh.computeBoundingSphere();
+        const sphere = mesh.boundingSphere;
+        levels.push({
+          near: mesh,
+          far: twin,
+          centre: sphere ? sphere.center.clone() : new Vector3(),
+          radius: sphere?.radius ?? 0,
+        });
+        return [mesh, twin];
       });
     });
   }
@@ -366,6 +393,71 @@ function createFarTree(): BufferGeometry {
     const light = 0.5 + (0.5 * y) / height;
     return [0.13 * light + 0.05, 0.2 * light + 0.06, 0.08 * light + 0.03];
   });
+}
+
+/**
+ * A stand-in for a tree model seen from far away: one eight-triangle shape
+ * the size of the model's crown, coloured like the far windbreak trees.
+ */
+function farVersionOf(geometry: BufferGeometry): BufferGeometry {
+  geometry.computeBoundingBox();
+  const box = geometry.boundingBox;
+  const width = box ? box.max.x - box.min.x : 8;
+  const depth = box ? box.max.z - box.min.z : 8;
+  const height = box ? box.max.y : 12;
+  // The crown starts about a third of the way up the trunk.
+  const crownBase = height * 0.3;
+  const far = new OctahedronGeometry(1, 0);
+  far.scale(width / 2, (height - crownBase) / 2, depth / 2);
+  far.translate(0, (height + crownBase) / 2, 0);
+  // The model's own colours, averaged over its crown, so the swap barely shows.
+  const colors = geometry.getAttribute("color");
+  const position = geometry.getAttribute("position");
+  const crown = [0, 0, 0];
+  let counted = 0;
+  for (let vertex = 0; colors && vertex < colors.count; vertex += 1) {
+    if (position.getY(vertex) > crownBase) {
+      crown[0] += colors.getX(vertex);
+      crown[1] += colors.getY(vertex);
+      crown[2] += colors.getZ(vertex);
+      counted += 1;
+    }
+  }
+  const [red, green, blue] = counted > 0 ? crown.map((sum) => sum / counted) : [0.1, 0.16, 0.06];
+  return colorize(far, (y) => {
+    const light = 0.75 + (0.35 * (y - crownBase)) / (height - crownBase);
+    return [red * light, green * light, blue * light];
+  });
+}
+
+/** A batch of trees drawn either as their models or, far from the camera, as simple shapes. */
+interface TreeLevel {
+  readonly near: InstancedMesh;
+  readonly far: InstancedMesh;
+  readonly centre: Vector3;
+  readonly radius: number;
+}
+
+/** Beyond this distance from the camera, in metres, a batch of trees is drawn simply. */
+const FAR_TREE_DISTANCE = 1500;
+
+/** Switches batches of trees between their models and simple shapes by distance. */
+export class TreeLevels {
+  constructor(private readonly levels: readonly TreeLevel[]) {}
+
+  /** Call when the camera has moved. Returns whether any batch switched. */
+  update(camera: Vector3): boolean {
+    let changed = false;
+    for (const level of this.levels) {
+      const far = camera.distanceTo(level.centre) - level.radius > FAR_TREE_DISTANCE;
+      if (level.far.visible !== far) {
+        level.far.visible = far;
+        level.near.visible = !far;
+        changed = true;
+      }
+    }
+    return changed;
+  }
 }
 
 /** A box with no underside. */
@@ -1964,6 +2056,8 @@ export interface Scenery {
   /** The fireworks over the barge, and the fountain show. */
   readonly fireworks: Show;
   readonly fountain: Show;
+  /** Switches distant trees to simple shapes. */
+  readonly trees: TreeLevels;
 }
 
 function addHidden(group: Group, meshes: readonly InstancedMesh[]): readonly InstancedMesh[] {
@@ -2027,7 +2121,30 @@ export function createScenery(kit: Kit, surface: GroundSurface, quality: Quality
   dressWaterfront({ ...context, random: seededRandom(73) }, trees, waterfront);
   const setting = new Group();
   setting.name = "scenery";
-  setting.add(...trees.build(true), ...farTrees.build(false), ...vines.build(false));
+  const treeModels = new Set(
+    Object.values(TREES)
+      .flat()
+      .map(model)
+      .filter((geometry) => geometry !== undefined),
+  );
+  const farVersions = new Map<BufferGeometry, BufferGeometry>();
+  const farVersion = (geometry: BufferGeometry): BufferGeometry | undefined => {
+    if (!treeModels.has(geometry)) {
+      return undefined;
+    }
+    let far = farVersions.get(geometry);
+    if (!far) {
+      far = farVersionOf(geometry);
+      farVersions.set(geometry, far);
+    }
+    return far;
+  };
+  const levels: TreeLevel[] = [];
+  setting.add(
+    ...trees.build(true, farVersion, levels),
+    ...farTrees.build(false),
+    ...vines.build(false),
+  );
 
   const precincts = new Map<Category, Group>(CATEGORIES.map((category) => [category, new Group()]));
   const group = (category: Category): Group => {
@@ -2135,5 +2252,16 @@ export function createScenery(kit: Kit, surface: GroundSurface, quality: Quality
     ],
   ]);
 
-  return { setting, precincts, events, fireworks: display.show, fountain: fountain.show };
+  for (const [category, shadows] of createContactShadows(surface)) {
+    group(category).add(shadows);
+  }
+
+  return {
+    setting,
+    precincts,
+    events,
+    fireworks: display.show,
+    fountain: fountain.show,
+    trees: new TreeLevels(levels),
+  };
 }

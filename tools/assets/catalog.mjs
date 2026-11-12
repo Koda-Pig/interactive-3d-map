@@ -33,6 +33,9 @@ const rows = {
     ["lakeside-pavilion", 26, 16, 7],
     ["promenade-segment", 20, 8, 2, "modular", true],
     ["hospitality-marquee", 30, 15, 8],
+    ["lake-footbridge", 8, 76, 2.9, "modular"],
+    ["timber-deck", 50, 30, 1.9, "modular"],
+    ["pergola", 48, 9, 3.1, "modular"],
   ],
   "mixed-use": [
     ["residents-clubhouse", 32, 10, 5, "modular"],
@@ -74,6 +77,9 @@ const rows = {
   ],
 };
 const noSkirt = new Set([
+  "lake-footbridge",
+  "timber-deck",
+  "pergola",
   "lake-fountain",
   "fireworks-barge",
   "start-finish-gantry",

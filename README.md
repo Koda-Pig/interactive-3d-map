@@ -49,7 +49,7 @@ Left-drag pans, right-drag rotates and scrolling zooms. On touch, one finger pan
 
 The map opens with a short fly-in, skipped under reduced motion. Pointing at a location or its label highlights it. Clicking or tapping a building, gate or label opens its details and moves the camera to it. Roads, tracks, flat areas and water open their details where they are, without muting the rest of the site. Clicking empty ground, the close button or Escape closes the details.
 
-The selected location goes into the address as `?location=<id>`, so a copied link opens the map on it. Other parameters such as `?quality` are kept, and an id that doesn't exist is dropped.
+The details list the closest gate and car park, which fly there when picked. On a race weekend race cars lap the circuit, and on a race weekend or conference day shuttles run round the ring road. The selected location goes into the address as `?location=<id>`, so a copied link opens the map on it. Other parameters such as `?quality` are kept, and an id that doesn't exist is dropped.
 
 The switch at the top of the map shows the site as a whole, on a race weekend or on a conference day. The locations in use stay in full colour and the rest are muted, with crowds of parked cars, the race grid or conference marquees appearing to match.
 
@@ -58,5 +58,7 @@ The sidebar lists every location by precinct. Typing in the search box filters t
 ## Checking performance
 
 The map draws less on phones. It picks its tier from the device, and `?quality=low` or `?quality=high` in the address overrides that. If the frame rate drops below 28 fps while the view is moving, it lowers the resolution by itself.
+
+`pnpm perf` starts the dev server, opens six fixed views on the high and low tiers in headless Chrome, and prints draw calls, triangles and a median frame time for each. `--compare tools/perf/baseline.json` shows the change from the saved baseline, and `--out` saves a new one. The counts are exact. The times only compare runs on the same machine.
 
 Add `?stats` to the address to see the frame rate, draw calls and triangles once you've moved the map. To try it on a phone on the same Wi-Fi, run the dev server with `pnpm dev --host` and open the "Network" address it prints, with `?stats` added.

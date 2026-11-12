@@ -1,6 +1,6 @@
 {
-  "assetCount": 79,
-  "totalBytesIncludingManifest": 1702841,
+  "assetCount": 82,
+  "totalBytesIncludingManifest": 2423707,
   "errors": 0,
   "warnings": 0,
   "reports": [
@@ -168,6 +168,24 @@
     },
     {
       "id": "hospitality-marquee",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "lake-footbridge",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "timber-deck",
+      "errors": 0,
+      "warnings": 0,
+      "messages": []
+    },
+    {
+      "id": "pergola",
       "errors": 0,
       "warnings": 0,
       "messages": []

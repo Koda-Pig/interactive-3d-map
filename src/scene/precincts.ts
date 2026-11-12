@@ -1,5 +1,6 @@
 import type { Object3D } from "three";
 import { Color, Material, MathUtils, Mesh } from "three";
+import { ALWAYS_TRANSPARENT } from "../draw/contact-shadows.ts";
 import type { SiteMaterial } from "../draw/materials.ts";
 import { refreshHighlights, setBaseMaterial } from "../draw/materials.ts";
 import type { Category, Location } from "../layout/locations.ts";
@@ -100,7 +101,7 @@ function isAlwaysDrawn(location: Location): boolean {
 }
 
 function setOpacity(material: Material, opacity: number): void {
-  const transparent = opacity < 1;
+  const transparent = opacity < 1 || material.userData[ALWAYS_TRANSPARENT] === true;
   material.opacity = opacity;
   // Opaque and transparent materials compile to different shaders.
   if (material.transparent !== transparent) {

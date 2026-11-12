@@ -151,6 +151,7 @@ The layout lives in `src/data/locations.json`, as a `locations` list, `grading` 
 - `image`: a path relative to `public/`, such as `images/locations/lake.webp`, with no leading slash. It's shown in the details card and, on a phone, under the location in the sidebar. Both resolve it against the site's base URL, so images also work when hosted under a sub-path. Without one, a placeholder is shown
 - `markings`: on an area, lines painted on it, such as a tennis court's. It has a `color`, a `width` and a list of `lines`, each a path
 - `planting`: on an area, `park` scatters trees through it and `edge` lines its edge with them
+- `surface`: on an area, a pattern drawn over its colour: `paving` (slabs), `concrete` (poured bays with joints) or `mown` (mowing stripes)
 - Tracks and roads use `path` (a list of points, rounded the same way) instead of `footprint`, plus `width`. Optional: `closed`, `branches` (more paths in the same location), `median`, `dashed`, `kerbs`, `runoff`, `runoffColor`, `step` (spacing of the ribbon's cross-sections, for very long roads)
 - The location with the id `circuit` also needs `startFinish`: an `[x, z]` point on the start-finish line, which `pnpm check:layout` uses to find that straight
 - Gates use `position`, one `[x, z]` point, and `facing`, the direction people arrive from

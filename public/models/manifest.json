@@ -27,19 +27,19 @@
           52.000003814697266
         ]
       },
-      "triangleCount": 2370,
-      "fileSize": 177384,
+      "triangleCount": 3930,
+      "fileSize": 338092,
       "materials": [
         "wall-white",
         "screen-dark",
         "metal",
+        "brand-navy",
         "glass",
         "timber",
         "canopy-white",
         "roof-dark",
         "wall-grey",
         "foliage-dry",
-        "brand-navy",
         "concrete"
       ],
       "tileable": false,
@@ -91,8 +91,8 @@
           32
         ]
       },
-      "triangleCount": 506,
-      "fileSize": 41184,
+      "triangleCount": 614,
+      "fileSize": 57204,
       "materials": [
         "concrete",
         "brand-navy",
@@ -153,7 +153,7 @@
         ]
       },
       "triangleCount": 250,
-      "fileSize": 19372,
+      "fileSize": 22596,
       "materials": [
         "concrete",
         "brand-navy"
@@ -208,7 +208,7 @@
         ]
       },
       "triangleCount": 518,
-      "fileSize": 42160,
+      "fileSize": 49264,
       "materials": [
         "concrete",
         "brand-navy",
@@ -269,7 +269,7 @@
         ]
       },
       "triangleCount": 250,
-      "fileSize": 19364,
+      "fileSize": 22588,
       "materials": [
         "concrete",
         "brand-navy"
@@ -324,7 +324,7 @@
         ]
       },
       "triangleCount": 48,
-      "fileSize": 5456,
+      "fileSize": 6360,
       "materials": [
         "metal",
         "brand-navy",
@@ -380,7 +380,7 @@
         ]
       },
       "triangleCount": 176,
-      "fileSize": 14692,
+      "fileSize": 17136,
       "materials": [
         "metal",
         "wall-grey",
@@ -436,7 +436,7 @@
         ]
       },
       "triangleCount": 130,
-      "fileSize": 13036,
+      "fileSize": 15264,
       "materials": [
         "wall-white",
         "roof-dark",
@@ -495,7 +495,7 @@
         ]
       },
       "triangleCount": 48,
-      "fileSize": 5448,
+      "fileSize": 6352,
       "materials": [
         "metal",
         "roof-dark",
@@ -551,7 +551,7 @@
         ]
       },
       "triangleCount": 218,
-      "fileSize": 19300,
+      "fileSize": 22580,
       "materials": [
         "wall-white",
         "screen-dark",
@@ -610,7 +610,7 @@
         ]
       },
       "triangleCount": 74,
-      "fileSize": 7260,
+      "fileSize": 8476,
       "materials": [
         "metal",
         "brand-navy",
@@ -666,7 +666,7 @@
         ]
       },
       "triangleCount": 142,
-      "fileSize": 14508,
+      "fileSize": 16988,
       "materials": [
         "wall-white",
         "roof-dark",
@@ -726,7 +726,7 @@
         ]
       },
       "triangleCount": 258,
-      "fileSize": 21656,
+      "fileSize": 25308,
       "materials": [
         "wall-white",
         "roof-dark",
@@ -784,7 +784,7 @@
         ]
       },
       "triangleCount": 402,
-      "fileSize": 30816,
+      "fileSize": 35968,
       "materials": [
         "glass",
         "wall-white",
@@ -840,7 +840,7 @@
         ]
       },
       "triangleCount": 74,
-      "fileSize": 7804,
+      "fileSize": 9128,
       "materials": [
         "glass",
         "stone",
@@ -897,7 +897,7 @@
         ]
       },
       "triangleCount": 86,
-      "fileSize": 8612,
+      "fileSize": 10084,
       "materials": [
         "metal",
         "canopy-white",
@@ -954,7 +954,7 @@
         ]
       },
       "triangleCount": 202,
-      "fileSize": 18160,
+      "fileSize": 21252,
       "materials": [
         "glass",
         "roof-dark",
@@ -1013,7 +1013,7 @@
         ]
       },
       "triangleCount": 2426,
-      "fileSize": 177840,
+      "fileSize": 207508,
       "materials": [
         "brand-navy",
         "concrete",
@@ -1071,7 +1071,7 @@
         ]
       },
       "triangleCount": 94,
-      "fileSize": 9768,
+      "fileSize": 11448,
       "materials": [
         "stone",
         "wall-white",
@@ -1129,7 +1129,7 @@
         ]
       },
       "triangleCount": 162,
-      "fileSize": 15196,
+      "fileSize": 17804,
       "materials": [
         "stone",
         "timber",
@@ -1188,7 +1188,7 @@
         ]
       },
       "triangleCount": 480,
-      "fileSize": 35956,
+      "fileSize": 41936,
       "materials": [
         "stone",
         "wall-grey"
@@ -1244,7 +1244,7 @@
         ]
       },
       "triangleCount": 312,
-      "fileSize": 24980,
+      "fileSize": 29164,
       "materials": [
         "roof-dark",
         "wall-grey",
@@ -1302,7 +1302,7 @@
         ]
       },
       "triangleCount": 98,
-      "fileSize": 10116,
+      "fileSize": 11844,
       "materials": [
         "timber",
         "screen-dark",
@@ -1359,8 +1359,8 @@
           25
         ]
       },
-      "triangleCount": 418,
-      "fileSize": 35544,
+      "triangleCount": 1282,
+      "fileSize": 114140,
       "materials": [
         "stone",
         "timber",
@@ -1421,8 +1421,8 @@
           25
         ]
       },
-      "triangleCount": 322,
-      "fileSize": 28612,
+      "triangleCount": 1042,
+      "fileSize": 93956,
       "materials": [
         "stone",
         "timber",
@@ -1484,7 +1484,7 @@
         ]
       },
       "triangleCount": 158,
-      "fileSize": 13844,
+      "fileSize": 16184,
       "materials": [
         "timber",
         "glass",
@@ -1541,7 +1541,7 @@
         ]
       },
       "triangleCount": 190,
-      "fileSize": 15556,
+      "fileSize": 18164,
       "materials": [
         "timber",
         "metal",
@@ -1597,7 +1597,7 @@
         ]
       },
       "triangleCount": 106,
-      "fileSize": 9572,
+      "fileSize": 11172,
       "materials": [
         "concrete",
         "canopy-white",
@@ -1632,6 +1632,174 @@
       }
     },
     {
+      "id": "lake-footbridge",
+      "file": "/models/hospitality/lake-footbridge.glb",
+      "category": "hospitality",
+      "boundingBox": {
+        "min": [
+          -4,
+          0,
+          -38
+        ],
+        "max": [
+          4,
+          2.8999998569488525,
+          38
+        ],
+        "size": [
+          8,
+          2.8999998569488525,
+          76
+        ]
+      },
+      "triangleCount": 532,
+      "fileSize": 47740,
+      "materials": [
+        "stone",
+        "concrete",
+        "metal",
+        "glass"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -4,
+          -38
+        ],
+        [
+          4,
+          -38
+        ],
+        [
+          4,
+          38
+        ],
+        [
+          -4,
+          38
+        ]
+      ],
+      "spec": {
+        "width": 8,
+        "depth": 76,
+        "height": 2.9,
+        "skirtDepth": 0,
+        "triangleBudget": 1500
+      }
+    },
+    {
+      "id": "timber-deck",
+      "file": "/models/hospitality/timber-deck.glb",
+      "category": "hospitality",
+      "boundingBox": {
+        "min": [
+          -25,
+          0,
+          -15
+        ],
+        "max": [
+          25,
+          1.899999976158142,
+          15
+        ],
+        "size": [
+          50,
+          1.899999976158142,
+          30
+        ]
+      },
+      "triangleCount": 744,
+      "fileSize": 64768,
+      "materials": [
+        "timber",
+        "trunk",
+        "metal"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -25,
+          -15
+        ],
+        [
+          25,
+          -15
+        ],
+        [
+          25,
+          15
+        ],
+        [
+          -25,
+          15
+        ]
+      ],
+      "spec": {
+        "width": 50,
+        "depth": 30,
+        "height": 1.9,
+        "skirtDepth": 0,
+        "triangleBudget": 1500
+      }
+    },
+    {
+      "id": "pergola",
+      "file": "/models/hospitality/pergola.glb",
+      "category": "hospitality",
+      "boundingBox": {
+        "min": [
+          -24,
+          0,
+          -4.5
+        ],
+        "max": [
+          24,
+          3.1000001430511475,
+          4.5
+        ],
+        "size": [
+          48,
+          3.1000001430511475,
+          9
+        ]
+      },
+      "triangleCount": 684,
+      "fileSize": 59064,
+      "materials": [
+        "wall-grey",
+        "timber"
+      ],
+      "tileable": false,
+      "instanced": false,
+      "footprint": [
+        [
+          -24,
+          -4.5
+        ],
+        [
+          24,
+          -4.5
+        ],
+        [
+          24,
+          4.5
+        ],
+        [
+          -24,
+          4.5
+        ]
+      ],
+      "spec": {
+        "width": 48,
+        "depth": 9,
+        "height": 3.1,
+        "skirtDepth": 0,
+        "triangleBudget": 1500
+      }
+    },
+    {
       "id": "residents-clubhouse",
       "file": "/models/mixed-use/residents-clubhouse.glb",
       "category": "mixed-use",
@@ -1653,7 +1821,7 @@
         ]
       },
       "triangleCount": 178,
-      "fileSize": 15748,
+      "fileSize": 18440,
       "materials": [
         "timber",
         "wall-white",
@@ -1711,7 +1879,7 @@
         ]
       },
       "triangleCount": 386,
-      "fileSize": 33208,
+      "fileSize": 38836,
       "materials": [
         "wall-grey",
         "wall-white",
@@ -1773,7 +1941,7 @@
         ]
       },
       "triangleCount": 210,
-      "fileSize": 18148,
+      "fileSize": 21220,
       "materials": [
         "wall-white",
         "roof-dark",
@@ -1831,7 +1999,7 @@
         ]
       },
       "triangleCount": 522,
-      "fileSize": 44176,
+      "fileSize": 51664,
       "materials": [
         "stone",
         "wall-white",
@@ -1895,7 +2063,7 @@
         ]
       },
       "triangleCount": 290,
-      "fileSize": 26136,
+      "fileSize": 30612,
       "materials": [
         "wall-grey",
         "wall-white",
@@ -1957,7 +2125,7 @@
         ]
       },
       "triangleCount": 290,
-      "fileSize": 24552,
+      "fileSize": 28700,
       "materials": [
         "wall-white",
         "roof-dark",
@@ -2016,7 +2184,7 @@
         ]
       },
       "triangleCount": 154,
-      "fileSize": 15364,
+      "fileSize": 17988,
       "materials": [
         "wall-white",
         "roof-dark",
@@ -2076,7 +2244,7 @@
         ]
       },
       "triangleCount": 410,
-      "fileSize": 33140,
+      "fileSize": 38724,
       "materials": [
         "wall-white",
         "screen-dark",
@@ -2135,7 +2303,7 @@
         ]
       },
       "triangleCount": 158,
-      "fileSize": 15648,
+      "fileSize": 18320,
       "materials": [
         "wall-white",
         "roof-dark",
@@ -2195,7 +2363,7 @@
         ]
       },
       "triangleCount": 118,
-      "fileSize": 12140,
+      "fileSize": 14224,
       "materials": [
         "wall-white",
         "glass",
@@ -2254,7 +2422,7 @@
         ]
       },
       "triangleCount": 122,
-      "fileSize": 11288,
+      "fileSize": 13192,
       "materials": [
         "concrete",
         "metal",
@@ -2311,7 +2479,7 @@
         ]
       },
       "triangleCount": 86,
-      "fileSize": 9288,
+      "fileSize": 10872,
       "materials": [
         "wall-grey",
         "roof-dark",
@@ -2369,7 +2537,7 @@
         ]
       },
       "triangleCount": 142,
-      "fileSize": 14508,
+      "fileSize": 16992,
       "materials": [
         "wall-white",
         "roof-dark",
@@ -2429,7 +2597,7 @@
         ]
       },
       "triangleCount": 46,
-      "fileSize": 5824,
+      "fileSize": 6816,
       "materials": [
         "wall-grey",
         "glass",
@@ -2486,7 +2654,7 @@
         ]
       },
       "triangleCount": 122,
-      "fileSize": 11316,
+      "fileSize": 13220,
       "materials": [
         "concrete",
         "metal",
@@ -2543,7 +2711,7 @@
         ]
       },
       "triangleCount": 226,
-      "fileSize": 18760,
+      "fileSize": 21916,
       "materials": [
         "brand-navy",
         "metal",
@@ -2600,7 +2768,7 @@
         ]
       },
       "triangleCount": 148,
-      "fileSize": 13888,
+      "fileSize": 16220,
       "materials": [
         "canopy-white",
         "wall-white",
@@ -2658,7 +2826,7 @@
         ]
       },
       "triangleCount": 144,
-      "fileSize": 13020,
+      "fileSize": 15192,
       "materials": [
         "brand-navy",
         "metal",
@@ -2716,7 +2884,7 @@
         ]
       },
       "triangleCount": 44,
-      "fileSize": 4596,
+      "fileSize": 5344,
       "materials": [
         "metal",
         "canopy-white"
@@ -2771,7 +2939,7 @@
         ]
       },
       "triangleCount": 192,
-      "fileSize": 14672,
+      "fileSize": 17084,
       "materials": [
         "metal"
       ],
@@ -2825,7 +2993,7 @@
         ]
       },
       "triangleCount": 12,
-      "fileSize": 1696,
+      "fileSize": 1952,
       "materials": [
         "concrete"
       ],
@@ -2879,7 +3047,7 @@
         ]
       },
       "triangleCount": 36,
-      "fileSize": 4028,
+      "fileSize": 4680,
       "materials": [
         "wall-white",
         "metal"
@@ -2934,7 +3102,7 @@
         ]
       },
       "triangleCount": 52,
-      "fileSize": 6232,
+      "fileSize": 7296,
       "materials": [
         "wall-white",
         "screen-dark",
@@ -2991,7 +3159,7 @@
         ]
       },
       "triangleCount": 136,
-      "fileSize": 11780,
+      "fileSize": 13740,
       "materials": [
         "brand-teal",
         "screen-dark",
@@ -3048,7 +3216,7 @@
         ]
       },
       "triangleCount": 116,
-      "fileSize": 10996,
+      "fileSize": 12832,
       "materials": [
         "wall-white",
         "glass",
@@ -3106,7 +3274,7 @@
         ]
       },
       "triangleCount": 128,
-      "fileSize": 12400,
+      "fileSize": 14492,
       "materials": [
         "wall-white",
         "glass",
@@ -3165,7 +3333,7 @@
         ]
       },
       "triangleCount": 104,
-      "fileSize": 10668,
+      "fileSize": 12468,
       "materials": [
         "wall-white",
         "brand-teal",
@@ -3224,7 +3392,7 @@
         ]
       },
       "triangleCount": 202,
-      "fileSize": 16380,
+      "fileSize": 19136,
       "materials": [
         "wall-grey",
         "metal",
@@ -3280,7 +3448,7 @@
         ]
       },
       "triangleCount": 122,
-      "fileSize": 11868,
+      "fileSize": 13888,
       "materials": [
         "wall-white",
         "roof-dark",
@@ -3338,7 +3506,7 @@
         ]
       },
       "triangleCount": 76,
-      "fileSize": 6308,
+      "fileSize": 7328,
       "materials": [
         "rock-distant"
       ],
@@ -3392,7 +3560,7 @@
         ]
       },
       "triangleCount": 116,
-      "fileSize": 10360,
+      "fileSize": 12080,
       "materials": [
         "trunk",
         "foliage-dark",
@@ -3448,7 +3616,7 @@
         ]
       },
       "triangleCount": 116,
-      "fileSize": 10328,
+      "fileSize": 12052,
       "materials": [
         "trunk",
         "foliage-dark",
@@ -3504,7 +3672,7 @@
         ]
       },
       "triangleCount": 116,
-      "fileSize": 10328,
+      "fileSize": 12048,
       "materials": [
         "trunk",
         "foliage-dark",
@@ -3560,7 +3728,7 @@
         ]
       },
       "triangleCount": 116,
-      "fileSize": 10352,
+      "fileSize": 12072,
       "materials": [
         "trunk",
         "foliage-dark",
@@ -3616,7 +3784,7 @@
         ]
       },
       "triangleCount": 116,
-      "fileSize": 10380,
+      "fileSize": 12100,
       "materials": [
         "trunk",
         "foliage-dark",
@@ -3672,7 +3840,7 @@
         ]
       },
       "triangleCount": 116,
-      "fileSize": 10348,
+      "fileSize": 12068,
       "materials": [
         "trunk",
         "foliage-dark",
@@ -3728,7 +3896,7 @@
         ]
       },
       "triangleCount": 116,
-      "fileSize": 10372,
+      "fileSize": 12092,
       "materials": [
         "trunk",
         "foliage-dark",
@@ -3784,7 +3952,7 @@
         ]
       },
       "triangleCount": 116,
-      "fileSize": 10340,
+      "fileSize": 12060,
       "materials": [
         "trunk",
         "foliage-dark",
@@ -3840,7 +4008,7 @@
         ]
       },
       "triangleCount": 116,
-      "fileSize": 10340,
+      "fileSize": 12060,
       "materials": [
         "trunk",
         "foliage-dark",
@@ -3896,7 +4064,7 @@
         ]
       },
       "triangleCount": 60,
-      "fileSize": 5728,
+      "fileSize": 6668,
       "materials": [
         "foliage-dry",
         "foliage-dark"
@@ -3951,7 +4119,7 @@
         ]
       },
       "triangleCount": 60,
-      "fileSize": 5760,
+      "fileSize": 6700,
       "materials": [
         "foliage-dry",
         "foliage-dark"
@@ -4006,7 +4174,7 @@
         ]
       },
       "triangleCount": 60,
-      "fileSize": 5724,
+      "fileSize": 6664,
       "materials": [
         "foliage-dry",
         "foliage-dark"
@@ -4061,7 +4229,7 @@
         ]
       },
       "triangleCount": 60,
-      "fileSize": 5152,
+      "fileSize": 5980,
       "materials": [
         "stone"
       ],
@@ -4115,7 +4283,7 @@
         ]
       },
       "triangleCount": 60,
-      "fileSize": 5152,
+      "fileSize": 5980,
       "materials": [
         "stone"
       ],
@@ -4169,7 +4337,7 @@
         ]
       },
       "triangleCount": 60,
-      "fileSize": 5156,
+      "fileSize": 5984,
       "materials": [
         "stone"
       ],
@@ -4223,7 +4391,7 @@
         ]
       },
       "triangleCount": 530,
-      "fileSize": 44788,
+      "fileSize": 52364,
       "materials": [
         "stone",
         "wall-white",
@@ -4287,7 +4455,7 @@
         ]
       },
       "triangleCount": 522,
-      "fileSize": 44188,
+      "fileSize": 51672,
       "materials": [
         "stone",
         "wall-white",
@@ -4351,7 +4519,7 @@
         ]
       },
       "triangleCount": 290,
-      "fileSize": 26148,
+      "fileSize": 30624,
       "materials": [
         "wall-grey",
         "wall-white",
@@ -4413,7 +4581,7 @@
         ]
       },
       "triangleCount": 290,
-      "fileSize": 26160,
+      "fileSize": 30636,
       "materials": [
         "wall-grey",
         "wall-white",
@@ -4475,7 +4643,7 @@
         ]
       },
       "triangleCount": 386,
-      "fileSize": 33216,
+      "fileSize": 38844,
       "materials": [
         "wall-grey",
         "wall-white",
@@ -4537,7 +4705,7 @@
         ]
       },
       "triangleCount": 386,
-      "fileSize": 33216,
+      "fileSize": 38840,
       "materials": [
         "wall-grey",
         "wall-white",

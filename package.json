@@ -19,7 +19,8 @@
     "assets:validate": "node tools/assets/validate.mjs",
     "assets:preview": "node tools/assets/serve.mjs",
     "assets:render": "node tools/assets/render.mjs",
-    "assets:determinism": "node tools/assets/determinism.mjs"
+    "assets:determinism": "node tools/assets/determinism.mjs",
+    "perf": "node tools/perf.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.6",

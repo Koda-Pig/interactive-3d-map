@@ -27,14 +27,32 @@ function garageDoors(s, w, z, height, count) {
 function pit(s, { w, d, h }) {
   s.box(w, 8, d * 0.72, 0, 4, -d * 0.1);
   garageDoors(s, w * 0.97, d * 0.265, 6, 32);
+  // A navy band over the garage doors carries the line of the pit lane.
+  s.box(w * 0.97, 1, 0.5, 0, 6.7, d * 0.27, "brand-navy");
   // Long conference wings step back from the pit lane, exposing terrace bands.
   for (let floor = 0; floor < 3; floor++) {
     const y = 8 + floor * 5;
     const depth = d * (0.66 - floor * 0.12);
     s.box(w * 0.83, 4.5, depth, -w * 0.035, y + 2.25, -d * 0.12, "glass");
+    // Mullions through the glazing, front and back, every 7.5 m.
+    const span = w * 0.83;
+    const bays = Math.round(span / 7.5);
+    for (let bay = 1; bay < bays; bay++)
+      s.box(
+        0.35,
+        4.5,
+        depth + 0.3,
+        -w * 0.035 - span / 2 + (bay * span) / bays,
+        y + 2.25,
+        -d * 0.12,
+      );
     s.box(w * 0.85, 0.6, depth + 3, -w * 0.035, y + 4.7, -d * 0.12);
     terrace(s, w * 0.76, 4, -w * 0.035, y + 4.95, -d * 0.12 + depth / 2);
   }
+  // Rows of solar panels in the gaps between the roof pavilions.
+  for (const x of [-0.185, 0.025, 0.235])
+    for (let row = 0; row < 3; row++)
+      s.box(w * 0.07, 0.15, 2.2, w * x, 23.6, -d * 0.3 + row * 3.2, "glass", [-0.3, 0, 0]);
   // Separate roof pavilions leave broad, visible gaps and occupied roof terraces.
   for (const x of [-0.29, -0.08, 0.13]) {
     s.box(w * 0.16, 2.4, d * 0.23, w * x, 25.2, -d * 0.19, "glass");
@@ -109,6 +127,14 @@ function stand(s, { w, d, h, id }) {
       -d * 0.49 + n * d * 0.022,
       "wall-grey",
     );
+  if (id === "grandstand-bay-covered") {
+    for (const x of [-w * 0.4, -w * 0.2, w * 0.2, w * 0.4])
+      s.box(0.5, h * 0.32, 0.6, x, h * 0.18, -d * 0.47, "wall-grey");
+    // The front rail runs the full width, so neighbouring bays join into one.
+    s.box(w, 0.12, 0.12, 0, 2.15, d * 0.49, "metal");
+    for (const x of [-w * 0.375, -w * 0.125, w * 0.125, w * 0.375])
+      s.box(0.12, 1.1, 0.12, x, 1.6, d * 0.49, "metal");
+  }
   if (id === "grandstand-end-cap")
     s.box(END_WALL, h * 0.34, d * 0.8, (END_WALL - w) / 2, h * 0.17, 0, "wall-white");
 }
@@ -140,6 +166,18 @@ function hotel(s, { w, d, h, id }) {
       -d * 0.15,
       "glass",
     );
+    // Fins between the rooms, through the floor so they show front and back.
+    const rooms = Math.max(2, Math.round(width / 3.2));
+    for (let room = 1; room < rooms; room++)
+      s.box(
+        0.3,
+        floorHeight * 0.94,
+        d * 0.52 + 0.3,
+        -w * 0.07 - width / 2 + (room * width) / rooms,
+        level + floorHeight * 0.47,
+        -d * 0.15,
+        "wall-white",
+      );
     s.box(width + 2, 0.55, d * 0.68, -w * 0.07, level + floorHeight * 0.94, -d * 0.13);
   }
   const roofY = h * 0.2 + floors * floorHeight;
@@ -177,9 +215,102 @@ function precinct(s, { w, d, h, id }) {
     }
   } else s.box(w * 0.28, 0.5, d * 0.28, 0, h * 0.24, d * 0.35, "canopy-white");
 }
+/** A level footbridge with ramped ends, two piers and railings, along Z. */
+function lakeFootbridge(s, { w, d, h }) {
+  const ramp = d * 0.16;
+  const deck = h * 0.55;
+  const slab = 0.4;
+  // Solid ramps rise from the quay to the deck at each end. The profile is
+  // drawn in Z and Y, then turned so its extrusion runs across the bridge.
+  const wedge = (profile, z) => {
+    const g = new THREE.ExtrudeGeometry(
+      new THREE.Shape(profile.map(([pz, py]) => new THREE.Vector2(pz, py))),
+      { depth: w, bevelEnabled: false },
+    );
+    g.rotateY(-Math.PI / 2);
+    g.translate(w / 2, 0, z);
+    s.add(g, "stone");
+  };
+  wedge(
+    [
+      [0, 0],
+      [ramp, 0],
+      [ramp, deck],
+    ],
+    -d / 2,
+  );
+  wedge(
+    [
+      [0, 0],
+      [ramp, 0],
+      [0, deck],
+    ],
+    d / 2 - ramp,
+  );
+  s.box(w, slab, d - ramp * 2, 0, deck - slab / 2, 0, "stone");
+  // Piers in the water under the deck.
+  for (const z of [-d * 0.17, d * 0.17])
+    s.box(w * 0.7, deck - slab, 1.6, 0, (deck - slab) / 2, z, "concrete");
+  // Railings: a top rail and posts every 3 m along both edges.
+  for (const x of [-w / 2 + 0.15, w / 2 - 0.15]) {
+    s.box(0.12, 0.12, d - ramp * 2, x, h - 0.06, 0, "metal");
+    s.box(0.1, h - deck, d - ramp * 2, x, (h + deck) / 2, 0, "glass");
+    const posts = Math.round((d - ramp * 2) / 3);
+    for (let post = 0; post <= posts; post++)
+      s.box(
+        0.16,
+        h - deck,
+        0.16,
+        x,
+        (h + deck) / 2,
+        -(d / 2 - ramp) + (post * (d - ramp * 2)) / posts,
+        "metal",
+      );
+  }
+}
+/** A timber deck on piles with plank joints and a railing round three sides. */
+function timberDeck(s, { w, d, h }) {
+  const top = h * 0.47;
+  s.box(w, top, d, 0, top / 2, 0, "timber");
+  // Plank joints, a shade darker, across the deck.
+  for (let i = 1; i < 16; i++)
+    s.box(0.12, 0.04, d - 0.4, -w / 2 + (i * w) / 16, top + 0.02, 0, "trunk");
+  // Piles along the outer edges.
+  for (let i = 0; i <= 6; i++) {
+    const x = -w / 2 + 0.3 + (i * (w - 0.6)) / 6;
+    for (const z of [-d / 2 + 0.3, d / 2 - 0.3]) s.box(0.4, top, 0.4, x, top / 2, z, "trunk");
+  }
+  // The railing leaves the landward side (-Z) open to the quay.
+  const rail = h - top;
+  s.box(w, 0.1, 0.1, 0, h - 0.05, d / 2 - 0.1, "metal");
+  for (const x of [-w / 2 + 0.1, w / 2 - 0.1]) s.box(0.1, 0.1, d, x, h - 0.05, 0, "metal");
+  for (let i = 0; i <= 10; i++) {
+    const x = -w / 2 + 0.1 + (i * (w - 0.2)) / 10;
+    s.box(0.1, rail, 0.1, x, top + rail / 2, d / 2 - 0.1, "metal");
+  }
+  for (let i = 0; i <= 8; i++)
+    for (const x of [-w / 2 + 0.1, w / 2 - 0.1])
+      s.box(0.1, rail, 0.1, x, top + rail / 2, -d / 2 + 0.1 + (i * (d - 0.2)) / 8, "metal");
+}
+/** An open timber pergola: posts, two beams and slatted rafters across them. */
+function pergola(s, { w, d, h }) {
+  const posts = 7;
+  for (let i = 0; i < posts; i++) {
+    const x = -w / 2 + 0.3 + (i * (w - 0.6)) / (posts - 1);
+    for (const z of [-d / 2 + 0.3, d / 2 - 0.3])
+      s.box(0.35, h - 0.5, 0.35, x, (h - 0.5) / 2, z, "wall-grey");
+  }
+  for (const z of [-d / 2 + 0.3, d / 2 - 0.3]) s.box(w, 0.35, 0.3, 0, h - 0.4, z, "timber");
+  const rafters = Math.round(w / 1.2);
+  for (let i = 0; i <= rafters; i++)
+    s.box(0.18, 0.25, d, -w / 2 + (i * w) / rafters, h - 0.12, 0, "timber");
+}
 export function aerial(s, a) {
   const { id, w, d, h } = a;
   if (id === "pit-conference-building") pit(s, a);
+  else if (id === "lake-footbridge") lakeFootbridge(s, a);
+  else if (id === "timber-deck") timberDeck(s, a);
+  else if (id === "pergola") pergola(s, a);
   else if (["grandstand-bay-covered", "grandstand-end-cap"].includes(id)) stand(s, a);
   else if (id === "conference-hall") hall(s, a);
   else if (id.startsWith("hotel-")) hotel(s, a);

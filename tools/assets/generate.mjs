@@ -1,10 +1,11 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { catalog } from "./catalog.mjs";
 import { design } from "./designs.mjs";
+import { bakeOcclusion } from "./occlusion.mjs";
 import { exportAsset } from "./shared.mjs";
 
 const assets = [];
-for (const spec of catalog) assets.push(await exportAsset(spec, design(spec)));
+for (const spec of catalog) assets.push(await exportAsset(spec, bakeOcclusion(design(spec), spec)));
 await mkdir("public/models", { recursive: true });
 await writeFile(
   "public/models/manifest.json",

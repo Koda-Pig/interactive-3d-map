@@ -107,9 +107,12 @@ export function bakedGeometry(model: KitModel): BufferGeometry {
     baked.deleteAttribute("uv");
     color.copy(material.color);
     const count = baked.getAttribute("position").count;
+    // The kit bakes its shading into vertex colours, which the material's colour multiplies.
+    const shade = geometry.getAttribute("color");
     const colors = new Float32Array(count * 3);
     for (let vertex = 0; vertex < count; vertex += 1) {
-      colors.set([color.r, color.g, color.b], vertex * 3);
+      const amount = shade ? shade.getX(vertex) : 1;
+      colors.set([color.r * amount, color.g * amount, color.b * amount], vertex * 3);
     }
     baked.setAttribute("color", new BufferAttribute(colors, 3));
     return baked;
