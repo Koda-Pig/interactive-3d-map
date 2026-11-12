@@ -1,54 +1,130 @@
 # Aerial architecture review
 
-The kit now has 72 models, up from 60. `designs.mjs` routes the redesigned buildings through `aerial.mjs`; the other 49 original models are byte-identical. No palette colours or runtime materials changed.
+Reviewed 12 November 2026. This describes the current kit, replacing the earlier comparison against the first architecture pass.
 
-## Geometry and placement
+## Kit and rendering
 
-The pit building has stepped glazed floors, exposed terrace bands, three roof pavilions, a north race-control tower, a south lobby and a pit-lane canopy on slanted supports. The covered grandstand keeps its curved roof over the upper seating, with white canopy sections, navy and teal tiers, a rear concourse and stairs. Its X boundaries match across tiles.
+The catalog contains **82 procedural models across eight categories**, plus six crowd figures built separately from Kenney's Mini Characters. The procedural GLBs total **2,462,920 bytes**, or **2,544,277 bytes including the manifest**. These sizes exclude the crowd figures.
 
-Hall tiles have four roof ridges, skylight strips and perimeter equipment. The Expo Centre adds a glazed concourse and a lake-facing entrance. Hotels have podium decks, broad balcony ledges, stepped upper floors and roof pools. Retail, research and residential each have three variants with different heights and roof arrangements. The arch has stone piers and a deep faceted span. Plaza towers have roof lanterns.
+| Category | Procedural models |
+| --- | ---: |
+| racing | 12 |
+| conference | 8 |
+| hospitality | 11 |
+| mixed-use | 15 |
+| transport | 7 |
+| props | 11 |
+| setting | 3 |
+| nature | 15 |
 
-New support rooms and equipment awnings occupy the existing separate paddock footprints. The awning model replaces the raised roof part and includes its own posts. The renderer fits that part to `base + height`, so the canopy top stays at 5.6 m. Existing side supports remain. Karting garage models replace the two wall volumes; the existing roof and door parts remain because only model entries may change. The south conference entrance now has a glazed back wall and an open canopy.
+Every procedural model has baked ambient occlusion in vertex colours. Tileable models are baked between neighbouring copies. The palette remains shared, glass is opaque, and geometry is flat-shaded. The separate crowd pipeline simplifies and shades six CC0 source characters. Those figures appear near the camera, with simpler people drawn farther away.
 
-Only `model` entries changed in `locations.json`. A structural comparison with the baseline confirmed that every other value, including footprints, heights, base offsets, facing directions of existing models, event data and grading, is unchanged. Circuit, access, loading aisles and protected boundaries are preserved.
+## Architecture and placement
 
-The pit catalog envelope matches its combined placement at 370 × 52 × 33 m. Hall tiles use 78 × 72 m, close to the 75 × 75 m and 78 × 70 m cells. Retail uses local X × Z dimensions of 30 × 60 m because the existing placements face east or west. The Expo entrance is 44 × 24 m locally and faces east. The tower hotel keeps its 45 × 25 m envelope; its stepped massing also supports the existing 60 × 30 m placement.
+The pit building has stepped glazed floors, terrace bands, roof pavilions, a race-control tower, a conference lobby, a garage canopy, glazing mullions and solar panels. Covered grandstand bays have curved roofs, white canopies, exposed seating, rear fins and front rails. The end-cap tiers stop inside their end wall to prevent flickering.
 
-## Triangle counts
+Hall tiles have roof ridges and skylights. The Expo Centre has a separate glazed concourse and lake-facing entrance. Hotels have stepped floors, balcony ledges, room divisions and roof pools. Retail, research and apartments each have three variants. The lake footbridge, restaurant decks and terrace pergolas have dedicated models.
 
-Counts include building skirts. Copies come from the placement grid and the renderer's end-cap tiling rule, giving 31 covered bays and eight end caps. New models replace 12-triangle rectangular extrusions. The retail after-count is 522 for variants 1 and 3 and 530 for variant 2, placed four, three and three times respectively.
+The secondary-building update adds:
 
-| Model or family | Before per copy | After per copy | Placed copies | Total change |
+- **Driving Academy:** two teaching floors glazed on both long facades, mullions, a projecting floor band, a recessed entrance, a canopy on posts, and a teal roof volume.
+- **Automotive Hub:** eight workshop bays behind projecting piers, divided doors, clerestory glazing, a navy fascia, and three roof vents.
+- **Townhouses:** five homes per row with separate timber doors, window reveals, porches, and alternating roof heights and colours. Ten existing residential blocks now use this model, six facing west toward the eastern estate's street and four facing north toward the southern estate's street. Previously they were plain extrusions, and the kit's townhouse model was unused.
+
+A structural comparison with the preceding layout confirms that only `model` entries changed. Footprints, heights, existing facing directions, roads, grading, circuit geometry and event data are preserved. Models fit their existing placement envelopes, including the academy's 12 m placement height and the townhouses' 13 m placement height. Catalog heights are 9 m and 10 m respectively, so the map scales them vertically.
+
+## Current triangle counts
+
+These counts come from `public/models/manifest.json` after `node tools/assets/generate.mjs`. Counts include skirts where applicable and describe one catalog model, not a whole placed building or the rendered scene.
+
+| Model | Triangles per copy | Budget |
+| --- | ---: | ---: |
+| `pit-conference-building` | 3,930 | 15,000 |
+| `grandstand-bay-covered` | 614 | 1,500 |
+| `grandstand-end-cap` | 518 | 1,500 |
+| `conference-hall` | 258 | 4,000 |
+| `amphitheatre` | 2,426 | 15,000 |
+| `hotel-tower` | 1,282 | 4,000 |
+| `hotel-low` | 1,042 | 4,000 |
+| `lake-footbridge` | 532 | 1,500 |
+| `timber-deck` | 744 | 1,500 |
+| `pergola` | 684 | 1,500 |
+| `retail-block` | 522 | 4,000 |
+| `retail-block-2` | 530 | 4,000 |
+| `retail-block-3` | 522 | 4,000 |
+| `research-block` | 290 | 4,000 |
+| `residential-trackside` | 386 | 4,000 |
+| `paddock-support-unit` | 218 | 4,000 |
+| `paddock-equipment-awning` | 74 | 4,000 |
+| `expo-concourse` | 402 | 4,000 |
+| `expo-entrance` | 74 | 4,000 |
+| `conference-entrance-canopy` | 86 | 4,000 |
+| `karting-garage-row` | 410 | 4,000 |
+| `driving-academy` | 598 | 4,000 |
+| `automotive-hub` | 614 | 4,000 |
+| `townhouse-row` | 810 | 4,000 |
+
+Research and apartment variants share their base model's triangle count. All 82 procedural assets pass their budget checks.
+
+### Cost of the secondary-building update
+
+| Model | Before per copy | Current per copy | Placed copies | Change in placed triangles |
 | --- | ---: | ---: | ---: | ---: |
-| Pit / conference | 1,286 | 2370 | 1 | +1,084 |
-| Covered grandstand bay | 394 | 506 | 31 | +3,472 |
-| Grandstand end cap | 406 | 518 | 8 | +896 |
-| Hall tile | 146 | 258 | 16 | +1,792 |
-| Hotel tower | 1,762 | 418 | 2 | -2,688 |
-| Low hotel | 754 | 322 | 1 | -432 |
-| Retail variants | 274 | 522 / 530 | 10 | +2,504 |
-| Research variants | 178 | 290 | 8 | +896 |
-| Residential variants | 922 | 386 | 10 | -5,360 |
-| Gateway arch | 178 | 94 | 1 | -84 |
-| Plaza tower | 58 | 162 | 2 | +208 |
-| Paddock support room | 12 | 218 | 10 | +2,060 |
-| Equipment awning | 12 | 74 | 10 | +620 |
-| Expo concourse | 12 | 402 | 1 | +390 |
-| Expo entrance | 12 | 74 | 1 | +62 |
-| Conference canopy | 12 | 86 | 1 | +74 |
-| Karting garage row | 12 | 410 | 2 | +796 |
+| Driving Academy | 154 | 598 | 1 | +444 |
+| Automotive Hub | 290 | 614 | 1 | +324 |
+| Townhouse row | 12 as a plain extrusion | 810 | 10 | +7,980 |
 
-Affected placed geometry totals **37,340 → 43,630 triangles**, a net **+6,290**. All other placed geometry is unchanged. This adds about 1.2–1.7% to the previously reported 375,000–510,000 scene range. Those scene figures are context, not a fresh device measurement. Every model remains below its per-kind budget; the hero uses 2,370 of 15,000 triangles and a covered bay uses 506 of 1,500.
+The placement change adds **8,748 triangles** across these buildings. The townhouse kit asset itself increased from 210 to 810 triangles, but it had no placements before this update. This arithmetic excludes shadows, scenery, culling and draw-call costs. The three changed GLBs add 120,412 bytes. Every other procedural GLB is byte-identical to the preceding kit.
+
+## Visual review
+
+All eight contact sheets in `previews/` were regenerated from the exported GLBs and opened for inspection. The hospitality sheet now includes the footbridge, timber deck and pergola, and shows the current hotel facades. The racing sheet shows the current pit mullions and grandstand details. The preview's full 82-asset grid and orbit inspector pass without browser errors.
+
+A follow-up geometry review found gaps below the academy and workshop roofs. Their walls and workshop piers now meet the roofs. Raycasts through the former gaps hit supporting geometry, and the models and contact sheets were regenerated.
+
+The academy's entrance and glazing rhythm are distinct from the workshop's recessed bay frontage. The townhouse doors and porches separate the five homes in each row. At whole-site distance, roof silhouettes and colour variation carry more of this difference than windows or door divisions.
+
+`review-map.mjs` captures overview and fly-to views in Whole site, Race weekend and Conference day modes. It includes the academy, automotive hub and both residential estates as well as the existing signature-building views. It opens selections through location links so the review works with the sidebar collapsed. Captures are written to `/tmp/bmr-map-review`, or `MAP_REVIEW_DIR` when set.
 
 ## Verification
 
-- `pnpm assets`, `pnpm assets:validate` and `pnpm assets:determinism` pass. All 73 generated files are deterministic; Khronos validation has no warnings or errors.
-- `pnpm assets:render` regenerates all eight contact sheets. The racing, conference, hospitality and mixed-use sheets are opened for inspection.
-- `pnpm build` and `pnpm test` pass, including all 42 layout and geometry tests. Vite retains its large-bundle advisory.
-- `node tools/assets/review-map.mjs`, with `pnpm dev` running, captures the overview and fly-to views in Whole site, Race weekend and Conference day modes. It also captures the stretched Promenade Hotel, karting garages and team support rows. Images are written to `/tmp/bmr-map-review` by default, or `MAP_REVIEW_DIR` when set.
+Run from the repository root:
 
-## Camera limits
+- `node tools/assets/generate.mjs`: 82 models generated.
+- `node tools/assets/validate.mjs`: 82 assets passed, with zero Khronos errors or warnings.
+- `node tools/assets/determinism.mjs`: all 83 generated files, including the manifest, are byte-identical after regeneration.
+- `node tools/assets/render.mjs`: eight contact sheets, the full grid, and the orbit inspector pass.
+- `node tools/assets/review-map.mjs`: 42 map captures across all three modes complete without browser errors. The changed buildings were inspected in each mode.
+- `node tools/check-layout.mjs`: 4,800 m lap, 693 m start-finish straight, separate 1,061 m straight, 15 m width, and all 42 referenced model files exist.
+- `node --test 'tests/*.test.mjs'`: all 56 tests pass.
+- `node node_modules/@biomejs/biome/bin/biome check .`: lint and formatting pass.
+- `node node_modules/typescript/bin/tsc` and `node node_modules/vite/bin/vite.js build`: production checks pass, with Vite's existing large-chunk advisory.
 
-The broad pit terraces, hall ridges, exposed seating and hotel decks distinguish the buildings from above. Individual doors, small roof equipment and balcony divisions disappear at whole-site distance. The Gateway Arch reads as a stone-pier gateway at fly-to distance, but its fixed 40 m width limits its prominence in the overview. Retail variants differ at fly-to distance; the repeated street arrangement still dominates when zoomed out. Event-mode muting reduces colour contrast outside active precincts.
+The crowd figures are outside the procedural validator and determinism command. Their build and provenance are documented in [README.md](README.md#crowd-figures).
 
-No real-phone frame-time measurement was made.
+## Rendered scene cost
+
+`node tools/perf.mjs --compare tools/perf/baseline.json --out /tmp/bmr-assets-perf.json` measured these fixed views on 12 November 2026. Changes are against the saved baseline from before this update. The low tier uses an emulated phone viewport on a desktop GPU.
+
+| Tier and viewport | View | Draw calls | Change | Triangles | Change |
+| --- | --- | ---: | ---: | ---: | ---: |
+| high desktop | opening | 833 | +7 | 697,500 | +8,748 |
+| high desktop | opening, race weekend | 932 | +7 | 1,027,766 | +8,748 |
+| high desktop | pit building | 378 | +1 | 590,838 | +4,788 |
+| high desktop | grandstand A | 320 | +1 | 554,342 | +4,788 |
+| high desktop | lake | 575 | +4 | 624,356 | +8,304 |
+| high desktop | car park | 341 | +0 | 514,716 | +0 |
+| low phone | opening | 606 | +5 | 451,089 | +8,424 |
+| low phone | opening, race weekend | 687 | +5 | 589,703 | +8,424 |
+| low phone | pit building | 241 | +0 | 369,648 | +0 |
+| low phone | grandstand A | 195 | +0 | 342,524 | +0 |
+| low phone | lake | 427 | +7 | 379,445 | +8,748 |
+| low phone | car park | 155 | +0 | 297,046 | +0 |
+
+The largest increase is 8,748 triangles and seven draw calls. Culling hides some or all of the changed buildings in other views. Median main-pass times ranged from 4.4 to 7.7 ms on the high tier and 3.1 to 5.1 ms on the low tier in this run. These are desktop benchmark timings, not frame rates on a phone.
+
+## Remaining opportunities and limits
+
+The karting clubhouse, lakeside pavilions and residents' clubhouse remain simpler than the improved buildings. The Automotive Hub's adjoining secondary volume remains a plain extrusion. Station furniture and aerodrome details could make arrival locations more recognisable. Retail and research variants still share similar silhouettes.
+
+The southern townhouses face their street to the north, so their porches are hidden from the initial fly-to bearing. Small details disappear at whole-site distance, and inactive precincts lose contrast in event modes. Further work needs review at the map's actual fly-to distance. No real-phone frame-time measurement has been made.

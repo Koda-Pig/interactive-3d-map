@@ -1,6 +1,6 @@
 # Asset conventions
 
-The kit contains 79 models across eight categories. Three variants of each nature asset use deterministic seeds. The kit contains no downloaded models, textures, compression, logos, or embedded text. The viewer labels and human reference exist only in the preview.
+The procedural kit contains 82 models across eight categories, plus six separately built crowd figures. Three variants of each nature asset use deterministic seeds. The procedural kit contains no downloaded models, textures, compression, logos, or embedded text. The separate crowd figures derive from Kenney's CC0 Mini Characters, as described in [README.md](README.md#crowd-figures). The viewer labels and human reference exist only in the preview.
 
 ## Coordinates and dimensions
 
@@ -27,7 +27,7 @@ These are the only changes to explicitly supplied dimension axes. Unspecified wi
 
 `assets:validate` loads every GLB independently with glTF Transform and runs Khronos `gltf-validator`. It checks dimensions against the catalog within 10%, triangle budgets, centred bounds, ground and skirt depth, root name and transform, palette names, unique material primitives, file sizes, manifest bounds, footprint, instancing and tile flags, matching tile boundary vertices, flat unit normals, winding, nondegenerate triangles, absence of textures and extensions, stale GLBs, and the 15 MB kit limit. The size limit includes GLBs and manifest.
 
-Results are written to `validation-report.json`. `determinism-report.json` records SHA-256 hashes for all 80 generated files. Rendering uses the exported GLBs, rather than the generator geometry.
+Results are written to `validation-report.json`. `determinism-report.json` records SHA-256 hashes for all 83 generated files. Rendering uses the exported GLBs, rather than the generator geometry.
 
 ## Reference access
 

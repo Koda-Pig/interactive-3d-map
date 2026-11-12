@@ -1701,32 +1701,56 @@
         {
           "footprint": [[920, -325], [932, -325], [932, -285], [920, -285]],
           "height": 13,
-          "color": "#CFC6B4"
+          "color": "#CFC6B4",
+          "model": {
+            "file": "mixed-use/townhouse-row.glb",
+            "facing": "west"
+          }
         },
         {
           "footprint": [[920, -245], [932, -245], [932, -205], [920, -205]],
           "height": 13,
-          "color": "#CFC6B4"
+          "color": "#CFC6B4",
+          "model": {
+            "file": "mixed-use/townhouse-row.glb",
+            "facing": "west"
+          }
         },
         {
           "footprint": [[920, -165], [932, -165], [932, -125], [920, -125]],
           "height": 13,
-          "color": "#CFC6B4"
+          "color": "#CFC6B4",
+          "model": {
+            "file": "mixed-use/townhouse-row.glb",
+            "facing": "west"
+          }
         },
         {
           "footprint": [[920, -85], [932, -85], [932, -45], [920, -45]],
           "height": 13,
-          "color": "#CFC6B4"
+          "color": "#CFC6B4",
+          "model": {
+            "file": "mixed-use/townhouse-row.glb",
+            "facing": "west"
+          }
         },
         {
           "footprint": [[920, -5], [932, -5], [932, 35], [920, 35]],
           "height": 13,
-          "color": "#CFC6B4"
+          "color": "#CFC6B4",
+          "model": {
+            "file": "mixed-use/townhouse-row.glb",
+            "facing": "west"
+          }
         },
         {
           "footprint": [[920, 75], [932, 75], [932, 115], [920, 115]],
           "height": 13,
-          "color": "#CFC6B4"
+          "color": "#CFC6B4",
+          "model": {
+            "file": "mixed-use/townhouse-row.glb",
+            "facing": "west"
+          }
         }
       ]
     },
@@ -1861,22 +1885,38 @@
         {
           "footprint": [[450, 300], [490, 300], [490, 312], [450, 312]],
           "height": 13,
-          "color": "#CFC6B4"
+          "color": "#CFC6B4",
+          "model": {
+            "file": "mixed-use/townhouse-row.glb",
+            "facing": "north"
+          }
         },
         {
           "footprint": [[530, 300], [570, 300], [570, 312], [530, 312]],
           "height": 13,
-          "color": "#CFC6B4"
+          "color": "#CFC6B4",
+          "model": {
+            "file": "mixed-use/townhouse-row.glb",
+            "facing": "north"
+          }
         },
         {
           "footprint": [[610, 300], [650, 300], [650, 312], [610, 312]],
           "height": 13,
-          "color": "#CFC6B4"
+          "color": "#CFC6B4",
+          "model": {
+            "file": "mixed-use/townhouse-row.glb",
+            "facing": "north"
+          }
         },
         {
           "footprint": [[690, 300], [730, 300], [730, 312], [690, 312]],
           "height": 13,
-          "color": "#CFC6B4"
+          "color": "#CFC6B4",
+          "model": {
+            "file": "mixed-use/townhouse-row.glb",
+            "facing": "north"
+          }
         }
       ]
     },

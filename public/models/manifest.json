@@ -1940,12 +1940,15 @@
           12
         ]
       },
-      "triangleCount": 210,
-      "fileSize": 21220,
+      "triangleCount": 810,
+      "fileSize": 73808,
       "materials": [
         "wall-white",
-        "roof-dark",
+        "stone",
+        "screen-dark",
         "glass",
+        "timber",
+        "roof-dark",
         "wall-grey",
         "concrete"
       ],
@@ -2124,14 +2127,16 @@
           45
         ]
       },
-      "triangleCount": 290,
-      "fileSize": 28700,
+      "triangleCount": 614,
+      "fileSize": 57128,
       "materials": [
-        "wall-white",
-        "roof-dark",
+        "wall-grey",
         "screen-dark",
-        "metal",
         "glass",
+        "wall-white",
+        "metal",
+        "brand-navy",
+        "roof-dark",
         "concrete"
       ],
       "tileable": false,
@@ -2183,15 +2188,18 @@
           22
         ]
       },
-      "triangleCount": 154,
-      "fileSize": 17988,
+      "triangleCount": 598,
+      "fileSize": 57384,
       "materials": [
         "wall-white",
-        "roof-dark",
         "glass",
         "wall-grey",
+        "roof-dark",
         "brand-teal",
+        "screen-dark",
         "canopy-white",
+        "metal",
+        "stone",
         "concrete"
       ],
       "tileable": false,

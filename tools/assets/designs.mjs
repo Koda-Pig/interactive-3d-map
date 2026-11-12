@@ -490,12 +490,74 @@ export function design(a) {
       d,
       "rock-distant",
     );
+  } else if (id === "driving-academy") {
+    // Two-storey teaching wing, with a recessed ground-floor entrance.
+    s.box(w * 0.94, h * 0.85, d * 0.78, 0, h * 0.425, -d * 0.08);
+    for (const y of [h * 0.22, h * 0.62]) {
+      s.box(w * 0.88, h * 0.24, 0.18, 0, y, d * 0.315, "glass");
+      for (let i = -4; i <= 4; i++)
+        s.box(0.18, h * 0.27, 0.35, i * w * 0.1, y, d * 0.33, "wall-grey");
+    }
+    // Classrooms also face the campus road, visible from the default fly-to bearing.
+    for (const y of [h * 0.22, h * 0.62]) {
+      s.box(w * 0.88, h * 0.24, 0.18, 0, y, -d * 0.475, "glass");
+      for (let i = -4; i <= 4; i++)
+        s.box(0.18, h * 0.27, 0.35, i * w * 0.1, y, -d * 0.49, "wall-grey");
+    }
+    s.box(w * 0.98, 0.25, d * 0.84, 0, h * 0.43, -d * 0.06, "wall-grey");
+    s.box(w, 0.3, d * 0.94, 0, h * 0.85, -d * 0.03, "roof-dark");
+    s.box(w * 0.28, h * 0.16, d * 0.38, -w * 0.28, h * 0.92, -d * 0.12, "brand-teal");
+    s.box(w * 0.12, h * 0.32, 0.24, 0, h * 0.16, d * 0.33, "screen-dark");
+    s.box(w * 0.4, 0.25, d * 0.22, 0, h * 0.38, d * 0.39, "canopy-white");
+    for (const x of [-w * 0.18, w * 0.18])
+      s.box(0.22, h * 0.36, 0.22, x, h * 0.18, d * 0.47, "metal");
+    s.box(w * 0.42, 0.18, d * 0.18, 0, 0.09, d * 0.4, "stone");
+  } else if (id === "automotive-hub") {
+    // Workshop fronts sit behind the structural piers, rather than on a solid wall.
+    s.box(w, h * 0.78, d * 0.86, 0, h * 0.39, -d * 0.07, "wall-grey");
+    for (let i = 0; i < 8; i++) {
+      const x = ((i - 3.5) * w) / 8;
+      s.box(w * 0.1, h * 0.4, 0.3, x, h * 0.2, d * 0.365, "screen-dark");
+      s.box(w * 0.1, h * 0.13, 0.35, x, h * 0.53, d * 0.365, "glass");
+      s.box(w * 0.022, h * 0.78, d * 0.12, x - w * 0.0625 + w * 0.011, h * 0.39, d * 0.42);
+      for (const y of [h * 0.13, h * 0.26]) s.box(w * 0.1, 0.12, 0.16, x, y, d * 0.37, "metal");
+    }
+    s.box(w * 0.022, h * 0.78, d * 0.12, w * 0.489, h * 0.39, d * 0.42);
+    s.box(w, h * 0.1, d * 0.13, 0, h * 0.68, d * 0.425, "brand-navy");
+    s.roof(w, d, h * 0.19, h * 0.78);
+    for (const x of [-w * 0.3, 0, w * 0.3]) {
+      s.box(w * 0.08, h * 0.13, d * 0.08, x, h * 0.91, -d * 0.16, "metal");
+      s.box(w * 0.1, 0.22, d * 0.1, x, h * 0.98, -d * 0.16, "roof-dark");
+    }
   } else if (id === "townhouse-row") {
     for (let i = 0; i < 5; i++) {
-      const x = ((i - 2) * w) / 5;
-      s.box((w / 5) * 0.98, h * 0.65, d * 0.9, x, h * 0.325, 0, i % 2 ? "wall-grey" : "wall-white");
-      s.roof(w / 5, d, h * 0.35, h * 0.65, "roof-dark", x);
-      s.box((w / 5) * 0.65, h * 0.25, 0.2, x, h * 0.4, d * 0.46, "glass");
+      const unit = w / 5,
+        x = (i - 2) * unit;
+      const eave = h * (i % 2 ? 0.64 : 0.68);
+      s.box(
+        unit * 0.97,
+        eave,
+        d * 0.76,
+        x,
+        eave / 2,
+        -d * 0.06,
+        i % 2 ? "wall-grey" : "wall-white",
+      );
+      s.roof(unit, d * 0.92, h * 0.3, eave, i % 2 ? "roof-dark" : "stone", x, -d * 0.04);
+      // Dark reveals, with smaller glazing set behind their front edges.
+      for (const [dx, y, ww, hh] of [
+        [-0.23, 0.48, 0.28, 0.17],
+        [0.23, 0.48, 0.28, 0.17],
+        [-0.22, 0.19, 0.3, 0.2],
+      ]) {
+        s.box(unit * ww, h * hh, 0.22, x + unit * dx, h * y, d * 0.325, "screen-dark");
+        s.box(unit * (ww - 0.05), h * (hh - 0.04), 0.08, x + unit * dx, h * y, d * 0.333, "glass");
+      }
+      s.box(unit * 0.18, h * 0.27, 0.2, x + unit * 0.23, h * 0.135, d * 0.325, "timber");
+      s.box(unit * 0.44, 0.18, d * 0.2, x + unit * 0.2, h * 0.3, d * 0.4, "roof-dark");
+      for (const dx of [0.01, 0.39])
+        s.box(0.15, h * 0.29, 0.15, x + unit * dx, h * 0.145, d * 0.47, "timber");
+      s.box(unit * 0.44, 0.16, d * 0.2, x + unit * 0.2, 0.08, d * 0.4, "stone");
     }
   } else if (id === "aerodrome-hangar") {
     s.box(w, h * 0.72, d, 0, h * 0.36, 0, "wall-grey");
@@ -512,10 +574,10 @@ export function design(a) {
             : id === "research-block"
               ? 4
               : 2;
-    if (id === "conference-hall" || id === "automotive-hub") {
+    if (id === "conference-hall") {
       s.box(w, h * 0.76, d, 0, h * 0.38, 0, "wall-white");
       s.roof(w, d, h * 0.24, h * 0.76);
-      doors(s, w * 0.95, d, h * 0.8, id === "automotive-hub" ? 10 : 4);
+      doors(s, w * 0.95, d, h * 0.8, 4);
       s.box(w * 0.94, h * 0.13, d * 1.003, 0, h * 0.62, 0, "glass");
     } else {
       block(s, w, d, h, floors);
@@ -537,15 +599,7 @@ export function design(a) {
       }
     }
     if (id === "karting-clubhouse") s.roof(w, d, h * 0.18, h, "roof-dark");
-    if (id === "driving-academy") {
-      s.box(w * 0.35, 0.3, d * 0.6, w * 0.33, h * 1.04, 0, "brand-teal", [0, 0, 0.09]);
-    }
-    if (
-      id === "media-centre" ||
-      id === "driving-academy" ||
-      id === "karting-clubhouse" ||
-      id === "aerodrome-terminal"
-    )
+    if (id === "media-centre" || id === "karting-clubhouse" || id === "aerodrome-terminal")
       s.box(w * 1.05, 0.3, d * 0.27, 0, h * 0.58, d * 0.43, "canopy-white");
   }
   return s.finish(a);
