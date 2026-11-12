@@ -21,7 +21,7 @@ from the edges (the sidebar crops with `object-fit: cover`).
 
 ## Status (12 November 2026)
 
-All 57 previews are now illustrations in `public/images/locations/`, and every
+All 57 previews are finished illustrations in `public/images/locations/`, and every
 location's `image` field is set. The final ten transport previews were generated
 with the unchanged style paragraph, their subject and mood, fresh map screenshots,
 and `n7`, `gate` and `lake` as style references. Each is 1280×720 WebP under 150 KB.
@@ -48,15 +48,21 @@ the aerodrome helipad circles have no letters.
   `aerodrome-terminal`, `aerodrome-hangars`, `aerodrome-control-tower`
 - Entrances: `gate`
 
-**To check among the finished ones**
+**Checked against the running map (12 November 2026)**
 
-- `infield-reserve`: the saved draft is almost all empty grass with a strip of track.
-  It should show the drainage swale and open reserve behind the team compound, with no
-  added trees. The prompt below now reflects this requirement.
-- `grandstand-d` and `grandstand-e`: assigned from generation order. Confirm D shows the
-  hairpin at the end of the long straight and E the braking zone into Turn 1; swap the
-  two files if not.
-- None of the original 25 has been checked against the running map since being saved.
+- `infield-reserve` was regenerated with the unchanged style paragraph, its subject
+  and G mood adjusted to no people, a fresh map screenshot, and `paddock`, `lake`
+  and `n7` style references. It shows the shallow swale across treeless turf, the
+  team compound at one edge, and the track and fence beyond, with low farmland hills.
+
+- `grandstand-d` shows the hairpin and `grandstand-e` the braking zone into Turn 1,
+  matching their positions on the map. No swap needed.
+- The other original illustrations match their locations' descriptions and the
+  map's layout closely enough for previews, with no text or branding.
+- Known minor drift, not worth regenerating on its own: `shuttle-drop-off` puts track
+  kerbs round the bus bay; `car-park` adds a tiered structure near the gate; the four
+  aerodrome images place the tower, terminal and hangars differently from one another;
+  `aerodrome-terminal` has wheat right up to the apron.
 
 ## Style paragraph
 
