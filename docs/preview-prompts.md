@@ -50,6 +50,17 @@ the aerodrome helipad circles have no letters.
 
 **Checked against the running map (12 November 2026)**
 
+- `lake`, `promenade`, `lake-fountain`, `paddle-boats` and `amphitheatre` were
+  regenerated after the waterfront was rebuilt as two basins and the amphitheatre
+  moved back onto its lawn. Each used the rewritten subject below, the unchanged style
+  paragraph and a fresh map capture. They show the paved quays with no grass at the
+  water, the 200 m fountain arc, the square marina cove and its jetty, Pavilion Point
+  with a restaurant deck on each side and the footbridge, and the smooth lawn behind
+  the amphitheatre. A first `lake` draft had an empty cove, and a first `promenade`
+  draft put a hotel beside Pavilion Point. Both were redone. Minor drift: `lake` shows
+  three piazza kiosks, not four, and the picnic blankets in `amphitheatre` are in front
+  of the bowl rather than on the lawn behind it.
+
 - `infield-reserve` was regenerated with the unchanged style paragraph, its subject
   and G mood adjusted to no people, a fresh map screenshot, and `paddock`, `lake`
   and `n7` style references. It shows the shallow swale across treeless turf, the
@@ -143,7 +154,7 @@ The venue's largest exhibition space: four connected halls on a glazed central c
 The working side of the Expo Centre: truck docks along its western side with trucks backed in, pallets and cages, a marked yard served by a road, kept separate from any visitor area. Conference-day mood, calm and orderly.
 
 **amphitheatre.webp** — E — `amphitheatre`
-A stepped open-air bowl facing the arrival plaza, stage lit against the deepening dusk sky, an audience filling the steps, path lighting on around it. Evening mood.
+The stepped open-air bowl facing the arrival plaza, relocated 50 m farther back from the plaza and Exhibition Hall 1. Show the smooth grass bank wrapping behind the top seating tier, crest level with that tier and sloping gently outwards, tapering away at the seating ends. The lawn has no steps or terraces. Preserve the map's bowl, plain stage building and surrounding open ground, with a small simplified audience on the seating and picnic lawn. Evening mood: deep dusk sky, building and path lighting switched on.
 
 **conference-footbridge.webp** — C — `conference-footbridge`, `infield-guest-walk`
 A public pedestrian bridge carrying a walkway over the start-finish straight and pit lane, ramped approaches at each end, delegates crossing on foot, the track quiet below. Conference-day mood. Composed so it reads both as the bridge and as the guest walk leading to it.
@@ -157,16 +168,16 @@ Low grass reserve ground inside the circuit: a shallow drainage swale crossing o
 ### Hospitality and waterfront
 
 **lake.webp** — G — `lake`
-The centrepiece lake of the waterfront precinct seen across its water: calm surface, a fountain near the middle, a promenade loop around its edge, timber pavilions and hotels on the far shore, paddle boats moored. Golden-hour mood.
+The designed two-basin waterfront, seen in a low three-quarter aerial with the entire lake comfortably framed. The western show basin is a rounded rectangle, joined through a 76 m neck to the eastern boating basin with its arc-shaped end and 100 m by 70 m square marina cove on the north shore. A 14 m paved stone quay with coping surrounds every water edge; grass never touches water. The north show-basin quay has the piazza, four kiosks, landing and flanking stone terraces with lawns and timber pergolas. Pavilion Point occupies the northern peninsula, with restaurant pavilions on timber decks over the water on either side; the Waterfront Hotel tower occupies the southern peninsula, joined to the park by the neck footbridge. A 200 m arc of fountain jets spans the show basin with a tall central jet and two end basins. Quiet golden-hour mood: few people, long warm light.
 
 **promenade.webp** — G — `promenade`
-The lakeside promenade: a timber-edged walking loop around the lake, a few people strolling, restaurants and hotels along it, warm low light across the water. Golden-hour mood.
+The 14 m paved quay promenade along the north shore of the western show basin, with straight stone coping, lamps and a row of olive trees on its landward side. Centre the Lake Piazza and its four kiosks, low landing stepping down to water, and the stepped stone terraces and lawns under timber pergolas on either side. Include Pavilion Point and the plain neck footbridge towards the Waterfront Hotel where visible in the map reference. The 200 m arc of fountain jets sits out in the show basin. Continuous paving separates all grass from water; no timber-edged loop. Quiet golden-hour mood: few people, long warm light.
 
 **lake-fountain.webp** — G — `lake-fountain`
-A fountain in the middle of the lake: a tall central jet with a ring of arcing jets around it, spray catching the low warm light, the lake and its shores around it. Golden-hour mood.
+The 200 m gently curved line of fountain jets across the western rectangular show basin, stretching between two small end basins, with a ring and tall jet at the centre basin. Keep the entire long arc visible with breathing room around both ends. Straight stone quays and the paved promenade frame the water, with the piazza, terraces and pergolas on the north shore and the referenced waterfront buildings beyond. No isolated single central fountain, no natural shoreline and no grass at the water edge. Quiet golden-hour mood: few people, long warm light.
 
 **paddle-boats.webp** — G — `paddle-boats`
-A jetty and small ticket kiosk on the north shore of the lake, colourful paddle boats moored alongside and one or two out on the water with a few people aboard. Golden-hour mood.
+The jetty and small ticket kiosk inside the 100 m by 70 m square marina cove cut into the north shore of the eastern boating basin. Show its three straight stone quay sides and right-angle corners, opening into the boating basin, with a T-shaped timber jetty, colourful moored paddle boats and one or two boats on the water. The 14 m paved promenade, stone coping, lamps and landward olive trees continue round the cove; grass never touches water. Keep the cove and jetty away from the frame edges. Quiet golden-hour mood: few people, long warm light.
 
 **fireworks-barge.webp** — E — `fireworks-barge`
 A launch barge moored on the lake at dusk, fireworks bursting in the sky above it, their light reflected in the water, the promenade and buildings around the lake lit. Evening mood.
