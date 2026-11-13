@@ -1,4 +1,4 @@
-import type { BufferGeometry, Texture } from "three";
+import type { BufferGeometry } from "three";
 import { Color, InstancedMesh, MeshLambertMaterial, Object3D } from "three";
 import { layout } from "../layout/locations.ts";
 import type { Route } from "../layout/route.ts";
@@ -6,6 +6,7 @@ import { pointAt, routeOf } from "../layout/route.ts";
 import type { GroundSurface } from "../terrain/ground.ts";
 import { trackSurface } from "./ribbons.ts";
 import { seatVehicle, tyreContacts, vehicleSlope } from "./vehicle-pose.ts";
+import { setWaterTime } from "./water.ts";
 
 /** Race cars on track at once, spread round the lap. */
 const RACE_CARS = 8;
@@ -17,8 +18,6 @@ const SHUTTLES = 3;
 const SHUTTLE_SPEED = 11;
 /** Shuttles keep to the left-hand lane, this far from the road's middle. */
 const SHUTTLE_LANE = 2.6;
-/** How far the lake's ripples drift each second, as a share of their tile. */
-const RIPPLE_DRIFT = 0.004;
 
 /** The views that have something moving. */
 const RACE_MODE = "race";
@@ -79,7 +78,7 @@ class Convoy {
 
 /**
  * What moves on the map: race cars lapping the circuit on a race weekend,
- * shuttles on the ring road and drifting ripples on the lake whenever the
+ * shuttles on the ring road and drifting ripples on the water whenever the
  * site is shown in use. The whole-site view stays still, so the map only
  * draws when something changes there.
  */
@@ -94,12 +93,7 @@ export class Traffic {
   private mode: string | null = null;
   private startedAt: number | null = null;
 
-  constructor(
-    raceCar: BufferGeometry,
-    shuttle: BufferGeometry,
-    surface: GroundSurface,
-    private readonly ripples: Texture | null,
-  ) {
+  constructor(raceCar: BufferGeometry, shuttle: BufferGeometry, surface: GroundSurface) {
     const carTints = Array.from({ length: RACE_CARS }, (_, index) =>
       new Color().setHSL(index / RACE_CARS, 0.55, 0.55),
     );
@@ -158,9 +152,7 @@ export class Traffic {
     if (this.buses.mesh.visible) {
       this.buses.place(seconds);
     }
-    if (this.ripples) {
-      this.ripples.offset.set(seconds * RIPPLE_DRIFT, seconds * RIPPLE_DRIFT * 0.6);
-    }
+    setWaterTime(seconds);
     return true;
   }
 }

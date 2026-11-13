@@ -7,6 +7,7 @@ import {
   NotEqualStencilFunc,
   ReplaceStencilOp,
 } from "three";
+import type { Point } from "../layout/polygon.ts";
 import {
   createAsphaltTexture,
   createParkingStallTexture,
@@ -14,6 +15,7 @@ import {
   createSurfaceTexture,
   type SurfaceFinish,
 } from "./textures.ts";
+import { createWaterMaterial } from "./water.ts";
 
 /**
  * Flat layers lie almost on top of each other, so depth precision alone can't
@@ -125,27 +127,16 @@ export function parkingStallTexture(): Texture {
   return parkingStalls;
 }
 
-const RIPPLE_TILE_METRES = 420;
-
 let ripples: Texture | null = null;
 
-/** The lake's ripples, once any water has been drawn, so they can be set drifting. */
-export function rippleTexture(): Texture | null {
-  return ripples;
-}
-
-export function waterMaterial(color: string): MeshStandardMaterial {
-  if (!ripples) {
-    ripples = createRippleTexture(ANISOTROPY);
-    // Flat shapes use their metres as texture coordinates.
-    ripples.repeat.setScalar(1 / RIPPLE_TILE_METRES);
-  }
-  return new MeshStandardMaterial({
+/** A water surface for an outline, sharing one ripple texture with every other. */
+export function waterMaterial(color: string, outline: readonly Point[]): MeshStandardMaterial {
+  ripples ??= createRippleTexture(ANISOTROPY);
+  return createWaterMaterial({
     color,
-    roughness: 0.16,
-    metalness: 0.3,
-    normalMap: ripples,
-    ...offsetParameters(Layer.area),
+    outline,
+    ripples,
+    polygonOffset: offsetParameters(Layer.area),
   });
 }
 

@@ -122,7 +122,7 @@ export function createArea(location: AreaLocation, surface: GroundSurface): Mesh
 
   const material =
     location.type === "water"
-      ? waterMaterial(location.color)
+      ? waterMaterial(location.color, outline)
       : layerMaterial(
           location.color,
           Layer.area + (location.overlay ? 0.5 : 0),

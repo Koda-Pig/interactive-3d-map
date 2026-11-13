@@ -4,7 +4,7 @@ import { NeutralToneMapping, PCFShadowMap, Scene, WebGLRenderer } from "three";
 import { CSS2DRenderer } from "three/addons/renderers/CSS2DRenderer.js";
 import { ArrivalRoutes } from "./draw/arrival-routes.ts";
 import { bakedGeometry, layoutModelFiles, loadKit } from "./draw/kit.ts";
-import { rippleTexture, updateHighlights } from "./draw/materials.ts";
+import { updateHighlights } from "./draw/materials.ts";
 import {
   createScenery,
   FIREWORKS_LOCATION,
@@ -140,12 +140,7 @@ const shuttleModel = kit.get(SHUTTLE);
 // Without either model there's nothing to drive, and the map just stays still.
 const traffic =
   raceCarModel && shuttleModel
-    ? new Traffic(
-        bakedGeometry(raceCarModel),
-        bakedGeometry(shuttleModel),
-        ground.surface,
-        rippleTexture(),
-      )
+    ? new Traffic(bakedGeometry(raceCarModel), bakedGeometry(shuttleModel), ground.surface)
     : null;
 if (traffic) {
   scenery.precincts.get("racing")?.add(traffic.raceCars);
