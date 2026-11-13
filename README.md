@@ -47,9 +47,9 @@ pnpm dev
 
 Left-drag pans, right-drag rotates and scrolling zooms. On touch, one finger pans and two fingers zoom and rotate.
 
-The map opens with a short fly-in, skipped under reduced motion. Pointing at a location or its label highlights it. Clicking or tapping a building, gate or label opens its details and moves the camera to it. Roads, tracks, flat areas and water open their details where they are, without muting the rest of the site. Clicking empty ground, the close button or Escape closes the details.
+While it loads, the map shows a title screen with the circuit drawing itself. It then opens with a fly-in, skipped under reduced motion. Pointing at a location or its label highlights it. Clicking or tapping a building, gate or label opens its details and moves the camera to it. Roads, tracks, flat areas and water open their details where they are, without muting the rest of the site. Clicking empty ground, the close button or Escape closes the details.
 
-The details list the closest gate and car park, which fly there when picked. On a race weekend race cars lap the circuit, and on a race weekend or conference day shuttles run round the ring road. A race weekend also draws the arrival routes: arrows along the roads from the N7 and the aerodrome to the car parks, and dots along the walks to the gates. They come from the `arrivals` list in the layout data. Two tour buttons ride the camera round the circuit, or from the N7 through Gate 2 to the main grandstands. Dragging, zooming or picking anything stops a tour, and under reduced motion the buttons are hidden. The selected location goes into the address as `?location=<id>`, so a copied link opens the map on it. Other parameters such as `?quality` are kept, and an id that doesn't exist is dropped.
+The details list the closest gate and car park, which fly there when picked. Shuttles run round the ring road and traffic along the N7 in every view. On a race weekend ten race cars lap the circuit on a racing line, braking for the bends. A race weekend also draws the arrival routes: arrows along the roads from the N7 and the aerodrome to the car parks, and dots along the walks to the gates. They come from the `arrivals` list in the layout data. Two tour buttons ride the camera round the circuit behind a race car, showing its speed and turn, or from the N7 through Gate 2 to the main grandstands. Dragging, zooming or picking anything stops a tour, and under reduced motion the buttons are hidden. The selected location goes into the address as `?location=<id>`, so a copied link opens the map on it. Other parameters such as `?quality` are kept, and an id that doesn't exist is dropped.
 
 The switch at the top of the map shows the site as a whole, on a race weekend or on a conference day. The locations in use stay in full colour and the rest are muted, with crowds of parked cars, the race grid or conference marquees appearing to match.
 
@@ -59,7 +59,7 @@ The sidebar lists every location by precinct. Typing in the search box filters t
 
 ## Checking performance
 
-The map draws less on phones. It picks its tier from the device, and `?quality=low` or `?quality=high` in the address overrides that. If the frame rate drops below 28 fps while the view is moving, it lowers the resolution by itself.
+The map draws less on phones: fewer trees and people, no glow, cloud shadows or blur over the picture, and the everyday movement at half the frame rate. It picks its tier from the device, and `?quality=low` or `?quality=high` in the address overrides that. If the frame rate drops below 28 fps while the view is moving, it lowers the resolution by itself.
 
 `pnpm perf` starts the dev server, opens six fixed views on the high and low tiers in headless Chrome, and prints draw calls, triangles and a median frame time for each. `--compare tools/perf/baseline.json` shows the change from the saved baseline, and `--out` saves a new one. The counts are exact. The times only compare runs on the same machine.
 

@@ -31,8 +31,8 @@ const SLIDER_DURATION = 120;
 /** Where the opening fly-in starts, relative to the opening view. */
 const FLY_IN_DISTANCE = 1.9;
 const FLY_IN_TILT = MathUtils.degToRad(22);
-const FLY_IN_TURN = MathUtils.degToRad(-30);
-const FLY_IN_DURATION = 2600;
+const FLY_IN_TURN = MathUtils.degToRad(-60);
+const FLY_IN_DURATION = 3800;
 
 // Long roads run off the map, so only the part you can fly to is framed.
 const MAP_AREA = new Box3(
@@ -97,11 +97,12 @@ export class CameraFlight {
   /**
    * Starts the camera high above the site, turned a little, and settles it
    * into the opening view. Under reduced motion it goes straight there.
+   * Returns how long it takes, in milliseconds.
    */
-  flyIn(): void {
+  flyIn(): number {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       this.flyHome();
-      return;
+      return 0;
     }
     const { camera, controls } = this;
     const view = this.currentView();
@@ -115,6 +116,7 @@ export class CameraFlight {
     camera.position.copy(controls.target).add(offset);
     camera.lookAt(controls.target);
     this.flyHome(FLY_IN_DURATION);
+    return FLY_IN_DURATION;
   }
 
   /**

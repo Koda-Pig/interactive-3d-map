@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="sidebar-closed">
+<html lang="en" class="sidebar-closed intro">
   <head>
     <meta charset="utf-8" />
     <meta
@@ -8,6 +8,141 @@
     />
     <title>Blue Mountain Racing concept map</title>
     <link rel="icon" href="data:," />
+    <!-- The title screen shows while the scripts and models load, so its styles can't wait for them. -->
+    <style>
+      @font-face {
+        font-family: "Roboto";
+        font-style: normal;
+        font-weight: 500;
+        font-display: block;
+        src: url("/node_modules/@fontsource/roboto/files/roboto-latin-500-normal.woff2")
+          format("woff2");
+      }
+      .title {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        padding: 24px;
+        background: radial-gradient(120% 90% at 50% 38%, #00527f 0%, #003257 46%, #001a30 100%);
+        color: #fff;
+        font:
+          500 14px / 1.3 Roboto,
+          system-ui,
+          sans-serif;
+        text-align: center;
+        transition: opacity 1100ms ease;
+      }
+      .title--leaving {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .title__circuit {
+        width: min(46vw, 42vh, 300px);
+        margin-bottom: 14px;
+        overflow: visible;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .title__track {
+        stroke: rgb(255 255 255 / 92%);
+        stroke-width: 2.5;
+        stroke-dasharray: 1;
+        filter: drop-shadow(0 0 7px rgb(28 167 236 / 75%));
+        animation: title-draw 2200ms cubic-bezier(0.65, 0, 0.2, 1) both;
+      }
+      /* A light that laps the circuit for as long as the map is loading. */
+      .title__car {
+        stroke: #ffb81c;
+        stroke-width: 4;
+        stroke-dasharray: 0.035 0.965;
+        filter: drop-shadow(0 0 5px #ffb81c);
+        opacity: 0;
+        animation:
+          title-appear 500ms ease 2000ms forwards,
+          title-lap 3600ms linear 2000ms infinite;
+      }
+      .title__name {
+        margin: 0;
+        font-size: clamp(18px, 3.4vw, 30px);
+        font-weight: 500;
+        letter-spacing: 0.3em;
+        /* Letter spacing follows the last letter too, which would push the name off centre. */
+        margin-right: -0.3em;
+        text-transform: uppercase;
+        animation: title-rise 900ms ease 350ms both;
+      }
+      .title__place {
+        margin: 0;
+        color: rgb(255 255 255 / 72%);
+        font-size: 13px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        animation: title-rise 900ms ease 650ms both;
+      }
+      .title__status {
+        position: absolute;
+        bottom: max(28px, env(safe-area-inset-bottom));
+        left: 24px;
+        right: 24px;
+        margin: 0;
+        color: rgb(255 255 255 / 60%);
+        font-size: 12px;
+        animation: title-appear 600ms ease 1200ms both;
+      }
+      @keyframes title-draw {
+        from {
+          stroke-dashoffset: 1;
+        }
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+      @keyframes title-lap {
+        from {
+          stroke-dashoffset: 1;
+        }
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+      @keyframes title-appear {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes title-rise {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .title,
+        .title .title__track,
+        .title .title__name,
+        .title .title__place,
+        .title .title__status {
+          animation: none;
+          transition: none;
+        }
+        .title__car {
+          display: none;
+        }
+      }
+    </style>
   </head>
   <body>
     <aside id="sidebar" class="sidebar" aria-label="Locations">
@@ -127,6 +262,10 @@
             <strong class="tours__name"></strong>
             <span class="tours__status">Getting into position…</span>
           </div>
+          <p class="tours__telemetry" hidden>
+            <span class="tours__speedometer"><span class="tours__kmh">0</span> km/h</span>
+            <span class="tours__place"></span>
+          </p>
           <div class="tours__speed">
             <label for="tour-speed">Speed</label>
             <select id="tour-speed" data-tour-speed>
@@ -154,8 +293,11 @@
       class="map-controls"
       aria-label="Map view"
     ></section>
-    <div id="loading" class="loading" role="status">
-      Loading the map&hellip;
+    <div id="loading" class="title">
+      <!-- circuit-outline -->
+      <p class="title__name">Blue Mountain Racing</p>
+      <p class="title__place">Swartland &middot; Western Cape</p>
+      <p class="title__status" role="status">Loading the concept map&hellip;</p>
     </div>
     <script type="module" src="/src/main.ts"></script>
   </body>

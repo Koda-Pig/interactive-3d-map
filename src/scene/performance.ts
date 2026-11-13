@@ -23,6 +23,8 @@ export class FrameMonitor {
     private readonly renderer: WebGLRenderer,
     private readonly quality: Quality,
     private readonly applyPixelRatio: (ratio: number) => void,
+    /** What the scene took to draw, when passes over it would hide the renderer's own count. */
+    private readonly drawn: () => { calls: number; triangles: number } = () => renderer.info.render,
   ) {
     this.stats = new URLSearchParams(window.location.search).has("stats")
       ? document.body.appendChild(document.createElement("output"))
@@ -66,7 +68,7 @@ export class FrameMonitor {
       this.stats.textContent = "Move the map to measure";
       return;
     }
-    const { calls, triangles } = this.renderer.info.render;
+    const { calls, triangles } = this.drawn();
     this.stats.textContent = [
       `${fps.toFixed(0)} fps`,
       `${calls} draws`,

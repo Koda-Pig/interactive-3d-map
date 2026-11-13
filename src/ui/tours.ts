@@ -3,8 +3,11 @@ import { requirePart } from "./dom.ts";
 export interface TourButtons {
   /** Shows which tour is under way, by its id, or none with `null`. */
   showRunning(id: string | null): void;
-  /** Updates the ride progress; null means the camera is approaching its start. */
-  showProgress(progress: number | null): void;
+  /**
+   * Updates the ride progress; null means the camera is approaching its start.
+   * `telemetry` is the speed in km/h and the place, on a ride that has them.
+   */
+  showProgress(progress: number | null, telemetry?: { speed: number; place: string } | null): void;
 }
 
 const PLAY =
@@ -32,6 +35,9 @@ export function createTourButtons(
   const name = requirePart(root, ".tours__name");
   const status = requirePart(root, ".tours__status");
   const progress = requirePart<HTMLProgressElement>(root, ".tours__progress");
+  const telemetry = requirePart(root, ".tours__telemetry");
+  const speedometer = requirePart(root, ".tours__kmh");
+  const place = requirePart(root, ".tours__place");
   const stop = requirePart<HTMLButtonElement>(root, ".tours__stop");
   stop.innerHTML = `${STOP}<span>Stop</span>`;
   stop.addEventListener("click", actions.stop);
@@ -51,6 +57,7 @@ export function createTourButtons(
     name.textContent = button ? (names.get(button) ?? "") : "";
     status.textContent = "Getting into position…";
     progress.value = 0;
+    telemetry.hidden = true;
   };
 
   for (const button of buttons) {
@@ -74,10 +81,17 @@ export function createTourButtons(
             ?.focus({ preventScroll: true });
       }
     },
-    showProgress(value) {
+    showProgress(value, reading) {
       progress.value = value ?? 0;
+      const percent = value === null ? "" : `${Math.floor(value * 100)}% complete`;
       status.textContent =
-        value === null ? "Getting into position…" : `${Math.floor(value * 100)}% complete`;
+        value === null ? "Getting into position…" : reading ? reading.place : percent;
+      telemetry.hidden = !reading;
+      if (reading) {
+        // Rounded to the nearest 5, so the figure doesn't flicker.
+        speedometer.textContent = String(Math.round(reading.speed / 5) * 5);
+        place.textContent = percent;
+      }
     },
   };
 }

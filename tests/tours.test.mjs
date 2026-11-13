@@ -63,7 +63,10 @@ test("tour progress distinguishes the approach, advances during the ride, and cl
   state.flight.update(10000);
   state.tour.update(10000);
   assert.equal(state.tour.progress, 0);
-  state.tour.update(10100);
+  // The lap waits for the car it rides with to reach its start, which takes under two seconds.
+  for (let frame = 1; frame <= 25; frame++) {
+    state.tour.update(10000 + frame * 100);
+  }
   assert.ok(state.tour.progress > 0 && state.tour.progress < 1);
   state.tour.stop();
   assert.equal(state.tour.progress, null);

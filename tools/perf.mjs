@@ -68,7 +68,13 @@ try {
         timeout: 120000,
       });
       if (view.race) {
-        await page.getByRole("button", { name: "Race weekend" }).click();
+        // At phone width the switch is a list to pick from, not a row of buttons.
+        const button = page.getByRole("button", { name: "Race weekend" });
+        if (await button.isVisible()) {
+          await button.click();
+        } else {
+          await page.getByLabel("Site view").selectOption({ label: "Race weekend" });
+        }
       }
       // Long enough for flights, fades and the shadow refit to finish.
       await page.waitForTimeout(2500);

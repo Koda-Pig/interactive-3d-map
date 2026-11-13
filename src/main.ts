@@ -1,11 +1,12 @@
 import "@fontsource/roboto/latin-400.css";
 import "@fontsource/roboto/latin-500.css";
-import { NeutralToneMapping, PCFShadowMap, Scene, WebGLRenderer } from "three";
+import { MathUtils, NeutralToneMapping, PCFShadowMap, Scene, WebGLRenderer } from "three";
 import { CSS2DRenderer } from "three/addons/renderers/CSS2DRenderer.js";
 import { ArrivalRoutes } from "./draw/arrival-routes.ts";
 import { bakedGeometry, layoutModelFiles, loadKit } from "./draw/kit.ts";
 import { updateHighlights } from "./draw/materials.ts";
 import {
+  createCar,
   createScenery,
   FIREWORKS_LOCATION,
   FOUNTAIN_LOCATION,
@@ -16,6 +17,7 @@ import {
 import { createSite } from "./draw/site.ts";
 import { Traffic } from "./draw/traffic.ts";
 import { setEventMode } from "./scene/event-modes.ts";
+import { Finish } from "./scene/finish.ts";
 import { CameraFlight } from "./scene/flight.ts";
 import { MapInteraction } from "./scene/interaction.ts";
 import { SiteLabels } from "./scene/labels.ts";
@@ -29,7 +31,7 @@ import { createSky, TABLE_MOUNTAIN_MODEL } from "./scene/sky.ts";
 import { addTouchGestures } from "./scene/touch-gestures.ts";
 import { CameraTour } from "./scene/tour.ts";
 import { ARRIVAL_TOUR, arrivalTour, lapTour } from "./scene/tours.ts";
-import { constrainView, createCamera, createControls } from "./scene/view.ts";
+import { constrainView, createCamera, createControls, MAX_TILT } from "./scene/view.ts";
 import "./style.css";
 import { createGround } from "./terrain/ground.ts";
 import { linkedLocation, showInAddress } from "./ui/address.ts";
@@ -51,6 +53,19 @@ const PAN_STEP = 0.18;
 const TURN_STEP = Math.PI / 12;
 /** How far one press tilts the view, in radians. */
 const TILT_STEP = Math.PI / 24;
+/**
+ * The miniature blur is at full strength while the view looks down on the
+ * site, and gone by the time it looks along the ground, where blurring the
+ * top of the view would blur the horizon.
+ */
+const MINIATURE_TILT = [MAX_TILT - MathUtils.degToRad(14), MAX_TILT - MathUtils.degToRad(2)];
+/** The title screen stays up at least this long after the page opens, in milliseconds. */
+const TITLE_TIME = 2600;
+/** How long the title screen takes to clear, which matches its transition in `index.html`. */
+const TITLE_FADE = 1100;
+/** How long before the opening flight ends the interface starts to appear, in milliseconds. */
+const INTERFACE_LEAD = 1300;
+const INTERFACE_FADE = 800;
 /** The event mode that shows the arrival routes. */
 const ARRIVAL_MODE = "race";
 /** Matches the phone layout in `style.css`, where the sidebar is a sheet along the bottom. */
@@ -61,6 +76,7 @@ const infoPanelElement = document.querySelector<HTMLElement>("#info-panel");
 const sidebarElement = document.querySelector<HTMLElement>("#sidebar");
 const eventSwitchElement = document.querySelector<HTMLElement>("#event-switch");
 const loadingElement = document.querySelector<HTMLElement>("#loading");
+const loadingStatus = document.querySelector<HTMLElement>(".title__status");
 const mapControlsElement = document.querySelector<HTMLElement>("#map-controls");
 const hintElement = document.querySelector<HTMLElement>("#hint");
 const noticeElement = document.querySelector<HTMLElement>(".notice");
@@ -76,6 +92,7 @@ if (
   !sidebarElement ||
   !eventSwitchElement ||
   !loadingElement ||
+  !loadingStatus ||
   !mapControlsElement ||
   !hintElement ||
   !noticeElement ||
@@ -91,13 +108,14 @@ if (
 
 // Anything that stops the map starting would otherwise leave the loading message up for good.
 const showStartupFailure = (): void => {
-  loadingElement.textContent =
+  loadingStatus.textContent =
     "The map couldn't start. Check that WebGL is turned on, or try another browser.";
 };
 window.addEventListener("error", showStartupFailure);
 window.addEventListener("unhandledrejection", showStartupFailure);
 
 const quality = detectQuality();
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const renderer = new WebGLRenderer({ antialias: true, stencil: true });
 renderer.toneMapping = NeutralToneMapping;
@@ -113,6 +131,7 @@ renderer.domElement.setAttribute(
   "Map of the site. Arrow keys move it, and plus and minus zoom.",
 );
 host.append(renderer.domElement);
+const finish = quality.finish ? new Finish(renderer) : null;
 
 const labelRenderer = new CSS2DRenderer();
 labelRenderer.domElement.classList.add("labels");
@@ -140,11 +159,16 @@ const shuttleModel = kit.get(SHUTTLE);
 // Without either model there's nothing to drive, and the map just stays still.
 const traffic =
   raceCarModel && shuttleModel
-    ? new Traffic(bakedGeometry(raceCarModel), bakedGeometry(shuttleModel), ground.surface)
+    ? new Traffic(
+        bakedGeometry(raceCarModel),
+        bakedGeometry(shuttleModel),
+        createCar(),
+        ground.surface,
+      )
     : null;
 if (traffic) {
   scenery.precincts.get("racing")?.add(traffic.raceCars);
-  scenery.precincts.get("transport")?.add(traffic.shuttles);
+  scenery.precincts.get("transport")?.add(traffic.shuttles, traffic.highway);
 }
 const arrivals = new ArrivalRoutes(ground.surface);
 scene.add(
@@ -298,7 +322,7 @@ const tourButtons = createTourButtons(toursElement, {
     if (id === ARRIVAL_TOUR) {
       tour.start(arrivalTour(flight));
     } else {
-      tour.start(lapTour(flight));
+      tour.start(lapTour(flight, traffic?.raceClock));
     }
   },
   stop: () => tour.stop(),
@@ -334,15 +358,29 @@ const setPixelRatio = (ratio: number): void => {
   renderer.setSize(host.clientWidth, host.clientHeight, false);
 };
 
-const frames = new FrameMonitor(renderer, quality, (ratio) => {
-  setPixelRatio(ratio);
-  // Resizing the canvas clears it, and the view may have just stopped moving.
-  needsRender = true;
-});
+const frames = new FrameMonitor(
+  renderer,
+  quality,
+  (ratio) => {
+    setPixelRatio(ratio);
+    // Resizing the canvas clears it, and the view may have just stopped moving.
+    needsRender = true;
+  },
+  finish ? () => finish.drawn : undefined,
+);
 
 function render(now: number): void {
   sky.follow(camera);
-  renderer.render(scene, camera);
+  if (finish) {
+    const [full, none] = MINIATURE_TILT;
+    finish.render(scene, camera, {
+      // Under reduced motion the cloud shadows stay where they are.
+      seconds: reducedMotion ? 0 : now / 1000,
+      tiltShift: 1 - MathUtils.smoothstep(controls.getPolarAngle(), full, none),
+    });
+  } else {
+    renderer.render(scene, camera);
+  }
   outline.render(renderer, scene, camera);
   const { width, height } = labelRenderer.getSize();
   if (labels.layout(camera, width, height, overlays.boxes(), now)) {
@@ -368,11 +406,15 @@ new ResizeObserver(() => {
   render(performance.now());
 }).observe(host);
 
-// The scene is all but static, so frames are only drawn when something has changed.
+// Frames are drawn when something has changed. The everyday movement (the
+// water, shuttles, N7 traffic and cloud shadows) keeps that going in every
+// view, but less often on a phone, where it's the only thing moving.
+let frame = 0;
 renderer.setAnimationLoop((now) => {
+  frame += 1;
   const flying = flight.update(now);
   const touring = tour.update(now);
-  if (touring) tourButtons.showProgress(tour.progress);
+  if (touring) tourButtons.showProgress(tour.progress, tour.telemetry);
   controls.update();
   const moved = viewChanged || flying || touring;
   viewChanged = false;
@@ -404,32 +446,51 @@ renderer.setAnimationLoop((now) => {
   if (scenery.fountain.update(now) || fireworksMoved) {
     needsRender = true;
   }
-  if (traffic?.update(now)) {
-    needsRender = true;
-  }
   if (arrivals.update(now, camera, controls.target, host.clientHeight)) {
     needsRender = true;
   }
-  const drawing = moved || changes.redraw || needsRender;
+  const ambient = traffic?.update(now) ?? false;
+  const everyFrame = moved || changes.redraw || needsRender || (ambient && traffic?.busy === true);
+  const drawing = everyFrame || (ambient && frame % quality.ambientFrames === 0);
   if (drawing) {
     needsRender = false;
     render(now);
   }
-  frames.tick(now, drawing);
+  // Frames drawn at the slower everyday rate say nothing about how fast the device is.
+  frames.tick(now, drawing && (everyFrame || quality.ambientFrames === 1));
 });
 
 window.removeEventListener("error", showStartupFailure);
 window.removeEventListener("unhandledrejection", showStartupFailure);
-loadingElement.remove();
 
-// A link to a location opens on it. Otherwise the camera settles into the opening view.
+const root = document.documentElement;
+/** Clears the title screen, then brings the interface in once the camera has nearly arrived. */
+const openMap = (flightTime: number): void => {
+  const fade = reducedMotion ? 0 : TITLE_FADE;
+  loadingElement.classList.add("title--leaving");
+  window.setTimeout(() => loadingElement.remove(), fade);
+  window.setTimeout(
+    () => {
+      root.classList.replace("intro", "intro-done");
+      window.setTimeout(() => root.classList.remove("intro-done"), INTERFACE_FADE);
+    },
+    Math.max(fade * 0.6, flightTime - INTERFACE_LEAD),
+  );
+};
+
+// A link to a location opens on it. Otherwise the title screen has its moment,
+// and the camera settles into the opening view as it clears.
 const linked = linkedLocation();
 if (linked) {
   interaction.select(linked);
+  openMap(0);
 } else {
   // Drops a stale id, such as one for a location that has since been renamed.
   showInAddress(null);
-  flight.flyIn();
+  if (!reducedMotion) {
+    await new Promise((resolve) => window.setTimeout(resolve, TITLE_TIME - performance.now()));
+  }
+  openMap(flight.flyIn());
 }
 
 if (import.meta.env.DEV) {

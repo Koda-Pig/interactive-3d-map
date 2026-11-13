@@ -583,8 +583,8 @@ function openBox(
   return box;
 }
 
-/** A parked car in 20 triangles, since a race day needs thousands of them. */
-function createCar(): BufferGeometry {
+/** A road car in 20 triangles, since a race day parks thousands of them. Takes the tint. */
+export function createCar(): BufferGeometry {
   const body = colorize(openBox(1.8, 0.75, 4.4, 0.55, 0), () => [1, 1, 1]);
   const cabin = colorize(openBox(1.55, 0.6, 2.2, 1.2, -0.2), () => [0.16, 0.19, 0.23]);
   const merged = mergeGeometries([body, cabin]);

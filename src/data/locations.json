@@ -243,7 +243,7 @@
       "description": "A 4.8 km circuit that follows the lie of the land, with a start-finish straight of nearly 700 m, a full-throttle straight of over a kilometre and a flowing middle section. The pits and team compound sit in the infield. A concept layout for illustration, not BMR's published design.",
       "closed": true,
       "width": 15,
-      "color": "#2F3338",
+      "color": "#5C6168",
       "kerbs": true,
       "runoff": 4,
       "runoffColor": "#8C9860",
@@ -312,7 +312,7 @@
       "type": "track",
       "description": "Cars peel off before the final corner, run past the garages for tyres and repairs, and rejoin the start-finish straight. Grandstands A, B and C look straight down onto it.",
       "width": 12,
-      "color": "#2F3338",
+      "color": "#5C6168",
       "path": [[-470, 250], [-566, 250, 55], [-566, -360, 45], [-600, -435, 45], [-600, -455]]
     },
     {
@@ -1416,7 +1416,7 @@
       "description": "The first step on the driving pathway: an outdoor karting circuit for lessons and club racing, in the academy campus.",
       "closed": true,
       "width": 8,
-      "color": "#2F3338",
+      "color": "#5C6168",
       "kerbs": true,
       "runoff": 3,
       "runoffColor": "#CFC4A6",

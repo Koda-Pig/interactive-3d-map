@@ -25,6 +25,28 @@ export interface TourStage {
   readonly back: number;
   /** How far ahead along the route the camera looks, in metres. */
   readonly ahead: number;
+  /** The camera's field of view for the stretch, in degrees. Without one it keeps the map's. */
+  readonly fov?: number;
+}
+
+/** What a ride shows beside its progress: how fast it's going, and where it is. */
+export interface TourTelemetry {
+  /** In kilometres per hour. */
+  readonly speed: number;
+  readonly place: string;
+}
+
+/** Something that moves by itself, which a tour rides along with instead of setting its own pace. */
+export interface TourLead {
+  /** Called when the tour starts flying to its start. */
+  begin(): void;
+  /** Moves the lead on by `seconds`, and returns how far along the tour it now is, in metres. */
+  advance(seconds: number): number;
+  /** How far to the side of the route the lead is at a point of the tour, towards `(-dirZ, dirX)`. */
+  sideways(travelled: number): number;
+  telemetry(travelled: number): TourTelemetry;
+  /** Called when the tour ends or is interrupted. */
+  release(): void;
 }
 
 /** A camera ride along a route, from `start` metres along it for `length` metres. */
@@ -34,6 +56,10 @@ export interface TourPlan {
   readonly start: number;
   readonly length: number;
   readonly stages: readonly TourStage[];
+  /** A race car, say, for the camera to chase. */
+  readonly lead?: TourLead;
+  /** How quickly the camera catches up with where it should be, in seconds. */
+  readonly smoothing?: number;
   /** What happens once the ride reaches the end, such as flying to a closing view. */
   readonly finish: () => void;
 }
@@ -50,8 +76,18 @@ const BEND_REACH = 35;
 const BEND_SLOWING = 0.45;
 /** How quickly the camera catches up with where it should be, in seconds. */
 const SMOOTHING = 0.45;
-/** The camera keeps at least this far above the ground under it, in metres. */
+/** The camera keeps at least this far above the ground under it, in metres, unless it rides lower. */
 const CLEARANCE = 15;
+/**
+ * How near the horizon a ride may look, in radians from straight down. A
+ * chase rides lower than the map lets anyone tilt by hand.
+ */
+const RIDE_MAX_TILT = MathUtils.degToRad(88);
+/** How quickly the tilt limit and field of view return to the map's after a ride, per second. */
+const TILT_RETURN = MathUtils.degToRad(30);
+const FOV_RETURN = 40;
+/** How quickly the field of view follows a stretch's, in seconds. */
+const FOV_SMOOTHING = 0.6;
 /**
  * The longest step taken in one frame, in seconds, so a stalled tab doesn't
  * jump. Below 10 frames a second the ride slows down rather than skipping.
@@ -79,6 +115,11 @@ export class CameraTour {
   private readonly position = new Vector3();
   private readonly wantedTarget = new Vector3();
   private readonly wantedPosition = new Vector3();
+  /** The map's own tilt limit and field of view, which a ride changes and hands back. */
+  private readonly mapMaxTilt: number;
+  private readonly mapFov: number;
+  private settling = false;
+  private settledAt: number | null = null;
 
   constructor(
     private readonly camera: PerspectiveCamera,
@@ -87,7 +128,16 @@ export class CameraTour {
     private readonly surface: GroundSurface,
     private readonly onChange: (id: string | null) => void,
   ) {
+    this.mapMaxTilt = controls.maxPolarAngle;
+    this.mapFov = camera.fov;
     controls.addEventListener("start", () => this.cancel());
+  }
+
+  /** What the ride under way has to show, if it's following something. */
+  get telemetry(): TourTelemetry | null {
+    return this.plan?.lead && this.phase === "ride"
+      ? this.plan.lead.telemetry(this.travelled)
+      : null;
   }
 
   /** The id of the tour under way, if any. */
@@ -112,6 +162,7 @@ export class CameraTour {
     this.phase = "approach";
     this.travelled = 0;
     this.lastTime = null;
+    plan.lead?.begin();
     this.pose(0, this.wantedTarget, this.wantedPosition);
     const offset = direction.subVectors(this.wantedPosition, this.wantedTarget);
     spherical.setFromVector3(offset);
@@ -142,15 +193,50 @@ export class CameraTour {
     if (this.phase === "approach" && this.flight.currentLeg === this.approach) {
       this.flight.stop();
     }
-    this.plan = null;
+    this.end();
     this.onChange(null);
+  }
+
+  private end(): void {
+    this.plan?.lead?.release();
+    this.plan = null;
+    this.settling = true;
+    this.settledAt = null;
+  }
+
+  /**
+   * Eases the tilt limit and field of view back to the map's after a ride, so
+   * the view rises gently instead of jumping. Returns whether anything changed.
+   */
+  private settle(now: number): boolean {
+    if (!this.settling) {
+      return false;
+    }
+    const step = this.settledAt === null ? 0 : Math.min((now - this.settledAt) / 1000, MAX_STEP);
+    this.settledAt = now;
+    const { camera, controls } = this;
+    controls.maxPolarAngle = Math.max(this.mapMaxTilt, controls.maxPolarAngle - TILT_RETURN * step);
+    const fov =
+      camera.fov > this.mapFov
+        ? Math.max(this.mapFov, camera.fov - FOV_RETURN * step)
+        : Math.min(this.mapFov, camera.fov + FOV_RETURN * step);
+    this.setFov(fov);
+    this.settling = controls.maxPolarAngle > this.mapMaxTilt || camera.fov !== this.mapFov;
+    return true;
+  }
+
+  private setFov(fov: number): void {
+    if (fov !== this.camera.fov) {
+      this.camera.fov = fov;
+      this.camera.updateProjectionMatrix();
+    }
   }
 
   /** Moves the camera on to `now`. Returns whether it moved. */
   update(now: number): boolean {
     const { plan } = this;
     if (!plan) {
-      return false;
+      return this.settle(now);
     }
     if (this.phase === "approach") {
       const leg = this.flight.currentLeg;
@@ -163,6 +249,8 @@ export class CameraTour {
         return false;
       }
       this.phase = "ride";
+      this.settling = false;
+      this.controls.maxPolarAngle = RIDE_MAX_TILT;
       this.target.copy(this.controls.target);
       this.position.copy(this.camera.position);
     } else if (this.flight.flying) {
@@ -174,13 +262,14 @@ export class CameraTour {
     const step = this.lastTime === null ? 0 : Math.min((now - this.lastTime) / 1000, MAX_STEP);
     this.lastTime = now;
     const rideStep = step * this.speedMultiplier;
-    this.travelled = Math.min(
-      plan.length,
-      this.travelled + this.speedAt(this.travelled) * rideStep,
-    );
+    this.travelled = plan.lead
+      ? MathUtils.clamp(plan.lead.advance(rideStep), 0, plan.length)
+      : Math.min(plan.length, this.travelled + this.speedAt(this.travelled) * rideStep);
 
     this.pose(this.travelled, this.wantedTarget, this.wantedPosition);
-    const follow = 1 - Math.exp(-rideStep / SMOOTHING);
+    const follow = 1 - Math.exp(-rideStep / (plan.smoothing ?? SMOOTHING));
+    const fov = this.stageAt(this.travelled).fov ?? this.mapFov;
+    this.setFov(MathUtils.lerp(this.camera.fov, fov, 1 - Math.exp(-step / FOV_SMOOTHING)));
     this.target.lerp(this.wantedTarget, follow);
     this.position.lerp(this.wantedPosition, follow);
     this.controls.target.copy(this.target);
@@ -188,7 +277,7 @@ export class CameraTour {
     this.camera.lookAt(this.target);
 
     if (this.travelled >= plan.length) {
-      this.plan = null;
+      this.end();
       this.onChange(null);
       plan.finish();
     }
@@ -214,12 +303,26 @@ export class CameraTour {
       height: MathUtils.lerp(current.height, next.height, t),
       back: MathUtils.lerp(current.back, next.back, t),
       ahead: MathUtils.lerp(current.ahead, next.ahead, t),
+      fov:
+        current.fov === undefined && next.fov === undefined
+          ? undefined
+          : MathUtils.lerp(current.fov ?? this.mapFov, next.fov ?? this.mapFov, t),
     };
   }
 
+  /** The point of the tour the camera follows: on the route, or to its side where the lead is. */
   private sample(travelled: number): PathSample {
     const plan = this.plan as TourPlan;
-    return pointAt(plan.route, plan.start + travelled);
+    const point = pointAt(plan.route, plan.start + travelled);
+    if (!plan.lead) {
+      return point;
+    }
+    const sideways = plan.lead.sideways(travelled);
+    return {
+      ...point,
+      x: point.x - point.dirZ * sideways,
+      z: point.z + point.dirX * sideways,
+    };
   }
 
   private speedAt(travelled: number): number {
@@ -256,7 +359,7 @@ export class CameraTour {
     const z = here.z - direction.z * back;
     const y = Math.max(
       this.surface.heightAt(here.x, here.z) + height,
-      this.surface.heightAt(x, z) + CLEARANCE,
+      this.surface.heightAt(x, z) + Math.min(CLEARANCE, height),
     );
     position.set(x, y, z);
   }

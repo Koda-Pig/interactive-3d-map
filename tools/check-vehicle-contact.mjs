@@ -23,6 +23,8 @@ try {
     const { layout } = await import("/src/layout/locations.ts");
     const { routeOf } = await import("/src/layout/route.ts");
     const { Traffic } = await import("/src/draw/traffic.ts");
+    const { circuitRace } = await import("/src/layout/race.ts");
+    const race = circuitRace();
     const { surface } = createGround(1, 64);
     const track = createRibbon(
       layout.locations.find((l) => l.id === "circuit"),
@@ -30,8 +32,14 @@ try {
     ).children[0];
     track.updateMatrixWorld(true);
     const geometry = window.__map.scene.getObjectByName("race-traffic").geometry;
-    const traffic = new Traffic(geometry, geometry, surface, null);
+    const traffic = new Traffic(geometry, geometry, geometry, surface);
     traffic.setMode("race");
+    // The first car is where the race's clock says, so holding the clock places it by distance.
+    traffic.raceClock.held = true;
+    const placeAt = (distance) => {
+      traffic.raceClock.seconds = race.timeAt(distance);
+      traffic.update(0);
+    };
     traffic.update(0);
     const ray = new THREE.Raycaster(new THREE.Vector3(0, 100, 0), new THREE.Vector3(0, -1, 0));
     const matrix = new THREE.Matrix4();
@@ -56,7 +64,7 @@ try {
     let low = Infinity,
       high = -Infinity;
     for (let distance = 0; distance < route.length; distance += 0.5) {
-      traffic.update((distance / 47) * 1000);
+      placeAt(distance);
       traffic.raceCars.getMatrixAt(0, matrix);
       low = Math.min(low, matrix.elements[13]);
       high = Math.max(high, matrix.elements[13]);
@@ -76,7 +84,7 @@ try {
         }
       }
     }
-    window.contactReview = { traffic, track, surface, minAt, maxAt };
+    window.contactReview = { traffic, placeAt, track, surface, minAt, maxAt };
     return {
       samples: Math.ceil(route.length / 0.5),
       contacts: contacts.length,
@@ -94,8 +102,8 @@ try {
   for (const distance of [160, 182, result.maxAt.distance, 0]) {
     await page.evaluate(async (distance) => {
       const { Vector3 } = await import("/node_modules/three/build/three.module.js");
-      const { traffic } = window.contactReview;
-      traffic.update((distance / 47) * 1000);
+      const { traffic, placeAt } = window.contactReview;
+      placeAt(distance);
       const { scene, camera, controls, renderer } = window.__map;
       const car = scene.getObjectByName("race-traffic");
       car.count = 1;

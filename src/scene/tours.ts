@@ -1,10 +1,10 @@
 import { MathUtils, Vector3 } from "three";
-import type { TrackLocation } from "../layout/locations.ts";
 import { layout } from "../layout/locations.ts";
+import { circuitRace } from "../layout/race.ts";
 import { joinRoutes, routeAlong, routeOf } from "../layout/route.ts";
 import { heightAt } from "../terrain/height.ts";
 import type { CameraFlight } from "./flight.ts";
-import type { TourPlan } from "./tour.ts";
+import type { TourLead, TourPlan } from "./tour.ts";
 
 export const LAP_TOUR = "lap";
 export const ARRIVAL_TOUR = "arrival";
@@ -29,26 +29,64 @@ const ARRIVAL_ENDING = {
   theta: MathUtils.degToRad(-110),
 };
 
-/** One lap of the circuit, from just before the start-finish line. */
-export function lapTour(flight: CameraFlight): TourPlan {
-  const circuit = layout.locations.find((location) => location.id === "circuit") as TrackLocation;
+/** The race's time, shared with whatever draws the cars so they keep pace with the ride. */
+export interface LapClock {
+  seconds: number;
+  held: boolean;
+}
+
+/**
+ * How long before the car the lap rides with reaches the lap's start the race
+ * is set to, in seconds: about as long as the camera takes to fly there.
+ */
+const LAP_COUNTDOWN = 1.6;
+/** The chase rides low behind the car, with a wider view than the map's so the speed shows. */
+const CHASE = { speed: 0, height: 6.5, back: 28, ahead: 100, fov: 58 };
+/** How quickly the chase camera catches up with the car, in seconds. */
+const CHASE_SMOOTHING = 0.22;
+
+/**
+ * One lap of the circuit behind a race car, from just before the start-finish
+ * line. `clock` is the race's time: the ride takes it over, so slowing the
+ * tour slows the whole race with it.
+ */
+export function lapTour(
+  flight: CameraFlight,
+  clock: LapClock = { seconds: 0, held: false },
+): TourPlan {
+  const race = circuitRace();
   const route = routeOf("circuit");
-  const [lineX, lineZ] = circuit.startFinish ?? [route.samples[0].x, route.samples[0].z];
-  let line = route.samples[0];
-  for (const sample of route.samples) {
-    if (
-      Math.hypot(sample.x - lineX, sample.z - lineZ) < Math.hypot(line.x - lineX, line.z - lineZ)
-    ) {
-      line = sample;
-    }
-  }
+  const start = (((race.line - LAP_LEAD_IN) % route.length) + route.length) % route.length;
   const length = route.length + LAP_LEAD_IN + LAP_RUN_OUT;
+  const lead: TourLead = {
+    begin() {
+      clock.seconds = race.timeAt(start) - LAP_COUNTDOWN;
+    },
+    advance(seconds) {
+      clock.held = true;
+      clock.seconds += seconds;
+      return race.distanceAt(clock.seconds) - start;
+    },
+    sideways: (travelled) => race.sidewaysAt(start + travelled),
+    telemetry(travelled) {
+      const turn = race.turnAt(start + travelled);
+      return {
+        speed: race.speedAt(start + travelled) * 3.6,
+        place: turn ? `Turn ${turn.number} of ${race.turns.length}` : "Flat out",
+      };
+    },
+    release() {
+      clock.held = false;
+    },
+  };
   return {
     id: LAP_TOUR,
     route,
-    start: line.distance - LAP_LEAD_IN,
+    start,
     length,
-    stages: [{ until: length, speed: 150, height: 70, back: 80, ahead: 140 }],
+    stages: [{ until: length, ...CHASE }],
+    lead,
+    smoothing: CHASE_SMOOTHING,
     finish: () => flight.flyHome(),
   };
 }

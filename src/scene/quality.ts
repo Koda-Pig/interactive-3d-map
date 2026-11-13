@@ -10,6 +10,13 @@ export interface Quality {
   readonly sceneryDensity: number;
   /** Whether catch fences are drawn along the spectator stretches of the circuit. */
   readonly catchFences: boolean;
+  /** Whether the finish in `finish.ts` is drawn over the scene: glow, cloud shadows and blur. */
+  readonly finish: boolean;
+  /**
+   * While only the everyday movement needs drawing (the water, shuttles and
+   * N7 traffic), one frame in this many is drawn.
+   */
+  readonly ambientFrames: number;
 }
 
 const HIGH: Quality = {
@@ -20,6 +27,8 @@ const HIGH: Quality = {
   fieldTextureSize: 2048,
   sceneryDensity: 1,
   catchFences: true,
+  finish: true,
+  ambientFrames: 1,
 };
 
 const LOW: Quality = {
@@ -30,6 +39,8 @@ const LOW: Quality = {
   fieldTextureSize: 1024,
   sceneryDensity: 0.45,
   catchFences: false,
+  finish: false,
+  ambientFrames: 2,
 };
 
 const PHONE_MAX_SCREEN_SIDE = 820;

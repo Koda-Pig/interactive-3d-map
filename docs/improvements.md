@@ -1,6 +1,6 @@
 # Visual improvements
 
-A review of the map against high-end interactive site maps, from November 2026, and the work that would close the gap. Items 1 to 7 are built, and item 8 in part. The scores are from before them.
+A review of the map against high-end interactive site maps, from November 2026, and the work that would close the gap. Items 1 to 7 are built, and item 8 in part. The scores are from before them. A [second pass](#second-pass-making-it-striking) on 13 November 2026 added a title screen, a finish over the picture, a chase-camera lap and movement in every view.
 
 The map already does its job as a product. Search, precinct filters, fly-to and the event switch are as good as most maps of this kind. It falls behind on finish. From the air it reads clearly, but up close it looks like an architectural blockout, and the close view is where every click takes you.
 
@@ -31,7 +31,7 @@ The usual alternatives each make a different trade:
 
 - The style stays clean and simplified, as [overview.md](overview.md#look-and-feel) sets out. The goal is for it to look finished, not realistic
 - Phones are the limit. The low tier already draws about 375,000 triangles in 175 draw calls, or about 430,000 triangles on a race weekend, and nobody has timed it on a real phone
-- The scene renders on demand and skips the shadow pass while the camera moves ([main.ts:51](../src/main.ts:51), [main.ts:150](../src/main.ts:150)). Anything animated has to work around that
+- The shadow pass is skipped while the camera moves, and anything that moves stays out of it. Under reduced motion the scene still renders only when something changes. Otherwise the everyday movement keeps it drawing: every frame on the high tier, every second frame on the low tier
 - BMR's artist's impressions are style guides. They don't go into the map without BMR's agreement
 - Capacities and similar facts stay out unless BMR supplies them. The layout is invented, and made-up numbers would make it look more official than it is
 
@@ -120,6 +120,24 @@ Below the description, the panel lists the closest gate and the closest car park
 **Still to do:** room for facts BMR supplies.
 
 **Done when:** someone can send a link to a location, and its panel says more than the label does.
+
+## Second pass: making it striking
+
+Added on 13 November 2026. The map worked, but it looked like an evenly lit diagram and nothing in it made anyone stop and look.
+
+**Title screen.** While the scripts and models load, the page shows the wordmark over a line drawing of the circuit that draws itself, with an amber light lapping it ([index.html](../index.html)). The drawing is made from the layout data when the page is built ([vite.config.ts](../vite.config.ts)), so it always matches the circuit. The title stays for at least 2.6 seconds, then clears over the opening flight, which is now longer and turns further. The interface appears as the camera arrives. A link to a location skips the wait, and reduced motion skips the animation.
+
+**Golden hour.** The sun is lower (19°) and warmer, and the sky's fill light is weaker and bluer, so shadows are long and cool ([lighting.ts](../src/scene/lighting.ts)).
+
+**The finish.** On the high tier the scene is drawn into a texture and one pass puts it on screen ([finish.ts](../src/scene/finish.ts)). It adds a glow round the brightest light, cloud shadows that drift over the land, a soft blur towards the top and bottom of the view that makes the site look like a model, a little more colour and darker corners. The blur fades out as the view tilts towards the horizon. The low tier draws straight to the screen as before, so phones pay nothing for it.
+
+**Racing that looks like racing.** [race.ts](../src/layout/race.ts) works out a lap from the circuit's path: the speed each bend allows, braking into it and accelerating out, and a racing line that runs wide on the way in and cuts to the inside. Ten cars follow it as a leading pair, a pack and two pairs further back. They close up into the bends and string out on the straights, between about 130 and 320 km/h. The line stays between the parked grid's two columns along the start-finish straight. The figures illustrate a fast single-seater and aren't a prediction for this circuit.
+
+**Chase-camera lap.** "Lap the circuit" now rides low behind one of the race cars with a wider field of view, and the player shows its speed and the turn it's in ([tours.ts](../src/scene/tours.ts)). The tour's speed setting slows or speeds the whole race. The map's tilt limit is relaxed for the ride and eases back afterwards.
+
+**Movement in every view.** Shuttles circle the ring road, traffic runs both ways along the N7 and the water ripples in the whole-site view too, not only in the event modes ([traffic.ts](../src/draw/traffic.ts)). The shuttles also moved to the left-hand lane: they had been driving on the right.
+
+**Still to do:** the frame rate on a real phone, now that the map draws continuously there at half rate. The finish hasn't been timed on a laptop with integrated graphics either. If the frame rate drops below 28 fps while the view moves, the map still lowers its resolution by itself.
 
 ## Suggested order
 
