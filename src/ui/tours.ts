@@ -16,9 +16,9 @@ const STOP =
   '<svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><rect x="3.5" y="3.5" width="9" height="9" rx="1" fill="currentColor"/></svg>';
 
 /**
- * Buttons that start a camera tour, and stop it again while it runs. Under
- * reduced motion the ride cuts between viewpoints instead of gliding, so the
- * buttons stay available to everyone.
+ * Buttons that start a camera tour, and stop it again while it runs. The
+ * buttons stay available to everyone, including viewers who ask for reduced
+ * motion.
  */
 export function createTourButtons(
   root: HTMLElement,
