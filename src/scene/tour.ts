@@ -76,6 +76,8 @@ const BEND_REACH = 35;
 const BEND_SLOWING = 0.45;
 /** How quickly the camera catches up with where it should be, in seconds. */
 const SMOOTHING = 0.45;
+/** How long the camera holds one viewpoint before cutting to the next when motion is reduced, in milliseconds. */
+const CUT_EVERY_MS = 2000;
 /** The camera keeps at least this far above the ground under it, in metres, unless it rides lower. */
 const CLEARANCE = 15;
 /**
@@ -101,7 +103,9 @@ const spherical = new Spherical();
  * Rides the camera along a route: a lap of the circuit, or the way in from the
  * N7. It first flies to the start, then follows the route, slowing for bends,
  * and hands back to the map at the end. Dragging, zooming or any other flight
- * interrupts it where it is. Pressing Stop returns to the home view.
+ * interrupts it where it is. Pressing Stop returns to the home view. When the
+ * viewer asks for reduced motion, the ride holds each viewpoint for a couple
+ * of seconds and cuts between them instead of gliding.
  */
 export class CameraTour {
   private plan: TourPlan | null = null;
@@ -120,6 +124,10 @@ export class CameraTour {
   private readonly mapFov: number;
   private settling = false;
   private settledAt: number | null = null;
+  /** Whether the viewer asked for reduced motion, in which case the ride cuts between viewpoints. */
+  private readonly reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  /** When the camera last cut to a new viewpoint, or null before the first cut of a ride. */
+  private cutAt: number | null = null;
 
   constructor(
     private readonly camera: PerspectiveCamera,
@@ -162,6 +170,7 @@ export class CameraTour {
     this.phase = "approach";
     this.travelled = 0;
     this.lastTime = null;
+    this.cutAt = null;
     plan.lead?.begin();
     this.pose(0, this.wantedTarget, this.wantedPosition);
     const offset = direction.subVectors(this.wantedPosition, this.wantedTarget);
@@ -202,6 +211,7 @@ export class CameraTour {
     this.plan = null;
     this.settling = true;
     this.settledAt = null;
+    this.cutAt = null;
   }
 
   /**
@@ -211,6 +221,12 @@ export class CameraTour {
   private settle(now: number): boolean {
     if (!this.settling) {
       return false;
+    }
+    if (this.reducedMotion) {
+      this.controls.maxPolarAngle = this.mapMaxTilt;
+      this.setFov(this.mapFov);
+      this.settling = false;
+      return true;
     }
     const step = this.settledAt === null ? 0 : Math.min((now - this.settledAt) / 1000, MAX_STEP);
     this.settledAt = now;
@@ -267,14 +283,27 @@ export class CameraTour {
       : Math.min(plan.length, this.travelled + this.speedAt(this.travelled) * rideStep);
 
     this.pose(this.travelled, this.wantedTarget, this.wantedPosition);
-    const follow = 1 - Math.exp(-rideStep / (plan.smoothing ?? SMOOTHING));
     const fov = this.stageAt(this.travelled).fov ?? this.mapFov;
-    this.setFov(MathUtils.lerp(this.camera.fov, fov, 1 - Math.exp(-step / FOV_SMOOTHING)));
-    this.target.lerp(this.wantedTarget, follow);
-    this.position.lerp(this.wantedPosition, follow);
-    this.controls.target.copy(this.target);
-    this.camera.position.copy(this.position);
-    this.camera.lookAt(this.target);
+    if (this.reducedMotion) {
+      // Reduced motion: hold each viewpoint for a while, then cut to the next.
+      if (this.cutAt === null || now - this.cutAt >= CUT_EVERY_MS) {
+        this.cutAt = now;
+        this.setFov(fov);
+        this.target.copy(this.wantedTarget);
+        this.position.copy(this.wantedPosition);
+        this.controls.target.copy(this.target);
+        this.camera.position.copy(this.position);
+        this.camera.lookAt(this.target);
+      }
+    } else {
+      const follow = 1 - Math.exp(-rideStep / (plan.smoothing ?? SMOOTHING));
+      this.setFov(MathUtils.lerp(this.camera.fov, fov, 1 - Math.exp(-step / FOV_SMOOTHING)));
+      this.target.lerp(this.wantedTarget, follow);
+      this.position.lerp(this.wantedPosition, follow);
+      this.controls.target.copy(this.target);
+      this.camera.position.copy(this.position);
+      this.camera.lookAt(this.target);
+    }
 
     if (this.travelled >= plan.length) {
       this.end();
