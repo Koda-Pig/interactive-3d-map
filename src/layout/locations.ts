@@ -38,6 +38,21 @@ interface LocationBase {
   readonly featured?: boolean;
   /** A picture for the sidebar, as a URL. A placeholder is shown without one. */
   readonly image?: string;
+  /** Ids of the actions in the layout's `actions` that the details card links to. */
+  readonly links?: readonly string[];
+}
+
+/** Who an action is for: fans and visitors, or businesses and partners. */
+export type ActionAudience = "visitors" | "business";
+
+/** Something people can do from a location's details card, such as buying tickets. */
+export interface LocationAction {
+  readonly label: string;
+  readonly audience: ActionAudience;
+  /** Where the link goes. A `#` placeholder until the real page exists. */
+  readonly url: string;
+  /** The event mode the action belongs to, by id. Without one it shows in every mode. */
+  readonly event?: string;
 }
 
 export type Facing = "north" | "east" | "south" | "west";
@@ -217,6 +232,7 @@ export interface ArrivalRoute {
 
 export interface Layout {
   readonly events: readonly EventMode[];
+  readonly actions: Readonly<Record<string, LocationAction>>;
   readonly arrivals: readonly ArrivalRoute[];
   readonly landUse: readonly LandUseZone[];
   readonly grading: readonly GradingZone[];

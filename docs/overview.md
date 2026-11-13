@@ -137,7 +137,7 @@ Colours:
 }
 ```
 
-The layout lives in `src/data/locations.json`, as a `locations` list, `grading` zones (terraces levelled as one, so everything standing on them shares a ground height), `landUse` zones (open ground with a use: `wheat`, `vineyard`, `overflow-parking`, `camping` or `fan-village`, which scenery fills wherever nothing else stands) and `events`: the ways the venue is used, each naming the precincts and locations in use.
+The layout lives in `src/data/locations.json`, as a `locations` list, `actions` (things people can do from a details card, such as buying tickets or applying to be a vendor: each has a `label`, an `audience` of `visitors` or `business`, a `url`, and optionally the `event` mode it belongs to, outside which it's hidden. URLs starting with `#` are placeholders that do nothing until the real pages exist), `grading` zones (terraces levelled as one, so everything standing on them shares a ground height), `landUse` zones (open ground with a use: `wheat`, `vineyard`, `overflow-parking`, `camping` or `fan-village`, which scenery fills wherever nothing else stands) and `events`: the ways the venue is used, each naming the precincts and locations in use.
 
 - Every location has an `id`, a `name`, a `category`, a `type` and a `description`. All but gates also need a `color`
 - `category`: `racing`, `conference`, `hospitality`, `academy`, `commercial`, `transport` or `entrances`
@@ -149,6 +149,7 @@ The layout lives in `src/data/locations.json`, as a `locations` list, `grading` 
 - `parts`: used instead of `footprint` and `height` by buildings with several volumes. Each part has its own `footprint` and `height`, and can add `base` (how far above the ground it starts) and `color`
 - `model`: on a building or one of its `parts`, a `.glb` from `public/models` that replaces the simple shape and is fitted to its footprint. It has a `file`, a `facing` (`north`, `east`, `south` or `west`), and optionally a `grid` of `[columns, rows]`, or an `endCap` file that makes `file` a tile repeated between two end pieces. If the file can't be loaded, the simple shape is drawn
 - `image`: a path relative to `public/`, such as `images/locations/lake.webp`, with no leading slash. It's shown in the details card and, on a phone, under the location in the sidebar. Both resolve it against the site's base URL, so images also work when hosted under a sub-path. Without one, a placeholder is shown
+- `links`: ids of actions from the top-level `actions` list, shown as buttons in the details card under "Fans and visitors" and "Business and partners"
 - `markings`: on an area, lines painted on it, such as a tennis court's. It has a `color`, a `width` and a list of `lines`, each a path
 - `planting`: on an area, `park` scatters trees through it and `edge` lines its edge with them
 - `surface`: on an area, a pattern drawn over its colour: `paving` (slabs), `concrete` (poured bays with joints) or `mown` (mowing stripes)

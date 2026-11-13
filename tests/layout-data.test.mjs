@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { test } from "node:test";
 import { resolvePath } from "../src/layout/path.ts";
 
-const { events, grading, landUse, locations } = JSON.parse(
+const { actions, events, grading, landUse, locations } = JSON.parse(
   readFileSync(new URL("../src/data/locations.json", import.meta.url), "utf8"),
 );
 const ids = new Set(locations.map((location) => location.id));
@@ -66,6 +66,27 @@ test("events only name locations and precincts that exist", () => {
       event.categories.filter((category) => !categories.has(category)),
       [],
       event.id,
+    );
+  }
+});
+
+test("actions have a label, a known audience, a url and only real event modes", () => {
+  const modes = new Set(events.map((event) => event.id));
+  for (const [id, action] of Object.entries(actions)) {
+    assert.ok(action.label && action.url, id);
+    assert.ok(["visitors", "business"].includes(action.audience), id);
+    assert.ok(action.event === undefined || modes.has(action.event), id);
+  }
+});
+
+test("location links only name actions that exist, once each", () => {
+  for (const location of locations) {
+    const links = location.links ?? [];
+    assert.equal(new Set(links).size, links.length, location.id);
+    assert.deepEqual(
+      links.filter((id) => !(id in actions)),
+      [],
+      location.id,
     );
   }
 });

@@ -256,6 +256,7 @@ const interaction = new MapInteraction({
 
 const eventSwitch = createEventSwitch(eventSwitchElement, (mode) => {
   setEventMode(mode, precincts, scenery.events);
+  panel.setMode(mode?.id ?? null);
   traffic?.setMode(mode?.id ?? null);
   const arriving = mode?.id === ARRIVAL_MODE;
   arrivals.setShown(arriving);

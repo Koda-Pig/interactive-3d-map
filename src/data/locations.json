@@ -199,9 +199,41 @@
       "footprint": [[315, 250], [770, 250], [770, 325], [315, 325]]
     }
   ],
+  "actions": {
+    "race-tickets": {"label": "Buy race tickets", "audience": "visitors", "url": "#race-tickets", "event": "race"},
+    "grandstand-seats": {"label": "Book grandstand seats", "audience": "visitors", "url": "#grandstand-seats", "event": "race"},
+    "ga-tickets": {"label": "Buy general admission", "audience": "visitors", "url": "#ga-tickets", "event": "race"},
+    "hospitality-packages": {"label": "Book race hospitality", "audience": "visitors", "url": "#hospitality-packages", "event": "race"},
+    "pit-walk": {"label": "Book a pit lane walk", "audience": "visitors", "url": "#pit-walk", "event": "race"},
+    "parking-pass": {"label": "Buy a parking pass", "audience": "visitors", "url": "#parking-pass"},
+    "shuttle-tickets": {"label": "Book a shuttle seat", "audience": "visitors", "url": "#shuttle-tickets"},
+    "train-times": {"label": "Plan your train trip", "audience": "visitors", "url": "#train-times"},
+    "event-registration": {"label": "Register for an event", "audience": "visitors", "url": "#event-registration", "event": "conference"},
+    "shows": {"label": "See concerts and shows", "audience": "visitors", "url": "#shows"},
+    "hotel-rooms": {"label": "Book a room", "audience": "visitors", "url": "#hotel-rooms"},
+    "restaurant-booking": {"label": "Reserve a table", "audience": "visitors", "url": "#restaurant-booking"},
+    "paddle-boats": {"label": "Book paddle boats", "audience": "visitors", "url": "#paddle-boats"},
+    "karting-sessions": {"label": "Book a karting session", "audience": "visitors", "url": "#karting-sessions"},
+    "academy-courses": {"label": "Browse driving courses", "audience": "visitors", "url": "#academy-courses"},
+    "track-days": {"label": "Book a track day", "audience": "visitors", "url": "#track-days"},
+    "residential-interest": {"label": "Register interest in a home", "audience": "visitors", "url": "#residential-interest"},
+    "fly-in": {"label": "Arrange a fly-in", "audience": "visitors", "url": "#fly-in"},
+    "vendor-application": {"label": "Apply to be a vendor", "audience": "business", "url": "#vendor-application"},
+    "exhibitor-stand": {"label": "Book an exhibitor stand", "audience": "business", "url": "#exhibitor-stand", "event": "conference"},
+    "conference-hire": {"label": "Plan a conference", "audience": "business", "url": "#conference-hire", "event": "conference"},
+    "venue-hire": {"label": "Hire the venue", "audience": "business", "url": "#venue-hire"},
+    "sponsorship": {"label": "Sponsorship and naming rights", "audience": "business", "url": "#sponsorship"},
+    "team-enquiries": {"label": "Team and series enquiries", "audience": "business", "url": "#team-enquiries", "event": "race"},
+    "retail-leasing": {"label": "Lease a retail unit", "audience": "business", "url": "#retail-leasing"},
+    "office-leasing": {"label": "Lease research space", "audience": "business", "url": "#office-leasing"},
+    "testing-time": {"label": "Book testing time", "audience": "business", "url": "#testing-time"},
+    "aircraft-slots": {"label": "Book aircraft and helicopter slots", "audience": "business", "url": "#aircraft-slots"},
+    "careers": {"label": "Work at the venue", "audience": "business", "url": "#careers"}
+  },
   "locations": [
     {
       "id": "circuit",
+      "links": ["race-tickets", "track-days", "sponsorship", "careers"],
       "image": "images/locations/circuit.webp",
       "name": "Blue Mountain Racing Circuit",
       "featured": true,
@@ -271,6 +303,7 @@
     },
     {
       "id": "pit-lane",
+      "links": ["pit-walk", "team-enquiries"],
       "image": "images/locations/pit-lane.webp",
       "featured": true,
       "image": "images/locations/pit-lane.webp",
@@ -284,6 +317,7 @@
     },
     {
       "id": "pit-conference-building",
+      "links": ["hospitality-packages", "event-registration", "conference-hire", "exhibitor-stand", "sponsorship"],
       "image": "images/locations/pit-conference-building.webp",
       "featured": true,
       "image": "images/locations/pit-conference-building.webp",
@@ -317,6 +351,7 @@
     },
     {
       "id": "paddock",
+      "links": ["pit-walk", "team-enquiries"],
       "surface": "concrete",
       "image": "images/locations/paddock.webp",
       "name": "Paddock",
@@ -329,6 +364,7 @@
     },
     {
       "id": "grandstand-a",
+      "links": ["grandstand-seats", "vendor-application"],
       "image": "images/locations/grandstands-main-straight.webp",
       "featured": true,
       "image": "images/locations/grandstands-main-straight.webp",
@@ -362,6 +398,7 @@
     },
     {
       "id": "grandstand-b",
+      "links": ["grandstand-seats", "vendor-application"],
       "image": "images/locations/grandstands-main-straight.webp",
       "featured": true,
       "image": "images/locations/grandstands-main-straight.webp",
@@ -395,6 +432,7 @@
     },
     {
       "id": "grandstand-c",
+      "links": ["grandstand-seats", "vendor-application"],
       "image": "images/locations/grandstands-main-straight.webp",
       "featured": true,
       "image": "images/locations/grandstands-main-straight.webp",
@@ -428,6 +466,7 @@
     },
     {
       "id": "grandstand-d",
+      "links": ["grandstand-seats", "vendor-application"],
       "image": "images/locations/grandstand-d.webp",
       "featured": true,
       "image": "images/locations/grandstand-d.webp",
@@ -461,6 +500,7 @@
     },
     {
       "id": "grandstand-e",
+      "links": ["grandstand-seats", "vendor-application"],
       "image": "images/locations/grandstand-e.webp",
       "featured": true,
       "image": "images/locations/grandstand-e.webp",
@@ -494,6 +534,7 @@
     },
     {
       "id": "ga-bank-1",
+      "links": ["ga-tickets", "vendor-application"],
       "image": "images/locations/ga-bank.webp",
       "image": "images/locations/ga-bank.webp",
       "name": "General Admission Bank 1",
@@ -506,6 +547,7 @@
     },
     {
       "id": "ga-bank-2",
+      "links": ["ga-tickets", "vendor-application"],
       "image": "images/locations/ga-bank.webp",
       "image": "images/locations/ga-bank.webp",
       "name": "General Admission Bank 2",
@@ -518,6 +560,7 @@
     },
     {
       "id": "ga-bank-3",
+      "links": ["ga-tickets", "vendor-application"],
       "image": "images/locations/ga-bank.webp",
       "image": "images/locations/ga-bank.webp",
       "name": "General Admission Bank 3",
@@ -530,6 +573,7 @@
     },
     {
       "id": "ga-bank-4",
+      "links": ["ga-tickets", "vendor-application"],
       "image": "images/locations/ga-bank.webp",
       "image": "images/locations/ga-bank.webp",
       "name": "General Admission Bank 4",
@@ -542,6 +586,7 @@
     },
     {
       "id": "ga-bank-5",
+      "links": ["ga-tickets", "vendor-application"],
       "image": "images/locations/ga-bank.webp",
       "image": "images/locations/ga-bank.webp",
       "name": "General Admission Bank 5",
@@ -554,6 +599,7 @@
     },
     {
       "id": "ga-bank-6",
+      "links": ["ga-tickets", "vendor-application"],
       "image": "images/locations/ga-bank.webp",
       "image": "images/locations/ga-bank.webp",
       "name": "General Admission Bank 6",
@@ -566,6 +612,7 @@
     },
     {
       "id": "ga-bank-7",
+      "links": ["ga-tickets", "vendor-application"],
       "image": "images/locations/ga-bank.webp",
       "image": "images/locations/ga-bank.webp",
       "name": "General Admission Bank 7",
@@ -578,6 +625,7 @@
     },
     {
       "id": "ga-bank-8",
+      "links": ["ga-tickets", "vendor-application"],
       "image": "images/locations/ga-bank.webp",
       "image": "images/locations/ga-bank.webp",
       "name": "General Admission Bank 8",
@@ -590,6 +638,7 @@
     },
     {
       "id": "arrival-plaza",
+      "links": ["race-tickets", "event-registration", "vendor-application"],
       "surface": "paving",
       "image": "images/locations/arrival-plaza.webp",
       "name": "Arrival Plaza",
@@ -604,6 +653,7 @@
     },
     {
       "id": "grandstand-fan-walk",
+      "links": ["vendor-application"],
       "image": "images/locations/grandstand-fan-walk.webp",
       "name": "Grandstand Fan Walk",
       "major": true,
@@ -617,6 +667,7 @@
     },
     {
       "id": "gateway-arch",
+      "links": ["sponsorship"],
       "image": "images/locations/gateway-arch.webp",
       "name": "Gateway Arch",
       "category": "conference",
@@ -675,6 +726,7 @@
     },
     {
       "id": "exhibition-hall-1",
+      "links": ["event-registration", "exhibitor-stand"],
       "image": "images/locations/exhibition-hall.webp",
       "name": "Exhibition Hall 1",
       "featured": true,
@@ -692,6 +744,7 @@
     },
     {
       "id": "exhibition-hall-2",
+      "links": ["event-registration", "exhibitor-stand"],
       "image": "images/locations/exhibition-hall.webp",
       "name": "Exhibition Hall 2",
       "featured": true,
@@ -709,6 +762,7 @@
     },
     {
       "id": "expo-centre",
+      "links": ["event-registration", "exhibitor-stand", "conference-hire", "venue-hire"],
       "image": "images/locations/expo-centre.webp",
       "name": "Expo Centre",
       "featured": true,
@@ -826,6 +880,7 @@
     },
     {
       "id": "amphitheatre",
+      "links": ["shows", "venue-hire", "vendor-application"],
       "image": "images/locations/amphitheatre.webp",
       "name": "Amphitheatre",
       "featured": true,
@@ -864,6 +919,7 @@
     },
     {
       "id": "amphitheatre-lawn",
+      "links": ["shows"],
       "image": "images/locations/amphitheatre.webp",
       "name": "Amphitheatre Lawn",
       "category": "conference",
@@ -883,6 +939,7 @@
     },
     {
       "id": "lake",
+      "links": ["paddle-boats", "venue-hire"],
       "image": "images/locations/lake.webp",
       "featured": true,
       "name": "The Lake",
@@ -895,6 +952,7 @@
     },
     {
       "id": "promenade",
+      "links": ["vendor-application"],
       "image": "images/locations/promenade.webp",
       "name": "Lakeside Promenade",
       "featured": true,
@@ -908,6 +966,7 @@
     },
     {
       "id": "lake-piazza",
+      "links": ["vendor-application"],
       "surface": "paving",
       "image": "images/locations/promenade.webp",
       "name": "Lake Piazza",
@@ -989,6 +1048,7 @@
     },
     {
       "id": "piazza-kiosks",
+      "links": ["vendor-application"],
       "image": "images/locations/paddle-boats.webp",
       "name": "Piazza Kiosks",
       "category": "hospitality",
@@ -1114,6 +1174,7 @@
     },
     {
       "id": "lake-fountain",
+      "links": ["sponsorship"],
       "image": "images/locations/lake-fountain.webp",
       "name": "Lake Fountain Show",
       "featured": true,
@@ -1150,6 +1211,7 @@
     },
     {
       "id": "paddle-boats",
+      "links": ["paddle-boats"],
       "image": "images/locations/paddle-boats.webp",
       "name": "Marina Cove and Paddle Boats",
       "category": "hospitality",
@@ -1183,6 +1245,7 @@
     },
     {
       "id": "fireworks-barge",
+      "links": ["sponsorship"],
       "image": "images/locations/fireworks-barge.webp",
       "name": "Lake Fireworks Display",
       "category": "hospitality",
@@ -1198,6 +1261,7 @@
     },
     {
       "id": "restaurant-west",
+      "links": ["restaurant-booking", "venue-hire"],
       "image": "images/locations/lakeside-restaurant.webp",
       "name": "Lakeside Restaurant West",
       "category": "hospitality",
@@ -1228,6 +1292,7 @@
     },
     {
       "id": "restaurant-central",
+      "links": ["restaurant-booking", "venue-hire"],
       "image": "images/locations/lakeside-restaurant.webp",
       "name": "Lakeside Restaurant Central",
       "category": "hospitality",
@@ -1258,6 +1323,7 @@
     },
     {
       "id": "restaurant-east",
+      "links": ["restaurant-booking", "venue-hire"],
       "image": "images/locations/lakeside-restaurant.webp",
       "name": "Lakeside Restaurant East",
       "category": "hospitality",
@@ -1288,6 +1354,7 @@
     },
     {
       "id": "hotel-waterfront",
+      "links": ["hotel-rooms", "conference-hire"],
       "image": "images/locations/hotel-waterfront.webp",
       "name": "Waterfront Hotel",
       "featured": true,
@@ -1305,6 +1372,7 @@
     },
     {
       "id": "hotel-lakeside",
+      "links": ["hotel-rooms", "conference-hire"],
       "image": "images/locations/hotel-lakeside.webp",
       "name": "Lakeside Lodge",
       "featured": true,
@@ -1321,6 +1389,7 @@
     },
     {
       "id": "hotel-promenade",
+      "links": ["hotel-rooms", "conference-hire"],
       "image": "images/locations/hotel-promenade.webp",
       "name": "Promenade Hotel",
       "featured": true,
@@ -1337,6 +1406,7 @@
     },
     {
       "id": "karting-track",
+      "links": ["karting-sessions", "venue-hire"],
       "image": "images/locations/karting-track.webp",
       "name": "Karting Track",
       "featured": true,
@@ -1354,6 +1424,7 @@
     },
     {
       "id": "karting-clubhouse",
+      "links": ["karting-sessions", "venue-hire"],
       "image": "images/locations/karting-clubhouse.webp",
       "name": "Karting Clubhouse",
       "category": "academy",
@@ -1539,6 +1610,7 @@
     },
     {
       "id": "driving-academy",
+      "links": ["academy-courses", "careers"],
       "image": "images/locations/driving-academy.webp",
       "name": "Driving Academy",
       "featured": true,
@@ -1555,6 +1627,7 @@
     },
     {
       "id": "skid-pan",
+      "links": ["academy-courses"],
       "image": "images/locations/skid-pan.webp",
       "name": "Academy Skid Pad",
       "featured": true,
@@ -1590,6 +1663,7 @@
     },
     {
       "id": "automotive-hub",
+      "links": ["testing-time", "office-leasing"],
       "image": "images/locations/automotive-hub.webp",
       "name": "Automotive Hub",
       "featured": true,
@@ -1616,6 +1690,7 @@
     },
     {
       "id": "automotive-test-pad",
+      "links": ["testing-time"],
       "surface": "concrete",
       "image": "images/locations/automotive-test-pad.webp",
       "name": "Automotive Test Pad",
@@ -1641,6 +1716,7 @@
     },
     {
       "id": "trackside-residences-east",
+      "links": ["residential-interest"],
       "image": "images/locations/trackside-residences.webp",
       "name": "Trackside Residences East",
       "featured": true,
@@ -1842,6 +1918,7 @@
     },
     {
       "id": "trackside-residences-south",
+      "links": ["residential-interest"],
       "image": "images/locations/trackside-residences.webp",
       "name": "Trackside Residences South",
       "featured": true,
@@ -2007,6 +2084,7 @@
     },
     {
       "id": "retail-quarter",
+      "links": ["retail-leasing", "vendor-application"],
       "image": "images/locations/retail-quarter.webp",
       "name": "Retail Quarter",
       "featured": true,
@@ -2111,6 +2189,7 @@
     },
     {
       "id": "research-park",
+      "links": ["office-leasing", "careers"],
       "image": "images/locations/research-park.webp",
       "name": "Research and Technology Park",
       "featured": true,
@@ -2301,6 +2380,7 @@
     },
     {
       "id": "car-park-1",
+      "links": ["parking-pass"],
       "image": "images/locations/car-park.webp",
       "name": "Car Park P1",
       "category": "transport",
@@ -2312,6 +2392,7 @@
     },
     {
       "id": "car-park-2",
+      "links": ["parking-pass"],
       "image": "images/locations/car-park.webp",
       "name": "Car Park P2",
       "category": "transport",
@@ -2323,6 +2404,7 @@
     },
     {
       "id": "car-park-3",
+      "links": ["parking-pass"],
       "image": "images/locations/car-park.webp",
       "name": "Car Park P3",
       "category": "transport",
@@ -2334,6 +2416,7 @@
     },
     {
       "id": "car-park-4",
+      "links": ["parking-pass"],
       "image": "images/locations/car-park.webp",
       "name": "Car Park P4",
       "category": "transport",
@@ -2345,6 +2428,7 @@
     },
     {
       "id": "car-park-5",
+      "links": ["parking-pass"],
       "image": "images/locations/car-park.webp",
       "name": "Car Park P5",
       "category": "transport",
@@ -2356,6 +2440,7 @@
     },
     {
       "id": "car-park-6",
+      "links": ["parking-pass"],
       "image": "images/locations/car-park.webp",
       "name": "Car Park P6",
       "category": "transport",
@@ -2367,6 +2452,7 @@
     },
     {
       "id": "car-park-7",
+      "links": ["parking-pass"],
       "image": "images/locations/car-park.webp",
       "name": "Car Park P7",
       "category": "transport",
@@ -2378,6 +2464,7 @@
     },
     {
       "id": "car-park-8",
+      "links": ["parking-pass"],
       "image": "images/locations/car-park.webp",
       "name": "Car Park P8",
       "category": "transport",
@@ -2389,6 +2476,7 @@
     },
     {
       "id": "shuttle-drop-off",
+      "links": ["shuttle-tickets"],
       "surface": "concrete",
       "image": "images/locations/shuttle-drop-off.webp",
       "name": "Shuttle Drop-off",
@@ -2401,6 +2489,7 @@
     },
     {
       "id": "kalbaskraal-station",
+      "links": ["train-times", "shuttle-tickets"],
       "image": "images/locations/kalbaskraal-station.webp",
       "name": "Kalbaskraal Station",
       "featured": true,
@@ -2430,6 +2519,7 @@
     },
     {
       "id": "fan-walk",
+      "links": ["train-times", "vendor-application"],
       "image": "images/locations/station-fan-walk.webp",
       "name": "Station Fan Walk",
       "category": "transport",
@@ -2453,6 +2543,7 @@
     },
     {
       "id": "aerodrome-runway",
+      "links": ["fly-in", "aircraft-slots"],
       "image": "images/locations/aerodrome-runway.webp",
       "name": "Aerodrome Runway",
       "featured": true,
@@ -2478,6 +2569,7 @@
     },
     {
       "id": "aerodrome-helipad",
+      "links": ["fly-in", "aircraft-slots"],
       "surface": "concrete",
       "image": "images/locations/aerodrome-runway.webp",
       "name": "Aerodrome Helipad",
@@ -2494,6 +2586,7 @@
     },
     {
       "id": "aerodrome-terminal",
+      "links": ["fly-in", "aircraft-slots"],
       "image": "images/locations/aerodrome-terminal.webp",
       "name": "Aerodrome Terminal",
       "category": "transport",
@@ -2551,6 +2644,7 @@
     },
     {
       "id": "gate-1",
+      "links": ["race-tickets", "event-registration"],
       "image": "images/locations/gate.webp",
       "image": "images/locations/gate.webp",
       "name": "Gate 1",
@@ -2562,6 +2656,7 @@
     },
     {
       "id": "gate-2",
+      "links": ["race-tickets", "event-registration"],
       "image": "images/locations/gate.webp",
       "image": "images/locations/gate.webp",
       "name": "Gate 2",
@@ -2573,6 +2668,7 @@
     },
     {
       "id": "gate-3",
+      "links": ["race-tickets", "event-registration"],
       "image": "images/locations/gate.webp",
       "image": "images/locations/gate.webp",
       "name": "Gate 3",
@@ -2584,6 +2680,7 @@
     },
     {
       "id": "gate-4",
+      "links": ["race-tickets", "event-registration"],
       "image": "images/locations/gate.webp",
       "image": "images/locations/gate.webp",
       "name": "Gate 4",
@@ -2595,6 +2692,7 @@
     },
     {
       "id": "gate-5",
+      "links": ["race-tickets", "event-registration"],
       "image": "images/locations/gate.webp",
       "image": "images/locations/gate.webp",
       "name": "Gate 5",
@@ -2606,6 +2704,7 @@
     },
     {
       "id": "gate-6",
+      "links": ["race-tickets", "event-registration"],
       "image": "images/locations/gate.webp",
       "image": "images/locations/gate.webp",
       "name": "Gate 6",
@@ -2617,6 +2716,7 @@
     },
     {
       "id": "gate-7",
+      "links": ["race-tickets", "event-registration"],
       "image": "images/locations/gate.webp",
       "image": "images/locations/gate.webp",
       "name": "Gate 7",
@@ -2628,6 +2728,7 @@
     },
     {
       "id": "gate-8",
+      "links": ["race-tickets", "event-registration"],
       "image": "images/locations/gate.webp",
       "image": "images/locations/gate.webp",
       "name": "Gate 8",
@@ -2639,6 +2740,7 @@
     },
     {
       "id": "gate-9",
+      "links": ["race-tickets", "event-registration"],
       "image": "images/locations/gate.webp",
       "image": "images/locations/gate.webp",
       "name": "Gate 9",
@@ -2650,6 +2752,7 @@
     },
     {
       "id": "gate-10",
+      "links": ["race-tickets", "event-registration"],
       "image": "images/locations/gate.webp",
       "image": "images/locations/gate.webp",
       "name": "Gate 10",
@@ -2661,6 +2764,7 @@
     },
     {
       "id": "gate-11",
+      "links": ["race-tickets", "event-registration"],
       "image": "images/locations/gate.webp",
       "image": "images/locations/gate.webp",
       "name": "Gate 11",
@@ -2672,6 +2776,7 @@
     },
     {
       "id": "gate-12",
+      "links": ["race-tickets", "event-registration"],
       "image": "images/locations/gate.webp",
       "image": "images/locations/gate.webp",
       "name": "Gate 12",
@@ -2683,6 +2788,7 @@
     },
     {
       "id": "gate-13",
+      "links": ["race-tickets", "event-registration"],
       "image": "images/locations/gate.webp",
       "image": "images/locations/gate.webp",
       "name": "Gate 13",
@@ -2694,6 +2800,7 @@
     },
     {
       "id": "gate-14",
+      "links": ["race-tickets", "event-registration"],
       "image": "images/locations/gate.webp",
       "image": "images/locations/gate.webp",
       "name": "Gate 14",
@@ -3143,6 +3250,7 @@
     },
     {
       "id": "infield-hospitality",
+      "links": ["hospitality-packages", "venue-hire"],
       "surface": "paving",
       "image": "images/locations/infield-hospitality.webp",
       "name": "Infield hospitality courtyard",
@@ -3156,6 +3264,7 @@
     },
     {
       "id": "hospitality-pavilions",
+      "links": ["hospitality-packages"],
       "image": "images/locations/infield-hospitality.webp",
       "name": "Infield hospitality pavilions",
       "category": "hospitality",
@@ -3191,6 +3300,7 @@
     },
     {
       "id": "hospitality-terrace",
+      "links": ["hospitality-packages"],
       "surface": "paving",
       "image": "images/locations/infield-hospitality.webp",
       "name": "Infield viewing terrace",
@@ -3405,6 +3515,7 @@
     },
     {
       "id": "team-logistics-yard",
+      "links": ["team-enquiries"],
       "surface": "concrete",
       "image": "images/locations/team-logistics-yard.webp",
       "name": "Team logistics yard",
