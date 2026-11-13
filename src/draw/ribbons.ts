@@ -30,6 +30,19 @@ const DEFAULT_STEP = 6;
 const CROSS_SPACING = 8;
 const LIFT = 0.35;
 const ROAD_TIER_STEP = 0.5;
+/**
+ * Kerbs and painted lines stand this far above the surface under them, in
+ * metres. They're sampled at different points from it, so at the same height
+ * the two cross each other by a few millimetres and flicker when seen from
+ * low down, as on a lap of the circuit.
+ */
+const KERB_RISE = 0.05;
+const PAINT_RISE = 0.03;
+/**
+ * The pit lane stands this far above the circuit's verge, which it crosses to
+ * join the track, for the same reason. The stencil keeps it off the track itself.
+ */
+const PIT_LANE_RISE = 0.02;
 
 const DASH_LENGTH = 14;
 
@@ -165,7 +178,7 @@ function kerbGeometry(
   const pushCorner = (sample: PathSample, offset: number, color: Color): void => {
     const x = sample.x - sample.dirZ * offset;
     const z = sample.z + sample.dirX * offset;
-    positions.push(x, surface.heightAt(x, z) + LIFT, z);
+    positions.push(x, surface.heightAt(x, z) + LIFT + KERB_RISE, z);
     colors.push(color.r, color.g, color.b);
   };
 
@@ -234,7 +247,14 @@ function finishLineMesh(
     segment,
   }));
   const half = location.width / 2;
-  const geometry = bandGeometry(across, { from: -half, to: half }, false, surface);
+  const geometry = bandGeometry(
+    across,
+    { from: -half, to: half },
+    false,
+    surface,
+    undefined,
+    (px, pz) => surface.heightAt(px, pz) + PAINT_RISE,
+  );
   const mesh = new Mesh(geometry, layerMaterial(FINISH_COLOR, Layer.marking));
   mesh.receiveShadow = true;
   return mesh;
@@ -259,6 +279,8 @@ function startingGrid(location: TrackLocation, surface: GroundSurface): Mesh {
         { from: -0.1, to: 0.1 },
         false,
         surface,
+        undefined,
+        (x, z) => surface.heightAt(x, z) + PAINT_RISE,
       ),
     );
   }
@@ -311,6 +333,7 @@ export function createRibbon(location: TrackLocation, surface: GroundSurface): G
     ribbon.material.stencilFunc = NotEqualStencilFunc;
     ribbon.material.stencilZPass = ReplaceStencilOp;
     ribbon.renderOrder = location.id === "circuit" ? 1 : 2;
+    if (location.id === "pit-lane") ribbon.position.y = PIT_LANE_RISE;
   }
 
   const group = new Group();
@@ -376,6 +399,8 @@ export function createRibbon(location: TrackLocation, surface: GroundSurface): G
           { from: side * (half - 0.28) - 0.1, to: side * (half - 0.28) + 0.1 },
           closed,
           surface,
+          undefined,
+          (x, z, distance) => crossing.heightAt(x, z, distance) + PAINT_RISE,
         ),
       ),
     );
@@ -390,6 +415,7 @@ export function createRibbon(location: TrackLocation, surface: GroundSurface): G
       mesh.material.stencilWriteMask = 0;
       mesh.material.stencilFunc = NotEqualStencilFunc;
       mesh.renderOrder = 3;
+      mesh.position.y = PIT_LANE_RISE;
     }
     group.add(mesh);
   }
