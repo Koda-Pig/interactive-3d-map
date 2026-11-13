@@ -14,9 +14,14 @@ const STOP =
  */
 export function createTourButtons(
   root: HTMLElement,
-  actions: { start(id: string): void; stop(): void },
+  actions: { start(id: string): void; stop(): void; setSpeed(multiplier: number): void },
 ): TourButtons {
   const buttons = [...root.querySelectorAll<HTMLButtonElement>("[data-tour]")];
+  const speed = root.querySelector<HTMLSelectElement>("[data-tour-speed]");
+  if (!speed) {
+    throw new Error("Missing tour speed selector");
+  }
+  speed.addEventListener("change", () => actions.setSpeed(Number(speed.value)));
   const names = new Map(buttons.map((button) => [button, button.textContent ?? ""]));
   let running: string | null = null;
 

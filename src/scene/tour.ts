@@ -73,6 +73,7 @@ export class CameraTour {
   /** The flight to the start of the tour, so another flight can be told apart from it. */
   private approach: number | null = null;
   private travelled = 0;
+  private speedMultiplier = 1;
   private lastTime: number | null = null;
   private readonly target = new Vector3();
   private readonly position = new Vector3();
@@ -92,6 +93,13 @@ export class CameraTour {
   /** The id of the tour under way, if any. */
   get running(): string | null {
     return this.plan?.id ?? null;
+  }
+
+  /** Changes the ride's pace without restarting it, and keeps it for the next tour. */
+  setSpeed(multiplier: number): void {
+    if (Number.isFinite(multiplier)) {
+      this.speedMultiplier = MathUtils.clamp(multiplier, 0.25, 4);
+    }
   }
 
   start(plan: TourPlan): void {
@@ -160,10 +168,14 @@ export class CameraTour {
 
     const step = this.lastTime === null ? 0 : Math.min((now - this.lastTime) / 1000, MAX_STEP);
     this.lastTime = now;
-    this.travelled = Math.min(plan.length, this.travelled + this.speedAt(this.travelled) * step);
+    const rideStep = step * this.speedMultiplier;
+    this.travelled = Math.min(
+      plan.length,
+      this.travelled + this.speedAt(this.travelled) * rideStep,
+    );
 
     this.pose(this.travelled, this.wantedTarget, this.wantedPosition);
-    const follow = 1 - Math.exp(-step / SMOOTHING);
+    const follow = 1 - Math.exp(-rideStep / SMOOTHING);
     this.target.lerp(this.wantedTarget, follow);
     this.position.lerp(this.wantedPosition, follow);
     this.controls.target.copy(this.target);

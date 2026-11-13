@@ -42,6 +42,71 @@ function setup() {
   return { camera, controls, flight, tour };
 }
 
+function beginRide(state, makePlan) {
+  state.tour.start(makePlan(state.flight));
+  state.flight.update(0);
+  state.flight.update(10000);
+  state.tour.update(10000);
+}
+
+function assertSamePose(actual, expected) {
+  assert.ok(actual.controls.target.distanceTo(expected.controls.target) < 1e-6);
+  assert.ok(actual.camera.position.distanceTo(expected.camera.position) < 1e-6);
+}
+
+for (const makePlan of [lapTour, arrivalTour]) {
+  for (const multiplier of [0.25, 0.5, 1, 1.5, 2, 3, 4]) {
+    test(`${makePlan.name} at ${multiplier}× follows the same route at the selected pace`, () => {
+      const actual = setup();
+      const expected = setup();
+      actual.tour.setSpeed(multiplier);
+      beginRide(actual, makePlan);
+      beginRide(expected, makePlan);
+      for (let frame = 1; frame <= 80; frame++) {
+        actual.tour.update(10000 + frame * 20);
+        expected.tour.update(10000 + frame * 20 * multiplier);
+      }
+      assertSamePose(actual, expected);
+    });
+  }
+}
+
+test("changing speed mid-ride keeps the camera in place and applies on the next frame", () => {
+  const actual = setup();
+  const expected = setup();
+  beginRide(actual, lapTour);
+  beginRide(expected, lapTour);
+  for (let frame = 1; frame <= 50; frame++) {
+    actual.tour.update(10000 + frame * 20);
+    expected.tour.update(10000 + frame * 20);
+  }
+  actual.tour.setSpeed(2);
+  assertSamePose(actual, expected);
+  assert.equal(actual.tour.running, "lap");
+  actual.tour.update(11020);
+  expected.tour.update(11040);
+  assertSamePose(actual, expected);
+});
+
+test("the selected speed survives stopping and switching tours", () => {
+  const actual = setup();
+  actual.tour.setSpeed(2);
+  beginRide(actual, lapTour);
+  actual.tour.stop();
+  const expected = setup();
+  // Start from the same camera pose after the interrupted tour.
+  expected.camera.position.copy(actual.camera.position);
+  expected.controls.target.copy(actual.controls.target);
+  expected.tour.setSpeed(2);
+  beginRide(actual, arrivalTour);
+  beginRide(expected, arrivalTour);
+  for (let frame = 1; frame <= 50; frame++) {
+    actual.tour.update(10000 + frame * 20);
+    expected.tour.update(10000 + frame * 20);
+  }
+  assertSamePose(actual, expected);
+});
+
 test("arrival starts on the highway just before the offramp and retains its walk", () => {
   const { flight } = setup();
   const plan = arrivalTour(flight);

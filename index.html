@@ -81,6 +81,18 @@
       <fieldset class="tours" aria-label="Tours">
         <button class="tours__button" type="button" data-tour="lap">Lap the circuit</button>
         <button class="tours__button" type="button" data-tour="arrival">Arrive for a race</button>
+        <div class="tours__speed">
+          <label for="tour-speed">Speed</label>
+          <select id="tour-speed" data-tour-speed>
+            <option value="0.25">0.25×</option>
+            <option value="0.5">0.5×</option>
+            <option value="1" selected>1×</option>
+            <option value="1.5">1.5×</option>
+            <option value="2">2×</option>
+            <option value="3">3×</option>
+            <option value="4">4×</option>
+          </select>
+        </div>
       </fieldset>
     </section>
     <p class="notice">Concept layout, for illustration only</p>

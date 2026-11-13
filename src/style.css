@@ -720,6 +720,8 @@ body {
 
 .tours {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 6px;
   min-width: 0;
   margin: 0;
@@ -731,19 +733,24 @@ body {
   display: none;
 }
 
-.tours__button {
+.tours__button,
+.tours__speed {
   display: inline-flex;
   align-items: center;
+  height: 36px;
   gap: 6px;
-  padding: 6px 11px;
+  padding: 0 12px;
   border: 0;
-  border-radius: 999px;
+  border-radius: 8px;
   background: rgb(255 255 255 / 94%);
   color: #004272;
   font: inherit;
   white-space: nowrap;
-  cursor: pointer;
   box-shadow: 0 4px 14px rgb(0 36 63 / 18%);
+}
+
+.tours__button {
+  cursor: pointer;
   transition:
     0.15s ease-out background-color,
     0.15s ease-out color;
@@ -759,9 +766,45 @@ body {
   color: #fff;
 }
 
-.tours__button:focus-visible {
+.tours__button:focus-visible,
+.tours__speed:has(select:focus-visible) {
   outline: 2px solid #1ca7ec;
   outline-offset: 1px;
+}
+
+.tours__speed {
+  position: relative;
+}
+
+.tours__speed::after {
+  content: "";
+  position: absolute;
+  right: 13px;
+  top: 13px;
+  width: 6px;
+  height: 6px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+
+.tours__speed select {
+  appearance: none;
+  width: 58px;
+  height: 100%;
+  padding: 0 16px 0 2px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.tours__speed select:focus-visible {
+  outline: none;
 }
 
 .loading {

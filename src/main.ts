@@ -301,6 +301,7 @@ const tourButtons = createTourButtons(toursElement, {
     }
   },
   stop: () => tour.stop(),
+  setSpeed: (multiplier) => tour.setSpeed(multiplier),
 });
 const tour = new CameraTour(camera, controls, flight, ground.surface, (id) => {
   tourButtons.showRunning(id);
