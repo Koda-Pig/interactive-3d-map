@@ -11,6 +11,8 @@ export const ARRIVAL_TOUR = "arrival";
 
 /** The arrival route the camera rides: from Cape Town up the N7 to the main grandstands. */
 const ARRIVAL_ROUTE = "from-cape-town";
+/** Begin just before the first highway exit waypoint. */
+const ARRIVAL_LEAD_IN = 120;
 
 /** The lap starts this far before the start-finish line, and ends this far past it. */
 const LAP_LEAD_IN = 220;
@@ -59,7 +61,9 @@ export function arrivalTour(flight: CameraFlight): TourPlan {
   }
   const legs = arrival.legs.map((leg) => ({ mode: leg.mode, route: routeAlong(leg.path, false) }));
   const route = joinRoutes(legs.map((leg) => leg.route));
-  let until = 0;
+  const [[fromX, fromZ], [exitX, exitZ]] = arrival.legs[0].path;
+  const start = Math.max(0, Math.hypot(exitX - fromX, exitZ - fromZ) - ARRIVAL_LEAD_IN);
+  let until = -start;
   const stages = legs.map(({ mode, route: leg }) => {
     until += leg.length;
     return mode === "drive"
@@ -70,8 +74,8 @@ export function arrivalTour(flight: CameraFlight): TourPlan {
   return {
     id: ARRIVAL_TOUR,
     route,
-    start: 0,
-    length: route.length,
+    start,
+    length: route.length - start,
     stages,
     finish: () =>
       flight.flyTo(

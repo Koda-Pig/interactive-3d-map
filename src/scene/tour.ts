@@ -65,7 +65,7 @@ const spherical = new Spherical();
  * Rides the camera along a route: a lap of the circuit, or the way in from the
  * N7. It first flies to the start, then follows the route, slowing for bends,
  * and hands back to the map at the end. Dragging, zooming or any other flight
- * stops it where it is.
+ * interrupts it where it is. Pressing Stop returns to the home view.
  */
 export class CameraTour {
   private plan: TourPlan | null = null;
@@ -86,7 +86,7 @@ export class CameraTour {
     private readonly surface: GroundSurface,
     private readonly onChange: (id: string | null) => void,
   ) {
-    controls.addEventListener("start", () => this.stop());
+    controls.addEventListener("start", () => this.cancel());
   }
 
   /** The id of the tour under way, if any. */
@@ -112,8 +112,17 @@ export class CameraTour {
     this.onChange(plan.id);
   }
 
-  /** Stops the tour where it is, including on its way to the start. */
+  /** Stops the tour and returns home, including on its way to the start. */
   stop(): void {
+    if (!this.plan) {
+      return;
+    }
+    this.cancel();
+    this.flight.flyHome();
+  }
+
+  /** Hands the camera back to the interaction that interrupted the tour. */
+  private cancel(): void {
     if (!this.plan) {
       return;
     }
@@ -134,7 +143,7 @@ export class CameraTour {
       const leg = this.flight.currentLeg;
       if (leg !== null && leg !== this.approach) {
         // Something else, such as a zoom button or a pick from the list, took the camera.
-        this.stop();
+        this.cancel();
         return false;
       }
       if (leg !== null) {
@@ -145,7 +154,7 @@ export class CameraTour {
       this.position.copy(this.camera.position);
     } else if (this.flight.flying) {
       // Something else, such as a zoom button or a pick from the list, took the camera.
-      this.stop();
+      this.cancel();
       return false;
     }
 
