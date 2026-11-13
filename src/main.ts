@@ -294,9 +294,8 @@ const tourButtons = createTourButtons(toursElement, {
   start: (id) => {
     hint.dismiss();
     interaction.select(null);
+    eventSwitch.select(ARRIVAL_MODE);
     if (id === ARRIVAL_TOUR) {
-      // The arrival is a race-day journey, with the routes drawn and the car parks full.
-      eventSwitch.select(ARRIVAL_MODE);
       tour.start(arrivalTour(flight));
     } else {
       tour.start(lapTour(flight));
@@ -307,6 +306,8 @@ const tourButtons = createTourButtons(toursElement, {
 });
 const tour = new CameraTour(camera, controls, flight, ground.surface, (id) => {
   tourButtons.showRunning(id);
+  labels.setTouring(id !== null);
+  needsRender = true;
   overlays.invalidate();
 });
 const playerResize = new ResizeObserver(() => {

@@ -303,7 +303,9 @@ const HINT_LINGER = 2500;
 
 /** Says how to move the map, until the visitor has started doing it. */
 export function createHint(element: HTMLElement): { dismiss(): void } {
-  element.textContent = window.matchMedia("(pointer: coarse)").matches ? TOUCH_HINT : MOUSE_HINT;
+  element.textContent = window.matchMedia("(pointer: coarse), (max-width: 600px)").matches
+    ? TOUCH_HINT
+    : MOUSE_HINT;
   let dismissed = false;
   return {
     dismiss() {

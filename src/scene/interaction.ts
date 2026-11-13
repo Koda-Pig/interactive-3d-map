@@ -77,7 +77,7 @@ export class MapInteraction {
     this.parts.onSelect(location);
     this.refresh();
     if (location && fly) {
-      this.parts.flight.frame(new Box3().setFromObject(this.objectOf(location)));
+      this.parts.flight.frame(new Box3().setFromObject(this.objectOf(location)), location.id);
     }
   }
 

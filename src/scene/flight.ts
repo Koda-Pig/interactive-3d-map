@@ -40,6 +40,18 @@ const MAP_AREA = new Box3(
   new Vector3(MAP_HALF_SIZE, Number.POSITIVE_INFINITY, MAP_HALF_SIZE),
 );
 
+/** Camera-side bearings, measured from +Z toward +X, in degrees. */
+const LANDMARK_VIEWS: ReadonlyMap<string, { bearing: number; elevation: number }> = new Map([
+  ["pit-conference-building", { bearing: -65, elevation: 32 }],
+  ["grandstand-a", { bearing: 65, elevation: 32 }],
+  ["arrival-plaza", { bearing: -35, elevation: 42 }],
+  ["expo-centre", { bearing: -35, elevation: 36 }],
+  ["lake", { bearing: -45, elevation: 38 }],
+  ["hotel-waterfront", { bearing: -145, elevation: 28 }],
+  ["hotel-lakeside", { bearing: -145, elevation: 28 }],
+  ["hotel-promenade", { bearing: -145, elevation: 28 }],
+]);
+
 interface Leg {
   readonly fromTarget: Vector3;
   readonly toTarget: Vector3;
@@ -107,15 +119,18 @@ export class CameraFlight {
 
   /**
    * Flies to frame a box in whichever clear part of the map shows it largest,
-   * keeping the direction the camera is facing.
+   * using a landmark's preferred angle when one is available.
    */
-  frame(bounds: Box3): void {
+  frame(bounds: Box3, locationId?: string): void {
     const reachable = bounds.clone().intersect(MAP_AREA);
     const centre = reachable.getCenter(new Vector3());
     const size = reachable.getSize(new Vector3());
     const current = this.currentView();
-    const phi = MathUtils.clamp(current.phi, MIN_FRAME_TILT, MAX_FRAME_TILT);
-    const { theta } = current;
+    const preferred = locationId ? LANDMARK_VIEWS.get(locationId) : undefined;
+    const phi = preferred
+      ? MathUtils.degToRad(90 - preferred.elevation)
+      : MathUtils.clamp(current.phi, MIN_FRAME_TILT, MAX_FRAME_TILT);
+    const theta = preferred ? MathUtils.degToRad(preferred.bearing) : current.theta;
 
     // How far the box reaches either side of its centre across the screen and
     // into it, turned to the way the camera faces. Seen at a tilt, the depth

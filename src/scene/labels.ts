@@ -9,7 +9,8 @@ import type { Box } from "../ui/overlays.ts";
 import type { Precincts } from "./precincts.ts";
 
 /** How close the camera must be before a minor label shows, in metres. */
-const MINOR_LABEL_RANGE = 1500;
+const MINOR_LABEL_RANGE = 950;
+const OVERVIEW_LABELS = new Set(["circuit", "pit-conference-building", "lake", "expo-centre"]);
 const ANCHOR_LIFT = 4;
 const PATH_STEP = 20;
 /** Clear space kept around each label, in pixels. */
@@ -73,6 +74,12 @@ export class SiteLabels {
 
   private readonly labels: Label[];
   private active: ReadonlySet<Location> = new Set();
+  private touring = false;
+
+  /** Keep the route clear during a guided camera ride. */
+  setTouring(touring: boolean): void {
+    this.touring = touring;
+  }
   /**
    * The selected thing's bounds, which minor labels keep clear of so they
    * don't sit on its outline. Tracks and roads span the site, so they have none.
@@ -170,9 +177,10 @@ export class SiteLabels {
         label.top + label.height <= viewHeight;
       const inRange =
         active ||
-        label.location.major === true ||
+        OVERVIEW_LABELS.has(label.location.id) ||
         label.anchor.distanceTo(camera.position) <= MINOR_LABEL_RANGE;
       const wanted =
+        !this.touring &&
         this.precincts.isShown(label.location.category) &&
         (active || !this.precincts.isMuted(label.location)) &&
         onScreen &&
