@@ -72,9 +72,9 @@ body {
     sans-serif;
   white-space: nowrap;
   transition:
-    opacity 150ms ease,
-    background-color 150ms ease,
-    color 150ms ease;
+    opacity 150ms,
+    background-color 150ms,
+    color 150ms;
 }
 
 .label--major {
@@ -154,6 +154,7 @@ body {
   font-size: 22px;
   line-height: 1;
   cursor: pointer;
+  transition: 0.15s ease-out background-color;
 }
 
 .info-panel__close:hover {
@@ -345,7 +346,7 @@ body {
   transition:
     left var(--sidebar-duration) var(--sidebar-ease),
     max-width var(--sidebar-duration) var(--sidebar-ease),
-    opacity 400ms ease;
+    opacity 400ms;
   margin: 0;
   padding: 6px 12px;
   border-radius: 8px;
@@ -630,7 +631,7 @@ body:has(.tours__playing:not([hidden])) .hint {
      together. */
   .sidebar__bar > * {
     transition:
-      opacity calc(var(--sidebar-duration) * 0.6) ease calc(var(--sidebar-duration) * 0.15),
+      opacity calc(var(--sidebar-duration) * 0.6) calc(var(--sidebar-duration) * 0.15),
       transform var(--sidebar-duration) var(--sidebar-ease),
       background-color 0s;
   }
@@ -638,7 +639,7 @@ body:has(.tours__playing:not([hidden])) .hint {
   .sidebar-closed .sidebar__bar > * {
     opacity: 0;
     transition:
-      opacity calc(var(--sidebar-duration) * 0.4) ease,
+      opacity calc(var(--sidebar-duration) * 0.4),
       transform var(--sidebar-duration) var(--sidebar-ease);
   }
 
@@ -659,7 +660,7 @@ body:has(.tours__playing:not([hidden])) .hint {
     visibility: hidden;
     pointer-events: none;
     transition:
-      opacity calc(var(--sidebar-duration) * 0.3) ease,
+      opacity calc(var(--sidebar-duration) * 0.3),
       background-color 0.15s ease-out,
       visibility 0s var(--sidebar-duration);
   }
@@ -669,7 +670,7 @@ body:has(.tours__playing:not([hidden])) .hint {
     visibility: visible;
     pointer-events: auto;
     transition:
-      opacity calc(var(--sidebar-duration) * 0.5) ease calc(var(--sidebar-duration) * 0.4),
+      opacity calc(var(--sidebar-duration) * 0.5) calc(var(--sidebar-duration) * 0.4),
       background-color 0.15s ease-out,
       visibility 0s;
   }
@@ -836,6 +837,10 @@ body:has(.tours__playing:not([hidden])) .hint {
   color: #fff;
   font: inherit;
   cursor: pointer;
+  transition: 0.15s ease-out background-color;
+}
+.event-switch__info:hover {
+  background: rgb(255 255 255 / 14%);
 }
 .event-switch__info[hidden] {
   display: none;
@@ -975,6 +980,7 @@ body:has(.tours__playing:not([hidden])) .hint {
   color: #fff;
   font: inherit;
   cursor: pointer;
+  transition: 0.15s ease-out background-color;
 }
 .tours__stop:hover {
   background: #00678c;
@@ -999,6 +1005,7 @@ body:has(.tours__playing:not([hidden])) .hint {
 }
 
 .tours__button {
+  border: 1px solid color-mix(in srgb, currentColor 40%, transparent);
   cursor: pointer;
   transition:
     0.15s ease-out background-color,
@@ -1060,7 +1067,7 @@ html.intro :is(.sidebar, .event-switch, .tour-player, .notice, .map-controls, .h
   pointer-events: none;
 }
 html.intro-done :is(.sidebar, .event-switch, .tour-player, .notice, .map-controls, .labels) {
-  animation: interface-in 800ms ease both;
+  animation: interface-in 800ms both;
 }
 @keyframes interface-in {
   from {
@@ -1146,6 +1153,7 @@ html.intro-done :is(.sidebar, .event-switch, .tour-player, .notice, .map-control
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
+  transition: 0.15s ease-out background-color;
 }
 
 .sidebar__close {
@@ -1159,6 +1167,7 @@ html.intro-done :is(.sidebar, .event-switch, .tour-player, .notice, .map-control
   font-size: 22px;
   line-height: 1;
   cursor: pointer;
+  transition: 0.15s ease-out background-color;
 }
 
 .sidebar__close:hover {
@@ -1257,7 +1266,7 @@ html.intro-done :is(.sidebar, .event-switch, .tour-player, .notice, .map-control
   border-bottom: 2px solid currentcolor;
   content: "";
   transform: translateX(-2px) rotate(-45deg);
-  transition: transform 150ms ease;
+  transition: transform 150ms;
 }
 
 .sidebar__group-expand[aria-expanded="true"]::before {
@@ -1296,7 +1305,7 @@ html.intro-done :is(.sidebar, .event-switch, .tour-player, .notice, .map-control
   background: #8496a1;
   appearance: none;
   cursor: pointer;
-  transition: background 150ms ease;
+  transition: background-color 150ms;
 }
 
 .sidebar__switch::before {
@@ -1308,7 +1317,7 @@ html.intro-done :is(.sidebar, .event-switch, .tour-player, .notice, .map-control
   border-radius: 50%;
   background: #fff;
   content: "";
-  transition: transform 150ms ease;
+  transition: transform 150ms;
 }
 
 .sidebar__switch:checked {
