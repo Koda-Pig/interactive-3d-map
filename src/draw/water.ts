@@ -13,6 +13,7 @@ import {
   Vector3,
 } from "three";
 import { boundsOf, type Point, signedDistance } from "../layout/polygon.ts";
+import { sliceOver, sliceStart, yieldToBrowser } from "../pace.ts";
 
 /** How far from the shore the water reaches its deepest colour, in metres. */
 const SHORE_DEPTH = 60;
@@ -41,7 +42,9 @@ export function setWaterTime(seconds: number): void {
  * A map of how far each point is from the shore, as a share of `SHORE_DEPTH`,
  * with the box it covers. 0 is the water's edge and 1 is deep water.
  */
-function shoreMap(outline: readonly Point[]): { texture: DataTexture; box: number[] } {
+async function shoreMap(
+  outline: readonly Point[],
+): Promise<{ texture: DataTexture; box: number[] }> {
   const bounds = boundsOf(outline);
   const width = bounds.maxX - bounds.minX;
   const depth = bounds.maxZ - bounds.minZ;
@@ -51,6 +54,9 @@ function shoreMap(outline: readonly Point[]): { texture: DataTexture; box: numbe
   const minX = bounds.minX - pixel;
   const minZ = bounds.minZ - pixel;
   const pixels = new Uint8Array(columns * rows * 4);
+  // One distance test per texel per outline point, which for a big lake runs
+  // to millions, so the rows pause to keep the loading screen animating.
+  let slice = sliceStart();
   for (let row = 0; row < rows; row += 1) {
     for (let column = 0; column < columns; column += 1) {
       const inside = -signedDistance(
@@ -61,6 +67,10 @@ function shoreMap(outline: readonly Point[]): { texture: DataTexture; box: numbe
       const offset = (row * columns + column) * 4;
       pixels[offset] = Math.round(Math.min(1, Math.max(0, inside / SHORE_DEPTH)) * 255);
       pixels[offset + 3] = 255;
+    }
+    if (sliceOver(slice)) {
+      await yieldToBrowser();
+      slice = sliceStart();
     }
   }
   const texture = new DataTexture(pixels, columns, rows);
@@ -205,16 +215,16 @@ export interface WaterOptions {
 }
 
 /** A water surface for an outline. Pools get small ripples and no foam. */
-export function createWaterMaterial({
+export async function createWaterMaterial({
   color,
   outline,
   ripples,
   polygonOffset,
-}: WaterOptions): WaterMaterial {
+}: WaterOptions): Promise<WaterMaterial> {
   const base = new Color(color);
   const bounds = boundsOf(outline);
   const pool = Math.max(bounds.maxX - bounds.minX, bounds.maxZ - bounds.minZ) < POOL_SIDE;
-  const { texture, box } = shoreMap(outline);
+  const { texture, box } = await shoreMap(outline);
   const shallow = base.clone().lerp(new Color("#7ED6CF"), pool ? 0.25 : 0.4);
   return new WaterMaterial(
     { color, roughness: 0.07, metalness: 0, ...polygonOffset },

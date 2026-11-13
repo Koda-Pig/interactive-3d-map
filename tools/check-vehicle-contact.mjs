@@ -25,7 +25,7 @@ try {
     const { Traffic } = await import("/src/draw/traffic.ts");
     const { circuitRace } = await import("/src/layout/race.ts");
     const race = circuitRace();
-    const { surface } = createGround(1, 64);
+    const { surface } = await createGround(1, 64);
     const track = createRibbon(
       layout.locations.find((l) => l.id === "circuit"),
       surface,

@@ -150,9 +150,12 @@ const sunShadow = addLighting(scene, quality);
 const sky = createSky(renderer, SUN_DIRECTION, kit.get(TABLE_MOUNTAIN_MODEL));
 scene.environment = sky.environment;
 scene.environmentIntensity = ENVIRONMENT_INTENSITY;
-const ground = createGround(renderer.capabilities.getMaxAnisotropy(), quality.fieldTextureSize);
-const site = createSite(ground.surface, kit);
-const scenery = createScenery(kit, ground.surface, quality);
+const ground = await createGround(
+  renderer.capabilities.getMaxAnisotropy(),
+  quality.fieldTextureSize,
+);
+const site = await createSite(ground.surface, kit);
+const scenery = await createScenery(kit, ground.surface, quality);
 const outline = new SelectionOutline();
 const raceCarModel = kit.get(RACE_CAR);
 const shuttleModel = kit.get(SHUTTLE);

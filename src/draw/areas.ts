@@ -9,6 +9,7 @@ import {
 import type { AreaLocation } from "../layout/locations.ts";
 import { resolveOutline } from "../layout/path.ts";
 import { centreOf } from "../layout/polygon.ts";
+import { sliceOver, sliceStart, yieldToBrowser } from "../pace.ts";
 import type { GroundSurface } from "../terrain/ground.ts";
 import { heightAt } from "../terrain/height.ts";
 import {
@@ -24,33 +25,45 @@ const STALL_LIFT = 0.02;
 /** The lines' colour. The stall texture darkens it to asphalt between them. */
 const STALL_PAINT = "#EDEFF0";
 
+/** One corner of a draped triangle, in metres. */
+type Vertex = readonly [number, number];
+
 /** Subdivide before projection so wide grass reserves follow the terrain mesh. */
-function drape(source: ShapeGeometry, surface: GroundSurface, lift: number): BufferGeometry {
+async function drape(
+  source: ShapeGeometry,
+  surface: GroundSurface,
+  lift: number,
+): Promise<BufferGeometry> {
   const flat = source.toNonIndexed();
   const vertices = flat.getAttribute("position");
   const positions: number[] = [];
-  type Vertex = readonly [number, number];
-  const midpoint = (a: Vertex, b: Vertex): Vertex => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
-  const triangle = (a: Vertex, b: Vertex, c: Vertex): void => {
-    const edge = (u: Vertex, v: Vertex): number => Math.hypot(u[0] - v[0], u[1] - v[1]);
+  // The subdivision runs from a work stack rather than recursion, so it can
+  // pause between triangles: one wide triangle can explode into hundreds of
+  // thousands of them, which would otherwise freeze the loading screen.
+  const edge = (u: Vertex, v: Vertex): number => Math.hypot(u[0] - v[0], u[1] - v[1]);
+  const pending: [Vertex, Vertex, Vertex][] = [];
+  for (let i = 0; i < vertices.count; i += 3) {
+    pending.push([
+      [vertices.getX(i), vertices.getZ(i)],
+      [vertices.getX(i + 1), vertices.getZ(i + 1)],
+      [vertices.getX(i + 2), vertices.getZ(i + 2)],
+    ]);
+  }
+  let slice = sliceStart();
+  while (pending.length > 0) {
+    const [a, b, c] = pending.pop() as [Vertex, Vertex, Vertex];
     if (Math.max(edge(a, b), edge(b, c), edge(c, a)) > 20) {
       const ab = midpoint(a, b),
         bc = midpoint(b, c),
         ca = midpoint(c, a);
-      triangle(a, ab, ca);
-      triangle(ab, b, bc);
-      triangle(ca, bc, c);
-      triangle(ab, bc, ca);
-      return;
+      pending.push([a, ab, ca], [ab, b, bc], [ca, bc, c], [ab, bc, ca]);
+    } else {
+      for (const [x, z] of [a, b, c]) positions.push(x, surface.heightAt(x, z) + lift, z);
     }
-    for (const [x, z] of [a, b, c]) positions.push(x, surface.heightAt(x, z) + lift, z);
-  };
-  for (let i = 0; i < vertices.count; i += 3) {
-    triangle(
-      [vertices.getX(i), vertices.getZ(i)],
-      [vertices.getX(i + 1), vertices.getZ(i + 1)],
-      [vertices.getX(i + 2), vertices.getZ(i + 2)],
-    );
+    if (sliceOver(slice)) {
+      await yieldToBrowser();
+      slice = sliceStart();
+    }
   }
   flat.dispose();
   source.dispose();
@@ -65,6 +78,11 @@ function drape(source: ShapeGeometry, surface: GroundSurface, lift: number): Buf
   geometry.setAttribute("uv", new BufferAttribute(uvs, 2));
   geometry.computeVertexNormals();
   return geometry;
+}
+
+/** The midpoint of two vertices, shared by the subdivision above. */
+function midpoint(a: Vertex, b: Vertex): Vertex {
+  return [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
 }
 
 /** The marked rows of a car park, one quad per block, just above its surface. */
@@ -110,19 +128,19 @@ function createStallBlocks(park: AreaLocation, y: number): Mesh {
   return mesh;
 }
 
-export function createArea(location: AreaLocation, surface: GroundSurface): Mesh {
+export async function createArea(location: AreaLocation, surface: GroundSurface): Promise<Mesh> {
   const outline = resolveOutline(location.footprint);
   const [x, z] = centreOf(outline);
 
   const flat = new ShapeGeometry(new Shape(outline.map(([px, pz]) => new Vector2(px, -pz))));
   flat.rotateX(-Math.PI / 2);
   const lift = LIFT + (location.overlay ? 0.03 : 0);
-  const geometry = location.followTerrain ? drape(flat, surface, lift) : flat;
+  const geometry = location.followTerrain ? await drape(flat, surface, lift) : flat;
   if (!location.followTerrain) geometry.translate(0, heightAt(x, z) + lift, 0);
 
   const material =
     location.type === "water"
-      ? waterMaterial(location.color, outline)
+      ? await waterMaterial(location.color, outline)
       : layerMaterial(
           location.color,
           Layer.area + (location.overlay ? 0.5 : 0),

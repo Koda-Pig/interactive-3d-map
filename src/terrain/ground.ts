@@ -16,6 +16,7 @@ import {
   Vector3,
 } from "three";
 import { createFieldDetailTexture } from "../draw/textures.ts";
+import { sliceOver, sliceStart, yieldToBrowser } from "../pace.ts";
 import { GROUND_HALF_SIZE, MAP_HALF_SIZE } from "../site.ts";
 import { writeFieldColor } from "./fields.ts";
 import { heightAt } from "./height.ts";
@@ -97,12 +98,17 @@ export class GroundSurface {
   }
 }
 
-function sampleHeights(lines: Float64Array): Float32Array {
+async function sampleHeights(lines: Float64Array): Promise<Float32Array> {
   const count = lines.length;
   const heights = new Float32Array(count * count);
+  let slice = sliceStart();
   for (let row = 0; row < count; row += 1) {
     for (let column = 0; column < count; column += 1) {
       heights[row * count + column] = heightAt(lines[column], lines[row]);
+    }
+    if (sliceOver(slice)) {
+      await yieldToBrowser();
+      slice = sliceStart();
     }
   }
   return heights;
@@ -166,13 +172,14 @@ function pieceGeometry(
   return geometry;
 }
 
-function buildGeometry(lines: Float64Array, heights: Float32Array): BufferGeometry {
+async function buildGeometry(lines: Float64Array, heights: Float32Array): Promise<BufferGeometry> {
   const count = lines.length;
   const last = count - 1;
   const positions = new Float32Array(count * count * 3);
   const uvs = new Float32Array(count * count * 2);
   const indices = new Uint32Array(last * last * 6);
 
+  let slice = sliceStart();
   for (let row = 0; row < count; row += 1) {
     for (let column = 0; column < count; column += 1) {
       const vertex = row * count + column;
@@ -181,6 +188,10 @@ function buildGeometry(lines: Float64Array, heights: Float32Array): BufferGeomet
       positions[vertex * 3 + 2] = lines[row];
       uvs[vertex * 2] = column / last;
       uvs[vertex * 2 + 1] = row / last;
+    }
+    if (sliceOver(slice)) {
+      await yieldToBrowser();
+      slice = sliceStart();
     }
   }
 
@@ -191,6 +202,10 @@ function buildGeometry(lines: Float64Array, heights: Float32Array): BufferGeomet
       const c = a + count;
       const d = c + 1;
       indices.set([a, c, b, b, c, d], (row * last + column) * 6);
+    }
+    if (sliceOver(slice)) {
+      await yieldToBrowser();
+      slice = sliceStart();
     }
   }
 
@@ -206,7 +221,7 @@ function buildGeometry(lines: Float64Array, heights: Float32Array): BufferGeomet
  * Bakes the farmland colours. Texture coordinates follow the grid lines, so
  * most of the texels land on the map, where the camera spends its time.
  */
-function bakeFieldTexture(lines: Float64Array, size: number): DataTexture {
+async function bakeFieldTexture(lines: Float64Array, size: number): Promise<DataTexture> {
   const last = lines.length - 1;
   const worldAtTexel = new Float64Array(size);
   for (let texel = 0; texel < size; texel += 1) {
@@ -216,9 +231,14 @@ function bakeFieldTexture(lines: Float64Array, size: number): DataTexture {
   }
 
   const pixels = new Uint8Array(size * size * 4);
+  let slice = sliceStart();
   for (let row = 0; row < size; row += 1) {
     for (let column = 0; column < size; column += 1) {
       writeFieldColor(worldAtTexel[column], worldAtTexel[row], pixels, (row * size + column) * 4);
+    }
+    if (sliceOver(slice)) {
+      await yieldToBrowser();
+      slice = sliceStart();
     }
   }
 
@@ -260,26 +280,31 @@ function addFieldDetail(material: MeshLambertMaterial, detail: Texture): void {
   };
 }
 
-export function createGround(
+export async function createGround(
   maxAnisotropy: number,
   textureSize: number,
-): { mesh: Group; surface: GroundSurface } {
+): Promise<{ mesh: Group; surface: GroundSurface }> {
   const lines = buildGridLines();
-  const heights = sampleHeights(lines);
-  const map = bakeFieldTexture(lines, textureSize);
+  const heights = await sampleHeights(lines);
+  const map = await bakeFieldTexture(lines, textureSize);
   map.anisotropy = maxAnisotropy;
 
   const material = new MeshLambertMaterial({ map });
   addFieldDetail(material, createFieldDetailTexture(maxAnisotropy));
 
-  const whole = buildGeometry(lines, heights);
+  const whole = await buildGeometry(lines, heights);
   const mesh = new Group();
   mesh.name = "ground";
+  let slice = sliceStart();
   for (let row = 0; row < lines.length - 1; row += PIECE_CELLS) {
     for (let column = 0; column < lines.length - 1; column += PIECE_CELLS) {
       const piece = new Mesh(pieceGeometry(whole, lines, heights, column, row), material);
       piece.receiveShadow = true;
       mesh.add(piece);
+    }
+    if (sliceOver(slice)) {
+      await yieldToBrowser();
+      slice = sliceStart();
     }
   }
   return { mesh, surface: new GroundSurface(lines, heights) };

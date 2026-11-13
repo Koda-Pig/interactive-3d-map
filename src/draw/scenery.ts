@@ -42,6 +42,7 @@ import type { Point } from "../layout/polygon.ts";
 import { boundsOf, centreOf, outsetPolygon, signedDistance } from "../layout/polygon.ts";
 import { raceGrid } from "../layout/race-grid.ts";
 import { createTrackSafety } from "../layout/track-safety.ts";
+import { sliceOver, sliceStart, yieldToBrowser } from "../pace.ts";
 import type { Quality } from "../scene/quality.ts";
 import { MAP_HALF_SIZE, SITE_SIZE } from "../site.ts";
 import { fieldEdgeX, siteEdgeDistance, siteEdgePoint } from "../terrain/fields.ts";
@@ -2230,7 +2231,11 @@ function addHidden(group: Group, meshes: readonly Object3D[]): readonly Object3D
 }
 
 /** Places all the scenery by rule, the same way on every load. */
-export function createScenery(kit: Kit, surface: GroundSurface, quality: Quality): Scenery {
+export async function createScenery(
+  kit: Kit,
+  surface: GroundSurface,
+  quality: Quality,
+): Promise<Scenery> {
   const baked = new Map<string, BufferGeometry>();
   const model = (file: string): BufferGeometry | undefined => {
     if (!baked.has(file)) {
@@ -2261,21 +2266,45 @@ export function createScenery(kit: Kit, surface: GroundSurface, quality: Quality
 
   const trees = new Instances();
   const farTrees = new Instances();
+  // Each planting step is a burst of placement work, so the pauses between
+  // them are where the loading screen gets its frames.
+  let slice = sliceStart();
+  const pause = async (): Promise<void> => {
+    if (sliceOver(slice)) {
+      await yieldToBrowser();
+      slice = sliceStart();
+    }
+  };
+  await pause();
   plantSiteHedge(context, trees);
+  await pause();
   plantAvenues(context, trees);
+  await pause();
   plantAreas(context, trees);
+  await pause();
   plantFanWalk(context, trees);
+  await pause();
   plantFarmland(context, trees);
+  await pause();
   scatterUnderbrush(context, trees);
+  await pause();
   plantWindbreaks(context, trees, farTrees, createFarTree());
+  await pause();
   placeFarmsteads(context, trees);
+  await pause();
   plantFieldEdges(land, trees);
+  await pause();
   plantCarParkShade(land, trees);
+  await pause();
   plantPrecinctGardens(land, trees);
+  await pause();
   plantRoadsides(land, trees, footprints);
+  await pause();
   plantParkland(land, trees);
+  await pause();
   const vines = new Instances();
   plantVineyards(land, vines);
+  await pause();
 
   // The quay draws from its own stream too, and adds its trees to the rest.
   const waterfront = new Instances();

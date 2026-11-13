@@ -15,7 +15,7 @@ import {
   createSurfaceTexture,
   type SurfaceFinish,
 } from "./textures.ts";
-import { createWaterMaterial } from "./water.ts";
+import { createWaterMaterial, type WaterMaterial } from "./water.ts";
 
 /**
  * Flat layers lie almost on top of each other, so depth precision alone can't
@@ -130,7 +130,7 @@ export function parkingStallTexture(): Texture {
 let ripples: Texture | null = null;
 
 /** A water surface for an outline, sharing one ripple texture with every other. */
-export function waterMaterial(color: string, outline: readonly Point[]): MeshStandardMaterial {
+export function waterMaterial(color: string, outline: readonly Point[]): Promise<WaterMaterial> {
   ripples ??= createRippleTexture(ANISOTROPY);
   return createWaterMaterial({
     color,
