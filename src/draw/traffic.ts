@@ -1,8 +1,11 @@
 import type { BufferGeometry, Texture } from "three";
 import { Color, InstancedMesh, MeshLambertMaterial, Object3D } from "three";
+import { layout } from "../layout/locations.ts";
 import type { Route } from "../layout/route.ts";
 import { pointAt, routeOf } from "../layout/route.ts";
 import type { GroundSurface } from "../terrain/ground.ts";
+import { trackSurface } from "./ribbons.ts";
+import { seatVehicle, tyreContacts, vehicleSlope } from "./vehicle-pose.ts";
 
 /** Race cars on track at once, spread round the lap. */
 const RACE_CARS = 8;
@@ -26,16 +29,19 @@ const placer = new Object3D();
 /** Vehicles that drive along a route, drawn in one call. */
 class Convoy {
   readonly mesh: InstancedMesh;
+  private readonly contacts;
 
   constructor(
     geometry: BufferGeometry,
     private readonly route: Route,
     private readonly speed: number,
-    private readonly surface: GroundSurface,
+    private readonly surface: Pick<GroundSurface, "heightAt">,
     private readonly lift: number,
     private readonly lane: number,
     tints: readonly Color[],
+    private readonly seatOnSurface = false,
   ) {
+    this.contacts = tyreContacts(geometry);
     this.mesh = new InstancedMesh(
       geometry,
       new MeshLambertMaterial({ vertexColors: true }),
@@ -59,7 +65,11 @@ class Convoy {
       const x = point.x - point.dirZ * this.lane;
       const z = point.z + point.dirX * this.lane;
       placer.position.set(x, this.surface.heightAt(x, z) + this.lift, z);
-      placer.rotation.set(0, Math.atan2(point.dirX, point.dirZ), 0);
+      const yaw = Math.atan2(point.dirX, point.dirZ);
+      const slope = vehicleSlope((px, pz) => this.surface.heightAt(px, pz), x, z, yaw);
+      placer.rotation.set(slope.pitch, yaw, slope.tilt, "YXZ");
+      if (this.seatOnSurface)
+        seatVehicle(placer, (px, pz) => this.surface.heightAt(px, pz), this.contacts);
       placer.updateMatrix();
       this.mesh.setMatrixAt(index, placer.matrix);
     }
@@ -93,7 +103,18 @@ export class Traffic {
     const carTints = Array.from({ length: RACE_CARS }, (_, index) =>
       new Color().setHSL(index / RACE_CARS, 0.55, 0.55),
     );
-    this.cars = new Convoy(raceCar, routeOf("circuit"), RACE_SPEED, surface, 0.35, 0, carTints);
+    const circuit = layout.locations.find((location) => location.id === "circuit");
+    if (circuit?.type !== "track") throw new Error("Missing circuit");
+    this.cars = new Convoy(
+      raceCar,
+      routeOf("circuit"),
+      RACE_SPEED,
+      trackSurface(circuit, surface),
+      0,
+      0,
+      carTints,
+      true,
+    );
     const busTints = Array.from({ length: SHUTTLES }, () => new Color(1, 1, 1));
     this.buses = new Convoy(
       shuttle,

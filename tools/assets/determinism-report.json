@@ -2,7 +2,7 @@
   "algorithm": "SHA-256",
   "matchedFiles": 83,
   "hashes": {
-    "public/models/manifest.json": "6b42afab33804e610373773ef899fd219fc9b0b16475ee40da045874143b946d",
+    "public/models/manifest.json": "85f7419748549032a18a1fa1edc8a4d7bf72ebe82fdf616632b2624fda940072",
     "public/models/racing/pit-conference-building.glb": "d203408606323e2a90cfef603586632ce22925a242ebd3f0f7ad8abec0e9caac",
     "public/models/racing/grandstand-bay-covered.glb": "96764f1e56489cea8617f767e4b958bf87a787f4110949450d2339b5fe594011",
     "public/models/racing/grandstand-bay-open.glb": "f8d19a0f3dd9cf60b67608878cf61aa01428072e067717414960ceef2565353f",
@@ -57,7 +57,7 @@
     "public/models/props/barrier-segment.glb": "601aa66cbbc4e69d50ccf870cbb723488ec8704fd93a654c73d488cb98dd8cd8",
     "public/models/props/hoarding-blank.glb": "0c9b210bcfe266610dc1f7750d1391dc5624844c77549e8a9dca120b6ca9c420",
     "public/models/props/food-stall.glb": "890b6f48b7e4ea09b5b053360a240926bc1fc6133f871f99b12f42e75acbcf14",
-    "public/models/props/race-car-generic.glb": "da43a2c6cc332e691738c936b9406404c8abbd08848139bfd02ad1bcccb0b828",
+    "public/models/props/race-car-generic.glb": "656243b3173b71dab0aa7fac7d7063462d8eeeb28bd3014aab4cf3c2d6362f99",
     "public/models/props/car-parked.glb": "7755889f6234fa74b788613a8147767e52b8197cb4dc9aaf5e90be677a59d08f",
     "public/models/props/shuttle-bus.glb": "417db4afb54832f3d780608d730b1ee9546d2de4bc9d13f9559372240b36f57a",
     "public/models/props/light-aircraft.glb": "ab7484cc7c78141851fb01c18d9dbeaaebf0047ede14722a46dd84e9366dc115",

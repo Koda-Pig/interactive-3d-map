@@ -3,6 +3,7 @@ import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import type { TrackLocation } from "../layout/locations.ts";
 import type { PathSample, PathSegment } from "../layout/path.ts";
 import { resolvePath, samplePath } from "../layout/path.ts";
+import { GRID_LENGTH, GRID_WIDTH, raceGrid } from "../layout/race-grid.ts";
 import { roadTier } from "../layout/road-order.ts";
 import { createTrackSafety } from "../layout/track-safety.ts";
 import type { GroundSurface } from "../terrain/ground.ts";
@@ -14,6 +15,7 @@ import {
   markSurround,
   vertexColorMaterial,
 } from "./materials.ts";
+import { TriangleSurface } from "./triangle-surface.ts";
 
 const ASPHALT_TILE_LENGTH = 9;
 const DEFAULT_STEP = 6;
@@ -230,31 +232,18 @@ function finishLineMesh(
   return mesh;
 }
 
-function startingGrid(
-  samples: readonly PathSample[],
-  location: TrackLocation,
-  surface: GroundSurface,
-  [lineX, lineZ]: readonly [number, number],
-): Mesh {
-  const finish = samples.reduce((best, sample) =>
-    Math.hypot(sample.x - lineX, sample.z - lineZ) < Math.hypot(best.x - lineX, best.z - lineZ)
-      ? sample
-      : best,
-  );
+function startingGrid(location: TrackLocation, surface: GroundSurface): Mesh {
   const geometries: BufferGeometry[] = [];
-  for (let row = 0; row < 10; row += 1) {
-    const side = row % 2 === 0 ? -1 : 1;
-    const along = -(row * 10 + 8);
-    const across = (side * location.width) / 4;
+  for (const slot of raceGrid(location)) {
     const points = [
-      [along - 5, across - 1],
-      [along, across - 1],
-      [along, across + 1],
-      [along - 5, across + 1],
+      [-GRID_LENGTH / 2, -GRID_WIDTH / 2],
+      [GRID_LENGTH / 2, -GRID_WIDTH / 2],
+      [GRID_LENGTH / 2, GRID_WIDTH / 2],
+      [-GRID_LENGTH / 2, GRID_WIDTH / 2],
     ];
     const path = points.map(([a, b]): readonly [number, number] => [
-      finish.x + finish.dirX * a - finish.dirZ * b,
-      finish.z + finish.dirZ * a + finish.dirX * b,
+      slot.x + slot.dirX * a - slot.dirZ * b,
+      slot.z + slot.dirZ * a + slot.dirX * b,
     ]);
     geometries.push(
       bandGeometry(
@@ -376,8 +365,24 @@ export function createRibbon(location: TrackLocation, surface: GroundSurface): G
   if (location.startFinish) {
     group.add(
       finishLineMesh(samples, location, surface, location.startFinish),
-      startingGrid(samples, location, surface, location.startFinish),
+      startingGrid(location, surface),
     );
   }
   return group;
+}
+
+/** Uses the same sampling, cross sections and triangulation as the visible track. */
+export function trackSurface(location: TrackLocation, surface: GroundSurface): TriangleSurface {
+  const samples = samplePath(
+    resolvePath(location.path, location.closed ?? false),
+    location.step ?? DEFAULT_STEP,
+    location.closed ?? false,
+  );
+  const geometry = bandGeometry(
+    samples,
+    { from: -location.width / 2, to: location.width / 2 },
+    location.closed ?? false,
+    surface,
+  );
+  return new TriangleSurface(geometry);
 }

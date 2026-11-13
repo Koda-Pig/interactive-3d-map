@@ -40,6 +40,7 @@ import type { PathSample } from "../layout/path.ts";
 import { resolveOutline, resolvePath, samplePath } from "../layout/path.ts";
 import type { Point } from "../layout/polygon.ts";
 import { boundsOf, centreOf, outsetPolygon, signedDistance } from "../layout/polygon.ts";
+import { raceGrid } from "../layout/race-grid.ts";
 import { createTrackSafety } from "../layout/track-safety.ts";
 import type { Quality } from "../scene/quality.ts";
 import { MAP_HALF_SIZE, SITE_SIZE } from "../site.ts";
@@ -50,6 +51,7 @@ import { hash2, noise2 } from "../terrain/noise.ts";
 import { createContactShadows } from "./contact-shadows.ts";
 import type { Kit } from "./kit.ts";
 import { bakedGeometry } from "./kit.ts";
+import { vehicleSlope } from "./vehicle-pose.ts";
 
 const TREES = {
   gum: ["nature/tree-gum-1.glb", "nature/tree-gum-2.glb", "nature/tree-gum-3.glb"],
@@ -256,6 +258,7 @@ interface Placement {
   readonly y: number;
   readonly z: number;
   readonly yaw?: number;
+  readonly pitch?: number;
   readonly scale?: number;
   /** Tips the model's X axis up by this many radians, to follow a slope. */
   readonly tilt?: number;
@@ -322,7 +325,7 @@ class Instances {
 
   add(
     geometry: BufferGeometry,
-    { x, y, z, yaw = 0, scale = 1, tilt = 0, tint = WHITE }: Placement,
+    { x, y, z, yaw = 0, pitch = 0, scale = 1, tilt = 0, tint = WHITE }: Placement,
   ): void {
     let batch = this.batches.get(geometry);
     if (!batch) {
@@ -330,7 +333,7 @@ class Instances {
       this.batches.set(geometry, batch);
     }
     placedAt.set(x, y, z);
-    placedEuler.set(0, yaw, tilt);
+    placedEuler.set(pitch, yaw, tilt, "YXZ");
     placedTurn.setFromEuler(placedEuler);
     placedScale.setScalar(scale);
     placedMatrix.compose(placedAt, placedTurn, placedScale);
@@ -1109,16 +1112,14 @@ function parkCars(
 
 function placeRaceGrid(context: Context, instances: Instances): void {
   const circuit = locationById<TrackLocation>("circuit");
-  const samples = samplePath(resolvePath(circuit.path, true), 4, true);
-  const finish = samples.indexOf(startFinishSample(samples, circuit));
-  for (let place = 0; place < 20; place += 1) {
-    const sample = samples[(finish - 3 - place * 2 + samples.length) % samples.length];
-    const side = place % 2 === 0 ? -3.2 : 3.2;
+  for (const slot of raceGrid(circuit)) {
+    const yaw = Math.atan2(slot.dirX, slot.dirZ);
     placeModel(context, instances, RACE_CAR, {
-      x: sample.x - sample.dirZ * side,
-      z: sample.z + sample.dirX * side,
+      x: slot.x,
+      z: slot.z,
       sink: -0.35,
-      yaw: Math.atan2(sample.dirX, sample.dirZ),
+      yaw,
+      ...vehicleSlope((x, z) => context.surface.heightAt(x, z), slot.x, slot.z, yaw),
       tint: new Color().setHSL(context.random(), 0.45, 0.6),
     });
   }

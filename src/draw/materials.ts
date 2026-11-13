@@ -68,7 +68,9 @@ export function kitMaterial(source: MeshStandardMaterial): MeshStandardMaterial 
 }
 
 export function offsetParameters(layer: number) {
-  return { polygonOffset: true, polygonOffsetFactor: -layer, polygonOffsetUnits: -layer * 4 };
+  // Slope-scaled bias can pull asphalt in front of tyres and low bodywork.
+  // Constant depth units still separate the coplanar road and marking layers.
+  return { polygonOffset: true, polygonOffsetFactor: 0, polygonOffsetUnits: -layer * 4 };
 }
 
 /** A nonzero stencil reference lets a road tier cover each pixel only once at junctions. */

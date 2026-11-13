@@ -96,27 +96,15 @@ function vehicle(s, a) {
     for (const z of [-d * 0.1, d * 0.1]) s.cylinder(0.18, 0.2, 0, 0.18, z, "roof-dark", 5);
     return;
   }
-  const race = id === "race-car-generic",
-    bus = id === "shuttle-bus";
-  s.box(w * 0.9, h * 0.35, d * 0.72, 0, h * 0.36, 0, race ? "brand-teal" : "wall-white");
-  if (race) {
-    s.box(w * 0.18, h * 0.25, d * 0.45, -w * 0.05, h * 0.68, 0, "screen-dark");
-    s.poly(
-      [
-        [-w * 0.05, h * 0.5],
-        [w * 0.49, h * 0.2],
-        [w * 0.49, h * 0.38],
-      ],
-      d * 0.22,
-      "brand-teal",
-    );
-    s.box(w * 0.08, 0.1, d, -w * 0.43, h * 0.75, 0, "roof-dark");
-    s.box(w * 0.08, 0.1, d, w * 0.43, h * 0.18, 0, "brand-teal");
-  } else {
-    s.box(w * (bus ? 0.87 : 0.52), h * 0.42, d * 0.67, -w * 0.05, h * 0.7, 0, "glass");
-    s.box(w * (bus ? 0.9 : 0.57), 0.12, d * 0.74, -w * 0.05, h * 0.94, 0, "wall-grey");
-    if (bus) s.box(w * 0.88, h * 0.12, d * 0.74, 0, h * 0.34, 0, "brand-teal");
+  if (id === "race-car-generic") {
+    formulaCar(s);
+    return;
   }
+  const bus = id === "shuttle-bus";
+  s.box(w * 0.9, h * 0.35, d * 0.72, 0, h * 0.36, 0, "wall-white");
+  s.box(w * (bus ? 0.87 : 0.52), h * 0.42, d * 0.67, -w * 0.05, h * 0.7, 0, "glass");
+  s.box(w * (bus ? 0.9 : 0.57), 0.12, d * 0.74, -w * 0.05, h * 0.94, 0, "wall-grey");
+  if (bus) s.box(w * 0.88, h * 0.12, d * 0.74, 0, h * 0.34, 0, "brand-teal");
   // Wheels use five-sided cylinders with axes across Z.
   for (const x of [-w * 0.3, w * 0.3])
     for (const z of [-d * 0.4, d * 0.4])
@@ -128,6 +116,72 @@ function vehicle(s, a) {
         z,
         [Math.PI / 2, 0, 0],
       );
+}
+/** Authored nose-first along +X, then rotated to +Z with the other vehicles. */
+function formulaCar(s) {
+  // Pale paint preserves the Convoy's instance colours; carbon remains dark.
+  const paint = "wall-white",
+    carbon = "screen-dark";
+  s.box(3.45, 0.08, 1.32, -0.35, 0.16, 0, carbon);
+  s.poly(
+    [
+      [-1.85, 0.2],
+      [-1.3, 0.58],
+      [-0.55, 0.82],
+      [0.1, 0.55],
+      [1.05, 0.49],
+      [2.5, 0.27],
+      [2.5, 0.19],
+    ],
+    0.38,
+    paint,
+  );
+  // Open cockpit, shoulder rails and raised airbox behind the driver.
+  s.box(0.72, 0.07, 0.46, 0.02, 0.56, 0, carbon);
+  s.poly(
+    [
+      [-1.15, 0.48],
+      [-0.8, 1],
+      [-0.48, 1],
+      [-0.4, 0.48],
+    ],
+    0.3,
+    paint,
+  );
+  for (const side of [-1, 1]) {
+    s.poly(
+      [
+        [-1.6, 0.22],
+        [-1.25, 0.48],
+        [0.55, 0.5],
+        [0.72, 0.28],
+      ],
+      0.38,
+      paint,
+      side * 0.49,
+    );
+    s.box(0.13, 0.15, 0.29, 0.59, 0.39, side * 0.49, carbon);
+    s.box(0.82, 0.12, 0.09, 0, 0.59, side * 0.27, paint);
+    // Faceted halo surrounds the opening and meets a single front pillar.
+    s.beam([-0.4, 0.85, side * 0.27], [0.25, 0.85, side * 0.27], 0.035, carbon);
+    s.beam([0.25, 0.85, side * 0.27], [0.52, 0.8, 0], 0.035, carbon);
+    // Exposed octagonal tyres and slim suspension arms.
+    for (const x of [-1.72, 1.65]) {
+      s.beam([x - 0.25, 0.27, side * 0.2], [x, 0.33, side * 0.8], 0.035, carbon);
+      s.add(new THREE.CylinderGeometry(0.36, 0.36, 0.38, 8), carbon, x, 0.36, side * 0.81, [
+        Math.PI / 2,
+        0,
+        0,
+      ]);
+    }
+    s.box(0.48, 0.25, 0.06, 2.56, 0.25, side * 0.97, paint);
+    s.box(0.53, 0.4, 0.06, -2.48, 0.79, side * 0.78, paint);
+  }
+  s.beam([0.52, 0.8, 0], [0.65, 0.48, 0], 0.04, carbon);
+  s.box(0.48, 0.06, 1.94, 2.56, 0.15, 0, paint);
+  s.box(0.22, 0.07, 1.82, 2.38, 0.26, 0, carbon);
+  s.box(0.16, 0.6, 0.12, -2.35, 0.55, 0, carbon);
+  s.box(0.53, 0.09, 1.56, -2.48, 0.91, 0, paint);
 }
 function nature(s, a) {
   const r = random(418 + a.variant * 731),

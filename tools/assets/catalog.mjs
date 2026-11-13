@@ -65,7 +65,8 @@ const rows = {
     ["barrier-segment", 10, 0.7, 1, "instanced", true],
     ["hoarding-blank", 10, 0.3, 1.5],
     ["food-stall", 6, 4, 3.5],
-    ["race-car-generic", 5.6, 2, 1],
+    // Eight moving cars share one draw call; allow the detailed prop budget.
+    ["race-car-generic", 5.6, 2, 1, "prop"],
     ["car-parked", 4.4, 1.8, 1.5],
     ["shuttle-bus", 11, 2.5, 3.2],
     ["light-aircraft", 8, 11, 2.5],
@@ -94,7 +95,7 @@ export const catalog = Object.entries(rows).flatMap(([category, rs]) =>
     w,
     d,
     h,
-    kind: category === "props" ? "instanced" : kind || "building",
+    kind: kind || (category === "props" ? "instanced" : "building"),
     tileable: !!tileable,
     skirt: category !== "props" && !noSkirt.has(id),
   })),

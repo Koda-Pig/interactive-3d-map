@@ -3153,28 +3153,27 @@
         "min": [
           -1,
           0,
-          -2.799999952316284
+          -2.8000001907348633
         ],
         "max": [
           1,
           1,
-          2.799999952316284
+          2.8000001907348633
         ],
         "size": [
           2,
           1,
-          5.599999904632568
+          5.600000381469727
         ]
       },
-      "triangleCount": 136,
-      "fileSize": 13740,
+      "triangleCount": 500,
+      "fileSize": 43640,
       "materials": [
-        "brand-teal",
         "screen-dark",
-        "roof-dark"
+        "wall-white"
       ],
       "tileable": false,
-      "instanced": true,
+      "instanced": false,
       "footprint": [
         [
           -1,
@@ -3198,7 +3197,7 @@
         "depth": 5.6,
         "height": 1,
         "skirtDepth": 0,
-        "triangleBudget": 200
+        "triangleBudget": 500
       },
       "notes": "Supplied vehicle dimensions interpreted as length × width × height; X/Z exchanged so the nose faces +Z."
     },
