@@ -4,7 +4,7 @@
 
 An interactive 3D map of the planned **Blue Mountain Racing** motorsport destination. It runs in the browser and renders in real time with Three.js. Instead of looking at a fixed picture, people can move around the site and look at it from any angle.
 
-It's a concept piece for Protium's software partnership proposal to Blue Mountain Racing (BMR). The proposal lives in the `Protium.PitchDecks` repo, under `apps/web-base/src/clients/blue-mountain-racing`. The deck's fan app and operations dashboard concepts both include a venue map. This project turns that idea into something you can actually use. It's a standalone site that lives only in this repo, separate from the deck.
+It's a concept piece for Protium's software partnership proposal to Blue Mountain Racing (BMR). The proposal lives in the `Protium.PitchDecks` repo, under `apps/web-base/src/clients/blue-mountain-racing`. The deck's fan app and operations dashboard concepts both include a venue map. This project turns that idea into something you can actually use. This repository owns the shared map implementation. Its standalone site uses that implementation directly, and the pitch deck can use it through the versioned package.
 
 ## About the site
 

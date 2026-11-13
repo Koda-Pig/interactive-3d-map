@@ -467,7 +467,7 @@ class Instances {
   }
 }
 
-const sceneryMaterial = new MeshLambertMaterial({ vertexColors: true });
+let sceneryMaterial = new MeshLambertMaterial({ vertexColors: true });
 
 function colorize(
   geometry: BufferGeometry,
@@ -652,7 +652,7 @@ function createPerson(): BufferGeometry {
 }
 
 /** A person seen from afar, in a crowd. Close up, the crowd figures replace it. */
-const PERSON = createPerson();
+let PERSON = createPerson();
 
 /** A turn for a person at this spot, the same on every load and without using up the random stream. */
 function personYaw(x: number, z: number, facing?: number): number {
@@ -1839,7 +1839,7 @@ function createSpectator(): BufferGeometry {
 }
 
 /** A spectator seen from afar. Close up, the crowd figures replace it. */
-const SPECTATOR = createSpectator();
+let SPECTATOR = createSpectator();
 
 function insideLand(zone: ResolvedZone, x: number, z: number, inset: number): boolean {
   return signedDistance(x, z, zone.outline) < -inset;
@@ -2236,6 +2236,11 @@ export async function createScenery(
   surface: GroundSurface,
   quality: Quality,
 ): Promise<Scenery> {
+  // Construction runs inside withMaterialScope. These templates belong only to this build.
+  sceneryMaterial = new MeshLambertMaterial({ vertexColors: true });
+  PERSON = createPerson();
+  SPECTATOR = createSpectator();
+
   const baked = new Map<string, BufferGeometry>();
   const model = (file: string): BufferGeometry | undefined => {
     if (!baked.has(file)) {

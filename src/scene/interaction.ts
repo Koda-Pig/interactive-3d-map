@@ -56,7 +56,17 @@ export class MapInteraction {
     canvas.addEventListener("pointerdown", this.onPointerDown);
     canvas.addEventListener("pointerup", this.onPointerUp);
     canvas.addEventListener("pointercancel", this.onPointerCancel);
-    document.addEventListener("keydown", this.onKeyDown);
+    canvas.addEventListener("keydown", this.onKeyDown);
+  }
+
+  destroy(): void {
+    const { canvas } = this.parts;
+    canvas.removeEventListener("pointermove", this.onPointerMove);
+    canvas.removeEventListener("pointerleave", this.onPointerLeave);
+    canvas.removeEventListener("pointerdown", this.onPointerDown);
+    canvas.removeEventListener("pointerup", this.onPointerUp);
+    canvas.removeEventListener("pointercancel", this.onPointerCancel);
+    canvas.removeEventListener("keydown", this.onKeyDown);
   }
 
   /**

@@ -119,6 +119,7 @@ export interface Sky {
   readonly object: Group;
   /** A blurred copy of the sky, for materials to reflect. */
   readonly environment: Texture;
+  dispose(): void;
   /** Keeps the sky centred on the camera, so it seems infinitely far away. */
   follow(camera: Camera): void;
 }
@@ -140,9 +141,10 @@ export function createSky(
   const capture = new Scene();
   capture.add(dome);
   const generator = new PMREMGenerator(renderer);
-  const environment = generator.fromScene(capture, 0, 1, ENVIRONMENT_FAR, {
+  const target = generator.fromScene(capture, 0, 1, ENVIRONMENT_FAR, {
     size: ENVIRONMENT_RESOLUTION,
-  }).texture;
+  });
+  const environment = target.texture;
   generator.dispose();
   material.uniforms.below.value = new Color(HORIZON_COLOR);
 
@@ -156,6 +158,9 @@ export function createSky(
   return {
     object,
     environment,
+    dispose() {
+      target.dispose();
+    },
     follow(camera) {
       object.position.copy(camera.position);
     },

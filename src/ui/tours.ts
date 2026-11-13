@@ -1,6 +1,7 @@
 import { requirePart } from "./dom.ts";
 
 export interface TourButtons {
+  destroy(): void;
   /** Shows which tour is under way, by its id, or none with `null`. */
   showRunning(id: string | null): void;
   /**
@@ -62,6 +63,7 @@ export function createTourButtons(
   show();
 
   return {
+    destroy() {},
     showRunning(id) {
       const previous = running;
       const focused = root.contains(document.activeElement);

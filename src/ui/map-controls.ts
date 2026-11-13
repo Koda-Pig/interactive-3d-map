@@ -17,6 +17,7 @@ export interface MapControlActions {
 }
 
 export interface MapControlButtons {
+  destroy(): void;
   /**
    * Turns and tips the compass. `bearing` is the camera's turn from north and
    * `tilt` its angle from straight down, in radians.
@@ -76,6 +77,7 @@ function createButton({ part, label, icon: content, action, repeats }: ButtonSpe
   }
 
   let timer: number | undefined;
+  button.addEventListener("bmr-stop", () => stop());
   const stop = (): void => {
     window.clearInterval(timer);
     timer = undefined;
@@ -277,6 +279,10 @@ export function createMapControls(
   let shownOrbit = "";
   let shownStep: number | null = null;
   return {
+    destroy() {
+      for (const button of root.querySelectorAll("button"))
+        button.dispatchEvent(new Event("bmr-stop"));
+    },
     showOrbit(bearing, tilt) {
       const orbit = `rotateX(${(tilt * DIAL_TILT_SHARE).toFixed(3)}rad) rotate(${bearing.toFixed(3)}rad)`;
       if (orbit !== shownOrbit) {
@@ -302,16 +308,20 @@ const MOUSE_HINT = "Drag to move. Right-drag, or drag the compass, to turn. Scro
 const HINT_LINGER = 2500;
 
 /** Says how to move the map, until the visitor has started doing it. */
-export function createHint(element: HTMLElement): { dismiss(): void } {
+export function createHint(element: HTMLElement): { dismiss(): void; destroy(): void } {
   element.textContent = window.matchMedia("(pointer: coarse), (max-width: 600px)").matches
     ? TOUCH_HINT
     : MOUSE_HINT;
   let dismissed = false;
+  let timer: number | undefined;
   return {
+    destroy() {
+      window.clearTimeout(timer);
+    },
     dismiss() {
       if (!dismissed) {
         dismissed = true;
-        window.setTimeout(() => element.classList.add("hint--gone"), HINT_LINGER);
+        timer = window.setTimeout(() => element.classList.add("hint--gone"), HINT_LINGER);
       }
     },
   };

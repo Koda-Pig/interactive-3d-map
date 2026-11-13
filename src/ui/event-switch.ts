@@ -10,6 +10,7 @@ interface Choice {
 export interface EventSwitch {
   /** Switches to an event mode by its id, or to the whole site with `null`, as a click would. */
   select(id: string | null): void;
+  destroy(): void;
 }
 
 /** Buttons for viewing the site as a whole, or as it's used for each kind of event. */
@@ -17,6 +18,7 @@ export function createEventSwitch(
   root: HTMLElement,
   onChange: (mode: EventMode | null) => void,
 ): EventSwitch {
+  const events = new AbortController();
   const buttons = requirePart(root, ".event-switch__buttons");
   const summary = requirePart(root, ".event-switch__summary");
   const info = requirePart<HTMLButtonElement>(root, ".event-switch__info");
@@ -29,15 +31,23 @@ export function createEventSwitch(
     summary.hidden = !summary.hidden;
     info.setAttribute("aria-expanded", String(!summary.hidden));
   });
-  document.addEventListener("pointerdown", (event) => {
-    if (event.target instanceof Node && !root.contains(event.target)) closeInfo();
-  });
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && !summary.hidden) {
-      closeInfo();
-      info.focus();
-    }
-  });
+  document.addEventListener(
+    "pointerdown",
+    (event) => {
+      if (event.target instanceof Node && !root.contains(event.target)) closeInfo();
+    },
+    { signal: events.signal },
+  );
+  (root.closest<HTMLElement>(".bmr-map") ?? root).addEventListener(
+    "keydown",
+    (event) => {
+      if (event instanceof KeyboardEvent && event.key === "Escape" && !summary.hidden) {
+        closeInfo();
+        info.focus();
+      }
+    },
+    { signal: events.signal },
+  );
 
   const choices: Choice[] = [
     { mode: null, name: "Whole site" },
@@ -77,6 +87,9 @@ export function createEventSwitch(
   });
 
   return {
+    destroy() {
+      events.abort();
+    },
     select(id) {
       const choice = choices.find(({ mode }) => (mode?.id ?? null) === id);
       if (choice) {

@@ -1,6 +1,6 @@
 {
-  "name": "interactive-3d-map",
-  "private": true,
+  "name": "@protium/bmr-map",
+  "private": false,
   "type": "module",
   "packageManager": "pnpm@11.0.8",
   "engines": {
@@ -21,7 +21,11 @@
     "assets:render": "node tools/assets/render.mjs",
     "assets:determinism": "node tools/assets/determinism.mjs",
     "assets:people": "node tools/assets/people.mjs",
-    "perf": "node tools/perf.mjs"
+    "perf": "node tools/perf.mjs",
+    "build:package": "node tools/build-package.mjs",
+    "check:package": "node --test tests/package.test.mjs",
+    "test:browser": "node tools/check-map-browser.mjs",
+    "prepack": "node tools/verify-package.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.6",
@@ -33,6 +37,46 @@
     "playwright": "1.65.0",
     "three": "0.187.0",
     "typescript": "7.0.2",
-    "vite": "8.3.6"
+    "vite": "8.3.6",
+    "react": "19.3.0",
+    "@types/react": "^19.0.0",
+    "react-dom": "19.3.0"
+  },
+  "version": "0.1.0",
+  "files": [
+    "dist",
+    "tools/copy-assets.mjs",
+    "LICENSES.md",
+    "tools/verify-package.mjs"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/react/index.d.ts",
+      "import": "./dist/react/index.js"
+    },
+    "./style.css": "./dist/style.css",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "bin": {
+    "bmr-map-copy-assets": "./tools/copy-assets.mjs"
+  },
+  "peerDependencies": {
+    "react": "^19.3.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "license": "UNLICENSED",
+  "publishConfig": {
+    "access": "restricted"
   }
 }
