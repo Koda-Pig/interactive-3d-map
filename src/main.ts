@@ -95,7 +95,7 @@ window.addEventListener("unhandledrejection", showStartupFailure);
 
 const quality = detectQuality();
 
-const renderer = new WebGLRenderer({ antialias: true });
+const renderer = new WebGLRenderer({ antialias: true, stencil: true });
 renderer.toneMapping = NeutralToneMapping;
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = PCFShadowMap;

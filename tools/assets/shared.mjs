@@ -3,6 +3,7 @@ import path from "node:path";
 import { Document, NodeIO } from "@gltf-transform/core";
 import * as THREE from "three";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
+import { resolveCoplanarSurfaces } from "./surfaces.mjs";
 
 export const palette = {
   "wall-white": "#E8ECEF",
@@ -119,7 +120,7 @@ export class KitShape {
     }
     if (spec.skirt) this.skirt(spec.w, 3, spec.d);
     const groups = new Map();
-    for (const { g, material } of this.parts) {
+    for (const { g, material } of resolveCoplanarSurfaces(this.parts)) {
       if (!groups.has(material)) groups.set(material, []);
       groups.get(material).push(g);
     }

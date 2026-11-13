@@ -1,5 +1,12 @@
 import type { Object3D, Texture } from "three";
-import { Color, Mesh, MeshLambertMaterial, MeshStandardMaterial } from "three";
+import {
+  Color,
+  Mesh,
+  MeshLambertMaterial,
+  MeshStandardMaterial,
+  NotEqualStencilFunc,
+  ReplaceStencilOp,
+} from "three";
 import {
   createAsphaltTexture,
   createParkingStallTexture,
@@ -64,11 +71,25 @@ export function offsetParameters(layer: number) {
   return { polygonOffset: true, polygonOffsetFactor: -layer, polygonOffsetUnits: -layer * 4 };
 }
 
-export function layerMaterial(color: string, layer: number, map?: Texture): MeshLambertMaterial {
-  const key = `${color}/${layer}/${map?.uuid ?? ""}`;
+/** A nonzero stencil reference lets a road tier cover each pixel only once at junctions. */
+export function layerMaterial(
+  color: string,
+  layer: number,
+  map?: Texture,
+  stencilRef = 0,
+): MeshLambertMaterial {
+  const key = `${color}/${layer}/${map?.uuid ?? ""}/${stencilRef}`;
   let material = layerMaterials.get(key);
   if (!material) {
-    material = new MeshLambertMaterial({ color, map: map ?? null, ...offsetParameters(layer) });
+    material = new MeshLambertMaterial({
+      color,
+      map: map ?? null,
+      ...offsetParameters(layer),
+      stencilWrite: stencilRef !== 0,
+      stencilRef,
+      stencilFunc: NotEqualStencilFunc,
+      stencilZPass: ReplaceStencilOp,
+    });
     layerMaterials.set(key, material);
   }
   return material;

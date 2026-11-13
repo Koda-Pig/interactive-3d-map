@@ -296,7 +296,11 @@ export function createRibbon(location: TrackLocation, surface: GroundSurface): G
 
   const geometry = geometries.length === 1 ? geometries[0] : mergeGeometries(geometries);
   const surfaceMap = location.dashed ? undefined : asphaltTexture();
-  const ribbon = new Mesh(geometry, layerMaterial(location.color, layer, surfaceMap));
+  // Branches and roads in the same tier can share a surface but have different
+  // texture coordinates. Stencil coverage gives each pixel one winner instead
+  // of letting almost identical depth values switch between those textures.
+  const stencilRef = location.type === "road" ? roadTier(location.width) + 1 : 0;
+  const ribbon = new Mesh(geometry, layerMaterial(location.color, layer, surfaceMap, stencilRef));
   ribbon.receiveShadow = true;
 
   const group = new Group();
