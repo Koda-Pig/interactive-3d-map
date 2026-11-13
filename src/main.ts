@@ -68,6 +68,8 @@ const sheetHandle = document.querySelector<HTMLElement>(".sidebar__handle");
 const sidebarOpenElement = document.querySelector<HTMLElement>("#sidebar-open");
 const toursElement = document.querySelector<HTMLElement>(".tours");
 const legendElement = document.querySelector<HTMLElement>(".route-legend");
+const tourPlayerElement = document.querySelector<HTMLElement>(".tour-player");
+const eventSummaryElement = document.querySelector<HTMLElement>(".event-switch__summary");
 if (
   !host ||
   !infoPanelElement ||
@@ -80,7 +82,9 @@ if (
   !sheetHandle ||
   !sidebarOpenElement ||
   !toursElement ||
-  !legendElement
+  !legendElement ||
+  !tourPlayerElement ||
+  !eventSummaryElement
 ) {
   throw new Error("The page is missing one of its main elements");
 }
@@ -168,6 +172,8 @@ const labels = new SiteLabels(site, labelRenderer.domElement, precincts);
 const overlays = new MapOverlays(host, [
   () => infoPanelElement.getBoundingClientRect(),
   () => eventSwitchElement.getBoundingClientRect(),
+  () => eventSummaryElement.getBoundingClientRect(),
+  () => tourPlayerElement.getBoundingClientRect(),
   () => noticeElement.getBoundingClientRect(),
   () => mapControlsElement.getBoundingClientRect(),
   // On a wide screen the sidebar lies over the map's left edge: the whole
@@ -307,6 +313,17 @@ const tour = new CameraTour(camera, controls, flight, ground.surface, (id) => {
   tourButtons.showRunning(id);
   overlays.invalidate();
 });
+const playerResize = new ResizeObserver(() => {
+  document.documentElement.style.setProperty(
+    "--tour-player-height",
+    `${tourPlayerElement.offsetHeight}px`,
+  );
+  overlays.invalidate();
+  needsRender = true;
+});
+playerResize.observe(tourPlayerElement);
+playerResize.observe(eventSwitchElement);
+playerResize.observe(eventSummaryElement);
 controls.addEventListener("start", () => hint.dismiss());
 // Using anything at all, the sidebar or a button included, means the visitor has found their way.
 window.addEventListener("pointerdown", () => hint.dismiss(), { once: true });
@@ -358,6 +375,7 @@ new ResizeObserver(() => {
 renderer.setAnimationLoop((now) => {
   const flying = flight.update(now);
   const touring = tour.update(now);
+  if (touring) tourButtons.showProgress(tour.progress);
   controls.update();
   const moved = viewChanged || flying || touring;
   viewChanged = false;

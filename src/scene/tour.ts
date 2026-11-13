@@ -95,6 +95,11 @@ export class CameraTour {
     return this.plan?.id ?? null;
   }
 
+  /** Distance covered as a share of the ride, or null while approaching its start. */
+  get progress(): number | null {
+    return this.plan && this.phase === "ride" ? this.travelled / this.plan.length : null;
+  }
+
   /** Changes the ride's pace without restarting it, and keeps it for the next tour. */
   setSpeed(multiplier: number): void {
     if (Number.isFinite(multiplier)) {

@@ -54,6 +54,21 @@ function assertSamePose(actual, expected) {
   assert.ok(actual.camera.position.distanceTo(expected.camera.position) < 1e-6);
 }
 
+test("tour progress distinguishes the approach, advances during the ride, and clears on stop", () => {
+  const state = setup();
+  assert.equal(state.tour.progress, null);
+  state.tour.start(lapTour(state.flight));
+  assert.equal(state.tour.progress, null);
+  state.flight.update(0);
+  state.flight.update(10000);
+  state.tour.update(10000);
+  assert.equal(state.tour.progress, 0);
+  state.tour.update(10100);
+  assert.ok(state.tour.progress > 0 && state.tour.progress < 1);
+  state.tour.stop();
+  assert.equal(state.tour.progress, null);
+});
+
 for (const makePlan of [lapTour, arrivalTour]) {
   for (const multiplier of [0.25, 0.5, 1, 1.5, 2, 3, 4]) {
     test(`${makePlan.name} at ${multiplier}× follows the same route at the selected pace`, () => {

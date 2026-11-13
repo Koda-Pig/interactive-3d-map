@@ -10,7 +10,7 @@
   --sheet-handle: 76px;
   --sheet-peek: calc(var(--sheet-handle) + env(safe-area-inset-bottom));
   --open-button-width: 122px;
-  --open-button-height: 38px;
+  --open-button-height: 44px;
   /* Room beside the button that opens the sidebar, while it's showing. */
   --open-button-space: 0px;
 }
@@ -271,7 +271,7 @@ body {
 .hint {
   position: fixed;
   left: calc(var(--sidebar-width) + 16px);
-  bottom: calc(max(16px, env(safe-area-inset-bottom)) + 32px);
+  bottom: calc(var(--tour-player-height, 90px) + 68px);
   max-width: calc(100vw - var(--sidebar-width) - 96px);
   transition:
     left var(--sidebar-duration) var(--sidebar-ease),
@@ -291,6 +291,9 @@ body {
 }
 
 .hint--gone {
+  opacity: 0;
+}
+body:has(.tours__playing:not([hidden])) .hint {
   opacity: 0;
 }
 
@@ -473,8 +476,17 @@ body {
   cursor: pointer;
 }
 
-.sidebar-open:hover {
-  background: #00678c;
+.sidebar-open::before {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: 6px;
+  pointer-events: none;
+  transition: background-color 0.15s ease-out;
+}
+
+.sidebar-open:hover::before {
+  background: rgb(255 255 255 / 14%);
 }
 
 .sidebar-open:focus-visible {
@@ -518,8 +530,8 @@ body {
     left: max(16px, env(safe-area-inset-left));
     width: var(--open-button-width);
     height: var(--open-button-height);
-    border-radius: 8px;
-    box-shadow: 0 4px 14px rgb(0 36 63 / 28%);
+    border-radius: 8px 0 0 8px;
+    box-shadow: none;
   }
 
   /* The pane keeps its full size while the shell clips it, so nothing inside
@@ -595,7 +607,7 @@ body {
 
   .sidebar-closed {
     --sidebar-width: 0px;
-    --open-button-space: calc(var(--open-button-width) + 8px);
+    --open-button-space: var(--open-button-width);
   }
 
   /* An instant switch. `visibility` has no duration either way, so the part
@@ -618,9 +630,14 @@ body {
   top: max(16px, env(safe-area-inset-top));
   left: calc(var(--sidebar-width) + var(--open-button-space) + 16px);
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
+  align-items: center;
+  gap: 4px;
+  padding: 3px;
+  height: 44px;
+  box-sizing: border-box;
+  border-radius: 8px;
+  background: #004272;
+  box-shadow: 0 4px 14px rgb(0 36 63 / 24%);
   width: max-content;
   max-width: calc(100vw - var(--sidebar-width) - var(--open-button-space) - 32px);
   transition:
@@ -635,14 +652,11 @@ body {
 .event-switch__buttons {
   display: flex;
   gap: 2px;
-  padding: 3px;
-  border-radius: 8px;
-  background: #004272;
-  box-shadow: 0 4px 14px rgb(0 36 63 / 28%);
 }
 
 .event-switch__button {
-  padding: 7px 12px;
+  height: 38px;
+  padding: 0 12px;
   border: 0;
   border-radius: 6px;
   background: transparent;
@@ -667,6 +681,12 @@ body {
 }
 
 .event-switch__summary {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 320px;
+  box-sizing: border-box;
+  line-height: 1.5;
   margin: 0;
   padding: 6px 12px;
   max-width: 440px;
@@ -681,12 +701,11 @@ body {
   display: flex;
   gap: 14px;
   margin: 0;
-  padding: 6px 12px;
-  border-radius: 8px;
-  background: rgb(255 255 255 / 94%);
-  color: #26343d;
+  padding: 8px 0 0;
+  border-top: 1px solid #dfe6ea;
+  color: #51626d;
+  font-size: 11px;
   font-weight: 400;
-  box-shadow: 0 4px 14px rgb(0 36 63 / 18%);
 }
 
 .route-legend[hidden] {
@@ -718,21 +737,157 @@ body {
   box-shadow: inset 0 0 0 1px rgb(0 41 71 / 45%);
 }
 
+.sidebar-closed .event-switch {
+  border-radius: 0 8px 8px 0;
+}
+.sidebar-closed .sidebar-open {
+  border-radius: 8px 0 0 8px;
+}
+.event-switch__mobile {
+  display: none;
+}
+.event-switch__select {
+  height: 38px;
+  max-width: 190px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 6px;
+  background: #004272;
+  color: white;
+  font: inherit;
+}
+.event-switch__info {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  margin: 0 5px;
+  border: 1px solid rgb(255 255 255 / 40%);
+  border-radius: 50%;
+  background: transparent;
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+.event-switch__info[hidden] {
+  display: none;
+}
+.event-switch__info[aria-expanded="true"] {
+  background: #00678c;
+}
+.event-switch__info:focus-visible,
+.event-switch__select:focus-visible {
+  outline: 2px solid #1ca7ec;
+  outline-offset: 1px;
+}
+.tour-player {
+  position: fixed;
+  bottom: max(52px, calc(env(safe-area-inset-bottom) + 36px));
+  left: calc(var(--sidebar-width) + (100vw - var(--sidebar-width)) / 2);
+  transform: translateX(-50%);
+  box-sizing: border-box;
+  width: 480px;
+  max-width: calc(100vw - var(--sidebar-width) - 32px);
+  padding: 14px 16px;
+  border: 1px solid rgb(255 255 255 / 70%);
+  border-radius: 12px;
+  background: rgb(255 255 255 / 96%);
+  box-shadow: 0 6px 24px rgb(0 36 63 / 20%);
+  color: #004272;
+  font:
+    500 13px / 1.3 Roboto,
+    system-ui,
+    sans-serif;
+}
+.tour-player:has(.tours[hidden]):has(.route-legend[hidden]) {
+  display: none;
+}
 .tours {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px;
   min-width: 0;
   margin: 0;
   padding: 0;
   border: 0;
 }
-
-.tours[hidden] {
+.tours[hidden],
+.tours__choices[hidden],
+.tours__playing[hidden] {
   display: none;
 }
-
+.tours__heading {
+  display: block;
+  margin-bottom: 10px;
+  color: #51626d;
+  font-size: 12px;
+}
+.tours__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.tours__actions > button {
+  flex: 1 1 130px;
+  justify-content: center;
+}
+.tours__playing {
+  display: grid;
+  grid-template-columns: 1fr auto 80px;
+  align-items: center;
+  gap: 10px;
+}
+.tours__description {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.tours__name {
+  font-size: 14px;
+  font-weight: 500;
+}
+.tours__status {
+  color: #51626d;
+  font-size: 11px;
+  font-weight: 400;
+}
+.tours__progress {
+  grid-column: 1 / -1;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border: 0;
+  border-radius: 2px;
+  overflow: hidden;
+  background: #dfe6ea;
+  color: #00678c;
+}
+.tours__progress::-webkit-progress-bar {
+  background: #dfe6ea;
+}
+.tours__progress::-webkit-progress-value {
+  background: #00678c;
+}
+.tours__progress::-moz-progress-bar {
+  background: #00678c;
+}
+.tours__stop {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 36px;
+  border: 0;
+  border-radius: 6px;
+  background: #004272;
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+.tours__stop:hover {
+  background: #00678c;
+}
+.tours__stop:focus-visible {
+  outline: 2px solid #1ca7ec;
+  outline-offset: 2px;
+}
 .tours__button,
 .tours__speed {
   display: inline-flex;
@@ -742,11 +897,10 @@ body {
   padding: 0 12px;
   border: 0;
   border-radius: 8px;
-  background: rgb(255 255 255 / 94%);
+  background: #edf3f6;
   color: #004272;
   font: inherit;
   white-space: nowrap;
-  box-shadow: 0 4px 14px rgb(0 36 63 / 18%);
 }
 
 .tours__button {
@@ -759,11 +913,6 @@ body {
 .tours__button:hover {
   background: #fff;
   color: #00678c;
-}
-
-.tours__button[data-running] {
-  background: #004272;
-  color: #fff;
 }
 
 .tours__button:focus-visible,
@@ -1203,10 +1352,10 @@ body {
 }
 
 /* On a phone the sidebar slides up over the map, from a strip along the bottom. */
-/* Too narrow to share the top edge with the event switch and its summary. */
+/* Leave the single toolbar clear when the details card cannot sit beside it. */
 @media (min-width: 601px) and (max-width: 1140px) {
   .info-panel {
-    --info-panel-top: 112px;
+    --info-panel-top: 80px;
   }
 }
 
@@ -1312,14 +1461,56 @@ body {
     padding: 7px 9px;
   }
 
-  /* Whatever follows the switch (summary, legend or tours) drops below the
-     notice, so the two never touch. */
   .event-switch__buttons {
-    margin-bottom: 26px;
+    display: none;
   }
-
+  .event-switch__mobile {
+    display: block;
+  }
+  .event-switch__select {
+    height: 38px;
+    max-width: 190px;
+    padding: 0 10px;
+    border: 0;
+    border-radius: 6px;
+    background: #004272;
+    color: white;
+    font: inherit;
+  }
+  .sidebar-closed .event-switch {
+    border-radius: 8px;
+  }
   .event-switch__summary {
-    max-width: 100%;
+    top: calc(100% + 28px);
+    width: min(300px, calc(100vw - 32px));
+    max-width: none;
+  }
+  .tour-player {
+    left: 16px;
+    right: 16px;
+    bottom: calc(var(--sheet-peek) + 12px);
+    transform: none;
+    width: auto;
+    max-width: none;
+    padding: 12px;
+  }
+  .tours__playing {
+    grid-template-columns: 1fr 80px;
+    gap: 8px;
+  }
+  .tours__description {
+    grid-column: 1 / -1;
+  }
+  .tours__speed {
+    justify-self: start;
+  }
+  .tours__button {
+    padding: 0 8px;
+    font-size: 12px;
+  }
+  .info-panel {
+    bottom: calc(var(--sheet-peek) + var(--tour-player-height, 110px) + 24px);
+    max-height: calc(100dvh - var(--sheet-peek) - var(--tour-player-height, 110px) - 120px);
   }
 
   .stats {
@@ -1330,7 +1521,7 @@ body {
 
   .hint {
     right: 16px;
-    bottom: calc(var(--sheet-peek) + 12px);
+    bottom: calc(var(--sheet-peek) + var(--tour-player-height, 110px) + 24px);
     left: 16px;
     max-width: none;
     text-align: center;
@@ -1368,5 +1559,26 @@ body {
 @media (max-width: 380px) {
   .event-switch__button {
     padding: 7px 6px;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 1000px) {
+  .tour-player {
+    bottom: calc(var(--map-controls-height, 170px) + 28px);
+  }
+  .hint {
+    bottom: calc(var(--map-controls-height, 170px) + var(--tour-player-height, 90px) + 40px);
+  }
+  html:not(.sidebar-closed) .event-switch__buttons {
+    display: none;
+  }
+  html:not(.sidebar-closed) .event-switch__mobile {
+    display: block;
+  }
+  html:not(.sidebar-closed) .tours__playing {
+    grid-template-columns: 1fr 80px;
+  }
+  html:not(.sidebar-closed) .tours__description {
+    grid-column: 1 / -1;
   }
 }

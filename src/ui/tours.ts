@@ -1,6 +1,10 @@
+import { requirePart } from "./dom.ts";
+
 export interface TourButtons {
   /** Shows which tour is under way, by its id, or none with `null`. */
   showRunning(id: string | null): void;
+  /** Updates the ride progress; null means the camera is approaching its start. */
+  showProgress(progress: number | null): void;
 }
 
 const PLAY =
@@ -22,7 +26,15 @@ export function createTourButtons(
     throw new Error("Missing tour speed selector");
   }
   speed.addEventListener("change", () => actions.setSpeed(Number(speed.value)));
-  const names = new Map(buttons.map((button) => [button, button.textContent ?? ""]));
+  const names = new Map(buttons.map((button) => [button, button.textContent?.trim() ?? ""]));
+  const choices = requirePart(root, ".tours__choices");
+  const playing = requirePart(root, ".tours__playing");
+  const name = requirePart(root, ".tours__name");
+  const status = requirePart(root, ".tours__status");
+  const progress = requirePart<HTMLProgressElement>(root, ".tours__progress");
+  const stop = requirePart<HTMLButtonElement>(root, ".tours__stop");
+  stop.innerHTML = `${STOP}<span>Stop</span>`;
+  stop.addEventListener("click", actions.stop);
   let running: string | null = null;
 
   const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -33,30 +45,39 @@ export function createTourButtons(
   showMotion();
 
   const show = (): void => {
-    for (const button of buttons) {
-      const on = button.dataset.tour === running;
-      // The name says what a press does, so it carries the state on its own.
-      button.toggleAttribute("data-running", on);
-      button.innerHTML = `${on ? STOP : PLAY}<span>${on ? "Stop" : names.get(button)}</span>`;
-    }
+    choices.hidden = running !== null;
+    playing.hidden = running === null;
+    const button = buttons.find((button) => button.dataset.tour === running);
+    name.textContent = button ? (names.get(button) ?? "") : "";
+    status.textContent = "Getting into position…";
+    progress.value = 0;
   };
 
   for (const button of buttons) {
-    button.addEventListener("click", () => {
-      const id = button.dataset.tour ?? "";
-      if (running === id) {
-        actions.stop();
-      } else {
-        actions.start(id);
-      }
-    });
+    button.innerHTML = `${PLAY}<span>${names.get(button)}</span>`;
+    button.addEventListener("click", () => actions.start(button.dataset.tour ?? ""));
   }
+
   show();
 
   return {
     showRunning(id) {
+      const previous = running;
+      const focused = root.contains(document.activeElement);
       running = id;
       show();
+      if (focused) {
+        if (id) stop.focus({ preventScroll: true });
+        else
+          buttons
+            .find((button) => button.dataset.tour === previous)
+            ?.focus({ preventScroll: true });
+      }
+    },
+    showProgress(value) {
+      progress.value = value ?? 0;
+      status.textContent =
+        value === null ? "Getting into position…" : `${Math.floor(value * 100)}% complete`;
     },
   };
 }

@@ -19,6 +19,25 @@ export function createEventSwitch(
 ): EventSwitch {
   const buttons = requirePart(root, ".event-switch__buttons");
   const summary = requirePart(root, ".event-switch__summary");
+  const info = requirePart<HTMLButtonElement>(root, ".event-switch__info");
+  const select = requirePart<HTMLSelectElement>(root, ".event-switch__select");
+  const closeInfo = (): void => {
+    summary.hidden = true;
+    info.setAttribute("aria-expanded", "false");
+  };
+  info.addEventListener("click", () => {
+    summary.hidden = !summary.hidden;
+    info.setAttribute("aria-expanded", String(!summary.hidden));
+  });
+  document.addEventListener("pointerdown", (event) => {
+    if (event.target instanceof Node && !root.contains(event.target)) closeInfo();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !summary.hidden) {
+      closeInfo();
+      info.focus();
+    }
+  });
 
   const choices: Choice[] = [
     { mode: null, name: "Whole site" },
@@ -30,7 +49,9 @@ export function createEventSwitch(
       element.setAttribute("aria-pressed", String(choices[index].mode === mode));
     }
     summary.textContent = mode?.summary ?? "";
-    summary.hidden = mode === null;
+    closeInfo();
+    info.hidden = mode === null;
+    select.value = mode?.id ?? "";
     onChange(mode);
   };
 
@@ -44,6 +65,16 @@ export function createEventSwitch(
     return button;
   });
   buttons.append(...elements);
+  for (const { mode, name } of choices) {
+    const option = document.createElement("option");
+    option.value = mode?.id ?? "";
+    option.textContent = name;
+    select.append(option);
+  }
+  select.addEventListener("change", () => {
+    const choice = choices.find(({ mode }) => (mode?.id ?? "") === select.value);
+    if (choice) choose(choice.mode);
+  });
 
   return {
     select(id) {
