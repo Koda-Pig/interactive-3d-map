@@ -1,4 +1,12 @@
-import { BufferAttribute, BufferGeometry, Color, Group, Mesh } from "three";
+import {
+  BufferAttribute,
+  BufferGeometry,
+  Color,
+  Group,
+  Mesh,
+  NotEqualStencilFunc,
+  ReplaceStencilOp,
+} from "three";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import type { TrackLocation } from "../layout/locations.ts";
 import type { PathSample, PathSegment } from "../layout/path.ts";
@@ -291,6 +299,19 @@ export function createRibbon(location: TrackLocation, surface: GroundSurface): G
   const stencilRef = location.type === "road" ? roadTier(location.width) + 1 : 0;
   const ribbon = new Mesh(geometry, layerMaterial(location.color, layer, surfaceMap, stencilRef));
   ribbon.receiveShadow = true;
+  if (location.id === "circuit" || location.id === "pit-lane") {
+    // Reserve the high stencil bit for the racing surface. Road tiers draw
+    // first; the circuit then owns the merge, regardless of depth rounding or
+    // the pit ribbon's different terrain triangulation and texture coordinates.
+    ribbon.material = ribbon.material.clone();
+    ribbon.material.stencilWrite = true;
+    ribbon.material.stencilRef = 128;
+    ribbon.material.stencilFuncMask = 128;
+    ribbon.material.stencilWriteMask = location.id === "circuit" ? 128 : 0;
+    ribbon.material.stencilFunc = NotEqualStencilFunc;
+    ribbon.material.stencilZPass = ReplaceStencilOp;
+    ribbon.renderOrder = location.id === "circuit" ? 1 : 2;
+  }
 
   const group = new Group();
   group.add(ribbon, crossing.structure);
@@ -360,6 +381,16 @@ export function createRibbon(location: TrackLocation, surface: GroundSurface): G
     );
     const mesh = new Mesh(edges, layerMaterial("#E9E5D9", Layer.marking));
     mesh.receiveShadow = true;
+    if (location.id === "pit-lane") {
+      // Pit edge paint ends at the circuit instead of crossing the racing line.
+      mesh.material = mesh.material.clone();
+      mesh.material.stencilWrite = true;
+      mesh.material.stencilRef = 128;
+      mesh.material.stencilFuncMask = 128;
+      mesh.material.stencilWriteMask = 0;
+      mesh.material.stencilFunc = NotEqualStencilFunc;
+      mesh.renderOrder = 3;
+    }
     group.add(mesh);
   }
   if (location.startFinish) {
