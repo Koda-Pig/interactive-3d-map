@@ -6,10 +6,10 @@ import { vehicleSlope } from "../src/draw/vehicle-pose.ts";
 import { GRID_LENGTH, GRID_WIDTH, raceGrid } from "../src/layout/race-grid.ts";
 
 const { locations } = JSON.parse(readFileSync("src/data/locations.json", "utf8"));
-test("all twenty cars fit inside separate painted starting slots", () => {
+test("all twenty-two cars fit inside separate painted starting slots", () => {
   const circuit = locations.find((location) => location.id === "circuit");
   const slots = raceGrid(circuit);
-  assert.equal(slots.length, 20);
+  assert.equal(slots.length, 22);
   assert(GRID_LENGTH > 5.6);
   assert(GRID_WIDTH > 2);
   for (let index = 0; index < slots.length; index++) {

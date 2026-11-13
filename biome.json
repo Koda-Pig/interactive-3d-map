@@ -10,6 +10,7 @@
       "**",
       "!**/*.md",
       "!src/data/locations.json",
+      "!src/assets/teams",
       "!public/models/manifest.json",
       "!tools/assets/validation-report.json",
       "!tools/assets/determinism-report.json"

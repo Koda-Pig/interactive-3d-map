@@ -51,6 +51,7 @@ import { hash2, noise2 } from "../terrain/noise.ts";
 import { createContactShadows } from "./contact-shadows.ts";
 import type { Kit } from "./kit.ts";
 import { bakedGeometry } from "./kit.ts";
+import { createTeamBranding, TEAMS, transporterColour } from "./team-branding.ts";
 import { vehicleSlope } from "./vehicle-pose.ts";
 
 const TREES = {
@@ -1112,7 +1113,9 @@ function parkCars(
 
 function placeRaceGrid(context: Context, instances: Instances): void {
   const circuit = locationById<TrackLocation>("circuit");
-  for (const slot of raceGrid(circuit)) {
+  for (const [place, slot] of raceGrid(circuit).entries()) {
+    // Two cars a team, in the paddock's order, painted in the team's colours.
+    const team = TEAMS[Math.floor(place / 2) % TEAMS.length];
     const yaw = Math.atan2(slot.dirX, slot.dirZ);
     placeModel(context, instances, RACE_CAR, {
       x: slot.x,
@@ -1120,7 +1123,7 @@ function placeRaceGrid(context: Context, instances: Instances): void {
       sink: -0.35,
       yaw,
       ...vehicleSlope((x, z) => context.surface.heightAt(x, z), slot.x, slot.z, yaw),
-      tint: new Color().setHSL(context.random(), 0.45, 0.6),
+      tint: team ? transporterColour(team) : undefined,
     });
   }
 }
@@ -1620,16 +1623,38 @@ function createFireworks(context: Context): { object: Group; show: Show } {
   };
 }
 
-/** Temporary race activity sits inside the permanent compound organisation. */
-function placeTeamActivity(context: Context, teams: Instances, guests: Instances): void {
+/**
+ * Temporary race activity sits inside the permanent compound organisation.
+ * Each team takes a unit in turn, which carries its colours, and parks its
+ * transporters in that unit's covered bay. The last unit is the spare.
+ */
+function placeTeamActivity(context: Context, teams: Instances, guests: Instances): Mesh {
   const truck = createTransporter();
   const support = locationById<BuildingLocation>("team-support-rows");
-  for (const part of buildingParts(support).filter((part) => part.base === 5)) {
+  const parts = buildingParts(support);
+  const bays = parts.filter((part) => part.base === 5);
+  for (const [index, part] of bays.entries()) {
     const [x, z] = centreOf(resolveOutline(part.footprint));
+    const team = TEAMS[index];
+    const tint = team ? transporterColour(team) : undefined;
     for (const offset of [-6, 6]) {
-      teams.add(truck, { x: x + offset, z, y: context.surface.heightAt(x, z) });
+      teams.add(truck, { x: x + offset, z, y: context.surface.heightAt(x, z), tint });
     }
   }
+  const units = parts
+    .filter((part) => part.model?.file === "racing/paddock-support-unit.glb")
+    .map((part) => {
+      const bounds = boundsOf(resolveOutline(part.footprint));
+      const x = (bounds.minX + bounds.maxX) / 2;
+      const z = (bounds.minZ + bounds.maxZ) / 2;
+      return {
+        x,
+        z,
+        width: bounds.maxX - bounds.minX,
+        depth: bounds.maxZ - bounds.minZ,
+        ground: context.surface.heightAt(x, z),
+      };
+    });
   for (const x of [-225, -170]) {
     placeModel(context, guests, MARQUEE, { x, z: -93, scale: 0.65 });
   }
@@ -1638,6 +1663,7 @@ function placeTeamActivity(context: Context, teams: Instances, guests: Instances
     const z = -124 + Math.floor(index / 12) * 5;
     guests.add(PERSON, { x, z, y: context.surface.heightAt(x, z) + 0.3, yaw: personYaw(x, z) });
   }
+  return createTeamBranding(units);
 }
 
 /** Training equipment and display cars stay with their external campuses. */
@@ -2360,7 +2386,7 @@ export function createScenery(kit: Kit, surface: GroundSurface, quality: Quality
   placeFoodStalls(context, raceTrackside);
   placeFanWalkCrowd(context, raceTrackside);
   const raceGuests = new Instances();
-  placeTeamActivity(context, raceTrackside, raceGuests);
+  const teamBranding = placeTeamActivity(context, raceTrackside, raceGuests);
   // Small and many, so they're drawn without shadows, as the parked cars are.
   const raceCrowds = new Instances();
   crowdBanks(
@@ -2385,6 +2411,7 @@ export function createScenery(kit: Kit, surface: GroundSurface, quality: Quality
         ...addHidden(group("transport"), raceShuttles.build(true)),
         ...addHidden(group("racing"), raceTrackside.build(true, undefined, levels, figuresFor)),
         ...addHidden(group("racing"), raceYardTrucks.build(true)),
+        ...addHidden(group("racing"), [teamBranding]),
         ...addHidden(group("racing"), raceCrowds.build(false, undefined, levels, figuresFor)),
         ...addHidden(group("hospitality"), raceGuests.build(true, undefined, levels, figuresFor)),
       ],
