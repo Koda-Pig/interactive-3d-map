@@ -211,6 +211,14 @@ export class SelectionOutline {
     renderer.autoClear = autoClear;
   }
 
+  dispose(): void {
+    this.setMasked(false);
+    this.target.dispose();
+    this.material.dispose();
+    this.maskMaterial.dispose();
+    this.overlay.geometry.dispose();
+  }
+
   private setMasked(masked: boolean): void {
     this.outlined?.traverse((child) => {
       if (child.userData.surround) {

@@ -1,1579 +1,824 @@
-:root {
-  /* The pane's own width, which never changes; the shell clips it. */
-  --sidebar-pane-width: calc(320px + env(safe-area-inset-left));
-  /* How far the panel reaches over the map. The chips beside it start here. */
-  --sidebar-width: var(--sidebar-pane-width);
-  /* Strong decelerate: the panel gets moving at once and lands softly.
-     The sidebar and every chip that tracks its edge share this curve. */
-  --sidebar-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --sidebar-duration: 300ms;
-  --sheet-handle: 76px;
-  --sheet-peek: calc(var(--sheet-handle) + env(safe-area-inset-bottom));
-  --open-button-width: 122px;
-  --open-button-height: 44px;
-  /* Room beside the button that opens the sidebar, while it's showing. */
-  --open-button-space: 0px;
-}
+@import "@fontsource/roboto/latin-400.css";
+@import "@fontsource/roboto/latin-500.css";
 
-/* hide netlify badge */
-#nl-badge-frame {
-  display: none;
-}
-
-html,
-body,
-#app {
+.bmr-map-container {
+  width: 100%;
   height: 100%;
-  margin: 0;
+  container: bmr / size;
 }
-
-body {
-  display: flex;
-  overflow: hidden;
-  background: #e5ddc9;
-}
-
-/* Isolated so the labels' z-indexes can't rise above the panel and notice. */
-#app {
+.bmr-map {
   position: relative;
-  flex: 1;
-  min-width: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
   isolation: isolate;
-  height: 100dvh;
-}
 
-#app canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-#app canvas:focus-visible {
-  outline: 2px solid #1ca7ec;
-  outline-offset: -2px;
-}
-
-/* Clicks reach the canvas, so dragging from a label still moves the map. */
-.labels {
-  position: absolute;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-}
-
-.label {
-  padding: 2px 7px;
-  border-radius: 8px;
-  background: rgb(255 255 255 / 92%);
-  color: #004272;
   font:
-    500 11px / 1.3 Roboto,
+    400 14px Roboto,
     system-ui,
     sans-serif;
-  white-space: nowrap;
-  transition:
-    opacity 150ms,
-    background-color 150ms,
-    color 150ms;
-}
-
-.label--major {
-  padding: 3px 8px;
-  background: rgb(255 255 255 / 90%);
   color: #004272;
-  box-shadow: 0 1px 5px rgb(0 36 63 / 14%);
-  font-size: 11px;
-}
-
-/* Hovered: a pale step up from the resting pill, in either size. */
-.label--active {
-  background: #e3f4fd;
-  color: #004272;
-}
-
-/* Selected: the colour of the line around it on the map (`SELECTION` in materials.ts). */
-.label--selected {
-  background: #ffb81c;
-  color: #00243f;
-}
-
-.label--hidden {
-  opacity: 0;
-}
-
-.info-panel {
-  --info-panel-top: max(16px, env(safe-area-inset-top));
-  position: fixed;
-  top: var(--info-panel-top);
-  right: max(16px, env(safe-area-inset-right));
-  width: 320px;
-  /* Stops above the map controls, which share the right edge, and scrolls
-     in a window too short for both. main.ts measures the controls. */
-  max-height: calc(
-    100dvh -
-    var(--info-panel-top) -
-    var(--map-controls-height, 0px) -
-    max(16px, env(safe-area-inset-bottom)) -
-    12px
-  );
-  overflow: hidden auto;
-  overscroll-behavior: contain;
-  border-radius: 8px;
-  background: #fff;
-  box-shadow: 0 8px 24px rgb(0 36 63 / 28%);
-  color: #26343d;
-  font:
-    400 14px / 1.5 Roboto,
-    system-ui,
-    sans-serif;
-}
-
-.info-panel__bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 6px 6px 6px 16px;
-  background: #004272;
-  color: #fff;
-}
-
-.info-panel__precinct {
-  margin: 0;
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.info-panel__close {
-  width: 32px;
-  height: 32px;
-  border: 0;
-  border-radius: 8px;
-  background: transparent;
-  color: inherit;
-  font-size: 22px;
-  line-height: 1;
-  cursor: pointer;
-  transition: 0.15s ease-out background-color;
-}
-
-.info-panel__close:hover {
-  background: #00678c;
-}
-
-.info-panel__close:focus-visible {
-  outline: 2px solid #1ca7ec;
-  outline-offset: -2px;
-}
-
-.info-panel__image {
-  display: block;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  background: linear-gradient(135deg, #004272, #00678c);
-}
-
-/* A short window keeps the name and text in view under a shorter picture. */
-@media (min-width: 601px) and (max-height: 720px) {
-  .info-panel__image {
-    aspect-ratio: 3 / 1;
-  }
-}
-
-.info-panel__image[hidden] {
-  display: none;
-}
-
-.info-panel__body {
-  padding: 14px 16px 16px;
-}
-
-.info-panel__name {
-  margin: 0 0 6px;
-  color: #004272;
-  font-size: 20px;
-  font-weight: 500;
-  line-height: 1.25;
-}
-
-.info-panel__description {
-  margin: 0;
-}
-
-.info-panel__actions {
-  margin-top: 12px;
-  border-top: 1px solid #e3e7ea;
-  padding-top: 10px;
-}
-
-.info-panel__actions[hidden] {
-  display: none;
-}
-
-.info-panel__action-group + .info-panel__action-group {
-  margin-top: 10px;
-}
-
-.info-panel__action-heading {
-  margin: 0 0 6px;
-  color: #5d6b75;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.info-panel__action-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.info-panel__action {
-  display: inline-flex;
-  align-items: center;
-  min-height: 32px;
-  border: 1px solid #00678c;
-  border-radius: 8px;
-  padding: 4px 12px;
-  color: #00678c;
-  font-weight: 500;
-  text-decoration: none;
-}
-
-.info-panel__action:hover {
-  background: #e6f1f5;
-}
-
-.info-panel__action--primary {
-  background: #00678c;
-  color: #fff;
-}
-
-.info-panel__action--primary:hover {
-  background: #005575;
-}
-
-.info-panel__action:focus-visible {
-  outline: 2px solid #1ca7ec;
-  outline-offset: 2px;
-}
-
-.info-panel__actions-note {
-  margin: 8px 0 0;
-  color: #5d6b75;
-  font-size: 11px;
-}
-
-.info-panel__related {
-  margin-top: 12px;
-  border-top: 1px solid #e3e7ea;
-  padding-top: 10px;
-}
-
-.info-panel__related[hidden] {
-  display: none;
-}
-
-.info-panel__related-list {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.info-panel__related-link {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  width: 100%;
-  border: 0;
-  border-radius: 6px;
-  padding: 6px 8px;
-  background: none;
-  color: #004272;
-  font: inherit;
-  font-weight: 500;
-  text-align: left;
-  cursor: pointer;
-}
-
-.info-panel__related-link:hover {
-  background: #eef3f6;
-}
-
-.info-panel__related-link:focus-visible {
-  outline: 2px solid #1ca7ec;
-  outline-offset: -2px;
-}
-
-.info-panel__related-role {
-  color: #5d6b75;
-  font-weight: 400;
-}
-
-.notice {
-  position: fixed;
-  left: calc(var(--sidebar-width) + 16px);
-  bottom: max(16px, env(safe-area-inset-bottom));
-  transition: left var(--sidebar-duration) var(--sidebar-ease);
-  margin: 0;
-  padding: 4px 10px;
-  border-radius: 6px;
-  /* A caption, not a control: quieter than the navy buttons. */
-  background: rgb(255 255 255 / 78%);
-  color: #26343d;
-  font:
-    400 12px / 1.3 Roboto,
-    system-ui,
-    sans-serif;
-  letter-spacing: 0.01em;
-  pointer-events: none;
-}
-
-/* Sits above the notice until the visitor has moved the map. */
-.hint {
-  position: fixed;
-  left: calc(var(--sidebar-width) + 16px);
-  bottom: calc(var(--tour-player-height, 90px) + 68px);
-  max-width: calc(100vw - var(--sidebar-width) - 96px);
-  transition:
-    left var(--sidebar-duration) var(--sidebar-ease),
-    max-width var(--sidebar-duration) var(--sidebar-ease),
-    opacity 400ms;
-  margin: 0;
-  padding: 6px 12px;
-  border-radius: 8px;
-  background: rgb(255 255 255 / 94%);
-  box-shadow: 0 4px 14px rgb(0 36 63 / 18%);
-  color: #26343d;
-  font:
-    400 13px / 1.3 Roboto,
-    system-ui,
-    sans-serif;
-  pointer-events: none;
-}
-
-.hint--gone {
-  opacity: 0;
-}
-body:has(.tours__playing:not([hidden])) .hint {
-  opacity: 0;
-}
-
-.map-controls {
-  position: fixed;
-  right: max(16px, env(safe-area-inset-right));
-  bottom: max(16px, env(safe-area-inset-bottom));
-  display: flex;
-  gap: 6px;
-  padding: 4px;
-  /* One square cell: the pad grid, the zoom buttons and the compass all
-     size from this, so shrinking the controls is a one-value change. */
-  --map-cell: 24px;
-  border-radius: 8px;
-  background: #004272;
-  box-shadow: 0 4px 14px rgb(0 36 63 / 28%);
-}
-
-.map-controls__pads {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-/* A cross of four arrows around a middle button. */
-.map-controls__pad {
-  display: grid;
-  padding: 4px;
-  grid-template: repeat(3, var(--map-cell)) / repeat(3, var(--map-cell));
-  grid-template-areas:
-    ". up ."
-    "left middle right"
-    ". down .";
-  border-radius: 6px;
-  background: rgb(255 255 255 / 8%);
-}
-
-.map-controls__up {
-  grid-area: up;
-}
-
-.map-controls__down {
-  grid-area: down;
-}
-
-.map-controls__left {
-  grid-area: left;
-}
-
-.map-controls__right {
-  grid-area: right;
-}
-
-.map-controls__home {
-  grid-area: middle;
-}
-
-/* The arrows are drawn pointing up. */
-.map-controls__down svg {
-  transform: rotate(180deg);
-}
-
-.map-controls__left svg {
-  transform: rotate(-90deg);
-}
-
-.map-controls__right svg {
-  transform: rotate(90deg);
-}
-
-.map-controls__zoom {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.map-controls__slider {
-  flex: 1;
-  width: 32px;
-  min-height: 0;
-  margin: 2px 0;
-  accent-color: #1ca7ec;
-  cursor: pointer;
-  /* Upright, with zoomed in at the top. */
-  writing-mode: vertical-lr;
-  direction: rtl;
-}
-
-.map-controls__button {
-  display: grid;
-  place-items: center;
-  width: 100%;
-  height: 100%;
-  padding: 0;
-  border: 0;
-  border-radius: 6px;
-  background: transparent;
-  color: #fff;
-  font:
-    400 22px / 1 Roboto,
-    system-ui,
-    sans-serif;
-  cursor: pointer;
-  touch-action: manipulation;
-  transition: 0.15s ease-out background-color;
-}
-
-.map-controls__button:hover {
-  background: rgb(255 255 255 / 14%);
-}
-
-.map-controls__button:active {
-  background: #00678c;
-}
-
-.map-controls__button:focus-visible,
-.map-controls__slider:focus-visible {
-  outline: 2px solid #1ca7ec;
-  outline-offset: 1px;
-}
-
-/* A dial to drag, the size of the pad below it. */
-.map-controls__compass {
-  width: calc(var(--map-cell) * 3 + 8px);
-  height: calc(var(--map-cell) * 3 + 8px);
-  border-radius: 50%;
-  background: rgb(255 255 255 / 8%);
-  cursor: grab;
-  /* Depth for the dial, which tips back as the view tilts. */
-  perspective: 240px;
-  touch-action: none;
-}
-
-.map-controls__compass:active {
-  background: rgb(255 255 255 / 20%);
-}
-
-.map-controls__compass--dragging {
-  cursor: grabbing;
-}
-
-.map-controls__dial {
-  width: 100%;
-  height: 100%;
-  font-family: Roboto, system-ui, sans-serif;
-  pointer-events: none;
-}
-
-/* The zoom buttons are flex children, not grid items, so 100% would mean
-   the whole column; size them from the shared cell instead. */
-.map-controls__zoom .map-controls__button {
-  width: var(--map-cell);
-  height: var(--map-cell);
-  flex: none;
-}
-
-/* The sidebar's collapsed state on a wide screen. The shell behind it draws
-   the shape, so the button only brings its label, hover and focus ring. */
-.sidebar-open {
-  position: fixed;
-  top: max(16px, env(safe-area-inset-top));
-  left: max(16px, env(safe-area-inset-left));
-  z-index: 1;
-  display: none;
-  gap: 8px;
-  align-items: center;
-  box-sizing: border-box;
-  width: var(--open-button-width);
-  height: var(--open-button-height);
-  padding: 0 12px;
-  border: 0;
-  border-radius: 8px;
-  background: transparent;
-  color: #fff;
-  font:
-    500 13px / 1 Roboto,
-    system-ui,
-    sans-serif;
-  white-space: nowrap;
-  cursor: pointer;
-}
-
-.sidebar-open::before {
-  content: "";
-  position: absolute;
-  inset: 3px;
-  border-radius: 6px;
-  pointer-events: none;
-  transition: background-color 0.15s ease-out;
-}
-
-.sidebar-open:hover::before {
-  background: rgb(255 255 255 / 14%);
-}
-
-.sidebar-open:focus-visible {
-  outline: 2px solid #1ca7ec;
-  outline-offset: 2px;
-}
-
-@media (min-width: 601px) {
-  /* The sidebar takes no room of its own: the map fills the window and the
-     panel lies over its left edge. What's seen is the shell: one shape that
-     is the full panel when open and the button when closed, and moves
-     between the two. */
-  .sidebar {
-    position: relative;
-    z-index: 1;
-    flex: none;
-    width: 0;
-    background: none;
-    box-shadow: none;
+  background: #e5ddc9;
+  & {
+    /* The pane's own width, which never changes; the shell clips it. */
+    --sidebar-pane-width: calc(320px + env(safe-area-inset-left));
+    /* How far the panel reaches over the map. The chips beside it start here. */
+    --sidebar-width: var(--sidebar-pane-width);
+    /* Strong decelerate: the panel gets moving at once and lands softly.
+     The sidebar and every chip that tracks its edge share this curve. */
+    --sidebar-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --sidebar-duration: 300ms;
+    --sheet-handle: 76px;
+    --sheet-peek: calc(var(--sheet-handle) + env(safe-area-inset-bottom));
+    --open-button-width: 122px;
+    --open-button-height: 44px;
+    /* Room beside the button that opens the sidebar, while it's showing. */
+    --open-button-space: 0px;
   }
 
-  /* The button's blue, which is also the panel's title bar, so the bar is
-     what the panel shrinks into. */
-  .sidebar__shell {
-    position: fixed;
-    top: 0;
-    left: 0;
-    display: block;
-    width: var(--sidebar-pane-width);
-    height: 100dvh;
-    overflow: hidden;
-    background: #004272;
-    box-shadow: 0 0 16px rgb(0 36 63 / 24%);
-    transition-property: top, left, width, height, border-radius, box-shadow;
-    transition-duration: var(--sidebar-duration);
-    transition-timing-function: var(--sidebar-ease);
+  /* Isolated so the labels' z-indexes can't rise above the panel and notice. */
+  .map-canvas {
+    position: absolute;
+    inset: 0;
+    flex: 1;
+    min-width: 0;
+    isolation: isolate;
+    height: 100%;
   }
 
-  .sidebar-closed .sidebar__shell {
-    top: max(16px, env(safe-area-inset-top));
-    left: max(16px, env(safe-area-inset-left));
-    width: var(--open-button-width);
-    height: var(--open-button-height);
-    border-radius: 8px 0 0 8px;
-    box-shadow: none;
-  }
-
-  /* The pane keeps its full size while the shell clips it, so nothing inside
-     reflows. It stays solid: the clip cuts the white body away and leaves the
-     title bar, which is the button's blue. */
-  .sidebar__inner {
-    width: var(--sidebar-pane-width);
-    height: 100dvh;
-    transition: visibility 0s;
-  }
-
-  .sidebar-closed .sidebar__inner {
-    visibility: hidden;
-    transition: visibility 0s var(--sidebar-duration);
-  }
-
-  .sidebar__bar {
-    padding-left: calc(16px + env(safe-area-inset-left));
-  }
-
-  .sidebar__body {
-    padding-left: env(safe-area-inset-left);
-  }
-
-  /* Only what's in the bar fades. It goes early and comes back late, and the
-     button's label does the opposite, so the two never show at full strength
-     together. */
-  .sidebar__bar > * {
-    transition:
-      opacity calc(var(--sidebar-duration) * 0.6) calc(var(--sidebar-duration) * 0.15),
-      transform var(--sidebar-duration) var(--sidebar-ease),
-      background-color 0s;
-  }
-
-  .sidebar-closed .sidebar__bar > * {
-    opacity: 0;
-    transition:
-      opacity calc(var(--sidebar-duration) * 0.4),
-      transform var(--sidebar-duration) var(--sidebar-ease);
-  }
-
-  /* The title travels to where the button's label sits, at the label's size,
-     so the swap reads as one line of text changing. The label starts 38px in
-     and is centred 19px down; the title starts 16px in, centred 26px down. */
-  .sidebar__title {
-    transform-origin: left center;
-  }
-
-  .sidebar-closed .sidebar__title {
-    transform: translate(calc(22px - env(safe-area-inset-left)), -7px) scale(calc(13 / 15));
-  }
-
-  .sidebar-open {
-    display: flex;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition:
-      opacity calc(var(--sidebar-duration) * 0.3),
-      background-color 0.15s ease-out,
-      visibility 0s var(--sidebar-duration);
-  }
-
-  .sidebar-closed .sidebar-open {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    transition:
-      opacity calc(var(--sidebar-duration) * 0.5) calc(var(--sidebar-duration) * 0.4),
-      background-color 0.15s ease-out,
-      visibility 0s;
-  }
-
-  .sidebar-closed {
-    --sidebar-width: 0px;
-    --open-button-space: var(--open-button-width);
-  }
-
-  /* An instant switch. `visibility` has no duration either way, so the part
-     that's put away stops being focusable at once. */
-  @media (prefers-reduced-motion: reduce) {
-    .sidebar__shell,
-    .sidebar__inner,
-    .sidebar__bar > *,
-    .sidebar-open,
-    .sidebar-closed .sidebar__inner,
-    .sidebar-closed .sidebar__bar > *,
-    .sidebar-closed .sidebar-open {
-      transition: none;
-    }
-  }
-}
-
-.event-switch {
-  position: fixed;
-  top: max(16px, env(safe-area-inset-top));
-  left: calc(var(--sidebar-width) + var(--open-button-space) + 16px);
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 3px;
-  height: 44px;
-  box-sizing: border-box;
-  border-radius: 8px;
-  background: #004272;
-  box-shadow: 0 4px 14px rgb(0 36 63 / 24%);
-  width: max-content;
-  max-width: calc(100vw - var(--sidebar-width) - var(--open-button-space) - 32px);
-  transition:
-    left var(--sidebar-duration) var(--sidebar-ease),
-    max-width var(--sidebar-duration) var(--sidebar-ease);
-  font:
-    500 13px / 1.3 Roboto,
-    system-ui,
-    sans-serif;
-}
-
-.event-switch__buttons {
-  display: flex;
-  gap: 2px;
-}
-
-.event-switch__button {
-  height: 38px;
-  padding: 0 12px;
-  border: 0;
-  border-radius: 6px;
-  background: transparent;
-  color: #fff;
-  font: inherit;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: 0.15s ease-out background-color;
-}
-
-.event-switch__button:hover {
-  background: rgb(255 255 255 / 14%);
-}
-
-.event-switch__button[aria-pressed="true"] {
-  background: #00678c;
-}
-
-.event-switch__button:focus-visible {
-  outline: 2px solid #1ca7ec;
-  outline-offset: 1px;
-}
-
-.event-switch__summary {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  width: 320px;
-  box-sizing: border-box;
-  line-height: 1.5;
-  margin: 0;
-  padding: 6px 12px;
-  max-width: 440px;
-  border-radius: 8px;
-  background: rgb(255 255 255 / 94%);
-  color: #26343d;
-  font-weight: 400;
-  box-shadow: 0 4px 14px rgb(0 36 63 / 18%);
-}
-
-.route-legend {
-  display: flex;
-  gap: 14px;
-  margin: 0;
-  padding: 8px 0 0;
-  border-top: 1px solid #dfe6ea;
-  color: #51626d;
-  font-size: 11px;
-  font-weight: 400;
-}
-
-.route-legend[hidden] {
-  display: none;
-}
-
-.route-legend__item {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.route-legend__item::before {
-  content: "";
-  width: 22px;
-  height: 7px;
-  border-radius: 4px;
-}
-
-.route-legend__item--drive::before {
-  background: repeating-linear-gradient(90deg, transparent 0 5px, #fff 5px 7px), #1ca7ec;
-  box-shadow: inset 0 0 0 1px rgb(0 41 71 / 45%);
-}
-
-.route-legend__item--walk::before {
-  background:
-    radial-gradient(circle, #004272 0 1.6px, transparent 2px) 0 50% / 7px 7px repeat-x,
-    #fff;
-  box-shadow: inset 0 0 0 1px rgb(0 41 71 / 45%);
-}
-
-.sidebar-closed .event-switch {
-  border-radius: 0 8px 8px 0;
-}
-.sidebar-closed .sidebar-open {
-  border-radius: 8px 0 0 8px;
-}
-.event-switch__mobile {
-  display: none;
-}
-.event-switch__select {
-  height: 38px;
-  max-width: 190px;
-  padding: 0 10px;
-  border: 0;
-  border-radius: 6px;
-  background: #004272;
-  color: white;
-  font: inherit;
-}
-.event-switch__info {
-  flex: none;
-  width: 28px;
-  height: 28px;
-  margin: 0 5px;
-  border: 1px solid rgb(255 255 255 / 40%);
-  border-radius: 50%;
-  background: transparent;
-  color: #fff;
-  font: inherit;
-  cursor: pointer;
-  transition: 0.15s ease-out background-color;
-}
-.event-switch__info:hover {
-  background: rgb(255 255 255 / 14%);
-}
-.event-switch__info[hidden] {
-  display: none;
-}
-.event-switch__info[aria-expanded="true"] {
-  background: #00678c;
-}
-.event-switch__info:focus-visible,
-.event-switch__select:focus-visible {
-  outline: 2px solid #1ca7ec;
-  outline-offset: 1px;
-}
-.tour-player {
-  position: fixed;
-  bottom: max(52px, calc(env(safe-area-inset-bottom) + 36px));
-  left: calc(var(--sidebar-width) + (100vw - var(--sidebar-width)) / 2);
-  transform: translateX(-50%);
-  box-sizing: border-box;
-  width: 480px;
-  max-width: calc(100vw - var(--sidebar-width) - 32px);
-  padding: 10px 12px;
-  border: 1px solid rgb(255 255 255 / 70%);
-  border-radius: 12px;
-  background: rgb(255 255 255 / 96%);
-  box-shadow: 0 6px 24px rgb(0 36 63 / 20%);
-  color: #004272;
-  font:
-    500 13px / 1.3 Roboto,
-    system-ui,
-    sans-serif;
-}
-.tour-player:has(.tours[hidden]):has(.route-legend[hidden]) {
-  display: none;
-}
-.tours {
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-  border: 0;
-}
-.tours[hidden],
-.tours__choices[hidden],
-.tours__playing[hidden] {
-  display: none;
-}
-.tours__heading {
-  display: block;
-  margin-bottom: 10px;
-  color: #51626d;
-  font-size: 12px;
-}
-.tours__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.tours__actions > button {
-  flex: 1 1 130px;
-  justify-content: center;
-}
-.tours__playing {
-  display: grid;
-  grid-template-columns: 1fr auto auto 80px;
-  align-items: center;
-  gap: 10px;
-}
-.tours__description {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-.tours__name {
-  font-size: 14px;
-  font-weight: 500;
-}
-.tours__status {
-  color: #51626d;
-  font-size: 11px;
-  font-weight: 400;
-}
-.tours__telemetry {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 3px;
-  margin: 0;
-  color: #51626d;
-  font-size: 11px;
-  font-weight: 400;
-}
-.tours__telemetry[hidden] {
-  display: none;
-}
-.tours__speedometer {
-  white-space: nowrap;
-}
-.tours__kmh {
-  display: inline-block;
-  min-width: 3ch;
-  color: #004272;
-  font-size: 20px;
-  font-weight: 500;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-  text-align: right;
-}
-.tours__progress {
-  grid-column: 1 / -1;
-  appearance: none;
-  width: 100%;
-  height: 4px;
-  border: 0;
-  border-radius: 2px;
-  overflow: hidden;
-  background: #dfe6ea;
-  color: #00678c;
-}
-.tours__progress::-webkit-progress-bar {
-  background: #dfe6ea;
-}
-.tours__progress::-webkit-progress-value {
-  background: #00678c;
-}
-.tours__progress::-moz-progress-bar {
-  background: #00678c;
-}
-.tours__stop {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  height: 36px;
-  border: 0;
-  border-radius: 6px;
-  background: #004272;
-  color: #fff;
-  font: inherit;
-  cursor: pointer;
-  transition: 0.15s ease-out background-color;
-}
-.tours__stop:hover {
-  background: #00678c;
-}
-.tours__stop:focus-visible {
-  outline: 2px solid #1ca7ec;
-  outline-offset: 2px;
-}
-.tours__button,
-.tours__speed {
-  display: inline-flex;
-  align-items: center;
-  height: 36px;
-  gap: 6px;
-  padding: 0 12px;
-  border: 0;
-  border-radius: 8px;
-  background: #edf3f6;
-  color: #004272;
-  font: inherit;
-  white-space: nowrap;
-}
-
-.tours__button {
-  border: 1px solid color-mix(in srgb, currentColor 40%, transparent);
-  cursor: pointer;
-  transition:
-    0.15s ease-out background-color,
-    0.15s ease-out color;
-}
-
-.tours__button:hover {
-  background: #fff;
-  color: #00678c;
-}
-
-.tours__button:focus-visible,
-.tours__speed:has(select:focus-visible) {
-  outline: 2px solid #1ca7ec;
-  outline-offset: 1px;
-}
-
-.tours__speed {
-  position: relative;
-}
-
-.tours__speed::after {
-  content: "";
-  position: absolute;
-  right: 13px;
-  top: 13px;
-  width: 6px;
-  height: 6px;
-  border-right: 1.5px solid currentColor;
-  border-bottom: 1.5px solid currentColor;
-  transform: rotate(45deg);
-  pointer-events: none;
-}
-
-.tours__speed select {
-  appearance: none;
-  width: 58px;
-  height: 100%;
-  padding: 0 16px 0 2px;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  font-variant-numeric: tabular-nums;
-  cursor: pointer;
-}
-
-.tours__speed select:focus-visible {
-  outline: none;
-}
-
-/* The interface stays out of the way until the title screen has cleared and the camera has arrived. */
-html.intro :is(.sidebar, .event-switch, .tour-player, .notice, .map-controls, .hint, .labels) {
-  opacity: 0;
-}
-html.intro :is(.sidebar, .event-switch, .tour-player, .notice, .map-controls, .hint, .labels),
-html.intro :is(.sidebar, .event-switch, .tour-player, .notice, .map-controls, .hint, .labels) * {
-  pointer-events: none;
-}
-html.intro-done :is(.sidebar, .event-switch, .tour-player, .notice, .map-controls, .labels) {
-  animation: interface-in 800ms both;
-}
-@keyframes interface-in {
-  from {
-    opacity: 0;
-  }
-}
-
-.stats {
-  position: fixed;
-  right: calc(max(16px, env(safe-area-inset-right)) + 54px);
-  bottom: max(16px, env(safe-area-inset-bottom));
-  padding: 4px 8px;
-  border-radius: 8px;
-  background: rgb(0 0 0 / 72%);
-  color: #fff;
-  font:
-    12px / 1.3 ui-monospace,
-    Menlo,
-    monospace;
-  pointer-events: none;
-}
-
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  height: 100dvh;
-  background: #fff;
-  box-shadow: 0 0 16px rgb(0 36 63 / 24%);
-  color: #26343d;
-  font:
-    400 14px / 1.4 Roboto,
-    system-ui,
-    sans-serif;
-}
-
-/* The shell is the panel's outline, and the pane inside it holds the contents.
-   On a phone both just pass the sheet's column layout through. */
-.sidebar__shell,
-.sidebar__inner {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  min-height: 0;
-}
-
-.sidebar [hidden] {
-  display: none;
-}
-
-.sidebar__grabber {
-  display: none;
-}
-
-.sidebar__bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  min-height: 52px;
-  box-sizing: border-box;
-  padding: 8px 8px 8px 16px;
-  background: #004272;
-  color: #fff;
-}
-
-.sidebar__title {
-  flex: 1;
-  margin: 0;
-  font-size: 15px;
-  font-weight: 500;
-}
-
-.sidebar__reset {
-  flex: none;
-  min-height: 36px;
-  padding: 0 12px;
-  border: 0;
-  border-radius: 8px;
-  background: #00678c;
-  color: #fff;
-  font: inherit;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: 0.15s ease-out background-color;
-}
-
-.sidebar__close {
-  width: 32px;
-  height: 32px;
-  margin-left: -6px;
-  border: 0;
-  border-radius: 8px;
-  background: transparent;
-  color: inherit;
-  font-size: 22px;
-  line-height: 1;
-  cursor: pointer;
-  transition: 0.15s ease-out background-color;
-}
-
-.sidebar__close:hover {
-  background: #00678c;
-}
-
-.sidebar__reset:hover {
-  background: #007da8;
-}
-
-.sidebar__body {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  min-height: 0;
-  background: #fff;
-}
-
-.sidebar__search-row {
-  padding: 12px;
-  border-bottom: 1px solid #dfe6ea;
-}
-
-.sidebar__search {
-  width: 100%;
-  box-sizing: border-box;
-  min-height: 40px;
-  padding: 0 12px;
-  border: 1px solid #b8c4cc;
-  border-radius: 8px;
-  color: inherit;
-  font: inherit;
-}
-
-.sidebar__empty {
-  margin: 0;
-  padding: 16px;
-  color: #51626d;
-}
-
-.sidebar__empty:empty {
-  display: none;
-}
-
-.sidebar__list {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-}
-
-.sidebar__group-header {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 44px;
-  border-bottom: 1px solid #dfe6ea;
-  background: #eef2f5;
-}
-
-.sidebar__group-name {
-  flex: 1;
-  align-self: stretch;
-  min-width: 0;
-  margin: 0;
-  font: inherit;
-}
-
-/* The whole header beside the switch opens and closes the precinct's list. */
-.sidebar__group-expand {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  height: 100%;
-  padding: 0 0 0 16px;
-  border: 0;
-  background: transparent;
-  color: #004272;
-  font: inherit;
-  font-size: 13px;
-  font-weight: 500;
-  text-align: left;
-  cursor: pointer;
-}
-
-.sidebar__group-expand::before {
-  flex: none;
-  width: 6px;
-  height: 6px;
-  margin-right: 2px;
-  border-right: 2px solid currentcolor;
-  border-bottom: 2px solid currentcolor;
-  content: "";
-  transform: translateX(-2px) rotate(-45deg);
-  transition: transform 150ms;
-}
-
-.sidebar__group-expand[aria-expanded="true"]::before {
-  transform: translateY(-2px) rotate(45deg);
-}
-
-/* A search opens every precinct with a match, so there's nothing to press. */
-.sidebar__group-expand:disabled {
-  cursor: default;
-}
-
-.sidebar__group-expand:enabled:hover {
-  background: #e1e8ed;
-}
-
-.sidebar__group-count {
-  color: #51626d;
-  font-size: 12px;
-  font-weight: 400;
-}
-
-/* A bigger target than the switch itself, for fingers. */
-.sidebar__switch-area {
-  display: flex;
-  margin-left: auto;
-  padding: 12px 14px;
-  cursor: pointer;
-}
-
-.sidebar__switch {
-  position: relative;
-  width: 34px;
-  height: 20px;
-  margin: 0;
-  border-radius: 10px;
-  background: #8496a1;
-  appearance: none;
-  cursor: pointer;
-  transition: background-color 150ms;
-}
-
-.sidebar__switch::before {
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #fff;
-  content: "";
-  transition: transform 150ms;
-}
-
-.sidebar__switch:checked {
-  background: #00678c;
-}
-
-.sidebar__switch:checked::before {
-  transform: translateX(14px);
-}
-
-.sidebar__items {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-/* A fold's one row grows from nothing to the height of what's inside, which
-   can be animated where a height of `auto` can't. Shut, it's also hidden, so
-   nothing inside takes focus; that waits for the slide to finish. */
-.sidebar__fold {
-  display: grid;
-  grid-template-rows: 0fr;
-  visibility: hidden;
-  transition:
-    grid-template-rows var(--sidebar-duration) var(--sidebar-ease),
-    visibility 0s var(--sidebar-duration);
-}
-
-.sidebar__fold--open {
-  grid-template-rows: 1fr;
-  /* Not `visible`, which would show a fold that's inside a shut one. */
-  visibility: inherit;
-  transition-delay: 0s;
-}
-
-.sidebar__fold-inner {
-  min-height: 0;
-  overflow: hidden;
-}
-
-.sidebar__list--instant .sidebar__fold {
-  transition: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .sidebar__fold {
-    transition: none;
-  }
-}
-
-.sidebar__more {
-  display: block;
-  width: 100%;
-  min-height: 36px;
-  padding: 6px 16px;
-  border: 0;
-  background: transparent;
-  color: #00678c;
-  font: inherit;
-  font-size: 13px;
-  font-weight: 500;
-  text-align: left;
-  cursor: pointer;
-}
-
-.sidebar__more:hover {
-  background: #e3f4fd;
-}
-
-.sidebar__item {
-  display: block;
-  width: 100%;
-  min-height: 36px;
-  padding: 6px 16px;
-  border: 0;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
-.sidebar__item:hover {
-  background: #e3f4fd;
-}
-
-.sidebar__item[aria-current] {
-  background: #1ca7ec;
-  color: #00243f;
-  font-weight: 500;
-}
-
-.sidebar__preview {
-  margin: 0;
-  padding: 8px 16px 12px;
-  background: #e3f4fd;
-}
-
-/* On a wide screen the details card shows the same picture beside it. */
-@media (min-width: 601px) {
-  .sidebar__preview {
-    display: none;
-  }
-}
-
-.sidebar__preview-image {
-  display: block;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  border-radius: 8px;
-  object-fit: cover;
-  background: linear-gradient(135deg, #004272, #00678c);
-}
-
-.sidebar__preview-image--placeholder {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  align-items: center;
-  justify-content: center;
-  color: rgb(255 255 255 / 80%);
-  font-size: 12px;
-}
-
-/* Still pickable: choosing one brings its precinct back. */
-.sidebar__group--off .sidebar__items {
-  opacity: 0.5;
-}
-
-.sidebar__reset:focus-visible,
-.sidebar__close:focus-visible,
-.sidebar__search:focus-visible,
-.sidebar__switch:focus-visible,
-.sidebar__item:focus-visible,
-.sidebar__more:focus-visible,
-.sidebar__group-expand:focus-visible,
-.sidebar__grabber:focus-visible {
-  outline: 2px solid #1ca7ec;
-  outline-offset: -2px;
-}
-
-/* On a phone the sidebar slides up over the map, from a strip along the bottom. */
-/* Leave the single toolbar clear when the details card cannot sit beside it. */
-@media (min-width: 601px) and (max-width: 1140px) {
-  .info-panel {
-    --info-panel-top: 80px;
-  }
-}
-
-@media (max-width: 600px) {
-  body {
-    display: block;
-  }
-
-  .sidebar {
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 1;
-    height: 78dvh;
-    padding: 0;
-    overflow: hidden;
-    border-radius: 8px 8px 0 0;
-    background: #004272;
-    transform: translateY(calc(100% - var(--sheet-peek)));
-    transition: transform 240ms var(--sidebar-ease);
-  }
-
-  .sidebar--open {
-    transform: none;
-  }
-
-  .sidebar--dragging {
-    transform: translateY(clamp(0px, var(--sheet-y), calc(100% - var(--sheet-peek))));
-    transition: none;
-  }
-
-  .sidebar__body {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-
-  .sidebar:not(.sidebar--open, .sidebar--dragging) .sidebar__body {
-    visibility: hidden;
-  }
-
-  .sidebar__handle {
-    touch-action: none;
-    cursor: grab;
-  }
-
-  .sidebar__grabber {
+  .map-canvas canvas {
     display: block;
     width: 100%;
-    height: 24px;
-    padding: 0;
-    border: 0;
-    background: #004272;
-    cursor: inherit;
+    height: 100%;
   }
 
-  .sidebar__grabber::before {
-    display: block;
-    width: 40px;
-    height: 4px;
-    margin: 4px auto 0;
-    border-radius: 2px;
-    background: rgb(255 255 255 / 60%);
-    content: "";
+  .map-canvas canvas:focus-visible {
+    outline: 2px solid #1ca7ec;
+    outline-offset: -2px;
   }
 
-  /* Anything smaller makes iOS zoom the page when the box gets focus. */
-  .sidebar__search {
-    font-size: 16px;
+  /* Clicks reach the canvas, so dragging from a label still moves the map. */
+  .labels {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
   }
 
-  .sidebar__item {
-    min-height: 44px;
+  .label {
+    padding: 2px 7px;
+    border-radius: 8px;
+    background: rgb(255 255 255 / 92%);
+    color: #004272;
+    font:
+      500 11px / 1.3 Roboto,
+      system-ui,
+      sans-serif;
+    white-space: nowrap;
+    transition:
+      opacity 150ms,
+      background-color 150ms,
+      color 150ms;
   }
 
-  .info-panel {
-    top: auto;
-    right: 16px;
-    bottom: calc(var(--sheet-peek) + 12px);
-    left: 16px;
-    width: auto;
-    /* The controls are at the top on a phone, so only the switch row is kept clear. */
-    max-height: calc(100dvh - var(--sheet-peek) - 12px - 100px);
-  }
-
-  /* The switch and the compass share the top row, with the notice tucked under the switch. */
-  .notice {
-    top: calc(max(16px, env(safe-area-inset-top)) + 44px);
-    bottom: auto;
-    left: max(16px, env(safe-area-inset-left));
+  .label--major {
     padding: 3px 8px;
+    background: rgb(255 255 255 / 90%);
+    color: #004272;
+    box-shadow: 0 1px 5px rgb(0 36 63 / 14%);
     font-size: 11px;
   }
 
-  .event-switch {
-    top: max(16px, env(safe-area-inset-top));
-    left: max(16px, env(safe-area-inset-left));
-    width: max-content;
-    max-width: calc(100vw - 32px - 64px);
-    font-size: 12px;
+  /* Hovered: a pale step up from the resting pill, in either size. */
+  .label--active {
+    background: #e3f4fd;
+    color: #004272;
   }
 
-  .event-switch__button {
-    padding: 7px 9px;
+  /* Selected: the colour of the line around it on the map (`SELECTION` in materials.ts). */
+  .label--selected {
+    background: #ffb81c;
+    color: #00243f;
+  }
+
+  .label--hidden {
+    opacity: 0;
+  }
+
+  .info-panel {
+    --info-panel-top: max(16px, env(safe-area-inset-top));
+    position: absolute;
+    top: var(--info-panel-top);
+    right: max(16px, env(safe-area-inset-right));
+    width: 320px;
+    /* Stops above the map controls, which share the right edge, and scrolls
+     in a window too short for both. main.ts measures the controls. */
+    max-height: calc(
+      100cqh -
+      var(--info-panel-top) -
+      var(--map-controls-height, 0px) -
+      max(16px, env(safe-area-inset-bottom)) -
+      12px
+    );
+    overflow: hidden auto;
+    overscroll-behavior: contain;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgb(0 36 63 / 28%);
+    color: #26343d;
+    font:
+      400 14px / 1.5 Roboto,
+      system-ui,
+      sans-serif;
+  }
+
+  .info-panel__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 6px 6px 6px 16px;
+    background: #004272;
+    color: #fff;
+  }
+
+  .info-panel__precinct {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .info-panel__close {
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: inherit;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    transition: 0.15s ease-out background-color;
+  }
+
+  .info-panel__close:hover {
+    background: #00678c;
+  }
+
+  .info-panel__close:focus-visible {
+    outline: 2px solid #1ca7ec;
+    outline-offset: -2px;
+  }
+
+  .info-panel__image {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    background: linear-gradient(135deg, #004272, #00678c);
+  }
+
+  /* A short window keeps the name and text in view under a shorter picture. */
+  @container bmr (min-width: 601px) and (max-height: 720px) {
+    .info-panel__image {
+      aspect-ratio: 3 / 1;
+    }
+  }
+
+  .info-panel__image[hidden] {
+    display: none;
+  }
+
+  .info-panel__body {
+    padding: 14px 16px 16px;
+  }
+
+  .info-panel__name {
+    margin: 0 0 6px;
+    color: #004272;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.25;
+  }
+
+  .info-panel__description {
+    margin: 0;
+  }
+
+  .info-panel__actions {
+    margin-top: 12px;
+    border-top: 1px solid #e3e7ea;
+    padding-top: 10px;
+  }
+
+  .info-panel__actions[hidden] {
+    display: none;
+  }
+
+  .info-panel__action-group + .info-panel__action-group {
+    margin-top: 10px;
+  }
+
+  .info-panel__action-heading {
+    margin: 0 0 6px;
+    color: #5d6b75;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .info-panel__action-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .info-panel__action {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    border: 1px solid #00678c;
+    border-radius: 8px;
+    padding: 4px 12px;
+    color: #00678c;
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .info-panel__action:hover {
+    background: #e6f1f5;
+  }
+
+  .info-panel__action--primary {
+    background: #00678c;
+    color: #fff;
+  }
+
+  .info-panel__action--primary:hover {
+    background: #005575;
+  }
+
+  .info-panel__action:focus-visible {
+    outline: 2px solid #1ca7ec;
+    outline-offset: 2px;
+  }
+
+  .info-panel__actions-note {
+    margin: 8px 0 0;
+    color: #5d6b75;
+    font-size: 11px;
+  }
+
+  .info-panel__related {
+    margin-top: 12px;
+    border-top: 1px solid #e3e7ea;
+    padding-top: 10px;
+  }
+
+  .info-panel__related[hidden] {
+    display: none;
+  }
+
+  .info-panel__related-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .info-panel__related-link {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    border: 0;
+    border-radius: 6px;
+    padding: 6px 8px;
+    background: none;
+    color: #004272;
+    font: inherit;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .info-panel__related-link:hover {
+    background: #eef3f6;
+  }
+
+  .info-panel__related-link:focus-visible {
+    outline: 2px solid #1ca7ec;
+    outline-offset: -2px;
+  }
+
+  .info-panel__related-role {
+    color: #5d6b75;
+    font-weight: 400;
+  }
+
+  .notice {
+    position: absolute;
+    left: calc(var(--sidebar-width) + 16px);
+    bottom: max(16px, env(safe-area-inset-bottom));
+    transition: left var(--sidebar-duration) var(--sidebar-ease);
+    margin: 0;
+    padding: 4px 10px;
+    border-radius: 6px;
+    /* A caption, not a control: quieter than the navy buttons. */
+    background: rgb(255 255 255 / 78%);
+    color: #26343d;
+    font:
+      400 12px / 1.3 Roboto,
+      system-ui,
+      sans-serif;
+    letter-spacing: 0.01em;
+    pointer-events: none;
+  }
+
+  /* Sits above the notice until the visitor has moved the map. */
+  .hint {
+    position: absolute;
+    left: calc(var(--sidebar-width) + 16px);
+    bottom: calc(var(--tour-player-height, 90px) + 68px);
+    max-width: calc(100cqw - var(--sidebar-width) - 96px);
+    transition:
+      left var(--sidebar-duration) var(--sidebar-ease),
+      max-width var(--sidebar-duration) var(--sidebar-ease),
+      opacity 400ms;
+    margin: 0;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: rgb(255 255 255 / 94%);
+    box-shadow: 0 4px 14px rgb(0 36 63 / 18%);
+    color: #26343d;
+    font:
+      400 13px / 1.3 Roboto,
+      system-ui,
+      sans-serif;
+    pointer-events: none;
+  }
+
+  .hint--gone {
+    opacity: 0;
+  }
+  &:has(.tours__playing:not([hidden])) .hint {
+    opacity: 0;
+  }
+
+  .map-controls {
+    position: absolute;
+    right: max(16px, env(safe-area-inset-right));
+    bottom: max(16px, env(safe-area-inset-bottom));
+    display: flex;
+    gap: 6px;
+    padding: 4px;
+    /* One square cell: the pad grid, the zoom buttons and the compass all
+     size from this, so shrinking the controls is a one-value change. */
+    --map-cell: 24px;
+    border-radius: 8px;
+    background: #004272;
+    box-shadow: 0 4px 14px rgb(0 36 63 / 28%);
+  }
+
+  .map-controls__pads {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  /* A cross of four arrows around a middle button. */
+  .map-controls__pad {
+    display: grid;
+    padding: 4px;
+    grid-template: repeat(3, var(--map-cell)) / repeat(3, var(--map-cell));
+    grid-template-areas:
+      ". up ."
+      "left middle right"
+      ". down .";
+    border-radius: 6px;
+    background: rgb(255 255 255 / 8%);
+  }
+
+  .map-controls__up {
+    grid-area: up;
+  }
+
+  .map-controls__down {
+    grid-area: down;
+  }
+
+  .map-controls__left {
+    grid-area: left;
+  }
+
+  .map-controls__right {
+    grid-area: right;
+  }
+
+  .map-controls__home {
+    grid-area: middle;
+  }
+
+  /* The arrows are drawn pointing up. */
+  .map-controls__down svg {
+    transform: rotate(180deg);
+  }
+
+  .map-controls__left svg {
+    transform: rotate(-90deg);
+  }
+
+  .map-controls__right svg {
+    transform: rotate(90deg);
+  }
+
+  .map-controls__zoom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .map-controls__slider {
+    flex: 1;
+    width: 32px;
+    min-height: 0;
+    margin: 2px 0;
+    accent-color: #1ca7ec;
+    cursor: pointer;
+    /* Upright, with zoomed in at the top. */
+    writing-mode: vertical-lr;
+    direction: rtl;
+  }
+
+  .map-controls__button {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: #fff;
+    font:
+      400 22px / 1 Roboto,
+      system-ui,
+      sans-serif;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: 0.15s ease-out background-color;
+  }
+
+  .map-controls__button:hover {
+    background: rgb(255 255 255 / 14%);
+  }
+
+  .map-controls__button:active {
+    background: #00678c;
+  }
+
+  .map-controls__button:focus-visible,
+  .map-controls__slider:focus-visible {
+    outline: 2px solid #1ca7ec;
+    outline-offset: 1px;
+  }
+
+  /* A dial to drag, the size of the pad below it. */
+  .map-controls__compass {
+    width: calc(var(--map-cell) * 3 + 8px);
+    height: calc(var(--map-cell) * 3 + 8px);
+    border-radius: 50%;
+    background: rgb(255 255 255 / 8%);
+    cursor: grab;
+    /* Depth for the dial, which tips back as the view tilts. */
+    perspective: 240px;
+    touch-action: none;
+  }
+
+  .map-controls__compass:active {
+    background: rgb(255 255 255 / 20%);
+  }
+
+  .map-controls__compass--dragging {
+    cursor: grabbing;
+  }
+
+  .map-controls__dial {
+    width: 100%;
+    height: 100%;
+    font-family: Roboto, system-ui, sans-serif;
+    pointer-events: none;
+  }
+
+  /* The zoom buttons are flex children, not grid items, so 100% would mean
+   the whole column; size them from the shared cell instead. */
+  .map-controls__zoom .map-controls__button {
+    width: var(--map-cell);
+    height: var(--map-cell);
+    flex: none;
+  }
+
+  /* The sidebar's collapsed state on a wide screen. The shell behind it draws
+   the shape, so the button only brings its label, hover and focus ring. */
+  .sidebar-open {
+    position: absolute;
+    top: max(16px, env(safe-area-inset-top));
+    left: max(16px, env(safe-area-inset-left));
+    z-index: 1;
+    display: none;
+    gap: 8px;
+    align-items: center;
+    box-sizing: border-box;
+    width: var(--open-button-width);
+    height: var(--open-button-height);
+    padding: 0 12px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #fff;
+    font:
+      500 13px / 1 Roboto,
+      system-ui,
+      sans-serif;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .sidebar-open::before {
+    content: "";
+    position: absolute;
+    inset: 3px;
+    border-radius: 6px;
+    pointer-events: none;
+    transition: background-color 0.15s ease-out;
+  }
+
+  .sidebar-open:hover::before {
+    background: rgb(255 255 255 / 14%);
+  }
+
+  .sidebar-open:focus-visible {
+    outline: 2px solid #1ca7ec;
+    outline-offset: 2px;
+  }
+
+  @container bmr (min-width: 601px) {
+    /* The sidebar takes no room of its own: the map fills the window and the
+     panel lies over its left edge. What's seen is the shell: one shape that
+     is the full panel when open and the button when closed, and moves
+     between the two. */
+    .sidebar {
+      position: relative;
+      z-index: 1;
+      flex: none;
+      width: 0;
+      background: none;
+      box-shadow: none;
+    }
+
+    /* The button's blue, which is also the panel's title bar, so the bar is
+     what the panel shrinks into. */
+    .sidebar__shell {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+      width: var(--sidebar-pane-width);
+      height: 100%;
+      overflow: hidden;
+      background: #004272;
+      box-shadow: 0 0 16px rgb(0 36 63 / 24%);
+      transition-property: top, left, width, height, border-radius, box-shadow;
+      transition-duration: var(--sidebar-duration);
+      transition-timing-function: var(--sidebar-ease);
+    }
+
+    &.sidebar-closed .sidebar__shell {
+      top: max(16px, env(safe-area-inset-top));
+      left: max(16px, env(safe-area-inset-left));
+      width: var(--open-button-width);
+      height: var(--open-button-height);
+      border-radius: 8px 0 0 8px;
+      box-shadow: none;
+    }
+
+    /* The pane keeps its full size while the shell clips it, so nothing inside
+     reflows. It stays solid: the clip cuts the white body away and leaves the
+     title bar, which is the button's blue. */
+    .sidebar__inner {
+      width: var(--sidebar-pane-width);
+      height: 100%;
+      transition: visibility 0s;
+    }
+
+    &.sidebar-closed .sidebar__inner {
+      visibility: hidden;
+      transition: visibility 0s var(--sidebar-duration);
+    }
+
+    .sidebar__bar {
+      padding-left: calc(16px + env(safe-area-inset-left));
+    }
+
+    .sidebar__body {
+      padding-left: env(safe-area-inset-left);
+    }
+
+    /* Only what's in the bar fades. It goes early and comes back late, and the
+     button's label does the opposite, so the two never show at full strength
+     together. */
+    .sidebar__bar > * {
+      transition:
+        opacity calc(var(--sidebar-duration) * 0.6) calc(var(--sidebar-duration) * 0.15),
+        transform var(--sidebar-duration) var(--sidebar-ease),
+        background-color 0s;
+    }
+
+    &.sidebar-closed .sidebar__bar > * {
+      opacity: 0;
+      transition:
+        opacity calc(var(--sidebar-duration) * 0.4),
+        transform var(--sidebar-duration) var(--sidebar-ease);
+    }
+
+    /* The title travels to where the button's label sits, at the label's size,
+     so the swap reads as one line of text changing. The label starts 38px in
+     and is centred 19px down; the title starts 16px in, centred 26px down. */
+    .sidebar__title {
+      transform-origin: left center;
+    }
+
+    &.sidebar-closed .sidebar__title {
+      transform: translate(calc(22px - env(safe-area-inset-left)), -7px) scale(calc(13 / 15));
+    }
+
+    .sidebar-open {
+      display: flex;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition:
+        opacity calc(var(--sidebar-duration) * 0.3),
+        background-color 0.15s ease-out,
+        visibility 0s var(--sidebar-duration);
+    }
+
+    &.sidebar-closed .sidebar-open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transition:
+        opacity calc(var(--sidebar-duration) * 0.5) calc(var(--sidebar-duration) * 0.4),
+        background-color 0.15s ease-out,
+        visibility 0s;
+    }
+
+    &.sidebar-closed {
+      --sidebar-width: 0px;
+      --open-button-space: var(--open-button-width);
+    }
+
+    /* An instant switch. `visibility` has no duration either way, so the part
+     that's put away stops being focusable at once. */
+    @media (prefers-reduced-motion: reduce) {
+      .sidebar__shell,
+      .sidebar__inner,
+      .sidebar__bar > *,
+      .sidebar-open,
+      &.sidebar-closed .sidebar__inner,
+      &.sidebar-closed .sidebar__bar > *,
+      &.sidebar-closed .sidebar-open {
+        transition: none;
+      }
+    }
+  }
+
+  .event-switch {
+    position: absolute;
+    top: max(16px, env(safe-area-inset-top));
+    left: calc(var(--sidebar-width) + var(--open-button-space) + 16px);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px;
+    height: 44px;
+    box-sizing: border-box;
+    border-radius: 8px;
+    background: #004272;
+    box-shadow: 0 4px 14px rgb(0 36 63 / 24%);
+    width: max-content;
+    max-width: calc(100cqw - var(--sidebar-width) - var(--open-button-space) - 32px);
+    transition:
+      left var(--sidebar-duration) var(--sidebar-ease),
+      max-width var(--sidebar-duration) var(--sidebar-ease);
+    font:
+      500 13px / 1.3 Roboto,
+      system-ui,
+      sans-serif;
   }
 
   .event-switch__buttons {
+    display: flex;
+    gap: 2px;
+  }
+
+  .event-switch__button {
+    height: 38px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: #fff;
+    font: inherit;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: 0.15s ease-out background-color;
+  }
+
+  .event-switch__button:hover {
+    background: rgb(255 255 255 / 14%);
+  }
+
+  .event-switch__button[aria-pressed="true"] {
+    background: #00678c;
+  }
+
+  .event-switch__button:focus-visible {
+    outline: 2px solid #1ca7ec;
+    outline-offset: 1px;
+  }
+
+  .event-switch__summary {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 320px;
+    box-sizing: border-box;
+    line-height: 1.5;
+    margin: 0;
+    padding: 6px 12px;
+    max-width: 440px;
+    border-radius: 8px;
+    background: rgb(255 255 255 / 94%);
+    color: #26343d;
+    font-weight: 400;
+    box-shadow: 0 4px 14px rgb(0 36 63 / 18%);
+  }
+
+  .route-legend {
+    display: flex;
+    gap: 14px;
+    margin: 0;
+    padding: 8px 0 0;
+    border-top: 1px solid #dfe6ea;
+    color: #51626d;
+    font-size: 11px;
+    font-weight: 400;
+  }
+
+  .route-legend[hidden] {
     display: none;
   }
+
+  .route-legend__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .route-legend__item::before {
+    content: "";
+    width: 22px;
+    height: 7px;
+    border-radius: 4px;
+  }
+
+  .route-legend__item--drive::before {
+    background: repeating-linear-gradient(90deg, transparent 0 5px, #fff 5px 7px), #1ca7ec;
+    box-shadow: inset 0 0 0 1px rgb(0 41 71 / 45%);
+  }
+
+  .route-legend__item--walk::before {
+    background:
+      radial-gradient(circle, #004272 0 1.6px, transparent 2px) 0 50% / 7px 7px repeat-x,
+      #fff;
+    box-shadow: inset 0 0 0 1px rgb(0 41 71 / 45%);
+  }
+
+  &.sidebar-closed .event-switch {
+    border-radius: 0 8px 8px 0;
+  }
+  &.sidebar-closed .sidebar-open {
+    border-radius: 8px 0 0 8px;
+  }
   .event-switch__mobile {
-    display: block;
+    display: none;
   }
   .event-switch__select {
     height: 38px;
@@ -1585,123 +830,1043 @@ html.intro-done :is(.sidebar, .event-switch, .tour-player, .notice, .map-control
     color: white;
     font: inherit;
   }
-  .sidebar-closed .event-switch {
-    border-radius: 8px;
+  .event-switch__info {
+    flex: none;
+    width: 28px;
+    height: 28px;
+    margin: 0 5px;
+    border: 1px solid rgb(255 255 255 / 40%);
+    border-radius: 50%;
+    background: transparent;
+    color: #fff;
+    font: inherit;
+    cursor: pointer;
+    transition: 0.15s ease-out background-color;
   }
-  .event-switch__summary {
-    top: calc(100% + 28px);
-    width: min(300px, calc(100vw - 32px));
-    max-width: none;
+  .event-switch__info:hover {
+    background: rgb(255 255 255 / 14%);
   }
-  .tour-player {
-    left: 16px;
-    right: 16px;
-    bottom: calc(var(--sheet-peek) + 12px);
-    transform: none;
-    width: auto;
-    max-width: none;
-    padding: 8px;
-  }
-  .tours__heading {
+  .event-switch__info[hidden] {
     display: none;
   }
-  .tours__playing {
-    grid-template-columns: 1fr auto 80px;
-    gap: 8px;
+  .event-switch__info[aria-expanded="true"] {
+    background: #00678c;
   }
-  .tours__telemetry {
-    grid-column: 2;
+  .event-switch__info:focus-visible,
+  .event-switch__select:focus-visible {
+    outline: 2px solid #1ca7ec;
+    outline-offset: 1px;
   }
-  .tours__stop {
-    grid-column: 3;
+  .tour-player {
+    position: absolute;
+    bottom: max(52px, calc(env(safe-area-inset-bottom) + 36px));
+    left: calc(var(--sidebar-width) + (100cqw - var(--sidebar-width)) / 2);
+    transform: translateX(-50%);
+    box-sizing: border-box;
+    width: 480px;
+    max-width: calc(100cqw - var(--sidebar-width) - 32px);
+    padding: 10px 12px;
+    border: 1px solid rgb(255 255 255 / 70%);
+    border-radius: 12px;
+    background: rgb(255 255 255 / 96%);
+    box-shadow: 0 6px 24px rgb(0 36 63 / 20%);
+    color: #004272;
+    font:
+      500 13px / 1.3 Roboto,
+      system-ui,
+      sans-serif;
   }
-  .tours__description {
-    grid-column: 1 / -1;
+  .tour-player:has(.tours[hidden]):has(.route-legend[hidden]) {
+    display: none;
   }
-  .tours__speed {
-    justify-self: start;
+  .tours {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
   }
-  .tours__button {
-    padding: 0 8px;
+  .tours[hidden],
+  .tours__choices[hidden],
+  .tours__playing[hidden] {
+    display: none;
+  }
+  .tours__heading {
+    display: block;
+    margin-bottom: 10px;
+    color: #51626d;
     font-size: 12px;
   }
-  .info-panel {
-    bottom: calc(var(--sheet-peek) + var(--tour-player-height, 110px) + 24px);
-    max-height: calc(100dvh - var(--sheet-peek) - var(--tour-player-height, 110px) - 120px);
+  .tours__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .tours__actions > button {
+    flex: 1 1 130px;
+    justify-content: center;
+  }
+  .tours__playing {
+    display: grid;
+    grid-template-columns: 1fr auto auto 80px;
+    align-items: center;
+    gap: 10px;
+  }
+  .tours__description {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .tours__name {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .tours__status {
+    color: #51626d;
+    font-size: 11px;
+    font-weight: 400;
+  }
+  .tours__telemetry {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+    margin: 0;
+    color: #51626d;
+    font-size: 11px;
+    font-weight: 400;
+  }
+  .tours__telemetry[hidden] {
+    display: none;
+  }
+  .tours__speedometer {
+    white-space: nowrap;
+  }
+  .tours__kmh {
+    display: inline-block;
+    min-width: 3ch;
+    color: #004272;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+  .tours__progress {
+    grid-column: 1 / -1;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    border: 0;
+    border-radius: 2px;
+    overflow: hidden;
+    background: #dfe6ea;
+    color: #00678c;
+  }
+  .tours__progress::-webkit-progress-bar {
+    background: #dfe6ea;
+  }
+  .tours__progress::-webkit-progress-value {
+    background: #00678c;
+  }
+  .tours__progress::-moz-progress-bar {
+    background: #00678c;
+  }
+  .tours__stop {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 36px;
+    border: 0;
+    border-radius: 6px;
+    background: #004272;
+    color: #fff;
+    font: inherit;
+    cursor: pointer;
+    transition: 0.15s ease-out background-color;
+  }
+  .tours__stop:hover {
+    background: #00678c;
+  }
+  .tours__stop:focus-visible {
+    outline: 2px solid #1ca7ec;
+    outline-offset: 2px;
+  }
+  .tours__button,
+  .tours__speed {
+    display: inline-flex;
+    align-items: center;
+    height: 36px;
+    gap: 6px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 8px;
+    background: #edf3f6;
+    color: #004272;
+    font: inherit;
+    white-space: nowrap;
+  }
+
+  .tours__button {
+    border: 1px solid color-mix(in srgb, currentColor 40%, transparent);
+    cursor: pointer;
+    transition:
+      0.15s ease-out background-color,
+      0.15s ease-out color;
+  }
+
+  .tours__button:hover {
+    background: #fff;
+    color: #00678c;
+  }
+
+  .tours__button:focus-visible,
+  .tours__speed:has(select:focus-visible) {
+    outline: 2px solid #1ca7ec;
+    outline-offset: 1px;
+  }
+
+  .tours__speed {
+    position: relative;
+  }
+
+  .tours__speed::after {
+    content: "";
+    position: absolute;
+    right: 13px;
+    top: 13px;
+    width: 6px;
+    height: 6px;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    transform: rotate(45deg);
+    pointer-events: none;
+  }
+
+  .tours__speed select {
+    appearance: none;
+    width: 58px;
+    height: 100%;
+    padding: 0 16px 0 2px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+  }
+
+  .tours__speed select:focus-visible {
+    outline: none;
+  }
+
+  /* The interface stays out of the way until the title screen has cleared and the camera has arrived. */
+  &.intro :is(.sidebar, .event-switch, .tour-player, .notice, .map-controls, .hint, .labels) {
+    opacity: 0;
+  }
+  &.intro :is(.sidebar, .event-switch, .tour-player, .notice, .map-controls, .hint, .labels),
+  &.intro :is(.sidebar, .event-switch, .tour-player, .notice, .map-controls, .hint, .labels) * {
+    pointer-events: none;
+  }
+  &.intro-done :is(.sidebar, .event-switch, .tour-player, .notice, .map-controls, .labels) {
+    animation: bmr-interface-in 800ms both;
   }
 
   .stats {
-    right: 16px;
-    bottom: calc(var(--sheet-peek) + 12px);
-    font-size: 10px;
+    position: absolute;
+    right: calc(max(16px, env(safe-area-inset-right)) + 54px);
+    bottom: max(16px, env(safe-area-inset-bottom));
+    padding: 4px 8px;
+    border-radius: 8px;
+    background: rgb(0 0 0 / 72%);
+    color: #fff;
+    font:
+      12px / 1.3 ui-monospace,
+      Menlo,
+      monospace;
+    pointer-events: none;
   }
 
-  .hint {
-    right: 16px;
-    bottom: calc(var(--sheet-peek) + var(--tour-player-height, 110px) + 24px);
-    left: 16px;
-    max-width: none;
-    text-align: center;
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    height: 100%;
+    background: #fff;
+    box-shadow: 0 0 16px rgb(0 36 63 / 24%);
+    color: #26343d;
+    font:
+      400 14px / 1.4 Roboto,
+      system-ui,
+      sans-serif;
   }
 
-  /* Pinching zooms on a phone, so only the compass is worth the room. */
-  .map-controls {
-    top: max(16px, env(safe-area-inset-top));
-    right: max(16px, env(safe-area-inset-right));
-    bottom: auto;
+  /* The shell is the panel's outline, and the pane inside it holds the contents.
+   On a phone both just pass the sheet's column layout through. */
+  .sidebar__shell,
+  .sidebar__inner {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
   }
 
-  .map-controls__zoom,
-  .map-controls__pad {
+  .sidebar [hidden] {
     display: none;
   }
 
-  .map-controls__compass {
-    width: calc(var(--map-cell) * 2);
-    height: calc(var(--map-cell) * 2);
-    background: none;
+  .sidebar__grabber {
+    display: none;
+  }
+
+  .sidebar__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 52px;
+    box-sizing: border-box;
+    padding: 8px 8px 8px 16px;
+    background: #004272;
+    color: #fff;
+  }
+
+  .sidebar__title {
+    flex: 1;
+    margin: 0;
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .sidebar__reset {
+    flex: none;
+    min-height: 36px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 8px;
+    background: #00678c;
+    color: #fff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.15s ease-out background-color;
   }
 
   .sidebar__close {
+    width: 32px;
+    height: 32px;
+    margin-left: -6px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: inherit;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    transition: 0.15s ease-out background-color;
+  }
+
+  .sidebar__close:hover {
+    background: #00678c;
+  }
+
+  .sidebar__reset:hover {
+    background: #007da8;
+  }
+
+  .sidebar__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+    background: #fff;
+  }
+
+  .sidebar__search-row {
+    padding: 12px;
+    border-bottom: 1px solid #dfe6ea;
+  }
+
+  .sidebar__search {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 40px;
+    padding: 0 12px;
+    border: 1px solid #b8c4cc;
+    border-radius: 8px;
+    color: inherit;
+    font: inherit;
+  }
+
+  .sidebar__empty {
+    margin: 0;
+    padding: 16px;
+    color: #51626d;
+  }
+
+  .sidebar__empty:empty {
     display: none;
   }
 
-  /* Short enough to leave the map in view above it. */
-  .info-panel__image {
-    aspect-ratio: 3 / 1;
+  .sidebar__list {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
-}
 
-/* Small phones: the switch tightens so the compass still fits beside it. */
-@media (max-width: 380px) {
-  .event-switch__button {
-    padding: 7px 6px;
+  .sidebar__group-header {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    border-bottom: 1px solid #dfe6ea;
+    background: #eef2f5;
   }
-}
 
-@media (min-width: 601px) and (max-width: 1000px) {
-  .tour-player {
-    bottom: calc(var(--map-controls-height, 170px) + 28px);
+  .sidebar__group-name {
+    flex: 1;
+    align-self: stretch;
+    min-width: 0;
+    margin: 0;
+    font: inherit;
   }
-  .hint {
-    bottom: calc(var(--map-controls-height, 170px) + var(--tour-player-height, 90px) + 40px);
+
+  /* The whole header beside the switch opens and closes the precinct's list. */
+  .sidebar__group-expand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    height: 100%;
+    padding: 0 0 0 16px;
+    border: 0;
+    background: transparent;
+    color: #004272;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
   }
-  html:not(.sidebar-closed) .event-switch__buttons {
-    display: none;
+
+  .sidebar__group-expand::before {
+    flex: none;
+    width: 6px;
+    height: 6px;
+    margin-right: 2px;
+    border-right: 2px solid currentcolor;
+    border-bottom: 2px solid currentcolor;
+    content: "";
+    transform: translateX(-2px) rotate(-45deg);
+    transition: transform 150ms;
   }
-  html:not(.sidebar-closed) .event-switch__mobile {
+
+  .sidebar__group-expand[aria-expanded="true"]::before {
+    transform: translateY(-2px) rotate(45deg);
+  }
+
+  /* A search opens every precinct with a match, so there's nothing to press. */
+  .sidebar__group-expand:disabled {
+    cursor: default;
+  }
+
+  .sidebar__group-expand:enabled:hover {
+    background: #e1e8ed;
+  }
+
+  .sidebar__group-count {
+    color: #51626d;
+    font-size: 12px;
+    font-weight: 400;
+  }
+
+  /* A bigger target than the switch itself, for fingers. */
+  .sidebar__switch-area {
+    display: flex;
+    margin-left: auto;
+    padding: 12px 14px;
+    cursor: pointer;
+  }
+
+  .sidebar__switch {
+    position: relative;
+    width: 34px;
+    height: 20px;
+    margin: 0;
+    border-radius: 10px;
+    background: #8496a1;
+    appearance: none;
+    cursor: pointer;
+    transition: background-color 150ms;
+  }
+
+  .sidebar__switch::before {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #fff;
+    content: "";
+    transition: transform 150ms;
+  }
+
+  .sidebar__switch:checked {
+    background: #00678c;
+  }
+
+  .sidebar__switch:checked::before {
+    transform: translateX(14px);
+  }
+
+  .sidebar__items {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* A fold's one row grows from nothing to the height of what's inside, which
+   can be animated where a height of `auto` can't. Shut, it's also hidden, so
+   nothing inside takes focus; that waits for the slide to finish. */
+  .sidebar__fold {
+    display: grid;
+    grid-template-rows: 0fr;
+    visibility: hidden;
+    transition:
+      grid-template-rows var(--sidebar-duration) var(--sidebar-ease),
+      visibility 0s var(--sidebar-duration);
+  }
+
+  .sidebar__fold--open {
+    grid-template-rows: 1fr;
+    /* Not `visible`, which would show a fold that's inside a shut one. */
+    visibility: inherit;
+    transition-delay: 0s;
+  }
+
+  .sidebar__fold-inner {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .sidebar__list--instant .sidebar__fold {
+    transition: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sidebar__fold {
+      transition: none;
+    }
+  }
+
+  .sidebar__more {
     display: block;
+    width: 100%;
+    min-height: 36px;
+    padding: 6px 16px;
+    border: 0;
+    background: transparent;
+    color: #00678c;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
   }
-  html:not(.sidebar-closed) .tours__playing {
-    grid-template-columns: 1fr auto 80px;
+
+  .sidebar__more:hover {
+    background: #e3f4fd;
   }
-  html:not(.sidebar-closed) .tours__telemetry {
-    grid-column: 2;
+
+  .sidebar__item {
+    display: block;
+    width: 100%;
+    min-height: 36px;
+    padding: 6px 16px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
   }
-  html:not(.sidebar-closed) .tours__stop {
-    grid-column: 3;
+
+  .sidebar__item:hover {
+    background: #e3f4fd;
   }
-  html:not(.sidebar-closed) .tours__description {
-    grid-column: 1 / -1;
+
+  .sidebar__item[aria-current] {
+    background: #1ca7ec;
+    color: #00243f;
+    font-weight: 500;
   }
+
+  .sidebar__preview {
+    margin: 0;
+    padding: 8px 16px 12px;
+    background: #e3f4fd;
+  }
+
+  /* On a wide screen the details card shows the same picture beside it. */
+  @container bmr (min-width: 601px) {
+    .sidebar__preview {
+      display: none;
+    }
+  }
+
+  .sidebar__preview-image {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 8px;
+    object-fit: cover;
+    background: linear-gradient(135deg, #004272, #00678c);
+  }
+
+  .sidebar__preview-image--placeholder {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+    justify-content: center;
+    color: rgb(255 255 255 / 80%);
+    font-size: 12px;
+  }
+
+  /* Still pickable: choosing one brings its precinct back. */
+  .sidebar__group--off .sidebar__items {
+    opacity: 0.5;
+  }
+
+  .sidebar__reset:focus-visible,
+  .sidebar__close:focus-visible,
+  .sidebar__search:focus-visible,
+  .sidebar__switch:focus-visible,
+  .sidebar__item:focus-visible,
+  .sidebar__more:focus-visible,
+  .sidebar__group-expand:focus-visible,
+  .sidebar__grabber:focus-visible {
+    outline: 2px solid #1ca7ec;
+    outline-offset: -2px;
+  }
+
+  /* On a phone the sidebar slides up over the map, from a strip along the bottom. */
+  /* Leave the single toolbar clear when the details card cannot sit beside it. */
+  @container bmr (min-width: 601px) and (max-width: 1140px) {
+    .info-panel {
+      --info-panel-top: 80px;
+    }
+  }
+
+  @container bmr (max-width: 600px) {
+    & {
+      display: block;
+    }
+
+    .sidebar {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 1;
+      height: 78cqh;
+      padding: 0;
+      overflow: hidden;
+      border-radius: 8px 8px 0 0;
+      background: #004272;
+      transform: translateY(calc(100% - var(--sheet-peek)));
+      transition: transform 240ms var(--sidebar-ease);
+    }
+
+    .sidebar--open {
+      transform: none;
+    }
+
+    .sidebar--dragging {
+      transform: translateY(clamp(0px, var(--sheet-y), calc(100% - var(--sheet-peek))));
+      transition: none;
+    }
+
+    .sidebar__body {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .sidebar:not(.sidebar--open, .sidebar--dragging) .sidebar__body {
+      visibility: hidden;
+    }
+
+    .sidebar__handle {
+      touch-action: none;
+      cursor: grab;
+    }
+
+    .sidebar__grabber {
+      display: block;
+      width: 100%;
+      height: 24px;
+      padding: 0;
+      border: 0;
+      background: #004272;
+      cursor: inherit;
+    }
+
+    .sidebar__grabber::before {
+      display: block;
+      width: 40px;
+      height: 4px;
+      margin: 4px auto 0;
+      border-radius: 2px;
+      background: rgb(255 255 255 / 60%);
+      content: "";
+    }
+
+    /* Anything smaller makes iOS zoom the page when the box gets focus. */
+    .sidebar__search {
+      font-size: 16px;
+    }
+
+    .sidebar__item {
+      min-height: 44px;
+    }
+
+    .info-panel {
+      top: auto;
+      right: 16px;
+      bottom: calc(var(--sheet-peek) + 12px);
+      left: 16px;
+      width: auto;
+      /* The controls are at the top on a phone, so only the switch row is kept clear. */
+      max-height: calc(100cqh - var(--sheet-peek) - 12px - 100px);
+    }
+
+    /* The switch and the compass share the top row, with the notice tucked under the switch. */
+    .notice {
+      top: calc(max(16px, env(safe-area-inset-top)) + 44px);
+      bottom: auto;
+      left: max(16px, env(safe-area-inset-left));
+      padding: 3px 8px;
+      font-size: 11px;
+    }
+
+    .event-switch {
+      top: max(16px, env(safe-area-inset-top));
+      left: max(16px, env(safe-area-inset-left));
+      width: max-content;
+      max-width: calc(100cqw - 32px - 64px);
+      font-size: 12px;
+    }
+
+    .event-switch__button {
+      padding: 7px 9px;
+    }
+
+    .event-switch__buttons {
+      display: none;
+    }
+    .event-switch__mobile {
+      display: block;
+    }
+    .event-switch__select {
+      height: 38px;
+      max-width: 190px;
+      padding: 0 10px;
+      border: 0;
+      border-radius: 6px;
+      background: #004272;
+      color: white;
+      font: inherit;
+    }
+    &.sidebar-closed .event-switch {
+      border-radius: 8px;
+    }
+    .event-switch__summary {
+      top: calc(100% + 28px);
+      width: min(300px, calc(100cqw - 32px));
+      max-width: none;
+    }
+    .tour-player {
+      left: 16px;
+      right: 16px;
+      bottom: calc(var(--sheet-peek) + 12px);
+      transform: none;
+      width: auto;
+      max-width: none;
+      padding: 8px;
+    }
+    .tours__heading {
+      display: none;
+    }
+    .tours__playing {
+      grid-template-columns: 1fr auto 80px;
+      gap: 8px;
+    }
+    .tours__telemetry {
+      grid-column: 2;
+    }
+    .tours__stop {
+      grid-column: 3;
+    }
+    .tours__description {
+      grid-column: 1 / -1;
+    }
+    .tours__speed {
+      justify-self: start;
+    }
+    .tours__button {
+      padding: 0 8px;
+      font-size: 12px;
+    }
+    .info-panel {
+      bottom: calc(var(--sheet-peek) + var(--tour-player-height, 110px) + 24px);
+      max-height: calc(100cqh - var(--sheet-peek) - var(--tour-player-height, 110px) - 120px);
+    }
+
+    .stats {
+      right: 16px;
+      bottom: calc(var(--sheet-peek) + 12px);
+      font-size: 10px;
+    }
+
+    .hint {
+      right: 16px;
+      bottom: calc(var(--sheet-peek) + var(--tour-player-height, 110px) + 24px);
+      left: 16px;
+      max-width: none;
+      text-align: center;
+    }
+
+    /* Pinching zooms on a phone, so only the compass is worth the room. */
+    .map-controls {
+      top: max(16px, env(safe-area-inset-top));
+      right: max(16px, env(safe-area-inset-right));
+      bottom: auto;
+    }
+
+    .map-controls__zoom,
+    .map-controls__pad {
+      display: none;
+    }
+
+    .map-controls__compass {
+      width: calc(var(--map-cell) * 2);
+      height: calc(var(--map-cell) * 2);
+      background: none;
+    }
+
+    .sidebar__close {
+      display: none;
+    }
+
+    /* Short enough to leave the map in view above it. */
+    .info-panel__image {
+      aspect-ratio: 3 / 1;
+    }
+  }
+
+  /* Small phones: the switch tightens so the compass still fits beside it. */
+  @container bmr (max-width: 380px) {
+    .event-switch__button {
+      padding: 7px 6px;
+    }
+  }
+
+  @container bmr (min-width: 601px) and (max-width: 1000px) {
+    .tour-player {
+      bottom: calc(var(--map-controls-height, 170px) + 28px);
+    }
+    .hint {
+      bottom: calc(var(--map-controls-height, 170px) + var(--tour-player-height, 90px) + 40px);
+    }
+    &:not(.sidebar-closed) .event-switch__buttons {
+      display: none;
+    }
+    &:not(.sidebar-closed) .event-switch__mobile {
+      display: block;
+    }
+    &:not(.sidebar-closed) .tours__playing {
+      grid-template-columns: 1fr auto 80px;
+    }
+    &:not(.sidebar-closed) .tours__telemetry {
+      grid-column: 2;
+    }
+    &:not(.sidebar-closed) .tours__stop {
+      grid-column: 3;
+    }
+    &:not(.sidebar-closed) .tours__description {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .title {
+    position: absolute;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 24px;
+    background: radial-gradient(120% 90% at 50% 38%, #00527f 0%, #003257 46%, #001a30 100%);
+    color: #fff;
+    font:
+      500 14px / 1.3 Roboto,
+      system-ui,
+      sans-serif;
+    text-align: center;
+    transition: opacity 1100ms ease;
+  }
+  .title--leaving {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .title__circuit {
+    width: min(46cqw, 42cqh, 300px);
+    margin-bottom: 14px;
+    overflow: visible;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .title__track {
+    stroke: rgb(255 255 255 / 92%);
+    stroke-width: 2.5;
+    stroke-dasharray: 1;
+    filter: drop-shadow(0 0 7px rgb(28 167 236 / 75%));
+    animation: bmr-title-draw 2200ms cubic-bezier(0.65, 0, 0.2, 1) both;
+  }
+  /* A light that laps the circuit for as long as the map is loading. */
+  .title__car {
+    stroke: #ffb81c;
+    stroke-width: 4;
+    stroke-dasharray: 0.035 0.965;
+    filter: drop-shadow(0 0 5px #ffb81c);
+    opacity: 0;
+    animation:
+      bmr-title-appear 500ms ease 2000ms forwards,
+      bmr-title-lap 3600ms linear 2000ms infinite;
+  }
+  .title__name {
+    margin: 0;
+    font-size: clamp(18px, 3.4cqw, 30px);
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    /* Letter spacing follows the last letter too, which would push the name off centre. */
+    margin-right: -0.3em;
+    text-transform: uppercase;
+    animation: bmr-title-rise 900ms ease 350ms both;
+  }
+  .title__place {
+    margin: 0;
+    color: rgb(255 255 255 / 72%);
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    animation: bmr-title-rise 900ms ease 650ms both;
+  }
+  .title__status {
+    position: absolute;
+    bottom: max(28px, env(safe-area-inset-bottom));
+    left: 24px;
+    right: 24px;
+    margin: 0;
+    color: rgb(255 255 255 / 60%);
+    font-size: 12px;
+    animation: bmr-title-appear 600ms ease 1200ms both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .title,
+    .title .title__track,
+    .title .title__name,
+    .title .title__place,
+    .title .title__status {
+      animation: none;
+      transition: none;
+    }
+    .title__car {
+      display: none;
+    }
+  }
+}
+
+@keyframes bmr-interface-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes bmr-title-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes bmr-title-lap {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes bmr-title-appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes bmr-title-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.bmr-map .map-engage {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  border: 0;
+  background: rgb(0 36 63 / 12%);
+  color: white;
+  font:
+    500 18px Roboto,
+    sans-serif;
+  text-shadow: 0 1px 4px black;
+  touch-action: pan-y;
+  cursor: pointer;
+}
+.bmr-map .map-engage[hidden],
+.bmr-map .map-leave[hidden] {
+  display: none;
+}
+.bmr-map .map-leave {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  z-index: 21;
+  padding: 10px;
+  border: 0;
+  border-radius: 8px;
+  color: white;
+  background: #004272;
+}
+.bmr-map[data-variant="section"] .tour-player {
+  display: none;
 }

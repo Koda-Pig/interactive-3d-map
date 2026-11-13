@@ -9,7 +9,6 @@ import { MAP_HALF_SIZE } from "../site.ts";
 import type { GroundSurface } from "../terrain/ground.ts";
 import { trackSurface } from "./ribbons.ts";
 import { seatVehicle, tyreContacts, vehicleSlope } from "./vehicle-pose.ts";
-import { setWaterTime } from "./water.ts";
 
 /**
  * The race cars, as seconds ahead of the first, which a lap of the circuit
@@ -287,7 +286,6 @@ export class Traffic {
     }
     this.buses.place(seconds);
     this.motorists.place(seconds);
-    setWaterTime(seconds);
     return true;
   }
 }

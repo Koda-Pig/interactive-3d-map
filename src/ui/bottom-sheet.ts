@@ -30,7 +30,11 @@ interface Drag {
 /** The sidebar's behaviour on a phone, where it slides up from the bottom. */
 export function createBottomSheet(parts: BottomSheetParts): BottomSheet {
   const { sheet, handle, grabber, handleAction } = parts;
-  const phone = window.matchMedia(PHONE_LAYOUT);
+  const phone = {
+    get matches() {
+      return (sheet.closest<HTMLElement>(".bmr-map")?.clientWidth ?? 0) <= 600;
+    },
+  };
 
   let open = false;
   let drag: Drag | null = null;

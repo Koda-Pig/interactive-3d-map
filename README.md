@@ -10,6 +10,9 @@ The procedural kit contains 82 models, plus six separately built crowd figures. 
 
 ## Docs
 
+- [docs/shared-map-usage.md](docs/shared-map-usage.md): package API, local tarball validation, PitchDecks integration and releases
+- [docs/shared-map-inventory.md](docs/shared-map-inventory.md): baseline, resource ownership and extraction measurements
+
 - [ai/track-layout.md](ai/track-layout.md): required circuit and infield corrections, their reasons, and checks to prevent layout regressions
 - [docs/overview.md](docs/overview.md): what we're building, the reference we're improving on, and the feature list
 - [docs/plan.md](docs/plan.md): the simplified build plan, phase by phase
@@ -42,6 +45,8 @@ pnpm dev
 `pnpm build` checks the layout, type-checks and writes a production build to `dist/`.
 
 `pnpm check:layout` measures the circuit in the layout data and fails if it misses BMR's length, straight or width targets, or if a model the layout asks for doesn't exist.
+
+`pnpm build:package` creates the shared library and runtime assets in `dist/`. Run it before package tests or packing. `pnpm test:browser` checks lifecycle, Strict Mode and tours in local Chrome.
 
 `pnpm test` runs the tests in `tests/`. `pnpm lint` checks formatting and common mistakes with [Biome](https://biomejs.dev), and `pnpm format` fixes what it can.
 
