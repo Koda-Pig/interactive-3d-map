@@ -245,10 +245,14 @@ export function mountMap(container: HTMLElement, options: MapOptions): MapHandle
     leave.type = "button";
     leave.className = "map-leave";
     leave.textContent = "Stop interacting";
+    // Until the visitor engages a section map, nothing in it can take focus or keys,
+    // so tabbing through the page passes over the map to the engage button.
+    const mapParts = [...root.children] as HTMLElement[];
     const syncInteraction = (): void => {
       engage.hidden = interactive;
       leave.hidden = !interactive;
       host.style.pointerEvents = interactive ? "" : "none";
+      for (const part of mapParts) part.inert = !interactive;
       if (activity) activity();
     };
     if (options.variant === "section") {
@@ -413,6 +417,7 @@ export function mountMap(container: HTMLElement, options: MapOptions): MapHandle
       resetView: () => interaction.resetView(),
     });
     renderer.domElement.addEventListener("keydown", (event) => {
+      if (!interactive) return;
       if (event.key === "+" || event.key === "=") {
         flight.zoomBy(ZOOM_STEP);
       } else if (event.key === "-" || event.key === "_") {

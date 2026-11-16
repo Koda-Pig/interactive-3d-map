@@ -1867,6 +1867,13 @@
   color: white;
   background: #004272;
 }
+/* On a narrow map the compass takes the top-right corner, so the button sits below it. */
+@container bmr (max-width: 600px) {
+  .bmr-map .map-leave {
+    right: max(16px, env(safe-area-inset-right));
+    top: calc(max(16px, env(safe-area-inset-top)) + var(--map-controls-height, 56px) + 8px);
+  }
+}
 .bmr-map[data-variant="section"] .tour-player {
   display: none;
 }

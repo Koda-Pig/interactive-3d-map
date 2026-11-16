@@ -11,7 +11,7 @@
     "build": "pnpm run check:layout && tsc && vite build",
     "preview": "vite preview",
     "typecheck": "tsc",
-    "test": "node --test \"tests/*.test.mjs\"",
+    "test": "node tools/build-package.mjs && node --test \"tests/*.test.mjs\"",
     "lint": "biome check .",
     "format": "biome check --write .",
     "check:layout": "node tools/check-layout.mjs",

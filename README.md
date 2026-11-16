@@ -46,7 +46,7 @@ pnpm dev
 
 `pnpm check:layout` measures the circuit in the layout data and fails if it misses BMR's length, straight or width targets, or if a model the layout asks for doesn't exist.
 
-`pnpm build:package` creates the shared library and runtime assets in `dist/`. Run it before package tests or packing. `pnpm test:browser` checks lifecycle, Strict Mode and tours in local Chrome.
+`pnpm build:package` creates the shared library and runtime assets in `dist/`. `pnpm test` runs it first, so run it yourself only before packing. `pnpm test:browser` checks lifecycle, Strict Mode and tours in local Chrome.
 
 `pnpm test` runs the tests in `tests/`. `pnpm lint` checks formatting and common mistakes with [Biome](https://biomejs.dev), and `pnpm format` fixes what it can.
 

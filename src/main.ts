@@ -18,10 +18,15 @@ const map = mountMap(host, {
   onLocationChange: (id) =>
     showInAddress(layout.locations.find((location) => location.id === id) ?? null),
 });
-window.addEventListener("popstate", () => map.selectLocation(readSelection() ?? null));
+const onPopState = (): void => map.selectLocation(readSelection() ?? null);
+window.addEventListener("popstate", onPopState);
 void map.ready
   .then(() => {
     if (import.meta.env.DEV) Object.assign(window, { __map: inspection.get(host) });
   })
   .catch(() => undefined);
-if (import.meta.hot) import.meta.hot.dispose(() => map.destroy());
+if (import.meta.hot)
+  import.meta.hot.dispose(() => {
+    window.removeEventListener("popstate", onPopState);
+    map.destroy();
+  });

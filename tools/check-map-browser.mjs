@@ -15,8 +15,13 @@ const server = await createServer({
           response.setHeader("Content-Type", "text/html");
           response.end("<!doctype html><html><head></head><body></body></html>");
         });
-        // Exercise a non-root asset base while Vite continues to serve the source public directory.
-        server.middlewares.use("/package-assets", (_request, _response, next) => next());
+        // Exercise a non-root asset base: strip the prefix so Vite serves the file from
+        // the source public directory, as a consumer's copied assets would be served.
+        server.middlewares.use((request, _response, next) => {
+          if (request.url?.startsWith("/package-assets/"))
+            request.url = request.url.slice("/package-assets".length);
+          next();
+        });
       },
     },
   ],
@@ -43,7 +48,11 @@ try {
   page.on("requestfailed", (request) => failedRequests.push(request.url()));
   page.on("response", (response) => {
     if (response.url().includes("/package-assets/")) {
-      assetResponses.push({ status: response.status(), url: response.url() });
+      assetResponses.push({
+        status: response.status(),
+        type: response.headers()["content-type"] ?? "",
+        url: response.url(),
+      });
     }
   });
   await page.goto(`http://localhost:${server.httpServer.address().port}/__map_test`);
@@ -78,6 +87,11 @@ try {
     assetResponses.filter(({ status }) => status >= 400),
     [],
   );
+  // A missing asset falls back to the HTML page with a 200, so the type matters too.
+  assert.deepEqual(
+    assetResponses.filter(({ type }) => type.includes("text/html")),
+    [],
+  );
   assert.equal(
     await page.evaluate(() => {
       const ids = [...document.querySelectorAll("[id]")].map((e) => e.id);
@@ -105,8 +119,21 @@ try {
     pausedFrames,
   );
   await page.evaluate(() => window.testMaps.second.setActive(true));
+  // An unengaged section map keeps its canvas and controls out of the tab order.
+  const engagement = () =>
+    page.evaluate(() => {
+      const canvas = document.querySelector("#one canvas");
+      canvas.focus();
+      return {
+        canvasFocused: document.activeElement === canvas,
+        controlsInert: document.querySelector("#one .map-controls").closest("[inert]") !== null,
+      };
+    });
+  assert.deepEqual(await engagement(), { canvasFocused: false, controlsInert: true });
   await page.locator("#one .map-engage").click();
+  assert.deepEqual(await engagement(), { canvasFocused: true, controlsInert: false });
   await page.locator("#one .map-leave").click();
+  assert.deepEqual(await engagement(), { canvasFocused: false, controlsInert: true });
   await page.evaluate(() => {
     window.testMaps.first.setActive(false);
     window.testMaps.first.destroy();
