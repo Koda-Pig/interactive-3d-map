@@ -1,6 +1,6 @@
 import type { Category, Location } from "../layout/locations.ts";
 import { CATEGORIES, layout, PRECINCT_NAMES } from "../layout/locations.ts";
-import { createBottomSheet, PHONE_LAYOUT } from "./bottom-sheet.ts";
+import { createBottomSheet } from "./bottom-sheet.ts";
 import { publicUrl, requirePart } from "./dom.ts";
 
 export interface SidebarActions {
@@ -21,6 +21,7 @@ export interface Sidebar {
    * Zero while it's closed, and on a phone, where it's the bottom sheet.
    */
   panelWidth(): number;
+  destroy(): void;
 }
 
 interface Row {
@@ -157,7 +158,7 @@ function createGroup(
   more.className = "sidebar__more";
 
   const body = createFold(leadList, restBody, more);
-  body.id = `sidebar-precinct-${category}`;
+  body.id = `sidebar-precinct-${category}-${crypto.randomUUID()}`;
   expand.setAttribute("aria-controls", body.id);
 
   const section = document.createElement("section");
@@ -191,13 +192,13 @@ const PLACEHOLDER_ICON =
   '<svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path fill="currentColor" d="M21 5v14H3V5zm-2 2H5v8.6l3.5-3.5 3 3 4-5L19 15.5zM8 11a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/></svg>';
 
 /** The picture shown under the selected row: the location's own, or a placeholder. */
-function createPreview(location: Location): HTMLElement {
+function createPreview(location: Location, assetBaseUrl: string): HTMLElement {
   const figure = document.createElement("figure");
   figure.className = "sidebar__preview";
   if (location.image) {
     const image = document.createElement("img");
     image.className = "sidebar__preview-image";
-    image.src = publicUrl(location.image);
+    image.src = publicUrl(location.image, assetBaseUrl);
     image.alt = location.name;
     figure.append(image);
   } else {
@@ -238,6 +239,7 @@ export function createSidebar(
   root: HTMLElement,
   openButton: HTMLElement,
   actions: SidebarActions,
+  assetBaseUrl: string,
 ): Sidebar {
   const search = requirePart<HTMLInputElement>(root, ".sidebar__search");
   const empty = requirePart(root, ".sidebar__empty");
@@ -255,10 +257,17 @@ export function createSidebar(
   });
 
   const pane = requirePart(root, ".sidebar__inner");
-  const phone = window.matchMedia(PHONE_LAYOUT);
+  const mapRoot = root.closest<HTMLElement>(".bmr-map") ?? root;
+  const phone = {
+    get matches() {
+      return mapRoot.clientWidth <= 600;
+    },
+  };
+  const resize = new ResizeObserver(syncInert);
+  resize.observe(mapRoot);
 
   function isShown(): boolean {
-    return !document.documentElement.classList.contains(CLOSED_CLASS);
+    return !mapRoot.classList.contains(CLOSED_CLASS);
   }
 
   // On a wide screen the panel and the button are one shape, and whichever
@@ -272,7 +281,7 @@ export function createSidebar(
   }
 
   function setShown(shown: boolean): void {
-    document.documentElement.classList.toggle(CLOSED_CLASS, !shown);
+    mapRoot.classList.toggle(CLOSED_CLASS, !shown);
     openButton.setAttribute("aria-expanded", String(shown));
     // Focus moves to the half that's arriving before the other goes inert.
     (shown ? pane : openButton).inert = false;
@@ -288,7 +297,7 @@ export function createSidebar(
     actions.shownChanged();
   }
   syncInert();
-  phone.addEventListener("change", syncInert);
+
   openButton.addEventListener("click", () => setShown(true));
   requirePart(root, ".sidebar__close").addEventListener("click", () => setShown(false));
   root.addEventListener("keydown", (event) => {
@@ -366,6 +375,9 @@ export function createSidebar(
   render();
 
   return {
+    destroy() {
+      resize.disconnect();
+    },
     panelWidth() {
       return !phone.matches && isShown() ? pane.offsetWidth : 0;
     },
@@ -376,7 +388,7 @@ export function createSidebar(
       selected = rows.find((row) => row.location === location) ?? null;
       if (selected) {
         selected.button.setAttribute("aria-current", "true");
-        preview = createPreview(selected.location);
+        preview = createPreview(selected.location, assetBaseUrl);
         selected.item.append(preview);
         const group = groups.get(selected.location.category);
         if (group) {

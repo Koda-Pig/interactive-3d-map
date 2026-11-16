@@ -19,11 +19,15 @@ export function createInfoPanel(
   panel: HTMLElement,
   onClose: () => void,
   onPick: (location: Location) => void,
+  assetBaseUrl: string,
 ): InfoPanel {
   const precinct = requirePart(panel, ".info-panel__precinct");
   const name = requirePart(panel, ".info-panel__name");
   const description = requirePart(panel, ".info-panel__description");
   const image = requirePart<HTMLImageElement>(panel, ".info-panel__image");
+  image.addEventListener("error", () => {
+    image.hidden = true;
+  });
   const actions = requirePart(panel, ".info-panel__actions");
   const actionGroups = requirePart(panel, ".info-panel__action-groups");
   const related = requirePart(panel, ".info-panel__related");
@@ -107,7 +111,7 @@ export function createInfoPanel(
         showRelated(location);
         image.hidden = !location.image;
         if (location.image) {
-          image.src = publicUrl(location.image);
+          image.src = publicUrl(location.image, assetBaseUrl);
           image.alt = location.name;
         } else {
           image.removeAttribute("src");

@@ -30,14 +30,6 @@ const GUST_SIZE = 95;
 /** Bodies of water smaller than this, such as pools, get small ripples and no foam. */
 const POOL_SIDE = 60;
 
-/** Seconds since the water started moving. Shared by every water surface. */
-const time = { value: 0 };
-
-/** Sets the water moving to a time in seconds. */
-export function setWaterTime(seconds: number): void {
-  time.value = seconds;
-}
-
 /**
  * A map of how far each point is from the shore, as a share of `SHORE_DEPTH`,
  * with the box it covers. 0 is the water's edge and 1 is deep water.
@@ -183,6 +175,10 @@ export class WaterMaterial extends MeshStandardMaterial {
     if (uniforms) this.waterUniforms = uniforms;
   }
 
+  setTime(seconds: number): void {
+    if (this.waterUniforms.uWaterTime) this.waterUniforms.uWaterTime.value = seconds;
+  }
+
   override copy(source: this): this {
     super.copy(source);
     this.waterUniforms = source.waterUniforms;
@@ -229,7 +225,7 @@ export async function createWaterMaterial({
   return new WaterMaterial(
     { color, roughness: 0.07, metalness: 0, ...polygonOffset },
     {
-      uWaterTime: time,
+      uWaterTime: { value: 0 },
       uRipples: { value: ripples },
       uShore: { value: texture },
       uShoreBox: { value: box },

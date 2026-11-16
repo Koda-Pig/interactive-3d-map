@@ -231,9 +231,15 @@ export function createTeamBranding(units: readonly TeamUnit[]): Mesh {
   const canvas = document.createElement("canvas");
   canvas.width = ATLAS_WIDTH;
   canvas.height = ATLAS_HEIGHT;
+  let disposed = false;
+  const images: HTMLImageElement[] = [];
   const logos = new Map<string, HTMLImageElement>();
   paintAtlas(canvas, logos);
   const texture = new CanvasTexture(canvas);
+  texture.addEventListener("dispose", () => {
+    disposed = true;
+    for (const image of images) image.src = "";
+  });
   texture.colorSpace = SRGBColorSpace;
   texture.minFilter = LinearMipmapLinearFilter;
   texture.anisotropy = 8;
@@ -242,6 +248,7 @@ export function createTeamBranding(units: readonly TeamUnit[]): Mesh {
   document.fonts
     ?.load("500 48px Roboto")
     .then(() => {
+      if (disposed) return;
       paintAtlas(canvas, logos);
       texture.needsUpdate = true;
     })
@@ -251,8 +258,10 @@ export function createTeamBranding(units: readonly TeamUnit[]): Mesh {
     const url = LOGO_URLS.get(team.slug);
     if (!url) continue;
     const logo = new Image();
+    images.push(logo);
     logo.decoding = "async";
     logo.addEventListener("load", () => {
+      if (disposed) return;
       logos.set(team.slug, logo);
       paintAtlas(canvas, logos);
       texture.needsUpdate = true;

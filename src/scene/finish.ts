@@ -234,6 +234,13 @@ export class Finish {
     this.bloom.materialHighPassFilter.fragmentShader = BRIGHT_FRAGMENT_SHADER;
   }
 
+  dispose(): void {
+    this.target.dispose();
+    this.bloom.dispose();
+    this.material.dispose();
+    this.screen.geometry.dispose();
+  }
+
   /** Draws the scene from `camera` to the screen. */
   render(scene: Scene, camera: PerspectiveCamera, look: FinishLook): void {
     const { renderer } = this;

@@ -32,7 +32,8 @@ export function addTouchGestures(
   camera: PerspectiveCamera,
   controls: MapControls,
   element: HTMLElement,
-): void {
+): () => void {
+  const events = new AbortController();
   controls.touches.TWO = null;
 
   const fingers = new Map<number, Finger>();
@@ -101,67 +102,86 @@ export function addTouchGestures(
     turning = false;
   };
 
-  element.addEventListener("pointerdown", (event) => {
-    if (event.pointerType === "touch") {
-      const { clientX: x, clientY: y } = event;
-      fingers.set(event.pointerId, { x, y, startX: x, startY: y });
-      reset();
-    }
-  });
-
-  element.addEventListener("pointermove", (event) => {
-    const finger = fingers.get(event.pointerId);
-    if (!finger) {
-      return;
-    }
-    const [a, b] = [...fingers.values()];
-    if (fingers.size !== 2 || !a || !b) {
-      finger.x = event.clientX;
-      finger.y = event.clientY;
-      return;
-    }
-    const before = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
-    const spanBefore = Math.hypot(b.x - a.x, b.y - a.y);
-    const angleBefore = Math.atan2(b.y - a.y, b.x - a.x);
-    finger.x = event.clientX;
-    finger.y = event.clientY;
-
-    if (!mode) {
-      const [ax, ay, bx, by] = [a.x - a.startX, a.y - a.startY, b.x - b.startX, b.y - b.startY];
-      if (Math.max(Math.hypot(ax, ay), Math.hypot(bx, by)) < DECIDE_DISTANCE) {
-        return;
-      }
-      // A tilt is both fingers heading the same way, up or down.
-      const together =
-        ay * by > 0 &&
-        Math.abs(ay) > Math.abs(ax) &&
-        Math.abs(by) > Math.abs(bx) &&
-        Math.min(Math.abs(ay), Math.abs(by)) >= DECIDE_DISTANCE / 2;
-      mode = together ? "tilt" : "pinch";
-      return;
-    }
-
-    const after = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
-    if (mode === "tilt") {
-      // Dragging up tips the view towards the horizon.
-      tilt((before.y - after.y) * TILT_PER_PIXEL);
-      return;
-    }
-    const span = Math.hypot(b.x - a.x, b.y - a.y);
-    const angle = Math.atan2(b.y - a.y, b.x - a.x);
-    const twisted = MathUtils.euclideanModulo(angle - angleBefore + Math.PI, Math.PI * 2) - Math.PI;
-    twist += twisted;
-    const wasTurning = turning;
-    turning ||= Math.abs(twist) > TWIST_THRESHOLD;
-    // Seen from above, the camera swings the opposite way to the map.
-    pinch(before, after, span > 0 ? spanBefore / span : 1, wasTurning ? twisted : 0);
-  });
-
-  for (const type of ["pointerup", "pointercancel"] as const) {
-    element.addEventListener(type, (event) => {
-      if (fingers.delete(event.pointerId)) {
+  element.addEventListener(
+    "pointerdown",
+    (event) => {
+      if (!controls.enabled) return;
+      if (event.pointerType === "touch") {
+        const { clientX: x, clientY: y } = event;
+        fingers.set(event.pointerId, { x, y, startX: x, startY: y });
         reset();
       }
-    });
+    },
+    { signal: events.signal },
+  );
+
+  element.addEventListener(
+    "pointermove",
+    (event) => {
+      if (!controls.enabled) return;
+      const finger = fingers.get(event.pointerId);
+      if (!finger) {
+        return;
+      }
+      const [a, b] = [...fingers.values()];
+      if (fingers.size !== 2 || !a || !b) {
+        finger.x = event.clientX;
+        finger.y = event.clientY;
+        return;
+      }
+      const before = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+      const spanBefore = Math.hypot(b.x - a.x, b.y - a.y);
+      const angleBefore = Math.atan2(b.y - a.y, b.x - a.x);
+      finger.x = event.clientX;
+      finger.y = event.clientY;
+
+      if (!mode) {
+        const [ax, ay, bx, by] = [a.x - a.startX, a.y - a.startY, b.x - b.startX, b.y - b.startY];
+        if (Math.max(Math.hypot(ax, ay), Math.hypot(bx, by)) < DECIDE_DISTANCE) {
+          return;
+        }
+        // A tilt is both fingers heading the same way, up or down.
+        const together =
+          ay * by > 0 &&
+          Math.abs(ay) > Math.abs(ax) &&
+          Math.abs(by) > Math.abs(bx) &&
+          Math.min(Math.abs(ay), Math.abs(by)) >= DECIDE_DISTANCE / 2;
+        mode = together ? "tilt" : "pinch";
+        return;
+      }
+
+      const after = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+      if (mode === "tilt") {
+        // Dragging up tips the view towards the horizon.
+        tilt((before.y - after.y) * TILT_PER_PIXEL);
+        return;
+      }
+      const span = Math.hypot(b.x - a.x, b.y - a.y);
+      const angle = Math.atan2(b.y - a.y, b.x - a.x);
+      const twisted =
+        MathUtils.euclideanModulo(angle - angleBefore + Math.PI, Math.PI * 2) - Math.PI;
+      twist += twisted;
+      const wasTurning = turning;
+      turning ||= Math.abs(twist) > TWIST_THRESHOLD;
+      // Seen from above, the camera swings the opposite way to the map.
+      pinch(before, after, span > 0 ? spanBefore / span : 1, wasTurning ? twisted : 0);
+    },
+    { signal: events.signal },
+  );
+
+  for (const type of ["pointerup", "pointercancel"] as const) {
+    element.addEventListener(
+      type,
+      (event) => {
+        if (fingers.delete(event.pointerId)) {
+          reset();
+        }
+      },
+      { signal: events.signal },
+    );
   }
+  return () => {
+    events.abort();
+    fingers.clear();
+  };
 }

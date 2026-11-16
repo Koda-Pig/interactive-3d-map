@@ -21,8 +21,12 @@ export interface KitModel {
 /** The models that loaded, by file. A missing one falls back to a plain shape. */
 export type Kit = ReadonlyMap<string, KitModel>;
 
-async function loadModel(loader: GLTFLoader, file: string): Promise<KitModel> {
-  const gltf = await loader.loadAsync(`${import.meta.env.BASE_URL}models/${file}`);
+async function loadModel(
+  loader: GLTFLoader,
+  file: string,
+  assetBaseUrl: string,
+): Promise<KitModel> {
+  const gltf = await loader.loadAsync(`${assetBaseUrl.replace(/\/?$/, "/")}models/${file}`);
   gltf.scene.updateMatrixWorld(true);
 
   const pieces: KitPiece[] = [];
@@ -78,14 +82,19 @@ export function layoutModelFiles(): string[] {
   return [...files];
 }
 
-export async function loadKit(files: Iterable<string>): Promise<Kit> {
+export async function loadKit(
+  files: Iterable<string>,
+  assetBaseUrl: string,
+  onMissing?: (file: string) => void,
+): Promise<Kit> {
   const loader = new GLTFLoader();
   const kit = new Map<string, KitModel>();
   await Promise.all(
     [...new Set(files)].map(async (file) => {
       try {
-        kit.set(file, await loadModel(loader, file));
+        kit.set(file, await loadModel(loader, file, assetBaseUrl));
       } catch (error) {
+        onMissing?.(file);
         console.warn(
           `Could not load the model "${file}", so a plain shape is drawn instead`,
           error,

@@ -11,6 +11,6 @@ export function requirePart<T extends HTMLElement = HTMLElement>(
 }
 
 /** The address of a file in `public/`, wherever the site is served from. */
-export function publicUrl(path: string): string {
-  return `${import.meta.env.BASE_URL}${path}`;
+export function publicUrl(path: string, assetBaseUrl: string): string {
+  return `${assetBaseUrl.replace(/\/?$/, "/")}${path}`;
 }

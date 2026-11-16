@@ -1,4 +1,4 @@
-import type { Object3D, Texture } from "three";
+import type { Material, Object3D, Texture } from "three";
 import {
   Color,
   Mesh,
@@ -37,9 +37,9 @@ const SOLID_ROUGHNESS = 0.85;
 const ROOF_LIGHTENER = new Color("#7A8794");
 const ANISOTROPY = 4;
 
-const solidMaterials = new Map<string, MeshStandardMaterial>();
-const layerMaterials = new Map<string, MeshLambertMaterial>();
-const kitMaterials = new Map<string, MeshStandardMaterial>();
+let solidMaterials = new Map<string, MeshStandardMaterial>();
+let layerMaterials = new Map<string, MeshLambertMaterial>();
+let kitMaterials = new Map<string, MeshStandardMaterial>();
 
 export function solidMaterial(color: string): MeshStandardMaterial {
   let material = solidMaterials.get(color);
@@ -107,7 +107,7 @@ export function asphaltTexture(): Texture {
   return asphalt;
 }
 
-const surfaces = new Map<SurfaceFinish, Texture>();
+let surfaces = new Map<SurfaceFinish, Texture>();
 
 /** The pattern for a paved or mown area, in its metres. */
 export function surfaceTexture(finish: SurfaceFinish): Texture {
@@ -140,7 +140,7 @@ export function waterMaterial(color: string, outline: readonly Point[]): Promise
   });
 }
 
-const vertexMaterials = new Map<number, MeshLambertMaterial>();
+let vertexMaterials = new Map<number, MeshLambertMaterial>();
 
 export function vertexColorMaterial(layer: number = Layer.marking): MeshLambertMaterial {
   let material = vertexMaterials.get(layer);
@@ -183,7 +183,7 @@ export function highlightLook(building: boolean, level: HighlightLevel): Highlig
   return (building ? BUILDING_LOOKS : FLAT_LOOKS)[level];
 }
 
-const highlightMaterials = new WeakMap<SiteMaterial, Map<HighlightLook, SiteMaterial>>();
+const highlightMaterials = new WeakMap<Material, Map<HighlightLook, SiteMaterial>>();
 const baseMaterials = new WeakMap<Mesh, SiteMaterial>();
 const meshLooks = new WeakMap<Mesh, HighlightLook>();
 
@@ -249,6 +249,7 @@ function aimHighlight(
   if (fade && to && fade.look !== to) {
     // The level changed while lit (hover to selected): both are on, so go straight there.
     mesh.material = highlightMaterial(base, to);
+    fade.material.dispose();
     highlightFades.delete(mesh);
     return;
   }
@@ -302,6 +303,7 @@ export function setHighlight(object: Object3D, look: HighlightLook | null): void
 
 /** Changes a mesh's normal material, without losing a highlight it has on. */
 export function setBaseMaterial(mesh: Mesh, material: SiteMaterial): void {
+  highlightFades.get(mesh)?.material.dispose();
   highlightFades.delete(mesh);
   baseMaterials.set(mesh, material);
   const look = meshLooks.get(mesh);
@@ -309,9 +311,14 @@ export function setBaseMaterial(mesh: Mesh, material: SiteMaterial): void {
 }
 
 /** Advances every highlight fade. Call once a frame, with the render loop's clock. */
-export function updateHighlights(now: number): boolean {
+export function updateHighlights(now: number, root?: Object3D): boolean {
   let fading = false;
   for (const [mesh, fade] of highlightFades) {
+    if (root) {
+      let parent: Object3D | null = mesh;
+      while (parent && parent !== root) parent = parent.parent;
+      if (!parent) continue;
+    }
     fade.at ??= now;
     const step = (now - fade.at) / FADE_TIME;
     fade.at = now;
@@ -320,6 +327,7 @@ export function updateHighlights(now: number): boolean {
     if (fade.t === goal) {
       mesh.material = fade.direction === 1 ? highlightMaterial(fade.base, fade.look) : fade.base;
       highlightFades.delete(mesh);
+      fade.material.dispose();
     } else {
       paintFade(fade.material, fade.look, fade.t);
       fading = true;
@@ -333,4 +341,72 @@ export function refreshHighlights(base: SiteMaterial): void {
   for (const material of highlightMaterials.get(base)?.values() ?? []) {
     material.color.copy(base.color);
   }
+}
+
+/** Async drawing yields between batches. Only construction enters this queue; mounted maps render independently. */
+let construction: Promise<void> = Promise.resolve();
+export async function withMaterialScope<T>(
+  build: () => Promise<T>,
+  own: (dispose: () => void) => void,
+): Promise<T> {
+  const previous = construction;
+  let release = (): void => {};
+  construction = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await previous;
+  solidMaterials = new Map();
+  layerMaterials = new Map();
+  kitMaterials = new Map();
+  vertexMaterials = new Map();
+  surfaces = new Map();
+  asphalt = null;
+  parkingStalls = null;
+  ripples = null;
+  try {
+    return await build();
+  } finally {
+    const materials = [
+      ...solidMaterials.values(),
+      ...layerMaterials.values(),
+      ...kitMaterials.values(),
+      ...vertexMaterials.values(),
+    ];
+    const textures = [...surfaces.values(), asphalt, parkingStalls, ripples];
+    own(() => {
+      for (const material of materials) {
+        disposeMaterialHighlights(material);
+        material.dispose();
+      }
+      for (const texture of textures) texture?.dispose();
+    });
+    solidMaterials.clear();
+    layerMaterials.clear();
+    kitMaterials.clear();
+    vertexMaterials.clear();
+    surfaces.clear();
+    asphalt = null;
+    parkingStalls = null;
+    ripples = null;
+    release();
+  }
+}
+
+export function disposeHighlights(root: Object3D): void {
+  root.traverse((child) => {
+    if (!(child instanceof Mesh)) return;
+    const fade = highlightFades.get(child);
+    fade?.material.dispose();
+    highlightFades.delete(child);
+    const base = baseMaterials.get(child);
+    if (base) {
+      disposeMaterialHighlights(base);
+      base.dispose();
+    }
+  });
+}
+
+export function disposeMaterialHighlights(base: Material): void {
+  for (const material of highlightMaterials.get(base)?.values() ?? []) material.dispose();
+  highlightMaterials.delete(base);
 }

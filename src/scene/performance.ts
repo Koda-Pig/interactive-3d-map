@@ -25,9 +25,10 @@ export class FrameMonitor {
     private readonly applyPixelRatio: (ratio: number) => void,
     /** What the scene took to draw, when passes over it would hide the renderer's own count. */
     private readonly drawn: () => { calls: number; triangles: number } = () => renderer.info.render,
+    host?: HTMLElement,
   ) {
     this.stats = new URLSearchParams(window.location.search).has("stats")
-      ? document.body.appendChild(document.createElement("output"))
+      ? (host?.appendChild(document.createElement("output")) ?? null)
       : null;
     if (this.stats) {
       this.stats.className = "stats";

@@ -64,9 +64,13 @@ try {
     for (const view of VIEWS) {
       const query = [view.query, `quality=${run.tier}`].filter(Boolean).join("&");
       await page.goto(`http://localhost:${port}/?${query}`);
-      await page.waitForFunction(() => !document.querySelector("#loading"), null, {
-        timeout: 120000,
-      });
+      await page.waitForFunction(
+        () => window.__map && !document.querySelector("[data-part=loading]"),
+        null,
+        {
+          timeout: 120000,
+        },
+      );
       if (view.race) {
         // At phone width the switch is a list to pick from, not a row of buttons.
         const button = page.getByRole("button", { name: "Race weekend" });

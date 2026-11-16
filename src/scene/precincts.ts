@@ -2,7 +2,11 @@ import type { Object3D } from "three";
 import { Color, Material, MathUtils, Mesh } from "three";
 import { ALWAYS_TRANSPARENT } from "../draw/contact-shadows.ts";
 import type { SiteMaterial } from "../draw/materials.ts";
-import { refreshHighlights, setBaseMaterial } from "../draw/materials.ts";
+import {
+  disposeMaterialHighlights,
+  refreshHighlights,
+  setBaseMaterial,
+} from "../draw/materials.ts";
 import type { Category, Location } from "../layout/locations.ts";
 import { CATEGORIES, layout } from "../layout/locations.ts";
 
@@ -235,6 +239,23 @@ export class Precincts {
       shadows ||= wasDrawn !== precinct.opacity > 0;
     }
     return { redraw: recoloured || faded, shadows };
+  }
+
+  dispose(): void {
+    for (const precinct of this.precincts.values()) {
+      for (const material of precinct.materials.keys()) {
+        disposeMaterialHighlights(material);
+        material.dispose();
+      }
+      for (const material of precinct.materials.values()) {
+        disposeMaterialHighlights(material);
+        material.dispose();
+      }
+      for (const material of precinct.twins) {
+        disposeMaterialHighlights(material);
+        material.dispose();
+      }
+    }
   }
 
   private muteTarget(location: Location): number {
